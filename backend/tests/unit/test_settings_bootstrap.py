@@ -1,11 +1,11 @@
 import re
+import subprocess
 import sys
 from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
 
-from scout.bootstrap import build_container
 from scout.settings import Settings
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -36,9 +36,16 @@ def test_every_env_example_key_has_a_field() -> None:
 
 
 def test_build_container_is_lazy_and_light() -> None:
-    c = build_container(_s(app_env="test"))
-    assert c.db.engine is not None
-    assert not {"openai", "agents", "llmrouter_free"} & set(sys.modules)
+    """Runs in a fresh interpreter: other tests may already have imported optional adapters."""
+    code = (
+        "import sys\n"
+        "from scout.bootstrap import build_container\n"
+        "from scout.settings import Settings\n"
+        "c = build_container(Settings(_env_file=None, app_env='test'))\n"
+        "bad = {'openai', 'agents', 'llmrouter_free', 'litellm'} & set(sys.modules)\n"
+        "sys.exit(1 if bad else 0)\n"
+    )
+    assert subprocess.run([sys.executable, "-c", code], check=False).returncode == 0
 
 
 def test_src_never_imports_tests() -> None:

@@ -7,9 +7,13 @@ from collections.abc import Awaitable, Callable, Mapping
 from uuid import UUID
 
 import structlog
+from opentelemetry import trace
 from pydantic import JsonValue
 
+from scout.adapters.observability import partitions
+from scout.adapters.persistence.db import Database
 from scout.ports.jobs import Job, JobQueuePort, retry_delay
+from scout.shared import Clock
 from scout.shared.context import RequestContext, set_context
 
 log = structlog.get_logger()
@@ -45,7 +49,10 @@ async def run_once(queue: JobQueuePort, handlers: Mapping[str, Handler], worker_
         return False
     set_context(_context_from(job))
     try:
-        result = await handlers[job.kind](job)
+        with trace.get_tracer("scout.worker").start_as_current_span(f"job.{job.kind}") as span:
+            span.set_attribute("job.id", str(job.id))
+            span.set_attribute("job.attempts", job.attempts)
+            result = await handlers[job.kind](job)
     except Exception as exc:
         log.warning("job_failed", job_id=str(job.id), kind=job.kind, attempt=job.attempts, error=str(exc))
         await queue.fail(job.id, f"{type(exc).__name__}: {exc}", retry_delay(job.attempts))
@@ -69,3 +76,8 @@ async def run_forever(
                 await asyncio.wait_for(stop.wait(), timeout=poll_interval)
             except TimeoutError:
                 pass
+
+
+def build_handlers(db: Database, clock: Clock, queue: JobQueuePort) -> dict[str, Handler]:
+    """All job handlers, closed over the infrastructure they need."""
+    return {**DEFAULT_HANDLERS, partitions.KIND: partitions.make_handler(db, clock, queue)}

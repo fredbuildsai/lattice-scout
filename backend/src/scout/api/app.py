@@ -7,6 +7,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
+from scout.adapters.observability.telemetry import configure_telemetry, instrument_app
 from scout.api import events, health
 from scout.api.errors import install_error_handlers
 from scout.api.logging import configure_logging
@@ -23,6 +24,11 @@ def create_app(container: Container | None = None) -> FastAPI:
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         c = container or build_container(get_settings())
         app.state.container = c
+        configure_telemetry(
+            c.settings.otel_service_name or "scout-api", c.settings.otel_exporter_otlp_endpoint,
+            c.settings.otel_traces_sampler_arg,
+        )  # fmt: skip
+        instrument_app(app, c.db)
         await start_container(c)
         try:
             yield

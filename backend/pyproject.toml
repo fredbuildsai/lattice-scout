@@ -51,7 +51,7 @@ packages = ["src/scout"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
-addopts = "-ra"
+addopts = "-ra -m 'not needs_network and not needs_supabase'"
 pythonpath = ["."]
 markers = [
   "integration: needs the VM's PostgreSQL 16",
