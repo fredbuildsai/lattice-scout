@@ -51,6 +51,7 @@ packages = ["src/scout"]
 testpaths = ["tests"]
 asyncio_mode = "auto"
 addopts = "-ra"
+pythonpath = ["."]
 markers = [
   "integration: needs the VM's PostgreSQL 16",
   "needs_network: live external calls (skipped by default)",
@@ -77,7 +78,7 @@ warn_unused_ignores = true
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
-module = ["scout.shared.*", "scout.*.domain.*", "scout.*.application.*", "scout.*.ports.*"]
+module = ["scout.shared.*", "scout.ports.*", "scout.settings", "scout.bootstrap", "scout.*.domain.*", "scout.*.application.*", "scout.*.ports.*"]
 strict = true
 
 [tool.interrogate]
@@ -97,13 +98,13 @@ include_external_packages = true
 name = "domain depends on nothing outside stdlib and pydantic"
 type = "forbidden"
 source_modules = ["scout.shared", "scout.identity.domain", "scout.profile.domain", "scout.vault.domain", "scout.discovery.domain", "scout.matching.domain", "scout.feedback.domain", "scout.notifications.domain"]
-forbidden_modules = ["scout.adapters", "scout.api", "scout.worker", "scout.bootstrap", "fastapi", "sqlmodel", "sqlalchemy", "httpx", "openai", "agents", "llmrouter_free", "psycopg"]
+forbidden_modules = ["scout.adapters", "scout.api", "scout.worker", "scout.bootstrap", "fastapi", "sqlmodel", "sqlalchemy", "httpx", "openai", "agents", "llmrouter_free", "psycopg", "scout.settings", "pydantic_settings"]
 
 [[tool.importlinter.contracts]]
 name = "application and ports never import adapters or frameworks"
 type = "forbidden"
-source_modules = ["scout.identity.application", "scout.profile.application", "scout.vault.application", "scout.discovery.application", "scout.matching.application", "scout.feedback.application", "scout.notifications.application", "scout.identity.ports", "scout.profile.ports", "scout.vault.ports", "scout.discovery.ports", "scout.matching.ports", "scout.feedback.ports", "scout.notifications.ports"]
-forbidden_modules = ["scout.adapters", "scout.api", "scout.worker", "scout.bootstrap", "fastapi", "sqlmodel", "sqlalchemy", "httpx", "openai", "agents", "llmrouter_free", "psycopg"]
+source_modules = ["scout.ports", "scout.identity.application", "scout.profile.application", "scout.vault.application", "scout.discovery.application", "scout.matching.application", "scout.feedback.application", "scout.notifications.application", "scout.identity.ports", "scout.profile.ports", "scout.vault.ports", "scout.discovery.ports", "scout.matching.ports", "scout.feedback.ports", "scout.notifications.ports"]
+forbidden_modules = ["scout.adapters", "scout.api", "scout.worker", "scout.bootstrap", "fastapi", "sqlmodel", "sqlalchemy", "httpx", "openai", "agents", "llmrouter_free", "psycopg", "scout.settings", "pydantic_settings"]
 
 [[tool.importlinter.contracts]]
 name = "context adapters never import application services"

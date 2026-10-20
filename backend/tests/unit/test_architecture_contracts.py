@@ -14,6 +14,7 @@ import subprocess
 import sys
 import tomllib
 from pathlib import Path
+from typing import Any
 
 BACKEND = Path(__file__).resolve().parents[2]
 PYPROJECT = BACKEND / "pyproject.toml"
@@ -28,15 +29,16 @@ def _lint_imports(cwd: Path, config: Path | None = None) -> subprocess.Completed
     return subprocess.run(cmd, cwd=cwd, env=env, capture_output=True, text=True, check=False)
 
 
-def _real_config() -> dict:
-    return tomllib.loads(PYPROJECT.read_text())["tool"]["importlinter"]
+def _real_config() -> dict[str, Any]:
+    cfg: dict[str, Any] = tomllib.loads(PYPROJECT.read_text())["tool"]["importlinter"]
+    return cfg
 
 
 def _toml_list(items: list[str]) -> str:
     return "[" + ", ".join(json.dumps(i) for i in items) + "]"
 
 
-def _write_config(path: Path, cfg: dict) -> None:
+def _write_config(path: Path, cfg: dict[str, Any]) -> None:
     lines = [
         "[tool.importlinter]",
         f"root_package = {json.dumps(cfg['root_package'])}",
