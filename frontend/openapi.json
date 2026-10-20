@@ -1,0 +1,134 @@
+{
+  "components": {
+    "schemas": {
+      "EventsAccepted": {
+        "description": "Result of ingestion. Writing happens asynchronously.",
+        "properties": {
+          "accepted": {
+            "title": "Accepted",
+            "type": "integer"
+          },
+          "rejected": {
+            "items": {
+              "$ref": "#/components/schemas/Rejection"
+            },
+            "title": "Rejected",
+            "type": "array"
+          }
+        },
+        "required": [
+          "accepted",
+          "rejected"
+        ],
+        "title": "EventsAccepted",
+        "type": "object"
+      },
+      "Rejection": {
+        "description": "Why an event was not accepted.",
+        "properties": {
+          "index": {
+            "title": "Index",
+            "type": "integer"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "index",
+          "reason"
+        ],
+        "title": "Rejection",
+        "type": "object"
+      },
+      "Status": {
+        "description": "Simple status body.",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "Status",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "title": "Lattice Scout API",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/v1/events": {
+      "post": {
+        "description": "Accepts up to 100 events. Accepts `application/json` or `text/plain` containing JSON (navigator.sendBeacon cannot set headers). Unknown event names or property keys are rejected per event. Returns 202 without waiting for the database.",
+        "operationId": "post_events_api_v1_events_post",
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventsAccepted"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Ingest a batch of product-analytics events",
+        "tags": [
+          "analytics"
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "description": "Return 200 while the process is up.",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Liveness probe",
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/ready": {
+      "get": {
+        "description": "Return 200 when the database answers, 503 otherwise.",
+        "operationId": "ready_ready_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Readiness probe (pings the database)",
+        "tags": [
+          "health"
+        ]
+      }
+    }
+  }
+}
