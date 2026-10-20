@@ -27,6 +27,13 @@ Last session: 2026-10-20 s01 — M0 tasks 1-12 done, make check green; reviewer 
 - [x] PR opened: https://github.com/fredbuildsai/lattice-scout/pull/1 (stack policy: left open)
 
 ## M1 — Auth + profile claim
+- [x] B1 `AuthTokenVerifier`, `SupabaseJwksVerifier`, dev auth + `/dev/login` [test-first]
+- [x] B2 identity: Account, EnsureAccount, `/me`, `/me/consent`
+- [x] B3 `LiteraturePort`, `OpenAlexClient`, `FixtureLiterature`, contract tests
+- [x] B4 profile: grouping, claim, import job, toggle [architect: docs/design/M1-identity-profile-claim.md]
+- [x] B5 endpoints `/profile/*`
+- [ ] F1–F3 auth clients, sign-in, claim flow [frontend] (in progress)
+- [ ] doc-writer pass, reviewer approve, PR update
 ## M2 — Vault + ingestion
 ## M3 — Gap analysis engine
 ## M4 — Opportunities UX + feedback
