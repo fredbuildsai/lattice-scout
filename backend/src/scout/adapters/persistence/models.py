@@ -4,12 +4,14 @@ from __future__ import annotations
 
 from sqlalchemy import (
     ARRAY,
+    BigInteger,
     Boolean,
     Column,
     Float,
     ForeignKey,
     Integer,
     MetaData,
+    Numeric,
     Table,
     Text,
 )
@@ -93,4 +95,40 @@ claimed_work = Table(
     Column("included_by_user", Boolean, nullable=False),
     Column("uncertain_reason", Text),
     ts("updated_at"),
+)  # fmt: skip
+
+document = Table(
+    "document", metadata,
+    Column("id", UUID(as_uuid=True), primary_key=True),
+    Column("owner_id", UUID(as_uuid=True), ForeignKey("account.id"), nullable=False),
+    Column("filename", Text, nullable=False), Column("mime", Text, nullable=False),
+    Column("size_bytes", BigInteger, nullable=False), Column("sha256", Text, nullable=False),
+    Column("storage_key", Text, nullable=False), Column("retention", Text, nullable=False),
+    Column("kind", Text), Column("kind_suggested", Text), Column("kind_reason", Text),
+    Column("status", Text, nullable=False), Column("failure_code", Text),
+    Column("pages", Integer), Column("page_basis", Text), Column("chunk_count", Integer), Column("extractor", Text),
+    ts("original_deleted_at"), ts("extracted_at"), ts("ready_at"), ts("deleted_at"),
+    ts("created_at", nullable=False), ts("updated_at", nullable=False),
+)  # fmt: skip
+
+document_chunk = Table(
+    "document_chunk", metadata,
+    Column("id", UUID(as_uuid=True), primary_key=True),
+    Column("document_id", UUID(as_uuid=True), ForeignKey("document.id"), nullable=False),
+    Column("ord", Integer, nullable=False), Column("label", Text, nullable=False),
+    Column("page_from", Integer, nullable=False), Column("page_to", Integer, nullable=False),
+    Column("char_start", Integer, nullable=False), Column("char_end", Integer, nullable=False),
+    Column("text", Text), Column("quotes", JSONB, nullable=False), Column("summary", Text),
+    ts("redacted_at"), ts("created_at", nullable=False), ts("updated_at", nullable=False),
+)  # fmt: skip
+
+document_insights = Table(
+    "document_insights", metadata,
+    Column("document_id", UUID(as_uuid=True), ForeignKey("document.id"), primary_key=True),
+    Column("payload", JSONB, nullable=False),
+    Column("verified_count", Integer, nullable=False), Column("unverified_count", Integer, nullable=False),
+    Column("prompt_version", Text, nullable=False), Column("model", Text, nullable=False),
+    Column("mode", Text, nullable=False), Column("slices", Integer, nullable=False),
+    Column("cost_usd", Numeric(12, 8), nullable=False),
+    ts("created_at", nullable=False), ts("updated_at", nullable=False),
 )  # fmt: skip
