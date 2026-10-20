@@ -10,7 +10,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from scout.adapters.observability.telemetry import configure_telemetry, instrument_app, tune_gc
-from scout.api import dev_auth, events, health, identity, profile
+from scout.api import dev_auth, events, health, identity, profile, vault
 from scout.api.errors import install_error_handlers
 from scout.api.logging import configure_logging
 from scout.api.middleware import RequestContextMiddleware
@@ -52,6 +52,7 @@ def create_app(container: Container | None = None) -> FastAPI:
     app.include_router(events.router)
     app.include_router(identity.router)
     app.include_router(profile.router)
+    app.include_router(vault.router)
     if (container.settings if container else get_settings()).auth_mode == "dev":
         app.include_router(dev_auth.router)
         structlog.get_logger().warning(

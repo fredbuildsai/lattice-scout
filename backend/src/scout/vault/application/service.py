@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from dataclasses import dataclass
 from uuid import UUID
 
 import structlog
@@ -12,10 +13,20 @@ from scout.ports.jobs import JobQueuePort, JobSpec
 from scout.shared import AccountId, Clock, IdGenerator, NotFound
 from scout.vault.domain.document import Document
 from scout.vault.domain.enums import DocKind
+from scout.vault.domain.ids import ChunkId
 from scout.vault.domain.insights import StoredInsights
 from scout.vault.ports.repos import VaultUnitOfWork
 
 log = structlog.get_logger()
+
+
+@dataclass(frozen=True)
+class DocumentDetail:
+    """A document, its stored insights (callers show ``visible()`` items only) and chunk page ranges."""
+
+    document: Document
+    insights: StoredInsights | None
+    pages: dict[ChunkId, tuple[int, int]]
 
 
 class VaultService:
@@ -42,6 +53,21 @@ class VaultService:
             if doc is None:
                 raise NotFound("Document not found")
             return doc, await uow.insights.get(document_id)
+
+    async def get_detail(self, owner_id: AccountId, document_id: UUID) -> DocumentDetail:
+        """Like ``get`` but with the page range of every chunk, so verified items can cite pages.
+
+        Raises:
+            NotFound: unknown, deleting, or owned by someone else.
+        """
+        async with self._uow() as uow:
+            doc = await uow.documents.get(document_id, owner_id)
+            if doc is None:
+                raise NotFound("Document not found")
+            stored = await uow.insights.get(document_id)
+            chunks = await uow.chunks.list(document_id) if stored is not None else []
+        pages = {c.id: (c.page_from, c.page_to) for c in chunks}
+        return DocumentDetail(doc, stored, pages)
 
     async def set_kind(self, owner_id: AccountId, document_id: UUID, kind: DocKind) -> Document:
         """Record the owner's classification.
