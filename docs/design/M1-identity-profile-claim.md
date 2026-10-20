@@ -51,6 +51,7 @@
 | `POST /profile/claim` | `ClaimIn {author_ids: list[str] (1..10), primary_author_id?: str}` | **202** `ProfileOut` | 422 `validation_failed`/`unknown_author`/`conflicting_orcids`, 503 |
 | `GET /profile` | - | `ProfileOut {researcher_id, display_name, orcid, institution, country, verified_level, import: ImportOut {status, generation, error_code, requested_at, finished_at}, openalex_ids: [{author_id, merged, basis, works_count}], topics: [TopicOut {topic_id, name, subfield, weight}], works_summary {total, included, uncertain}, works: [WorkOut {id, openalex_work_id, doi, title, year, cited_by, type, included, included_by_user, uncertain_reason}]}` | 404 `profile_not_found` |
 | `PATCH /profile/works/{id}` | `WorkPatchIn {included: bool}` | `WorkOut` | 404, 422 |
+
 Works are returned inline (sorted year desc, cited_by desc; at most 500 per claimed id); cursor paging is deferred. The front end polls `GET /profile` every 2 s while `import.status in (queued, importing)`. W1 card copy: the primary row shows its own `works_count` ("159 works"), the card shows "includes {includes_records} records"; `possible` rows render unticked.
 
 ## 6. Persistence: Alembic `0003_identity_profile` (plain PG16; RLS stays in the Supabase branch)
