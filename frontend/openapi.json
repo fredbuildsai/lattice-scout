@@ -1,6 +1,231 @@
 {
   "components": {
     "schemas": {
+      "CandidateGroupOut": {
+        "description": "A candidate profile: merged records plus weakly linked ones the user may add.",
+        "properties": {
+          "cited_by_count": {
+            "description": "Sum of citations over merged records.",
+            "title": "Cited By Count",
+            "type": "integer"
+          },
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Country code of the primary record.",
+            "title": "Country"
+          },
+          "group_id": {
+            "description": "Id of the primary record.",
+            "title": "Group Id",
+            "type": "string"
+          },
+          "includes_records": {
+            "description": "Number of merged records.",
+            "title": "Includes Records",
+            "type": "integer"
+          },
+          "institutions": {
+            "description": "Institutions across merged records.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Institutions",
+            "type": "array"
+          },
+          "orcid": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "ORCID of the primary record.",
+            "title": "Orcid"
+          },
+          "possible": {
+            "description": "Possible further records; shown unticked, never merged automatically.",
+            "items": {
+              "$ref": "#/components/schemas/RecordOut"
+            },
+            "title": "Possible",
+            "type": "array"
+          },
+          "primary": {
+            "$ref": "#/components/schemas/RecordOut",
+            "description": "The record with the most works."
+          },
+          "records": {
+            "description": "Merged records (shared ORCID), primary first.",
+            "items": {
+              "$ref": "#/components/schemas/RecordOut"
+            },
+            "title": "Records",
+            "type": "array"
+          },
+          "top_topics": {
+            "description": "Strongest topics across merged records.",
+            "items": {
+              "$ref": "#/components/schemas/TopicOut"
+            },
+            "title": "Top Topics",
+            "type": "array"
+          },
+          "works_count": {
+            "description": "Sum of works over merged records.",
+            "title": "Works Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "group_id",
+          "primary",
+          "records",
+          "possible",
+          "includes_records",
+          "works_count",
+          "cited_by_count",
+          "institutions",
+          "top_topics"
+        ],
+        "title": "CandidateGroupOut",
+        "type": "object"
+      },
+      "CandidatesOut": {
+        "description": "Result of a candidate search.",
+        "properties": {
+          "groups": {
+            "description": "Candidate profiles, best match first.",
+            "items": {
+              "$ref": "#/components/schemas/CandidateGroupOut"
+            },
+            "title": "Groups",
+            "type": "array"
+          }
+        },
+        "required": [
+          "groups"
+        ],
+        "title": "CandidatesOut",
+        "type": "object"
+      },
+      "ClaimIn": {
+        "additionalProperties": false,
+        "description": "Claim one or more OpenAlex records as your profile.",
+        "properties": {
+          "author_ids": {
+            "description": "OpenAlex author ids to merge.",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "minItems": 1,
+            "title": "Author Ids",
+            "type": "array"
+          },
+          "primary_author_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Primary record; defaults to the first id.",
+            "title": "Primary Author Id"
+          }
+        },
+        "required": [
+          "author_ids"
+        ],
+        "title": "ClaimIn",
+        "type": "object"
+      },
+      "ConsentIn": {
+        "additionalProperties": false,
+        "description": "Partial update of consents.",
+        "properties": {
+          "consent_matching": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Agree to be matched with other researchers.",
+            "title": "Consent Matching"
+          },
+          "consent_vault_signals": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Allow vault-derived signals in matching.",
+            "title": "Consent Vault Signals"
+          }
+        },
+        "title": "ConsentIn",
+        "type": "object"
+      },
+      "DevLoginRequest": {
+        "description": "Body of the dev login.",
+        "properties": {
+          "email": {
+            "description": "Any e-mail address.",
+            "maxLength": 254,
+            "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+            "title": "Email",
+            "type": "string"
+          }
+        },
+        "required": [
+          "email"
+        ],
+        "title": "DevLoginRequest",
+        "type": "object"
+      },
+      "DevLoginResponse": {
+        "description": "Access token for the dev auth mode.",
+        "properties": {
+          "access_token": {
+            "description": "ES256 JWT signed with the local dev key.",
+            "title": "Access Token",
+            "type": "string"
+          },
+          "expires_in": {
+            "description": "Seconds until the token expires.",
+            "title": "Expires In",
+            "type": "integer"
+          },
+          "token_type": {
+            "default": "bearer",
+            "description": "Always bearer.",
+            "title": "Token Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "access_token",
+          "expires_in"
+        ],
+        "title": "DevLoginResponse",
+        "type": "object"
+      },
       "EventsAccepted": {
         "description": "Result of ingestion. Writing happens asynchronously.",
         "properties": {
@@ -25,6 +250,329 @@
         "title": "EventsAccepted",
         "type": "object"
       },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "ImportOut": {
+        "description": "State of the works import.",
+        "properties": {
+          "error_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Set when status is failed.",
+            "title": "Error Code"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "When the import finished.",
+            "title": "Finished At"
+          },
+          "generation": {
+            "description": "Increases with every new claim.",
+            "title": "Generation",
+            "type": "integer"
+          },
+          "requested_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "When the import was requested.",
+            "title": "Requested At"
+          },
+          "status": {
+            "description": "queued, importing, done or failed.",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "generation"
+        ],
+        "title": "ImportOut",
+        "type": "object"
+      },
+      "MeOut": {
+        "description": "The signed-in account.",
+        "properties": {
+          "account_id": {
+            "description": "Account id (= auth user id).",
+            "format": "uuid",
+            "title": "Account Id",
+            "type": "string"
+          },
+          "consent_matching": {
+            "description": "Whether the user agreed to be matched.",
+            "title": "Consent Matching",
+            "type": "boolean"
+          },
+          "consent_vault_signals": {
+            "description": "Whether vault-derived signals may be used for matching.",
+            "title": "Consent Vault Signals",
+            "type": "boolean"
+          },
+          "created_at": {
+            "description": "Account creation time.",
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "email": {
+            "description": "E-mail address.",
+            "title": "Email",
+            "type": "string"
+          },
+          "launch_field": {
+            "description": "Launch field of the pilot.",
+            "title": "Launch Field",
+            "type": "string"
+          },
+          "researcher": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ResearcherSummaryOut"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Profile summary, if claimed."
+          },
+          "role": {
+            "description": "user or admin.",
+            "title": "Role",
+            "type": "string"
+          }
+        },
+        "required": [
+          "account_id",
+          "email",
+          "role",
+          "launch_field",
+          "consent_matching",
+          "consent_vault_signals",
+          "created_at"
+        ],
+        "title": "MeOut",
+        "type": "object"
+      },
+      "OpenAlexIdOut": {
+        "description": "A claimed OpenAlex record.",
+        "properties": {
+          "author_id": {
+            "description": "OpenAlex author id.",
+            "title": "Author Id",
+            "type": "string"
+          },
+          "basis": {
+            "description": "primary, orcid, institution_name or manual.",
+            "title": "Basis",
+            "type": "string"
+          },
+          "merged": {
+            "description": "True for non-primary records.",
+            "title": "Merged",
+            "type": "boolean"
+          },
+          "works_count": {
+            "description": "Works attributed to this record.",
+            "title": "Works Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "author_id",
+          "merged",
+          "basis",
+          "works_count"
+        ],
+        "title": "OpenAlexIdOut",
+        "type": "object"
+      },
+      "ProfileOut": {
+        "description": "The caller's researcher profile.",
+        "properties": {
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Country code (after import).",
+            "title": "Country"
+          },
+          "display_name": {
+            "description": "Name of the primary record.",
+            "title": "Display Name",
+            "type": "string"
+          },
+          "import": {
+            "$ref": "#/components/schemas/ImportOut",
+            "description": "Import state; poll while queued or importing."
+          },
+          "institution": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Institution (after import).",
+            "title": "Institution"
+          },
+          "openalex_ids": {
+            "description": "Claimed OpenAlex records.",
+            "items": {
+              "$ref": "#/components/schemas/OpenAlexIdOut"
+            },
+            "title": "Openalex Ids",
+            "type": "array"
+          },
+          "orcid": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "ORCID of the primary record.",
+            "title": "Orcid"
+          },
+          "researcher_id": {
+            "description": "Researcher id.",
+            "format": "uuid",
+            "title": "Researcher Id",
+            "type": "string"
+          },
+          "topics": {
+            "description": "Topics computed from included works.",
+            "items": {
+              "$ref": "#/components/schemas/TopicOut"
+            },
+            "title": "Topics",
+            "type": "array"
+          },
+          "verified_level": {
+            "description": "self_claimed, orcid_matched or contested.",
+            "title": "Verified Level",
+            "type": "string"
+          },
+          "works": {
+            "description": "Claimed works, newest first.",
+            "items": {
+              "$ref": "#/components/schemas/WorkOut"
+            },
+            "title": "Works",
+            "type": "array"
+          },
+          "works_summary": {
+            "$ref": "#/components/schemas/WorksSummaryOut"
+          }
+        },
+        "required": [
+          "researcher_id",
+          "display_name",
+          "verified_level",
+          "import",
+          "openalex_ids",
+          "topics",
+          "works_summary",
+          "works"
+        ],
+        "title": "ProfileOut",
+        "type": "object"
+      },
+      "RecordOut": {
+        "description": "One OpenAlex author record inside a candidate group.",
+        "properties": {
+          "author_id": {
+            "description": "OpenAlex author id, e.g. A5059588273.",
+            "title": "Author Id",
+            "type": "string"
+          },
+          "basis": {
+            "description": "Why the record is in the group: primary, orcid or institution_name.",
+            "title": "Basis",
+            "type": "string"
+          },
+          "display_name": {
+            "description": "Name as recorded in OpenAlex.",
+            "title": "Display Name",
+            "type": "string"
+          },
+          "institutions": {
+            "description": "Last known institutions.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Institutions",
+            "type": "array"
+          },
+          "orcid": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Bare ORCID.",
+            "title": "Orcid"
+          },
+          "works_count": {
+            "description": "Works attributed to this record.",
+            "title": "Works Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "author_id",
+          "display_name",
+          "works_count",
+          "institutions",
+          "basis"
+        ],
+        "title": "RecordOut",
+        "type": "object"
+      },
       "Rejection": {
         "description": "Why an event was not accepted.",
         "properties": {
@@ -46,6 +594,40 @@
         "title": "Rejection",
         "type": "object"
       },
+      "ResearcherSummaryOut": {
+        "description": "Short researcher summary for ``GET /me``.",
+        "properties": {
+          "display_name": {
+            "description": "Name of the primary record.",
+            "title": "Display Name",
+            "type": "string"
+          },
+          "import_status": {
+            "description": "queued, importing, done or failed.",
+            "title": "Import Status",
+            "type": "string"
+          },
+          "researcher_id": {
+            "description": "Researcher id.",
+            "format": "uuid",
+            "title": "Researcher Id",
+            "type": "string"
+          },
+          "verified_level": {
+            "description": "self_claimed, orcid_matched or contested.",
+            "title": "Verified Level",
+            "type": "string"
+          }
+        },
+        "required": [
+          "researcher_id",
+          "display_name",
+          "verified_level",
+          "import_status"
+        ],
+        "title": "ResearcherSummaryOut",
+        "type": "object"
+      },
       "Status": {
         "description": "Simple status body.",
         "properties": {
@@ -59,6 +641,230 @@
         ],
         "title": "Status",
         "type": "object"
+      },
+      "TopicOut": {
+        "description": "A topic with a weight between 0 and 1.",
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Topic name.",
+            "title": "Name"
+          },
+          "subfield": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Subfield name.",
+            "title": "Subfield"
+          },
+          "topic_id": {
+            "description": "OpenAlex topic id, e.g. T10610.",
+            "title": "Topic Id",
+            "type": "string"
+          },
+          "weight": {
+            "description": "Relative weight; the largest topic is 1.",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Weight",
+            "type": "number"
+          }
+        },
+        "required": [
+          "topic_id",
+          "weight"
+        ],
+        "title": "TopicOut",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      },
+      "WorkOut": {
+        "description": "A work attributed to the researcher.",
+        "properties": {
+          "cited_by": {
+            "description": "Citation count.",
+            "title": "Cited By",
+            "type": "integer"
+          },
+          "doi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Bare DOI.",
+            "title": "Doi"
+          },
+          "id": {
+            "description": "Id of the claimed work.",
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "included": {
+            "description": "Whether the work counts for gap analysis and matching.",
+            "title": "Included",
+            "type": "boolean"
+          },
+          "included_by_user": {
+            "description": "True if the user ticked or unticked it.",
+            "title": "Included By User",
+            "type": "boolean"
+          },
+          "openalex_work_id": {
+            "description": "OpenAlex work id.",
+            "title": "Openalex Work Id",
+            "type": "string"
+          },
+          "title": {
+            "description": "Title.",
+            "title": "Title",
+            "type": "string"
+          },
+          "type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "OpenAlex work type.",
+            "title": "Type"
+          },
+          "uncertain_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Why the work started unticked.",
+            "title": "Uncertain Reason"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Publication year.",
+            "title": "Year"
+          }
+        },
+        "required": [
+          "id",
+          "openalex_work_id",
+          "title",
+          "cited_by",
+          "included",
+          "included_by_user"
+        ],
+        "title": "WorkOut",
+        "type": "object"
+      },
+      "WorkPatchIn": {
+        "additionalProperties": false,
+        "description": "Include or exclude a work.",
+        "properties": {
+          "included": {
+            "description": "True to include the work.",
+            "title": "Included",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "included"
+        ],
+        "title": "WorkPatchIn",
+        "type": "object"
+      },
+      "WorksSummaryOut": {
+        "description": "Counts of works.",
+        "properties": {
+          "included": {
+            "description": "Included works.",
+            "title": "Included",
+            "type": "integer"
+          },
+          "total": {
+            "description": "All claimed works.",
+            "title": "Total",
+            "type": "integer"
+          },
+          "uncertain": {
+            "description": "Works that started unticked.",
+            "title": "Uncertain",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total",
+          "included",
+          "uncertain"
+        ],
+        "title": "WorksSummaryOut",
+        "type": "object"
       }
     }
   },
@@ -68,6 +874,48 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/dev/login": {
+      "post": {
+        "description": "Return a token without any credential check. Refused at startup when APP_ENV=prod.",
+        "operationId": "dev_login_api_v1_dev_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DevLoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DevLoginResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Dev login: issue an access token for an e-mail (AUTH_MODE=dev only)",
+        "tags": [
+          "dev"
+        ]
+      }
+    },
     "/api/v1/events": {
       "post": {
         "description": "Accepts up to 100 events. Accepts `application/json` or `text/plain` containing JSON (navigator.sendBeacon cannot set headers). Unknown event names or property keys are rejected per event. Returns 202 without waiting for the database.",
@@ -87,6 +935,254 @@
         "summary": "Ingest a batch of product-analytics events",
         "tags": [
           "analytics"
+        ]
+      }
+    },
+    "/api/v1/me": {
+      "get": {
+        "description": "Return the signed-in account; creates it on the first call.",
+        "operationId": "get_me_api_v1_me_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Current account, consents and profile summary",
+        "tags": [
+          "identity"
+        ]
+      }
+    },
+    "/api/v1/me/consent": {
+      "patch": {
+        "description": "Turning matching off also turns vault signals off; vault signals need matching.",
+        "operationId": "patch_consent_api_v1_me_consent_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConsentIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update matching and vault-signal consents",
+        "tags": [
+          "identity"
+        ]
+      }
+    },
+    "/api/v1/profile": {
+      "get": {
+        "description": "Poll this while ``import.status`` is queued or importing.",
+        "operationId": "get_profile_api_v1_profile_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Your researcher profile, claimed works and import state",
+        "tags": [
+          "profile"
+        ]
+      }
+    },
+    "/api/v1/profile/candidates": {
+      "get": {
+        "description": "Search OpenAlex; records sharing an ORCID are returned as one card (\"includes N records\").",
+        "operationId": "candidates_api_v1_profile_candidates_get",
+        "parameters": [
+          {
+            "description": "Researcher name.",
+            "in": "query",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "description": "Researcher name.",
+              "maxLength": 200,
+              "minLength": 2,
+              "title": "Name",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Institution hint.",
+            "in": "query",
+            "name": "affiliation",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 200,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Institution hint.",
+              "title": "Affiliation"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CandidatesOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Find OpenAlex author records for a name (split profiles grouped)",
+        "tags": [
+          "profile"
+        ]
+      }
+    },
+    "/api/v1/profile/claim": {
+      "post": {
+        "description": "Idempotent: claiming the same records again returns the same import generation.",
+        "operationId": "claim_api_v1_profile_claim_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClaimIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Claim OpenAlex records as your profile and start the import",
+        "tags": [
+          "profile"
+        ]
+      }
+    },
+    "/api/v1/profile/works/{work_id}": {
+      "patch": {
+        "description": "Another user's work id answers 404.",
+        "operationId": "patch_work_api_v1_profile_works__work_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "work_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Work Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkPatchIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Include or exclude one of your works",
+        "tags": [
+          "profile"
         ]
       }
     },

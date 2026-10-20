@@ -28,7 +28,7 @@ async def test_partition_job_runs_and_reschedules(db: Database) -> None:
     q = PostgresJobQueue(db, clock, ids)
     await schedule_today(q, clock)
     await schedule_today(q, clock)  # deduplicated
-    handlers = build_handlers(db, clock, q)
+    handlers = build_handlers(_container(db))
     assert await run_once(q, handlers, "w")
     assert not await run_once(q, handlers, "w")  # tomorrow's job is not due yet
     from sqlalchemy import text
@@ -55,3 +55,15 @@ async def test_exhausted_expired_job_becomes_dead(db: Database) -> None:
     assert await q.claim("w2", ["k"]) is None
     async with db.engine.connect() as conn:
         assert (await conn.execute(text("SELECT status FROM job"))).scalar_one() == "dead"
+
+
+def _container(db: Database):  # type: ignore[no-untyped-def]
+    from dataclasses import replace
+
+    from tests.conftest import TEST_URL
+
+    from scout.bootstrap import build_container
+    from scout.settings import Settings
+
+    c = build_container(Settings(_env_file=None, app_env="test", database_url=TEST_URL))
+    return replace(c, db=db)

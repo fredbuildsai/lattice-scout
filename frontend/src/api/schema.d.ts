@@ -4,6 +4,26 @@
  */
 
 export interface paths {
+    "/api/v1/dev/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Dev login: issue an access token for an e-mail (AUTH_MODE=dev only)
+         * @description Return a token without any credential check. Refused at startup when APP_ENV=prod.
+         */
+        post: operations["dev_login_api_v1_dev_login_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/events": {
         parameters: {
             query?: never;
@@ -22,6 +42,126 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Current account, consents and profile summary
+         * @description Return the signed-in account; creates it on the first call.
+         */
+        get: operations["get_me_api_v1_me_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/consent": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update matching and vault-signal consents
+         * @description Turning matching off also turns vault signals off; vault signals need matching.
+         */
+        patch: operations["patch_consent_api_v1_me_consent_patch"];
+        trace?: never;
+    };
+    "/api/v1/profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Your researcher profile, claimed works and import state
+         * @description Poll this while ``import.status`` is queued or importing.
+         */
+        get: operations["get_profile_api_v1_profile_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/profile/candidates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Find OpenAlex author records for a name (split profiles grouped)
+         * @description Search OpenAlex; records sharing an ORCID are returned as one card ("includes N records").
+         */
+        get: operations["candidates_api_v1_profile_candidates_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/profile/claim": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Claim OpenAlex records as your profile and start the import
+         * @description Idempotent: claiming the same records again returns the same import generation.
+         */
+        post: operations["claim_api_v1_profile_claim_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/profile/works/{work_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Include or exclude one of your works
+         * @description Another user's work id answers 404.
+         */
+        patch: operations["patch_work_api_v1_profile_works__work_id__patch"];
         trace?: never;
     };
     "/health": {
@@ -69,6 +209,140 @@ export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         /**
+         * CandidateGroupOut
+         * @description A candidate profile: merged records plus weakly linked ones the user may add.
+         */
+        CandidateGroupOut: {
+            /**
+             * Cited By Count
+             * @description Sum of citations over merged records.
+             */
+            cited_by_count: number;
+            /**
+             * Country
+             * @description Country code of the primary record.
+             */
+            country?: string | null;
+            /**
+             * Group Id
+             * @description Id of the primary record.
+             */
+            group_id: string;
+            /**
+             * Includes Records
+             * @description Number of merged records.
+             */
+            includes_records: number;
+            /**
+             * Institutions
+             * @description Institutions across merged records.
+             */
+            institutions: string[];
+            /**
+             * Orcid
+             * @description ORCID of the primary record.
+             */
+            orcid?: string | null;
+            /**
+             * Possible
+             * @description Possible further records; shown unticked, never merged automatically.
+             */
+            possible: components["schemas"]["RecordOut"][];
+            /** @description The record with the most works. */
+            primary: components["schemas"]["RecordOut"];
+            /**
+             * Records
+             * @description Merged records (shared ORCID), primary first.
+             */
+            records: components["schemas"]["RecordOut"][];
+            /**
+             * Top Topics
+             * @description Strongest topics across merged records.
+             */
+            top_topics: components["schemas"]["TopicOut"][];
+            /**
+             * Works Count
+             * @description Sum of works over merged records.
+             */
+            works_count: number;
+        };
+        /**
+         * CandidatesOut
+         * @description Result of a candidate search.
+         */
+        CandidatesOut: {
+            /**
+             * Groups
+             * @description Candidate profiles, best match first.
+             */
+            groups: components["schemas"]["CandidateGroupOut"][];
+        };
+        /**
+         * ClaimIn
+         * @description Claim one or more OpenAlex records as your profile.
+         */
+        ClaimIn: {
+            /**
+             * Author Ids
+             * @description OpenAlex author ids to merge.
+             */
+            author_ids: string[];
+            /**
+             * Primary Author Id
+             * @description Primary record; defaults to the first id.
+             */
+            primary_author_id?: string | null;
+        };
+        /**
+         * ConsentIn
+         * @description Partial update of consents.
+         */
+        ConsentIn: {
+            /**
+             * Consent Matching
+             * @description Agree to be matched with other researchers.
+             */
+            consent_matching?: boolean | null;
+            /**
+             * Consent Vault Signals
+             * @description Allow vault-derived signals in matching.
+             */
+            consent_vault_signals?: boolean | null;
+        };
+        /**
+         * DevLoginRequest
+         * @description Body of the dev login.
+         */
+        DevLoginRequest: {
+            /**
+             * Email
+             * @description Any e-mail address.
+             */
+            email: string;
+        };
+        /**
+         * DevLoginResponse
+         * @description Access token for the dev auth mode.
+         */
+        DevLoginResponse: {
+            /**
+             * Access Token
+             * @description ES256 JWT signed with the local dev key.
+             */
+            access_token: string;
+            /**
+             * Expires In
+             * @description Seconds until the token expires.
+             */
+            expires_in: number;
+            /**
+             * Token Type
+             * @description Always bearer.
+             * @default bearer
+             */
+            token_type: string;
+        };
+        /**
          * EventsAccepted
          * @description Result of ingestion. Writing happens asynchronously.
          */
@@ -83,6 +357,204 @@ export interface components {
              * @description Events that failed catalogue validation.
              */
             rejected: components["schemas"]["Rejection"][];
+        };
+        /** HTTPValidationError */
+        HTTPValidationError: {
+            /** Detail */
+            detail?: components["schemas"]["ValidationError"][];
+        };
+        /**
+         * ImportOut
+         * @description State of the works import.
+         */
+        ImportOut: {
+            /**
+             * Error Code
+             * @description Set when status is failed.
+             */
+            error_code?: string | null;
+            /**
+             * Finished At
+             * @description When the import finished.
+             */
+            finished_at?: string | null;
+            /**
+             * Generation
+             * @description Increases with every new claim.
+             */
+            generation: number;
+            /**
+             * Requested At
+             * @description When the import was requested.
+             */
+            requested_at?: string | null;
+            /**
+             * Status
+             * @description queued, importing, done or failed.
+             */
+            status: string;
+        };
+        /**
+         * MeOut
+         * @description The signed-in account.
+         */
+        MeOut: {
+            /**
+             * Account Id
+             * Format: uuid
+             * @description Account id (= auth user id).
+             */
+            account_id: string;
+            /**
+             * Consent Matching
+             * @description Whether the user agreed to be matched.
+             */
+            consent_matching: boolean;
+            /**
+             * Consent Vault Signals
+             * @description Whether vault-derived signals may be used for matching.
+             */
+            consent_vault_signals: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             * @description Account creation time.
+             */
+            created_at: string;
+            /**
+             * Email
+             * @description E-mail address.
+             */
+            email: string;
+            /**
+             * Launch Field
+             * @description Launch field of the pilot.
+             */
+            launch_field: string;
+            /** @description Profile summary, if claimed. */
+            researcher?: components["schemas"]["ResearcherSummaryOut"] | null;
+            /**
+             * Role
+             * @description user or admin.
+             */
+            role: string;
+        };
+        /**
+         * OpenAlexIdOut
+         * @description A claimed OpenAlex record.
+         */
+        OpenAlexIdOut: {
+            /**
+             * Author Id
+             * @description OpenAlex author id.
+             */
+            author_id: string;
+            /**
+             * Basis
+             * @description primary, orcid, institution_name or manual.
+             */
+            basis: string;
+            /**
+             * Merged
+             * @description True for non-primary records.
+             */
+            merged: boolean;
+            /**
+             * Works Count
+             * @description Works attributed to this record.
+             */
+            works_count: number;
+        };
+        /**
+         * ProfileOut
+         * @description The caller's researcher profile.
+         */
+        ProfileOut: {
+            /**
+             * Country
+             * @description Country code (after import).
+             */
+            country?: string | null;
+            /**
+             * Display Name
+             * @description Name of the primary record.
+             */
+            display_name: string;
+            /** @description Import state; poll while queued or importing. */
+            import: components["schemas"]["ImportOut"];
+            /**
+             * Institution
+             * @description Institution (after import).
+             */
+            institution?: string | null;
+            /**
+             * Openalex Ids
+             * @description Claimed OpenAlex records.
+             */
+            openalex_ids: components["schemas"]["OpenAlexIdOut"][];
+            /**
+             * Orcid
+             * @description ORCID of the primary record.
+             */
+            orcid?: string | null;
+            /**
+             * Researcher Id
+             * Format: uuid
+             * @description Researcher id.
+             */
+            researcher_id: string;
+            /**
+             * Topics
+             * @description Topics computed from included works.
+             */
+            topics: components["schemas"]["TopicOut"][];
+            /**
+             * Verified Level
+             * @description self_claimed, orcid_matched or contested.
+             */
+            verified_level: string;
+            /**
+             * Works
+             * @description Claimed works, newest first.
+             */
+            works: components["schemas"]["WorkOut"][];
+            works_summary: components["schemas"]["WorksSummaryOut"];
+        };
+        /**
+         * RecordOut
+         * @description One OpenAlex author record inside a candidate group.
+         */
+        RecordOut: {
+            /**
+             * Author Id
+             * @description OpenAlex author id, e.g. A5059588273.
+             */
+            author_id: string;
+            /**
+             * Basis
+             * @description Why the record is in the group: primary, orcid or institution_name.
+             */
+            basis: string;
+            /**
+             * Display Name
+             * @description Name as recorded in OpenAlex.
+             */
+            display_name: string;
+            /**
+             * Institutions
+             * @description Last known institutions.
+             */
+            institutions: string[];
+            /**
+             * Orcid
+             * @description Bare ORCID.
+             */
+            orcid?: string | null;
+            /**
+             * Works Count
+             * @description Works attributed to this record.
+             */
+            works_count: number;
         };
         /**
          * Rejection
@@ -101,12 +573,167 @@ export interface components {
             reason: string;
         };
         /**
+         * ResearcherSummaryOut
+         * @description Short researcher summary for ``GET /me``.
+         */
+        ResearcherSummaryOut: {
+            /**
+             * Display Name
+             * @description Name of the primary record.
+             */
+            display_name: string;
+            /**
+             * Import Status
+             * @description queued, importing, done or failed.
+             */
+            import_status: string;
+            /**
+             * Researcher Id
+             * Format: uuid
+             * @description Researcher id.
+             */
+            researcher_id: string;
+            /**
+             * Verified Level
+             * @description self_claimed, orcid_matched or contested.
+             */
+            verified_level: string;
+        };
+        /**
          * Status
          * @description Simple status body.
          */
         Status: {
             /** Status */
             status: string;
+        };
+        /**
+         * TopicOut
+         * @description A topic with a weight between 0 and 1.
+         */
+        TopicOut: {
+            /**
+             * Name
+             * @description Topic name.
+             */
+            name?: string | null;
+            /**
+             * Subfield
+             * @description Subfield name.
+             */
+            subfield?: string | null;
+            /**
+             * Topic Id
+             * @description OpenAlex topic id, e.g. T10610.
+             */
+            topic_id: string;
+            /**
+             * Weight
+             * @description Relative weight; the largest topic is 1.
+             */
+            weight: number;
+        };
+        /** ValidationError */
+        ValidationError: {
+            /** Context */
+            ctx?: Record<string, never>;
+            /** Input */
+            input?: unknown;
+            /** Location */
+            loc: (string | number)[];
+            /** Message */
+            msg: string;
+            /** Error Type */
+            type: string;
+        };
+        /**
+         * WorkOut
+         * @description A work attributed to the researcher.
+         */
+        WorkOut: {
+            /**
+             * Cited By
+             * @description Citation count.
+             */
+            cited_by: number;
+            /**
+             * Doi
+             * @description Bare DOI.
+             */
+            doi?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             * @description Id of the claimed work.
+             */
+            id: string;
+            /**
+             * Included
+             * @description Whether the work counts for gap analysis and matching.
+             */
+            included: boolean;
+            /**
+             * Included By User
+             * @description True if the user ticked or unticked it.
+             */
+            included_by_user: boolean;
+            /**
+             * Openalex Work Id
+             * @description OpenAlex work id.
+             */
+            openalex_work_id: string;
+            /**
+             * Title
+             * @description Title.
+             */
+            title: string;
+            /**
+             * Type
+             * @description OpenAlex work type.
+             */
+            type?: string | null;
+            /**
+             * Uncertain Reason
+             * @description Why the work started unticked.
+             */
+            uncertain_reason?: string | null;
+            /**
+             * Year
+             * @description Publication year.
+             */
+            year?: number | null;
+        };
+        /**
+         * WorkPatchIn
+         * @description Include or exclude a work.
+         */
+        WorkPatchIn: {
+            /**
+             * Included
+             * @description True to include the work.
+             */
+            included: boolean;
+        };
+        /**
+         * WorksSummaryOut
+         * @description Counts of works.
+         */
+        WorksSummaryOut: {
+            /**
+             * Included
+             * @description Included works.
+             */
+            included: number;
+            /**
+             * Total
+             * @description All claimed works.
+             */
+            total: number;
+            /**
+             * Uncertain
+             * @description Works that started unticked.
+             */
+            uncertain: number;
         };
     };
     responses: never;
@@ -117,6 +744,39 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    dev_login_api_v1_dev_login_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DevLoginRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DevLoginResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     post_events_api_v1_events_post: {
         parameters: {
             query?: never;
@@ -133,6 +793,181 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["EventsAccepted"];
+                };
+            };
+        };
+    };
+    get_me_api_v1_me_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MeOut"];
+                };
+            };
+        };
+    };
+    patch_consent_api_v1_me_consent_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConsentIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_profile_api_v1_profile_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProfileOut"];
+                };
+            };
+        };
+    };
+    candidates_api_v1_profile_candidates_get: {
+        parameters: {
+            query: {
+                /** @description Researcher name. */
+                name: string;
+                /** @description Institution hint. */
+                affiliation?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CandidatesOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    claim_api_v1_profile_claim_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ClaimIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProfileOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_work_api_v1_profile_works__work_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                work_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WorkPatchIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WorkOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

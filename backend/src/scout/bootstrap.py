@@ -16,13 +16,20 @@ from scout.adapters.observability.analytics import BufferedAnalytics, NullAnalyt
 from scout.adapters.observability.prices import load_price_table, resolve_path
 from scout.adapters.observability.usage_meter import BufferedUsageMeter
 from scout.adapters.persistence.db import Database
+from scout.adapters.queue.postgres import PostgresJobQueue
 from scout.identity.adapters.dev_auth import DevKeyPair, DevTokenIssuer, DevVerifier
 from scout.identity.adapters.jwks import HttpJwksFetcher, SupabaseJwksVerifier
+from scout.identity.adapters.sql import SqlIdentityUnitOfWork
+from scout.identity.application.service import IdentityService
 from scout.identity.ports.auth import AuthTokenVerifier
 from scout.ports.analytics import AnalyticsPort
+from scout.ports.jobs import JobQueuePort
 from scout.ports.literature import LiteraturePort
 from scout.ports.llm import LLMPort, ModelTier
 from scout.ports.usage import PriceTable, UsageMeterPort
+from scout.profile.adapters.sql import SqlProfileUnitOfWork
+from scout.profile.application.import_profile import ImportProfile
+from scout.profile.application.service import ProfileConfig, ProfileService
 from scout.settings import Settings
 from scout.shared import Clock, IdGenerator, SystemClock, UuidGenerator
 
@@ -54,6 +61,10 @@ class Container:
     llm: LLMPort
     auth_verifier: AuthTokenVerifier
     literature: LiteraturePort
+    job_queue: JobQueuePort
+    identity: IdentityService
+    profile: ProfileService
+    import_profile: ImportProfile
     dev_tokens: DevTokenIssuer | None = None
 
 
@@ -145,9 +156,16 @@ def build_container(
         else NullAnalytics()
     )
     verifier, dev_tokens = _select_auth(settings, clock)
+    literature = _select_literature(settings, db, clock, ids, usage)
+    queue = PostgresJobQueue(db, clock, ids, lease_seconds=settings.job_lease_seconds)
+    cfg = ProfileConfig()
     return Container(
         auth_verifier=verifier, dev_tokens=dev_tokens,
-        literature=_select_literature(settings, db, clock, ids, usage),
+        literature=literature,
+        job_queue=queue,
+        identity=IdentityService(lambda: SqlIdentityUnitOfWork(db), clock, ids, settings.launch_field),
+        profile=ProfileService(lambda: SqlProfileUnitOfWork(db), literature, queue, clock, ids, cfg),
+        import_profile=ImportProfile(lambda: SqlProfileUnitOfWork(db), literature, clock, ids, cfg),
         settings=settings, clock=clock, ids=ids, db=db, prices=prices, usage_meter=usage, analytics=analytics,
         llm=_select_llm(settings, prices, usage, clock, ids),
     )  # fmt: skip

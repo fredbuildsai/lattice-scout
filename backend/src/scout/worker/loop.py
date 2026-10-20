@@ -11,9 +11,9 @@ from opentelemetry import trace
 from pydantic import JsonValue
 
 from scout.adapters.observability import partitions
-from scout.adapters.persistence.db import Database
+from scout.bootstrap import Container
 from scout.ports.jobs import Job, JobQueuePort, retry_delay
-from scout.shared import Clock, describe_exception
+from scout.shared import describe_exception
 from scout.shared.context import RequestContext, set_context
 
 log = structlog.get_logger()
@@ -79,6 +79,14 @@ async def run_forever(
                 pass
 
 
-def build_handlers(db: Database, clock: Clock, queue: JobQueuePort) -> dict[str, Handler]:
-    """All job handlers, closed over the infrastructure they need."""
-    return {**DEFAULT_HANDLERS, partitions.KIND: partitions.make_handler(db, clock, queue)}
+def build_handlers(c: Container) -> dict[str, Handler]:
+    """All job handlers, closed over the container."""
+
+    async def profile_import(job: Job) -> dict[str, JsonValue]:
+        return await c.import_profile.handle(job.payload, last_attempt=job.attempts >= job.max_attempts)
+
+    return {
+        **DEFAULT_HANDLERS,
+        partitions.KIND: partitions.make_handler(c.db, c.clock, c.job_queue),
+        "profile.import": profile_import,
+    }

@@ -33,7 +33,9 @@ async def db(migrated_url: str) -> AsyncIterator[Database]:
     """Database with empty mutable tables."""
     database = Database(migrated_url)
     async with database.engine.begin() as conn:
-        tables = "job, audit_log, account, app_session, analytics_event, llm_call, external_call"
+        tables = (
+            "job, audit_log, account, app_session, analytics_event, llm_call, external_call, openalex_cache"
+        )
         await conn.execute(text(f"TRUNCATE {tables} CASCADE"))
     yield database
     await database.dispose()

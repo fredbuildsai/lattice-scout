@@ -7,7 +7,7 @@ from datetime import datetime
 from enum import StrEnum
 from typing import ClassVar, Literal
 
-from scout.shared import AccountId, AggregateRoot, DomainEvent, Forbidden, InvariantViolation
+from scout.shared import AccountId, AggregateRoot, Conflict, DomainEvent, Forbidden, InvariantViolation
 from scout.shared.ids import UuidGenerator
 
 
@@ -47,6 +47,13 @@ class AccountDeleted(Forbidden):
 
     code = "account_deleted"
     title = "Account deleted"
+
+
+class EmailInUse(Conflict):
+    """The e-mail address belongs to another account."""
+
+    code = "email_in_use"
+    title = "E-mail already in use"
 
 
 @dataclass
