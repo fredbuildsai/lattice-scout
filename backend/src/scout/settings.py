@@ -67,6 +67,17 @@ class Settings(BaseSettings):
     worker_poll_interval_ms: int = 1000
     job_lease_seconds: int = 300
 
+    vault_max_bytes: int = 26_214_400
+    vault_max_pages: int = 300
+    vault_max_text_chars: int = 720_000
+    vault_extract_timeout_s: int = 60
+    vault_extract_memory_mb: int = 1024
+    vault_max_documents: int = 50
+    insight_full_max_chars: int = 120_000
+    insight_slice_chars: int = 60_000
+    insight_map_concurrency: int = 3
+    supabase_storage_bucket: str = "vault"
+
     llm_fixtures_dir: Path = Path("backend/tests/fixtures/llm")
     prompts_dir: Path = Path("prompts")
     llm_max_concurrency: int = 8
@@ -106,6 +117,8 @@ class Settings(BaseSettings):
                 problems.append("LITERATURE_BACKEND=fixtures is refused when APP_ENV=prod")
             if self.email_provider == "console":
                 problems.append("EMAIL_PROVIDER=console is refused when APP_ENV=prod")
+            if self.storage_backend == "local":
+                problems.append("STORAGE_BACKEND=local is refused when APP_ENV=prod")
         if self.storage_backend == "supabase" and not (self.supabase_url and self.supabase_service_role_key):
             problems.append("STORAGE_BACKEND=supabase needs SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY")
         if self.auth_mode == "supabase" and not (self.jwks_url and self.supabase_url):

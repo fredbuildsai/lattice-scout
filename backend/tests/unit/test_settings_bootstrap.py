@@ -25,6 +25,7 @@ def test_offline_defaults() -> None:
 REAL = {
     "llm_backend": "openai_direct", "openai_api_key": "k", "literature_backend": "openalex",
     "email_provider": "resend", "email_api_key": "k", "email_from": "a@b.c",
+    "storage_backend": "supabase", "supabase_url": "https://x.supabase.co", "supabase_service_role_key": "k",
 }  # fmt: skip
 
 
@@ -46,7 +47,7 @@ def test_prod_refuses_each_offline_backend(key: str, value: str, needle: str) ->
 
 def test_prod_accepts_real_backends() -> None:
     assert (
-        _s(app_env="prod", auth_mode="supabase", supabase_url="https://x.supabase.co", **REAL).app_env
+        _s(app_env="prod", auth_mode="supabase", **REAL).app_env
         == "prod"
     )
 
@@ -87,3 +88,8 @@ def test_src_never_imports_tests() -> None:
 def test_supabase_auth_needs_url_for_issuer() -> None:
     with pytest.raises(ValidationError, match="SUPABASE_URL"):
         _s(auth_mode="supabase", supabase_jwks_url="https://x/jwks")
+
+
+def test_prod_refuses_local_storage() -> None:
+    with pytest.raises(ValidationError, match="STORAGE_BACKEND=local"):
+        _s(app_env="prod", auth_mode="supabase", **{**REAL, "storage_backend": "local"})
