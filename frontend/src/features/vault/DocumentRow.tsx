@@ -15,6 +15,11 @@ export function StatusChip({ status }: { status: string }) {
   return <span className={`inline-flex shrink-0 items-center rounded-btn px-2 py-0.5 text-xs font-semibold ${TONES[tone]}`}>{label}</span>
 }
 
+function formatAdded(iso: string): string {
+  const d = new Date(iso)
+  return Number.isNaN(d.getTime()) ? '' : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+}
+
 function plural(n: number, one: string, many: string) {
   return `${n} ${n === 1 ? one : many}`
 }
@@ -77,15 +82,41 @@ export function DeleteDialog({ doc, busy, error, onCancel, onConfirm }: { doc: V
   const cancel = useRef<HTMLButtonElement>(null)
   const onCancelRef = useRef(onCancel)
   onCancelRef.current = onCancel
+  const box = useRef<HTMLDivElement>(null)
   useEffect(() => {
+    const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null
     cancel.current?.focus()
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onCancelRef.current()
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onCancelRef.current()
+        return
+      }
+      if (e.key !== 'Tab' || !box.current) return
+      const items = Array.from(box.current.querySelectorAll<HTMLElement>('button:not([disabled])'))
+      if (items.length === 0) return
+      const first = items[0]!
+      const last = items[items.length - 1]!
+      const active = document.activeElement
+      if (!box.current.contains(active)) {
+        e.preventDefault()
+        first.focus()
+      } else if (e.shiftKey && active === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
     document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      if (opener?.isConnected) opener.focus()
+    }
   }, [])
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-4">
-      <div role="dialog" aria-modal="true" aria-labelledby="del-title" aria-describedby="del-body" className="w-full max-w-[460px] rounded-card bg-surface p-5 shadow-lg">
+      <div ref={box} role="dialog" aria-modal="true" aria-labelledby="del-title" aria-describedby="del-body" className="w-full max-w-[460px] rounded-card bg-surface p-5 shadow-lg">
         <h2 id="del-title" className="text-lg font-semibold">
           Delete “{doc.filename}”?
         </h2>
@@ -129,7 +160,7 @@ export function DocumentRow({ doc }: { doc: VaultDocument }) {
           <p className="break-words font-semibold">{doc.filename}</p>
           <p className="text-xs text-ink-3">
             {doc.mime.endsWith('pdf') ? 'PDF' : 'DOCX'} · {formatSize(doc.size_bytes)}
-            {doc.pages ? ` · ${doc.pages} pages` : ''} · {doc.original_available ? 'original kept' : 'insights only'}
+            {doc.pages ? ` · ${doc.pages} pages` : ''} · {doc.original_available ? 'original kept' : 'insights only'} · Added {formatAdded(doc.created_at)}
           </p>
         </div>
         <StatusChip status={doc.status} />

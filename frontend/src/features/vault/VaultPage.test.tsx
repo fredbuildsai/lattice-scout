@@ -100,9 +100,61 @@ describe('VaultPage', () => {
     await waitFor(() => expect(server.calls.some((c) => c.method === 'DELETE')).toBe(true))
     expect(await screen.findByText(/Nothing here yet/)).toBeInTheDocument()
   })
+
+  it('closes on Escape, returns focus to the opening Delete button and traps Tab', async () => {
+    stub({ docs: [doc()], calls: [] })
+    renderPage()
+    const opener = await screen.findByRole('button', { name: 'Delete proposal.pdf' })
+    await userEvent.click(opener)
+    const dialog = screen.getByRole('dialog')
+    const cancel = within(dialog).getByRole('button', { name: 'Cancel' })
+    const del = within(dialog).getByRole('button', { name: 'Delete' })
+    expect(cancel).toHaveFocus()
+    await userEvent.tab()
+    expect(del).toHaveFocus()
+    await userEvent.tab()
+    expect(cancel).toHaveFocus()
+    await userEvent.tab({ shift: true })
+    expect(del).toHaveFocus()
+    await userEvent.keyboard('{Escape}')
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(opener).toHaveFocus()
+  })
 })
 
 describe('upload flow', () => {
+  it('aborts in-flight uploads when the page unmounts', async () => {
+    stub({ docs: [], calls: [] })
+    let signal: AbortSignal | undefined
+    const upload = vi.fn<Uploader>((_f, _k, _p, s) => {
+      signal = s
+      return new Promise(() => undefined)
+    })
+    const { unmount } = renderPage(upload)
+    await userEvent.upload(screen.getByLabelText('Choose files', { selector: 'input' }), new File(['%PDF'], 'new.pdf', { type: 'application/pdf' }))
+    expect(signal?.aborted).toBe(false)
+    unmount()
+    expect(signal?.aborted).toBe(true)
+  })
+
+  it('shows an error instead of hanging when the upload rejects with a bad response', async () => {
+    stub({ docs: [], calls: [] })
+    renderPage(async () => {
+      throw new VaultError('http_error', 201)
+    })
+    await userEvent.upload(screen.getByLabelText('Choose files', { selector: 'input' }), new File(['%PDF'], 'new.pdf', { type: 'application/pdf' }))
+    expect(await screen.findByText(/upload failed/)).toBeInTheDocument()
+  })
+
+  it('says the file is empty for file_rejected / empty_file', async () => {
+    stub({ docs: [], calls: [] })
+    renderPage(async () => {
+      throw new VaultError('file_rejected', 422, 'empty_file')
+    })
+    await userEvent.upload(screen.getByLabelText('Choose files', { selector: 'input' }), new File(['%PDF'], 'new.pdf', { type: 'application/pdf' }))
+    expect(await screen.findByText(/This file is empty/)).toBeInTheDocument()
+  })
+
   const pdf = () => new File(['%PDF'], 'new.pdf', { type: 'application/pdf' })
   const choose = (f: File) => userEvent.upload(screen.getByLabelText('Choose files', { selector: 'input' }), f)
 

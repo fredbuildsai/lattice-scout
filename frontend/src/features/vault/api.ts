@@ -11,7 +11,7 @@ export type Insights = components['schemas']['InsightsOut']
 
 /** Error from the vault API carrying the problem+json `code`. */
 export class VaultError extends Error {
-  constructor(public code: string, public status: number) {
+  constructor(public code: string, public status: number, public reason?: string) {
     super(`${code} (${status})`)
   }
 }
@@ -83,12 +83,20 @@ export interface UploadResult {
 }
 
 /** Uploads one file; injectable so tests need no XHR. */
-export type Uploader = (file: File, keepOriginal: boolean, onProgress: (fraction: number) => void) => Promise<UploadResult>
+export type Uploader = (file: File, keepOriginal: boolean, onProgress: (fraction: number) => void, signal?: AbortSignal) => Promise<UploadResult>
 
-/** POST /documents (multipart) through XHR so progress events are available. Rejects with `VaultError`. */
-export const uploadDocument: Uploader = (file, keepOriginal, onProgress) =>
+/**
+ * POST /documents (multipart) through XHR so progress events are available. Rejects with `VaultError`
+ * (`network_error` on error or timeout, `aborted` when `signal` fires, `http_error` for an unreadable body).
+ */
+export const uploadDocument: Uploader = (file, keepOriginal, onProgress, signal) =>
   new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
+    if (signal?.aborted) {
+      reject(new VaultError('aborted', 0))
+      return
+    }
+    signal?.addEventListener('abort', () => xhr.abort(), { once: true })
     xhr.open('POST', `${API_URL}/api/v1/documents`)
     xhr.setRequestHeader('X-Session-Id', analytics.getSessionId())
     if (analytics.page) xhr.setRequestHeader('X-Page', analytics.page)
@@ -98,19 +106,28 @@ export const uploadDocument: Uploader = (file, keepOriginal, onProgress) =>
       if (e.lengthComputable) onProgress(e.loaded / e.total)
     }
     xhr.onerror = () => reject(new VaultError('network_error', 0))
+    xhr.ontimeout = () => reject(new VaultError('network_error', 0))
+    xhr.onabort = () => reject(new VaultError('aborted', 0))
     xhr.onload = () => {
       if (xhr.status === 401 && token) getAuthHooks().onUnauthorized(token)
       if (xhr.status === 200 || xhr.status === 201) {
-        resolve({ document: JSON.parse(xhr.responseText) as VaultDocument, duplicate: xhr.status === 200 })
+        try {
+          resolve({ document: JSON.parse(xhr.responseText) as VaultDocument, duplicate: xhr.status === 200 })
+        } catch {
+          reject(new VaultError('http_error', xhr.status))
+        }
         return
       }
       let code = 'http_error'
+      let reason: string | undefined
       try {
-        code = (JSON.parse(xhr.responseText) as { code?: string }).code ?? code
+        const body = JSON.parse(xhr.responseText) as { code?: string; reason?: string }
+        code = body.code ?? code
+        reason = typeof body.reason === 'string' ? body.reason : undefined
       } catch {
         /* not JSON */
       }
-      reject(new VaultError(code, xhr.status))
+      reject(new VaultError(code, xhr.status, reason))
     }
     const body = new FormData()
     body.append('file', file)

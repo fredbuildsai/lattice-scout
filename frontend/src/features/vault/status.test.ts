@@ -23,6 +23,17 @@ describe('messages', () => {
   it('maps API error codes', () => {
     for (const c of ['file_too_large', 'unsupported_file_type', 'vault_limit_reached', 'file_rejected']) expect(uploadErrorMessage(c)).not.toMatch(/failed\. Please/)
   })
+  it('tells the user to delete and re-upload for terminal failures', () => {
+    for (const c of ['extraction_failed', 'insights_unavailable', 'storage_unavailable']) {
+      expect(failureMessage(c)).toMatch(/delete it and upload the file again/)
+      expect(failureMessage(c)).not.toMatch(/later|few minutes/)
+    }
+  })
+  it('says the file is empty only for file_rejected with reason empty_file', () => {
+    expect(uploadErrorMessage('file_rejected', 'empty_file')).toMatch(/is empty/)
+    expect(uploadErrorMessage('file_rejected', 'corrupt_file')).toMatch(/empty, damaged or protected/)
+    expect(uploadErrorMessage('file_rejected')).toMatch(/empty, damaged or protected/)
+  })
   it('validates type and size client-side', () => {
     expect(validateFile({ name: 'a.PDF', size: 10 })).toBeNull()
     expect(validateFile({ name: 'a.xlsx', size: 10 })).toBe('unsupported_file_type')

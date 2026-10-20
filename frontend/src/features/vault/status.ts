@@ -47,9 +47,9 @@ const FAILURES: Record<string, string> = {
   too_complex: 'This file is too complex for Scout to read reliably. Try a simpler export.',
   original_missing: 'The stored original is missing, so Scout cannot read it again. Please upload it again.',
   ingest_stalled: 'Reading this file stalled. Please delete it and upload it again.',
-  extraction_failed: 'Scout could not read this file. Please try again later.',
-  insights_unavailable: 'Scout read the file but could not extract insights right now. Please try again later.',
-  storage_unavailable: 'Storage is temporarily unavailable. Please try again in a few minutes.',
+  extraction_failed: 'Scout could not read this file. Please delete it and upload the file again.',
+  insights_unavailable: 'Scout read the file but could not extract insights. Please delete it and upload the file again.',
+  storage_unavailable: 'Storage was unavailable while reading this file. Please delete it and upload the file again.',
 }
 
 /** Friendly explanation for a document `failure_code`. */
@@ -66,7 +66,8 @@ const ERRORS: Record<string, string> = {
 }
 
 /** Friendly message for an upload error `code` from the API (problem+json). */
-export function uploadErrorMessage(code?: string | null): string {
+export function uploadErrorMessage(code?: string | null, reason?: string | null): string {
+  if (code === 'file_rejected' && reason === 'empty_file') return 'This file is empty. Check that it has content and upload it again.'
   return (code && ERRORS[code]) || 'The upload failed. Please try again.'
 }
 

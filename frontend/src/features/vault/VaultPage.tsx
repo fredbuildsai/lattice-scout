@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { track } from '../../analytics/client'
 import { Icon } from '../../ui/icons'
 import { DocumentRow } from './DocumentRow'
@@ -27,6 +27,13 @@ export function VaultPage({ upload = uploadDocument }: { upload?: Uploader }) {
   const qc = useQueryClient()
   const [items, setItems] = useState<UploadItem[]>([])
   const patch = (key: number, p: Partial<UploadItem>) => setItems((xs) => xs.map((x) => (x.key === key ? { ...x, ...p } : x)))
+  // One controller for every in-flight upload: leaving the page aborts the XHRs.
+  const controller = useRef<AbortController | null>(null)
+  useEffect(() => {
+    const c = new AbortController()
+    controller.current = c
+    return () => c.abort()
+  }, [])
 
   const onFiles = (files: File[], keep: boolean) => {
     for (const file of files) {
@@ -40,15 +47,17 @@ export function VaultPage({ upload = uploadDocument }: { upload?: Uploader }) {
       }
       setItems((xs) => [...xs, { key, name: file.name, progress: 0, state: 'uploading' }])
       track('upload_started', { kind: ext })
-      upload(file, keep, (f) => patch(key, { progress: f }))
+      const signal = controller.current?.signal
+      upload(file, keep, (f) => patch(key, { progress: f }), signal)
         .then(({ document, duplicate }) => {
           patch(key, { progress: 1, state: duplicate ? 'duplicate' : 'done' })
           if (!duplicate) track('upload_completed', { document_id: document.id, kind: ext })
           return qc.invalidateQueries({ queryKey: ['documents'] })
         })
         .catch((e: unknown) => {
+          if (signal?.aborted) return
           const code = e instanceof VaultError ? e.code : 'network_error'
-          patch(key, { state: 'error', message: uploadErrorMessage(code) })
+          patch(key, { state: 'error', message: uploadErrorMessage(code, e instanceof VaultError ? e.reason : undefined) })
           track('upload_failed', { reason: code })
         })
     }

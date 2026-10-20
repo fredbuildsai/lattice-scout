@@ -61,6 +61,7 @@ When an upload is refused, Scout shows one of these messages.
 | This file is larger than 25 MB. | Send a smaller version, or split the document. |
 | Only PDF and Word (.docx) files are supported for now. | Save or export the file as PDF or .docx. |
 | Your vault is full. Delete a document to add another. | You have 50 documents. Delete one you no longer need. (Some versions show "The upload failed. Please try again." in this case.) |
+| This file is empty. Check that it has content and upload it again. | The file has no content. Check that it opens, then upload it again. |
 | This file could not be accepted. It may be empty, damaged or protected. | Check that the file opens and has content. Export it again. |
 | The upload was interrupted. Check your connection and try again. | Check your internet connection and upload the file again. |
 | The upload failed. Please try again. | Try again. If it keeps failing, contact the team running Scout. |
@@ -79,9 +80,9 @@ When reading fails, the card shows one of these messages.
 | This file is too complex for Scout to read reliably. Try a simpler export. | Export a simpler version, for example without many images. |
 | The stored original is missing, so Scout cannot read it again. Please upload it again. | Upload the file again. |
 | Reading this file stalled. Please delete it and upload it again. | Delete the document and upload the file again. |
-| Scout could not read this file. Please try again later. | Try again later. If it keeps failing, upload the file again. |
-| Scout read the file but could not extract insights right now. Please try again later. | Try again later. |
-| Storage is temporarily unavailable. Please try again in a few minutes. | Wait a few minutes, then upload the file again. |
+| Scout could not read this file. Please delete it and upload the file again. | There is no retry button. Delete the document, then upload the file again. |
+| Scout read the file but could not extract insights. Please delete it and upload the file again. | Delete the document, then upload the file again. |
+| Storage was unavailable while reading this file. Please delete it and upload the file again. | Delete the document, then upload the file again. |
 | Scout could not process this file. | Upload the file again. |
 
 ## What the insights are
