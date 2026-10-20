@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { TopicChips } from './TopicChips'
 import { useProfile } from './api'
 
@@ -27,7 +28,16 @@ export function HomePage() {
         <div role="region" className="mt-4 max-w-[640px] rounded-card border border-line bg-surface p-5" aria-label="Profile summary">
           {p.import.status !== 'done' && (
             <p role="status" className="mb-3 text-sm text-ink-3">
-              {p.import.status === 'failed' ? 'The last import failed.' : 'Still importing your works…'}
+              {p.import.status === 'failed' ? (
+                <>
+                  The last import failed.{' '}
+                  <Link to="/onboarding?step=works" className="font-semibold text-accent underline">
+                    Retry it
+                  </Link>
+                </>
+              ) : (
+                'Still importing your works…'
+              )}
             </p>
           )}
           <h2 className="text-xl font-semibold">{p.display_name}</h2>
@@ -38,6 +48,9 @@ export function HomePage() {
           <div className="mt-3">
             <TopicChips topics={p.topics} />
           </div>
+          <Link to="/onboarding?step=works" className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-accent hover:underline">
+            Review my publications
+          </Link>
         </div>
       )}
     </section>

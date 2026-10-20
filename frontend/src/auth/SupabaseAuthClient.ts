@@ -7,6 +7,8 @@ export class SupabaseAuthClient implements AuthClient {
   private client: SupabaseClient | null = null
   private session: AuthSession | null = null
   private emitter = new Emitter()
+  private refreshing: Promise<boolean> | null = null
+  private lastRefreshedToken: string | null = null
 
   constructor(private url: string, private key: string) {}
 
@@ -39,6 +41,29 @@ export class SupabaseAuthClient implements AuthClient {
   async signInWithGoogle(): Promise<void> {
     const { error } = await this.need().auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin + '/' } })
     if (error) throw new Error('Google sign-in failed. Try again.')
+  }
+  /** One session refresh before giving up: a token that expired just before the refresh must not log the user out. */
+  async handleUnauthorized(failedToken: string): Promise<void> {
+    if (this.session && this.session.accessToken !== failedToken && !this.refreshing) return // already renewed
+    if (!this.refreshing) {
+      this.refreshing = (async () => {
+        try {
+          if (failedToken === this.lastRefreshedToken) return false // the renewed token was refused too
+          const { data, error } = await this.need().auth.refreshSession()
+          const next = this.toSession(data.session)
+          if (error || !next || next.accessToken === failedToken) return false
+          this.lastRefreshedToken = next.accessToken
+          this.session = next
+          this.emitter.emit(next)
+          return true
+        } catch {
+          return false
+        }
+      })().finally(() => {
+        this.refreshing = null
+      })
+    }
+    if (!(await this.refreshing)) await this.signOut()
   }
   async signOut(): Promise<void> {
     await this.need().auth.signOut()

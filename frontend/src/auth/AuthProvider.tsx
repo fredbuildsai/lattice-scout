@@ -22,11 +22,14 @@ export function AuthProvider({ children, client: given }: { children: ReactNode;
   useEffect(() => {
     setAuthHooks({
       getToken: () => client.getSession()?.accessToken ?? null,
-      onUnauthorized: () => void client.signOut(),
+      onUnauthorized: (tok) => void (client.handleUnauthorized ? client.handleUnauthorized(tok) : client.signOut()),
     })
+    let lastToken = client.getSession()?.accessToken ?? null
     const unsub = client.subscribe((s) => {
       setSession(s)
       if (!s) qc.clear()
+      else if (s.accessToken !== lastToken) void qc.invalidateQueries() // renewed token: retry what failed
+      lastToken = s?.accessToken ?? null
     })
     let live = true
     void client.init().then(() => {

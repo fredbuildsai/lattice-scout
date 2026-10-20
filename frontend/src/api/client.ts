@@ -23,7 +23,7 @@ export async function apiFetch(path: string, init: RequestInit = {}): Promise<Re
   const token = getToken()
   if (token) headers.set('Authorization', `Bearer ${token}`)
   const res = await fetch(`${API_URL}${path}`, { ...init, headers })
-  if (res.status === 401 && token) onUnauthorized()
+  if (res.status === 401 && token) onUnauthorized(token)
   return res
 }
 

@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { QueryClient } from '@tanstack/react-query'
 import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { App } from '../App'
@@ -102,7 +103,7 @@ describe('app routing and token injection', () => {
     mockApi({ '/api/v1/me': ME_WITH_RESEARCHER, '/api/v1/profile': PROFILE })
     render(
       <MemoryRouter initialEntries={['/signin']}>
-        <App authClient={fakeAuthClient()} />
+        <App authClient={fakeAuthClient()} client={new QueryClient()} />
       </MemoryRouter>,
     )
     expect(await screen.findByText('Ada Test')).toBeInTheDocument()
@@ -122,5 +123,46 @@ describe('app routing and token injection', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
     await waitFor(() => expect(spy).toHaveBeenCalledWith('a@example.edu'))
     expect(screen.queryByRole('button', { name: /ORCID/ })).toBeNull()
+  })
+})
+
+describe('401 handling', () => {
+  it('RouteGuard shows loading, not /onboarding, while a 401 sign-out is pending', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => new Response('{}', { status: 401 })))
+    const client = fakeAuthClient()
+    client.signOut = () => new Promise(() => undefined) // never completes: sign-out pending
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <App authClient={client} client={new QueryClient({ defaultOptions: { queries: { retry: false } } })} />
+      </MemoryRouter>,
+    )
+    await waitFor(() => expect(fetch).toHaveBeenCalled())
+    await new Promise((r) => setTimeout(r, 50))
+    expect(screen.getByRole('status')).toHaveTextContent('Loading')
+    expect(screen.queryByLabelText(/Your name/)).toBeNull()
+  })
+
+  it('SupabaseAuthClient refreshes once before signing out', async () => {
+    const c = new SupabaseAuthClient('https://x.supabase.co', 'k')
+    const auth = {
+      refreshSession: vi.fn(async () => ({ data: { session: { access_token: 'new', user: {} } }, error: null })),
+      signOut: vi.fn(async () => ({})),
+    }
+    ;(c as unknown as { client: unknown }).client = { auth }
+    ;(c as unknown as { session: unknown }).session = { accessToken: 'old' }
+    await c.handleUnauthorized('old')
+    expect(auth.refreshSession).toHaveBeenCalledTimes(1)
+    expect(auth.signOut).not.toHaveBeenCalled()
+    expect(c.getSession()?.accessToken).toBe('new')
+    await c.handleUnauthorized('new') // the renewed token was refused too
+    expect(auth.signOut).toHaveBeenCalledTimes(1)
+  })
+
+  it('SupabaseAuthClient signs out when the refresh fails', async () => {
+    const c = new SupabaseAuthClient('https://x.supabase.co', 'k')
+    const auth = { refreshSession: vi.fn(async () => ({ data: { session: null }, error: new Error('x') })), signOut: vi.fn(async () => ({})) }
+    ;(c as unknown as { client: unknown }).client = { auth }
+    await c.handleUnauthorized('old')
+    expect(auth.signOut).toHaveBeenCalledTimes(1)
   })
 })

@@ -1,21 +1,24 @@
-import { useEffect, useState, type FormEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, type FormEvent } from 'react'
 import { ConsentToggles } from './ConsentToggles'
 import { TopicChips } from './TopicChips'
-import { useCandidates, useClaim, useMe, useProfile, type CandidateGroup } from './api'
+import { WorksStep } from './WorksStep'
+import { storedClaim, useCandidates, useClaim, useMe, useProfile, type CandidateGroup } from './api'
 import { buildClaim, initialSelection, toggleRecord } from './claimSelection'
 
 /**
  * W1 / M1 claim flow at /onboarding: search, pick a candidate card, tick records, set the matching
- * consent and confirm. Once a researcher exists the page shows import progress and then goes Home.
+ * consent and confirm. Once a researcher exists the page shows import progress, then the works
+ * confirmation step (`/onboarding?step=works` is the link Home uses to come back to it). "Search again"
+ * shows the claim form even when a researcher exists.
  */
 export function OnboardingPage() {
   const me = useMe()
-  if (me.data?.researcher) return <ImportProgress />
-  return <ClaimForm />
+  const [searchAgain, setSearchAgain] = useState(false)
+  if (me.data?.researcher && !searchAgain) return <ImportProgress onSearchAgain={() => setSearchAgain(true)} />
+  return <ClaimForm onClaimed={() => setSearchAgain(false)} />
 }
 
-function ClaimForm() {
+function ClaimForm({ onClaimed }: { onClaimed: () => void }) {
   const me = useMe()
   const claim = useClaim()
   const [name, setName] = useState('')
@@ -85,7 +88,7 @@ function ClaimForm() {
                     <h2 className="text-lg font-semibold">{g.primary.display_name}</h2>
                     <p className="text-sm text-ink-3">{g.institutions.join(' · ') || 'No affiliation listed'}{g.country ? ` · ${g.country}` : ''}</p>
                     <p className="mt-1 text-sm text-ink-2">
-                      {g.works_count} works · {g.cited_by_count.toLocaleString('en-US')} citations
+                      {g.works_count} works{g.cited_by_count > 0 && <> · {g.cited_by_count.toLocaleString('en-US')} citations</>}
                       {g.includes_records > 1 && <> · includes {g.includes_records} records</>}
                     </p>
                     {g.orcid && <p className="font-mono text-xs text-ink-3">ORCID {g.orcid}</p>}
@@ -138,7 +141,7 @@ function ClaimForm() {
               Could not save your profile. Try again.
             </p>
           )}
-          <button type="button" disabled={claim.isPending} onClick={() => claim.mutate(buildClaim(group, selected))} className="h-12 w-full rounded-btn bg-accent px-6 font-semibold text-white hover:bg-accent-dark disabled:opacity-60 md:w-auto">
+          <button type="button" disabled={claim.isPending} onClick={() => claim.mutate(buildClaim(group, selected), { onSuccess: onClaimed })} className="h-12 w-full rounded-btn bg-accent px-6 font-semibold text-white hover:bg-accent-dark disabled:opacity-60 md:w-auto">
             {claim.isPending ? 'Saving…' : 'Confirm'}
           </button>
         </div>
@@ -147,13 +150,11 @@ function ClaimForm() {
   )
 }
 
-function ImportProgress() {
+function ImportProgress({ onSearchAgain }: { onSearchAgain: () => void }) {
   const profile = useProfile()
-  const navigate = useNavigate()
+  const claim = useClaim()
   const status = profile.data?.import.status
-  useEffect(() => {
-    if (status === 'done') navigate('/', { replace: true })
-  }, [status, navigate])
+  if (profile.data && status === 'done') return <WorksStep profile={profile.data} />
 
   return (
     <section aria-labelledby="page-title" className="mx-auto max-w-[640px]">
@@ -168,10 +169,19 @@ function ImportProgress() {
           </button>
         </p>
       )}
-      {status === 'failed' && (
-        <p role="alert" className="mt-4 text-warm">
-          The import failed. Reload this page to try again, or search for your profile again from Settings.
-        </p>
+      {status === 'failed' && profile.data && (
+        <div role="alert" className="mt-4 text-warm">
+          <p>The import failed. Retry it, or search for your profile again.</p>
+          {claim.isError && <p className="mt-1 text-sm">Could not restart the import. Try again.</p>}
+          <div className="mt-3 flex flex-wrap gap-3">
+            <button type="button" disabled={claim.isPending} onClick={() => claim.mutate(storedClaim(profile.data))} className="h-11 rounded-btn bg-accent px-5 font-semibold text-white hover:bg-accent-dark disabled:opacity-60">
+              {claim.isPending ? 'Retrying…' : 'Retry import'}
+            </button>
+            <button type="button" onClick={onSearchAgain} className="h-11 rounded-btn border border-line-strong px-5 font-semibold text-ink hover:bg-subtle">
+              Search again
+            </button>
+          </div>
+        </div>
       )}
       {!profile.isError && status !== 'failed' && (
         <p role="status" className="mt-4 text-ink-2">

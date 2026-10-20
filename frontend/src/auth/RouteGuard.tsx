@@ -12,6 +12,8 @@ export function RouteGuard() {
 
   if (!ready) return <Loading />
   if (session && me.isPending) return <Loading />
+  // A 401 means the client is refreshing or signing out: show loading instead of redirecting.
+  if (session && me.isError && me.error instanceof ApiError && me.error.status === 401) return <Loading />
   if (session && me.isError && !(me.error instanceof ApiError && me.error.status === 401)) {
     return (
       <div role="alert" className="p-8 text-ink">

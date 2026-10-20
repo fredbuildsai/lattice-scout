@@ -21,10 +21,10 @@ const IMPLEMENTED: Record<string, JSX.Element> = {
   '/settings/privacy': <PrivacyPage />,
 }
 
-/** Root component. Must be rendered inside a Router. `authClient` is injectable for tests. */
-export function App({ authClient }: { authClient?: AuthClient }) {
+/** Root component. Must be rendered inside a Router. `authClient` and the query `client` are injectable for tests. */
+export function App({ authClient, client = queryClient }: { authClient?: AuthClient; client?: QueryClient }) {
   return (
-    <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={client}>
       <AuthProvider client={authClient}>
         <PageViewTracker />
         <Routes>

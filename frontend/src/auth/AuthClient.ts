@@ -18,6 +18,11 @@ export interface AuthClient {
   signInWithEmail(email: string): Promise<EmailSignInResult>
   signInWithGoogle(): Promise<void>
   signOut(): Promise<void>
+  /**
+   * Called when the API answered 401 for `failedToken`. Optional: clients that can renew the
+   * session try that once; the default is `signOut`.
+   */
+  handleUnauthorized?(failedToken: string): Promise<void>
   /** Listen for session changes; returns the unsubscribe function. */
   subscribe(listener: (session: AuthSession | null) => void): () => void
 }
