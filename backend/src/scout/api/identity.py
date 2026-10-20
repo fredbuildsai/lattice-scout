@@ -5,7 +5,6 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, Request
 
 from scout.api.deps import current_account, get_container
-from scout.api.profile import public_level
 from scout.api.schemas.profile import ConsentIn, MeOut, ResearcherSummaryOut
 from scout.identity.domain.account import Account
 
@@ -19,7 +18,7 @@ async def _me(request: Request, account: Account) -> MeOut:
         consent_matching=account.consent_matching, consent_vault_signals=account.consent_vault_signals,
         created_at=account.created_at,
         researcher=ResearcherSummaryOut(
-            researcher_id=r.id, display_name=r.display_name, verified_level=public_level(r),
+            researcher_id=r.id, display_name=r.display_name, verified_level=r.public_level().value,
             import_status=r.import_status.value,
         )
         if r

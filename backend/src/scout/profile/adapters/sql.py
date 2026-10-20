@@ -7,6 +7,7 @@ from uuid import UUID, uuid4
 
 from sqlalchemy import case, delete, func, insert, select, text, update
 from sqlalchemy.dialects.postgresql import insert as pg_insert
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from scout.adapters.persistence import models as m
@@ -17,7 +18,7 @@ from scout.profile.domain.grouping import RecordBasis, TopicWeight
 from scout.profile.domain.researcher import ImportStatus, Researcher, ResearcherOpenAlexId, VerifiedLevel
 from scout.profile.domain.topics import ResearcherTopic
 from scout.profile.domain.work import ClaimedWork, UncertainReason
-from scout.shared import AccountId
+from scout.shared import AccountId, Conflict
 
 
 class SqlResearcherRepo:
@@ -175,13 +176,25 @@ class SqlResearcherRepo:
                 ],
             )
 
+    async def set_verified_level(self, researcher_id: UUID, level: VerifiedLevel) -> None:
+        """Targeted update of one column."""
+        await self._s.execute(
+            update(m.researcher)
+            .where(m.researcher.c.id == researcher_id)
+            .values(verified_level=level.value, updated_at=func.now())
+        )
+
     async def add(self, researcher: Researcher) -> None:
         """Insert the aggregate."""
-        await self._s.execute(
-            insert(m.researcher).values(
-                id=researcher.id, created_at=researcher.created_at, **self._row(researcher)
-            )
-        )
+        try:
+            async with self._s.begin_nested():
+                await self._s.execute(
+                    insert(m.researcher).values(
+                        id=researcher.id, created_at=researcher.created_at, **self._row(researcher)
+                    )
+                )
+        except IntegrityError as exc:  # two first claims of one account raced
+            raise Conflict("A profile was created at the same time, please retry") from exc
         await self._children(researcher)
 
     async def save(self, researcher: Researcher) -> None:

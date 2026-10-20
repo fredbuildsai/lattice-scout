@@ -41,20 +41,20 @@ Under your card you see **Records to include**. A ticked record counts as yours.
 1. Choose your matching preference (see step 6).
 2. Choose **Confirm**.
 3. The page **Building your profile** appears. Scout copies your works from OpenAlex. This takes a few seconds.
-4. When it is done, you arrive on **Home**.
+4. When it is done, the **Publications & outputs** step opens (see step 5). Choose **Continue to Home** afterwards.
 
-If the import fails, the page says so. Reload it to try again.
+If the import fails, the page says so. Choose **Retry import**, or **Search again** to pick different records.
 
 ## 5. Check your works
 
-**Home** shows how many of your works are included, for example "149 of 159 works included", and your main topics.
+The **Publications & outputs** step lists your works with a checkbox each, and shows how many are included, for example "149 of 159 included · 10 uncertain". Untick anything that is not yours. Your main topics update as you tick and untick. You can come back any time with **Review my publications** on Home.
 
-Scout leaves some works unticked when it is not sure they are yours:
+Scout leaves some works unticked, and lists them first, when it is not sure they are yours:
 
 - works that are not journal articles or reviews, such as datasets
 - works where the author names do not match the names on your profile
 
-Changing single works is not available in the app yet. When Scout refreshes your works later, your own choices are kept.
+When Scout refreshes your works later, your own choices are kept.
 
 ## 6. Set your privacy choices
 

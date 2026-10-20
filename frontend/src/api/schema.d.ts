@@ -510,7 +510,7 @@ export interface components {
             topics: components["schemas"]["TopicOut"][];
             /**
              * Verified Level
-             * @description self_claimed, orcid_matched or contested.
+             * @description self_claimed or orcid_matched (conflicts are never shown).
              */
             verified_level: string;
             /**
@@ -595,7 +595,7 @@ export interface components {
             researcher_id: string;
             /**
              * Verified Level
-             * @description self_claimed, orcid_matched or contested.
+             * @description self_claimed or orcid_matched (conflicts are never shown).
              */
             verified_level: string;
         };

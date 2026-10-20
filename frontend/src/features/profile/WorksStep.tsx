@@ -36,12 +36,14 @@ function WorkRow({ work, onToggle }: { work: Work; onToggle: (w: Work, included:
 export function WorksStep({ profile }: { profile: Profile }) {
   const toggle = useToggleWork()
   const [all, setAll] = useState(false)
-  const works = all ? profile.works : profile.works.slice(0, PAGE)
+  // Uncertain works first (stable sort keeps newest-first within each group) so they are reviewed, not buried.
+  const ordered = [...profile.works].sort((a, b) => Number(!!b.uncertain_reason) - Number(!!a.uncertain_reason))
+  const works = all ? ordered : ordered.slice(0, PAGE)
   const s = profile.works_summary
   return (
     <section aria-labelledby="page-title" className="mx-auto max-w-[900px]">
       <h1 id="page-title" className="font-serif text-3xl font-semibold md:text-4xl">
-        Is this you, {profile.display_name.split(' ')[0]}?
+        Is this you, {profile.display_name}?
       </h1>
       <p className="mt-2 max-w-[640px] text-ink-2">Untick anything that is not yours. Scout compares your private work against the included publications only.</p>
 

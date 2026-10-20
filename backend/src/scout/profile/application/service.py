@@ -18,7 +18,15 @@ from scout.profile.domain.researcher import ImportStatus, Researcher
 from scout.profile.domain.topics import compute_topics
 from scout.profile.domain.work import ClaimedWork
 from scout.profile.ports.repos import ProfileUnitOfWork
-from scout.shared import AccountId, Clock, IdGenerator, InfrastructureError, NotFound, ValidationFailed
+from scout.shared import (
+    AccountId,
+    Clock,
+    Conflict,
+    IdGenerator,
+    InfrastructureError,
+    NotFound,
+    ValidationFailed,
+)
 
 _AUTHOR_ID = re.compile(r"^A\d+$")
 
@@ -158,11 +166,12 @@ class ProfileService:
         now = self._clock.now()
         enqueue = False
         async with self._uow() as uow:
-            await uow.researchers.lock_authors(ids)
-            current = await uow.researchers.get_by_account(account_id)
-            if current is not None:
-                await uow.researchers.lock_authors(current.author_ids)
-                current = await uow.researchers.get_for_update(current.id)
+            # One sorted pass over the union of new and current ids (no lock-order deadlocks between claimants).
+            peek = await uow.researchers.get_by_account(account_id)
+            await uow.researchers.lock_authors({*ids, *(peek.author_ids if peek else ())})
+            current = await uow.researchers.get_for_update(peek.id) if peek else None
+            if current is not None and not set(current.author_ids) <= {*ids, *peek.author_ids}:  # type: ignore[union-attr]
+                raise Conflict("Your profile changed at the same time, please retry")
             old_ids: set[str] = set(current.author_ids) if current else set()
             if (
                 current is not None
@@ -192,7 +201,7 @@ class ProfileService:
                         if x.id != other.id and set(x.author_ids) & set(other.author_ids)
                     ]  # fmt: skip
                     other.recompute_verification(contested=bool(rivals))
-                    await uow.researchers.save(other)
+                    await uow.researchers.set_verified_level(other.id, other.verified_level)
                 if current is None:
                     await uow.researchers.add(researcher)
                 else:

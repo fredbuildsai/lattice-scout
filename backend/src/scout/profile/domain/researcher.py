@@ -181,6 +181,13 @@ class Researcher(AggregateRoot):
         )
         return VerifiedLevel.ORCID_MATCHED if ok else VerifiedLevel.SELF_CLAIMED
 
+    def public_level(self) -> VerifiedLevel:
+        """Level shown to users: ``contested`` never leaves the system (it would reveal that another account
+        holds the same OpenAlex id)."""
+        if self.verified_level == VerifiedLevel.CONTESTED:
+            return self.level_without_conflict()
+        return self.verified_level
+
     def recompute_verification(self, *, contested: bool) -> None:
         """Contested wins; otherwise the level without conflict."""
         self.verified_level = VerifiedLevel.CONTESTED if contested else self.level_without_conflict()

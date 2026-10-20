@@ -83,7 +83,7 @@ The frontend refuses to start the Supabase client without both `VITE_SUPABASE_UR
 `SupabaseJwksVerifier` (`identity/adapters/jwks.py`):
 
 1. The header `alg` is one of `ES256`, `RS256` or `EdDSA`. HS256 and other algorithms are refused, so a shared secret cannot forge tokens. The header must carry a `kid`.
-2. The key with that `kid` comes from the JWKS. Keys are cached for at most 10 minutes. An unknown `kid` triggers one refetch, to handle key rotation.
+2. The key with that `kid` comes from the JWKS. Keys are cached for at most 10 minutes. An unknown `kid` triggers a refetch to handle key rotation, but at most once per 30 seconds, behind a lock, so garbage tokens cannot hammer the JWKS endpoint. If a refresh fails, the cached keys keep serving for up to one hour; with no keys at all the API answers 503 (not 401, so clients do not sign users out during an outage). The header `alg` must equal the JWK `alg`, and `aud` must contain `authenticated` when present.
 3. The signature is valid, `iss` equals `<SUPABASE_URL>/auth/v1`, and `exp`, `sub` and `iss` are present.
 4. `exp` is in the future by the API clock.
 5. `role` is `authenticated`, and `sub` is a UUID.
@@ -103,4 +103,4 @@ cd backend
 uv run pytest tests/unit/identity tests/unit/api/test_auth_endpoints.py -q
 ```
 
-`test_dev_auth.py` covers key persistence, the token round trip, the 0600 file mode, the one-hour lifetime and tokens from another key pair. `test_jwks_verifier.py` covers the rejection cases (HS256 and `alg: none`, wrong issuer, expired token, wrong or missing role, non-UUID `sub`, unknown `kid`, JWKS fetch failure) and the 10-minute cache.
+`test_dev_auth.py` covers key persistence, the token round trip, the 0600 file mode, the one-hour lifetime and tokens from another key pair. `test_jwks_verifier.py` covers the rejection cases (HS256 and `alg: none`, wrong issuer, expired token, wrong or missing role, non-UUID `sub`, unknown `kid`, throttling, stale keys during an outage, 503 without keys) and the 10-minute cache.

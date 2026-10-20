@@ -7,7 +7,7 @@ from typing import Protocol
 from uuid import UUID
 
 from scout.ports.audit import AuditLog
-from scout.profile.domain.researcher import Researcher
+from scout.profile.domain.researcher import Researcher, VerifiedLevel
 from scout.profile.domain.work import ClaimedWork
 from scout.shared import AccountId, UnitOfWork
 
@@ -33,6 +33,10 @@ class ResearcherRepo(Protocol):
 
     async def find_by_author_ids(self, author_ids: Collection[str]) -> list[Researcher]:
         """Every researcher (any account) that claimed one of the ids."""
+        ...
+
+    async def set_verified_level(self, researcher_id: UUID, level: VerifiedLevel) -> None:
+        """Change only ``verified_level`` (used for other accounts' rows: never rewrites their import state)."""
         ...
 
     async def add(self, researcher: Researcher) -> None:

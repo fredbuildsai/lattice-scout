@@ -99,7 +99,7 @@ async def test_update_consent_audits_each_change() -> None:
         await svc.update_consent(AccountId(UUID(int=99)), True, None)
 
 
-async def test_email_collision_on_sync_is_conflict_and_audit_has_domains_only() -> None:
+async def test_email_change_is_audited_with_domains_only() -> None:
     from scout.identity.domain.account import EmailInUse  # noqa: F401
 
     svc, store, _ = _svc()

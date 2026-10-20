@@ -8,7 +8,7 @@ from types import TracebackType
 from typing import Self
 from uuid import UUID
 
-from scout.profile.domain.researcher import Researcher
+from scout.profile.domain.researcher import Researcher, VerifiedLevel
 from scout.profile.domain.work import ClaimedWork
 from scout.shared import AccountId
 from tests.fakes.audit import InMemoryAuditLog
@@ -42,6 +42,9 @@ class InMemoryResearcherRepo:
 
     async def find_by_author_ids(self, author_ids: Collection[str]) -> list[Researcher]:
         return [copy.deepcopy(r) for r in self.data.values() if set(r.author_ids) & set(author_ids)]
+
+    async def set_verified_level(self, researcher_id: UUID, level: VerifiedLevel) -> None:
+        self.data[researcher_id].verified_level = level
 
     async def add(self, researcher: Researcher) -> None:
         self.data[researcher.id] = copy.deepcopy(researcher)

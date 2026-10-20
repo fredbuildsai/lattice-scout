@@ -113,7 +113,7 @@ class ProfileOut(BaseModel):
     orcid: str | None = Field(default=None, description="ORCID of the primary record.")
     institution: str | None = Field(default=None, description="Institution (after import).")
     country: str | None = Field(default=None, description="Country code (after import).")
-    verified_level: str = Field(description="self_claimed, orcid_matched or contested.")
+    verified_level: str = Field(description="self_claimed or orcid_matched (conflicts are never shown).")
     import_: ImportOut = Field(alias="import", description="Import state; poll while queued or importing.")
     openalex_ids: list[OpenAlexIdOut] = Field(description="Claimed OpenAlex records.")
     topics: list[TopicOut] = Field(description="Topics computed from included works.")
@@ -136,7 +136,7 @@ class ResearcherSummaryOut(BaseModel):
 
     researcher_id: UUID = Field(description="Researcher id.")
     display_name: str = Field(description="Name of the primary record.")
-    verified_level: str = Field(description="self_claimed, orcid_matched or contested.")
+    verified_level: str = Field(description="self_claimed or orcid_matched (conflicts are never shown).")
     import_status: str = Field(description="queued, importing, done or failed.")
 
 

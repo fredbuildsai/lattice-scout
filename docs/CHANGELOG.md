@@ -5,6 +5,7 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 ## [Unreleased]
 
 ### Added
+- M1 review fixes: works confirmation step in onboarding (tick/untick, uncertain works first), Retry import and Search again, neutral `verified_level` (conflicts never shown), per-researcher row locks and advisory locks for claims, non-overwriting works upsert, JWKS throttle with stale-key grace and 503 during outages, Retry-After parsing, 409 on e-mail collisions, 503 when the import cannot be scheduled.
 - Hand-off bundle: architecture, implementation plan, screens, runtime prompts, OpenAlex fixtures, Claude Code agents.
 - M0 foundations (backend):
   - Python 3.12 project managed with `uv`; import-linter contracts enforce the hexagonal layering and bounded-context isolation.

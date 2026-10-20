@@ -177,3 +177,12 @@ def test_user_toggle_survives_refresh_and_topics_ignore_excluded() -> None:
         [t.topic_id for t in topics] == ["T1", "T2"] and topics[0].weight == 1.0 and topics[1].weight == 0.5
     )
     assert compute_topics([_w("W5", (t1,), included=False)]) == []
+
+
+def test_public_level_never_contested() -> None:
+    r = Researcher.claim(UUID(int=9), ACCT, [_s("A1", orcid="0000-1")], "A1", NOW)
+    r.recompute_verification(contested=True)
+    assert r.verified_level == VerifiedLevel.CONTESTED and r.public_level() == VerifiedLevel.ORCID_MATCHED
+    r2 = Researcher.claim(UUID(int=10), ACCT, [_s("A2")], "A2", NOW)
+    r2.recompute_verification(contested=True)
+    assert r2.public_level() == VerifiedLevel.SELF_CLAIMED

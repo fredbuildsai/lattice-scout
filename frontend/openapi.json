@@ -490,7 +490,7 @@
             "type": "array"
           },
           "verified_level": {
-            "description": "self_claimed, orcid_matched or contested.",
+            "description": "self_claimed or orcid_matched (conflicts are never shown).",
             "title": "Verified Level",
             "type": "string"
           },
@@ -614,7 +614,7 @@
             "type": "string"
           },
           "verified_level": {
-            "description": "self_claimed, orcid_matched or contested.",
+            "description": "self_claimed or orcid_matched (conflicts are never shown).",
             "title": "Verified Level",
             "type": "string"
           }

@@ -23,17 +23,11 @@ from scout.api.schemas.profile import (
 from scout.identity.domain.account import Account
 from scout.profile.application.service import ProfileView
 from scout.profile.domain.grouping import CandidateGroup, GroupedRecord
-from scout.profile.domain.researcher import Researcher, VerifiedLevel
+from scout.profile.domain.researcher import Researcher
 from scout.profile.domain.work import ClaimedWork
 from scout.shared.context import get_context
 
 router = APIRouter(prefix="/api/v1/profile", tags=["profile"])
-
-
-def public_level(r: Researcher) -> str:
-    """User-facing level: ``contested`` stays internal so a claim never reveals that someone else holds the id."""
-    level = r.level_without_conflict() if r.verified_level == VerifiedLevel.CONTESTED else r.verified_level
-    return level.value
 
 
 def _record(r: GroupedRecord) -> RecordOut:
@@ -65,7 +59,7 @@ def _work_out(w: ClaimedWork) -> WorkOut:
 def _profile_out(r: Researcher, works: list[ClaimedWork]) -> ProfileOut:
     return ProfileOut(
         researcher_id=r.id, display_name=r.display_name, orcid=r.orcid, institution=r.institution, country=r.country,
-        verified_level=public_level(r),
+        verified_level=r.public_level().value,
         import_=ImportOut(
             status=r.import_status.value, generation=r.import_generation, error_code=r.import_error,
             requested_at=r.import_requested_at, finished_at=r.imported_at,

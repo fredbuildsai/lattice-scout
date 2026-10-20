@@ -85,8 +85,9 @@ export function useToggleWork() {
       if (previous) qc.setQueryData(['profile'], applyIncluded(previous, id, included))
       return { previous }
     },
-    onError: (_e, _v, ctx) => {
-      if (ctx?.previous) qc.setQueryData(['profile'], ctx.previous)
+    onError: (_e, { id, included }) => {
+      // Undo only the failed toggle; a second, successful toggle must survive.
+      qc.setQueryData<Profile>(['profile'], (p) => (p ? applyIncluded(p, id, !included) : p))
     },
     onSettled: () => qc.invalidateQueries({ queryKey: ['profile'] }),
   })

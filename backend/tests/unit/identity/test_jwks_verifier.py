@@ -201,3 +201,23 @@ async def test_jwks_outage_serves_stale_keys_within_grace(clock: FixedClock, key
     clock.advance(timedelta(hours=2))  # beyond the grace period
     with pytest.raises(InfrastructureError):
         await v.verify(key.sign(claims(clock.now(), ttl=3600)))
+
+
+async def test_outage_after_ttl_costs_one_fetch_per_cooldown_not_one_per_request(
+    clock: FixedClock, key: TestKey
+) -> None:
+    ok, state = FakeJwks(key), {"down": False, "calls": 0}
+
+    async def fetch() -> dict[str, object]:
+        state["calls"] += 1
+        if state["down"]:
+            raise ConnectionError("down")
+        return await ok()
+
+    v = SupabaseJwksVerifier(fetch, ISSUER, clock)
+    await v.verify(key.sign(claims(NOW, ttl=86400)))
+    state["down"] = True
+    clock.advance(timedelta(minutes=11))
+    for _ in range(20):
+        await v.verify(key.sign(claims(clock.now(), ttl=3600)))
+    assert state["calls"] == 2  # initial load + one failed refresh within the cooldown window

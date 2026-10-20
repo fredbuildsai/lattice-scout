@@ -65,14 +65,11 @@ class SupabaseJwksVerifier:
     async def _key_for(self, kid: str) -> tuple[Any, str | None]:
         async with self._lock:
             now = self._clock.now()
-            if self._fetched_at is None or now - self._fetched_at > self._ttl:
+            cooled = self._last_attempt is None or now - self._last_attempt >= UNKNOWN_KID_COOLDOWN
+            if self._fetched_at is None or (now - self._fetched_at > self._ttl and cooled):
                 await self._refresh()
-            elif kid not in self._keys and (
-                self._last_attempt is None or now - self._last_attempt >= UNKNOWN_KID_COOLDOWN
-            ):
-                await (
-                    self._refresh()
-                )  # unknown kid: key rotation; throttled so garbage tokens cannot hammer the JWKS
+            elif kid not in self._keys and cooled:
+                await self._refresh()  # unknown kid: key rotation, throttled against garbage tokens
         jwk = self._keys.get(kid)
         if jwk is None:
             raise InvalidToken("Unknown signing key")
