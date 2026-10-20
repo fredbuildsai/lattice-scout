@@ -1,9 +1,9 @@
 # Progress
 
 Merge policy: stack
-Current milestone: M1 — Auth + profile claim (done, review rounds 1–2 fixed; awaiting human sign-off). M0 done, PR #1 open (M1 added to the same branch)
+Current milestone: M2 — Vault + ingestion (built, review round 1 fixed, round 2 pending). M0 and M1 done and awaiting human sign-off; PR #1 open (M1 and M2 added to the same branch)
 Current branch: claude/zealous-curie-7m18vd (harness-designated; used instead of m0-foundations)
-Last session: 2026-10-20 s01 — M0 tasks 1-12 done, make check green; reviewer + PR pending
+Last session: 2026-10-20 s01 — M0, M1 and M2 built; M2 review round 1 fixed
 
 <!-- Merge policy: "stack" (default) = leave each milestone PR open for the human and branch the next milestone from the previous one.
      "self-merge" = squash-merge your own PR when checks are green. The human may change this line at any time. See plan §0.4. -->
@@ -35,8 +35,18 @@ Last session: 2026-10-20 s01 — M0 tasks 1-12 done, make check green; reviewer 
 - [x] F1–F3 auth clients, sign-in, claim flow [frontend] 
 - [x] doc-writer pass
 - [x] reviewer rounds 1–2 (docs/reviews/M1.md), all findings fixed; PR #1 extended with M1
-## M2 — Vault + ingestion (in progress)
-- [ ] architect design note (state machine, retention, agent factory)
+## M2 — Vault + ingestion
+- [x] architect design note (docs/design/M2-vault-ingestion.md, DECISIONS 41-50)
+- [x] B1 `FileStoragePort`, `LocalFileStorage`, `SupabaseStorage` (needs_supabase contract), in-memory fake
+- [x] B2 `TextExtractionPort`, `PdfDocxExtractor` (child process; pypdf, python-docx, pdfplumber fallback; markitdown rejected, docling deferred)
+- [x] B3 vault domain, `UploadDocument`, `IngestDocument`, `ExtractInsights` (map-reduce), `VaultService`, `DeleteDocumentJob`, `SweepVault` [test-first: 152 tests by test-engineer]
+- [x] B5 `AgentFactory` + `AgentsInsightExtractor`; `InsightExtractor` prompt 1.1.0 and fixtures [prompt-engineer]
+- [x] B6 `/documents` endpoints (+ `UploadGuard`), migration 0004
+- [x] B7 `scripts/make_sample_docs.py`
+- [x] F1-F2 vault screen W3 and polling [frontend-dev]
+- [x] doc-writer pass
+- [x] reviewer round 1 (docs/reviews/M2.md): 2 blocking, 4 major fixed; round 2 pending
+- [ ] reviewer round 2, PR updated
 ## M3 — Gap analysis engine
 ## M4 — Opportunities UX + feedback
 ## M5 — Matching
@@ -51,6 +61,8 @@ Last session: 2026-10-20 s01 — M0 tasks 1-12 done, make check green; reviewer 
 - llmrouter-free is installed out of band: `cd backend && uv pip install -e ../../llmrouter-free` (`uv sync` removes it; router adapter tests skip without it). `uv sync --extra llm` for the OpenAI Agents SDK.
 - Run `make check` (needs network for markdownlint via npx and Playwright is separate: `make e2e` with API + `pnpm dev` running).
 - Review `docs/reviews/M0.md` round 1 fixed; known gap: API p95 at stress load (DECISIONS 24).
+- M2 needs the sample PDFs for tests: `cd backend && uv run python ../scripts/make_sample_docs.py --long`. The `InsightExtractor` fixtures are keyed by a hash of the extracted text: `uv run python ../scripts/make_insight_fixtures.py --check` (regenerate without `--check` after upgrading pypdf or reportlab).
+- M2 not verified live: Supabase storage (`needs_supabase`) and real LLM output. Docling is deferred (BACKLOG).
 
 ## Open blockers
 - B2 live services, B3 llm-router response-text ledger (both have fallbacks; see docs/BLOCKERS.md)

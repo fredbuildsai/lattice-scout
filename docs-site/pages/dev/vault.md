@@ -46,7 +46,7 @@ Changing the policy:
 
 The default `user_choice` is provisional. ADR-009 is still `proposed`, and the product owner confirms the default before the pilot.
 
-What a discarded document keeps, per chunk, is decided by `retained_content` (`backend/src/scout/vault/domain/retention.py`): verified reviewer-objection quotes of at most 300 characters (with a `truncated` flag when cut), and a summary of the verified items that cite the chunk, at most 300 characters. Chunks nobody cites keep only their ids, offsets and page numbers.
+What a discarded document keeps, per chunk, is decided by `retained_content` (`backend/src/scout/vault/domain/retention.py`): verified reviewer-objection quotes of at most 300 characters (with a `truncated` flag when cut), and a summary of the verified items that cite the chunk, at most 300 characters. Chunks nobody cites keep only their ids, offsets and page numbers. The stored insights record is bounded too: under `discard`, `bounded_for_discard` cuts every string in it (verified or not) to 300 characters in the same commit, and a quote longer than 300 characters is never verified (`quote_too_long`). Model output is also stripped of control characters and each string is capped at 600 characters before anything is stored.
 
 ## Text extraction: choice and alternatives
 
@@ -88,7 +88,7 @@ Encrypted PDFs are tried with the empty password; if that fails, `encrypted`. A 
 `AgentFactory` (`backend/src/scout/adapters/llm/factory.py`) is the one way the application runs an agent:
 
 - `spec(name, output_type)` loads `prompts/<name>.md` (front matter plus body) and fills `{{placeholder}}` values. Bootstrap passes `field_name` (from `LAUNCH_FIELD`) and `today`. An unknown placeholder raises `ValidationFailed` when `spec()` is called. Bootstrap calls it at start-up, so a broken prompt stops the process before it serves requests. Specs are cached per name.
-- `run(spec, input, ctx)` runs inside the span `agent.run`. Its attributes are the agent name, prompt version, tier, model, route, attempts, tokens, `cost_usd` and `input_chars`. It logs `agent_done` with the same fields. Neither the input nor the output is put in spans, logs or exceptions.
+- `run(spec, input, ctx)` runs inside the span `agent.run`. Its attributes are the agent name, prompt version, tier, model, route, attempts, tokens, `cost_usd` and `input_chars`. It logs `agent_done` with the same fields. Neither the input nor the output is put in spans, logs or exceptions raised by the factory. Database errors are described by class, SQLSTATE and constraint name only (`describe_exception`), the worker span does not record exceptions and sets a scrubbed status, and the API logs frames, not the exception message.
 - Errors: output that does not match the schema becomes `LLMOutputInvalid("<name>: output invalid")`. Other infrastructure and provider failures become `LLMUnavailable("<name>: unavailable")`. Both are raised `from None`, because a chained `ValidationError` would carry the document text.
 - The tier (`fast` or `reasoning`) comes from the front matter. The adapters map it to a model route. The factory never chooses a model.
 
@@ -103,7 +103,7 @@ Encrypted PDFs are tried with the empty password; if that fails, `encrypted`. A 
 The LLM returns items with chunk labels (`c0`, `c1`, ...). `verify` (`vault/domain/verification.py`) checks each one before it is stored:
 
 - An item is **unverified** when it has no chunk reference, when any label is not a chunk of the document, or when any string in it contains an email address.
-- A reviewer objection is also unverified when its normalised quote has fewer than 15 characters, or when the quote is not a substring of its cited chunks joined in reading order. The match is verbatim after `norm` (NFKC, straight quotes, plain dashes, joined hyphenation, collapsed whitespace; case kept).
+- A reviewer objection is also unverified when its normalised quote has fewer than 15 characters, or when the quote is not a substring of its cited chunks joined in reading order. A quote cited from non-adjacent chunks is matched against each run of consecutive chunks separately, so it cannot be stitched together. The match is verbatim after `norm` (NFKC, straight quotes, plain dashes, joined hyphenation, collapsed whitespace; case kept).
 - A map-reduce run verifies each map partial, sends only the verified items to the reduce call, and then verifies the final output against all chunks.
 
 Unverified items are stored in `document_insights.payload` with a `reason` and a `stage`. They are never returned by the API: `StoredInsights.visible()` is the only source for `GET /documents/{id}`. The stored counts (`verified_count`, `unverified_count`) are not exposed to users.
@@ -141,7 +141,7 @@ All endpoints need a bearer token. Errors are problem+json (`code` and `detail`)
 
 | Method and path | Request | Success | Errors |
 |---|---|---|---|
-| `POST /api/v1/documents` | multipart: `file` (required), `keep_original` (bool, default `false`), `kind` (optional) | 201 with `Location`, `DocumentOut`. 200 when the same bytes are already in the vault. | 413 `file_too_large`; 415 `unsupported_file_type`; 422 `file_rejected` (a DOCX that is a zip bomb or corrupt) or `validation_failed`; 409 `conflict` with `detail` `vault_limit_reached` and `limit` (see note); 401 `unauthenticated` |
+| `POST /api/v1/documents` | multipart: `file` (required), `keep_original` (bool, default `false`), `kind` (optional) | 201 with `Location`, `DocumentOut`. 200 when the same bytes are already in the vault. | 413 `file_too_large`; 415 `unsupported_file_type`; 422 `file_rejected` (an empty file, or a DOCX that is a zip bomb or corrupt) or `validation_failed`; 409 `vault_limit_reached` with `limit`; 401 `unauthenticated` |
 | `GET /api/v1/documents` | none | 200 `DocumentListOut {items, next_cursor: null}`. Newest first, at most 50. Excludes `deleting`. | 401 |
 | `GET /api/v1/documents/{id}` | none | 200 `DocumentDetailOut`: `DocumentOut` plus `insights` (verified items only, with `refs` of `chunk_id`, `page_from`, `page_to`), or `null` | 404 `not_found` (also for another owner's document and for `deleting`); 401 |
 | `PATCH /api/v1/documents/{id}` | JSON `{"kind": "<DocKind>"}` only | 200 `DocumentOut` | 404 `not_found`; 422 `validation_failed`; 401 |
@@ -149,8 +149,8 @@ All endpoints need a bearer token. Errors are problem+json (`code` and `detail`)
 
 Notes:
 
-- The 413 check also runs on `Content-Length` before the body is read: anything above the limit plus 64 KB is refused.
-- An **empty** file is refused with 413 `file_too_large` too, so the user sees the size message (BACKLOG F-12).
+- `UploadGuard` (`backend/src/scout/api/upload_guard.py`) runs before FastAPI parses the multipart body: it answers 401 for a missing or invalid token and 413 above the limit plus 64 KB (from `Content-Length`, or by counting streamed bytes for chunked bodies), without reading the file.
+- An **empty** file is refused with 422 `file_rejected` (reason `empty_file`). Type sniffing, the archive checks and the SHA-256 run in a worker thread; an archive that declares more than 1000 entries is refused before its directory is parsed.
 - `vault_limit_reached` is meant to be the code of the 409. Today the code is `conflict` and the text `vault_limit_reached` is in `detail` (BACKLOG F-11). Clients should match on the `detail` until that is fixed.
 - The count against the limit includes `failed` and `rejected` documents, until they are deleted.
 - The frontend polls `GET /api/v1/documents` every 2 seconds while a document is `uploaded`, `extracting`, `extracted` or `analysing` (`frontend/src/features/vault/`).
@@ -182,7 +182,7 @@ Run the worker with `make worker`. Without a running worker, uploads stay `uploa
 
 ## Logs and audit
 
-Logs and audit rows carry ids, codes and counts only. The canary test (`backend/tests/unit/vault/test_no_leak.py`) puts a marker string into a document and checks that it appears in no audit row, job, log, exception or trace. The full list of log names is in the module README.
+Logs and audit rows carry ids, codes and counts only. The canary test (`backend/tests/unit/vault/test_no_leak.py`) puts a marker string into a document and checks that it appears in no audit row, job, log, exception or trace; `backend/tests/integration/test_vault_privacy.py` repeats the check against PostgreSQL (database errors, NUL characters in model output) and covers delete-during-analysis and the upload guard. The full list of log names is in the module README.
 
 ## Tests
 
