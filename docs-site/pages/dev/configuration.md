@@ -22,9 +22,14 @@ Settings are read by `backend/src/scout/settings.py` (`Settings`, pydantic-setti
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `AUTH_MODE` | `dev` | `dev` (local ES256 keys) or `supabase` (verify Supabase JWTs; needs `SUPABASE_JWKS_URL` or `SUPABASE_URL`). |
+| `AUTH_MODE` | `dev` | `dev` (local ES256 keys, `POST /api/v1/dev/login`) or `supabase` (verify Supabase JWTs; needs `SUPABASE_URL`). See [authentication](auth.md). |
+| `DEV_KEYS_DIR` | `var/dev-keys` | Where `AUTH_MODE=dev` keeps its ES256 key pair (`private.pem`, `public.jwk`), created on first start. Relative paths resolve from the current directory if they exist there, otherwise from the repository root. Git-ignored. |
+| `DEV_ISSUER` | `http://localhost:8000/dev-auth` | `iss` claim of dev tokens. Used for both signing and verification; it is a label, not a served URL. |
 | `LLM_BACKEND` | `fake` | `fake` (fixtures), `llm_router` (llm-router package) or `openai_direct` (needs `OPENAI_API_KEY`). |
-| `LITERATURE_BACKEND` | `fixtures` | `fixtures` or `openalex`. |
+| `LITERATURE_BACKEND` | `fixtures` | `fixtures` (recorded OpenAlex responses, offline) or `openalex` (live API through `OpenAlexClient`, 7-day response cache). |
+| `LITERATURE_FIXTURES_DIR` | `tests/fixtures/openalex` | Recorded responses used by `LITERATURE_BACKEND=fixtures` (`manifest.json` and the response files). Resolved like `DEV_KEYS_DIR`. |
+| `OPENALEX_API_KEY` | unset | Optional OpenAlex API key, sent with live requests (`LITERATURE_BACKEND=openalex`). Secret; never commit it. |
+| `OPENALEX_MAILTO` | unset | Optional contact address sent to OpenAlex with live requests (`mailto` parameter). |
 | `STORAGE_BACKEND` | `local` | `local` (folder in `LOCAL_STORAGE_DIR`) or `supabase` (needs `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`). |
 | `LOCAL_STORAGE_DIR` | `var/storage` | Where `STORAGE_BACKEND=local` keeps files. Git-ignored. |
 | `EMAIL_PROVIDER` | `console` | `console` (log only) or `resend` (needs `EMAIL_API_KEY` and `EMAIL_FROM`). |
@@ -38,7 +43,7 @@ Settings are read by `backend/src/scout/settings.py` (`Settings`, pydantic-setti
 | `SUPABASE_URL` | unset | Project URL. Also used to derive the JWKS URL. |
 | `SUPABASE_PUBLISHABLE_KEY` | unset | Publishable (anon) key for the frontend. |
 | `SUPABASE_SERVICE_ROLE_KEY` | unset | Server-side secret. Never expose it to the frontend or commit it. |
-| `SUPABASE_JWKS_URL` | derived from `SUPABASE_URL` | Explicit JWKS endpoint. |
+| `SUPABASE_JWKS_URL` | derived from `SUPABASE_URL` | Explicit JWKS endpoint. The expected issuer still comes from `SUPABASE_URL`, which must therefore be set (known gap: with only this variable, startup fails). |
 
 ## LLM
 
@@ -70,12 +75,15 @@ Settings are read by `backend/src/scout/settings.py` (`Settings`, pydantic-setti
 
 ## Frontend (Vite)
 
-These are read by Vite from `frontend/` (or the environment) and are not part of `Settings`.
+These are read by Vite from `frontend/` (`frontend/.env`, or the environment) and are not part of `Settings`. Vite does not read the repository-root `.env`: copy the `VITE_` lines into `frontend/.env`. `frontend/.env.example` lists the ones it documents.
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `VITE_AUTH_MODE` | `dev` | `dev` or `supabase`. Read by the sign-in code, which arrives in M1. |
+| `VITE_AUTH_MODE` | `dev` | `dev` (e-mail form calls `POST /api/v1/dev/login`) or `supabase` (Google or e-mail link). Must match `AUTH_MODE`. |
+| `VITE_SUPABASE_URL` | unset | Supabase project URL. Required when `VITE_AUTH_MODE=supabase`. |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | unset | Supabase publishable key. Required when `VITE_AUTH_MODE=supabase`. It is public, not a secret. |
 | `VITE_API_URL` | `http://localhost:8000` | Base URL of the API. |
+| `VITE_ANALYTICS_ENABLED` | `true` | `false` turns the frontend analytics client off. |
 
 ## Reserved for later milestones
 
@@ -84,8 +92,6 @@ names stay stable. Each is defined by the milestone in brackets.
 
 | Variable | Default | Milestone | Purpose |
 |---|---|---|---|
-| `OPENALEX_API_KEY` | unset | M1 | OpenAlex API key (optional). |
-| `OPENALEX_MAILTO` | unset | M1 | Contact address sent to OpenAlex. |
 | `LAUNCH_FIELD` | `bio-based-materials` | not scheduled (ADR-008) | Launch field for the pilot. |
 | `RUN_BUDGET_USD` | `1.50` | M3 | Spend limit per analysis run. |
 | `RUN_MAX_OPENALEX_CALLS` | `400` | M3 | OpenAlex call limit per run. |

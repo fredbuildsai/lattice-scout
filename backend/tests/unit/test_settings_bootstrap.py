@@ -82,3 +82,8 @@ def test_build_container_is_lazy_and_light() -> None:
 def test_src_never_imports_tests() -> None:
     for f in (ROOT / "backend/src").rglob("*.py"):
         assert not re.search(r"^\s*(import|from) tests\b", f.read_text(), flags=re.M), f
+
+
+def test_supabase_auth_needs_url_for_issuer() -> None:
+    with pytest.raises(ValidationError, match="SUPABASE_URL"):
+        _s(auth_mode="supabase", supabase_jwks_url="https://x/jwks")

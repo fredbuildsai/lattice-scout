@@ -108,8 +108,8 @@ class Settings(BaseSettings):
                 problems.append("EMAIL_PROVIDER=console is refused when APP_ENV=prod")
         if self.storage_backend == "supabase" and not (self.supabase_url and self.supabase_service_role_key):
             problems.append("STORAGE_BACKEND=supabase needs SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY")
-        if self.auth_mode == "supabase" and not self.jwks_url:
-            problems.append("AUTH_MODE=supabase needs SUPABASE_JWKS_URL or SUPABASE_URL")
+        if self.auth_mode == "supabase" and not (self.jwks_url and self.supabase_url):
+            problems.append("AUTH_MODE=supabase needs SUPABASE_URL (token issuer) and a JWKS URL")
         if self.llm_backend == "openai_direct" and not self.openai_api_key:
             problems.append("LLM_BACKEND=openai_direct needs OPENAI_API_KEY")
         if self.email_provider == "resend" and not (self.email_api_key and self.email_from):

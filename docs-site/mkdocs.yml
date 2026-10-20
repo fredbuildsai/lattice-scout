@@ -8,9 +8,12 @@ nav:
   - Home: index.md
   - Developer guide:
       - dev/index.md
+      - Authentication: dev/auth.md
+      - Profile and claim: dev/profile.md
       - Configuration: dev/configuration.md
   - User guide:
       - user/index.md
+      - Getting started: user/getting-started.md
 validation:
   links:
     not_found: warn

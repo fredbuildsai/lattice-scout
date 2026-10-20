@@ -206,3 +206,21 @@ async def test_last_attempt_failure_marks_failed_and_reclaim_requeues() -> None:
     r2 = await env.svc.claim(A, [MOREIRA], None, None)  # retry from the UI
     assert r2.import_generation == 2 and r2.import_status == ImportStatus.QUEUED
     assert Job is not None and JobStatus.QUEUED is not None
+
+
+async def test_enqueue_failure_is_503_and_reclaim_is_idempotent() -> None:
+    from scout.shared import InfrastructureError
+
+    env = _env()
+
+    async def boom(*_: object, **__: object) -> UUID:
+        raise RuntimeError("queue down")
+
+    original = env.jobs.enqueue
+    env.jobs.enqueue = boom  # type: ignore[method-assign]
+    with pytest.raises(InfrastructureError):
+        await env.svc.claim(A, [FOSTER], None, None)
+    env.jobs.enqueue = original  # type: ignore[method-assign]
+    r = await env.svc.claim(A, [FOSTER], None, None)
+    assert r.import_generation == 1
+    assert len([j for j in env.jobs.jobs.values() if j.kind == "profile.import"]) == 1

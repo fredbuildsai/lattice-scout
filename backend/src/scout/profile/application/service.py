@@ -18,7 +18,7 @@ from scout.profile.domain.researcher import ImportStatus, Researcher
 from scout.profile.domain.topics import compute_topics
 from scout.profile.domain.work import ClaimedWork
 from scout.profile.ports.repos import ProfileUnitOfWork
-from scout.shared import AccountId, Clock, IdGenerator, NotFound, ValidationFailed
+from scout.shared import AccountId, Clock, IdGenerator, InfrastructureError, NotFound, ValidationFailed
 
 _AUTHOR_ID = re.compile(r"^A\d+$")
 
@@ -205,21 +205,29 @@ class ProfileService:
                     )  # fmt: skip
                 await uow.commit()
         if enqueue:
-            await self._jobs.enqueue(
-                JobSpec(
-                    kind="profile.import",
-                    payload={
-                        "account_id": str(account_id),
-                        "session_id": session_id,
-                        "feature": "profile.import",
-                        "researcher_id": str(researcher.id),
-                        "generation": researcher.import_generation,
-                    },
-                    dedupe_key=f"{researcher.id}:{researcher.import_generation}",
-                    max_attempts=5,
-                )  # fmt: skip
-            )
+            try:
+                await self._enqueue_import(account_id, session_id, researcher)
+            except Exception as exc:  # the client re-POSTs; claim is idempotent
+                raise InfrastructureError("Could not schedule the import, please retry") from exc
         return researcher
+
+    async def _enqueue_import(
+        self, account_id: AccountId, session_id: str | None, researcher: Researcher
+    ) -> None:
+        await self._jobs.enqueue(
+            JobSpec(
+                kind="profile.import",
+                payload={
+                    "account_id": str(account_id),
+                    "session_id": session_id,
+                    "feature": "profile.import",
+                    "researcher_id": str(researcher.id),
+                    "generation": researcher.import_generation,
+                },
+                dedupe_key=f"{researcher.id}:{researcher.import_generation}",
+                max_attempts=5,
+            )  # fmt: skip
+        )
 
     # --- reads / toggles ----------------------------------------------------------------------------------
     async def get_profile(self, account_id: AccountId) -> ProfileView:

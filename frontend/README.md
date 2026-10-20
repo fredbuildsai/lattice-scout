@@ -11,7 +11,20 @@ React 18 + TypeScript (strict) + Vite + Tailwind + React Router + TanStack Query
 | `pnpm gen-client` | Regenerates `src/api/schema.d.ts` from `openapi.json` (`make gen-client` exports the schema first) |
 | `pnpm e2e` | Playwright smoke test. Start the API first: `cd backend && uv run uvicorn scout.api.app:create_app --factory --port 8000`. Screenshots go to `e2e/screenshots/` |
 
-Env: `VITE_API_URL`, `VITE_ANALYTICS_ENABLED` (`false` turns analytics off). See `.env.example`.
+Env: `VITE_API_URL`, `VITE_ANALYTICS_ENABLED` (`false` turns analytics off), `VITE_AUTH_MODE`, `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`. Vite reads `frontend/.env` (copy the lines from `frontend/.env.example`), not the repository-root `.env`.
+
+## Auth modes
+
+`VITE_AUTH_MODE` selects the client in `src/auth/createAuthClient.ts`. It must match the backend's `AUTH_MODE`.
+
+| Mode | Sign-in | Needs |
+|---|---|---|
+| `dev` (default) | The e-mail form calls `POST /api/v1/dev/login` on the API and signs in straight away. No password. | Nothing. The API must run with `AUTH_MODE=dev`. |
+| `supabase` | "Continue with Google" (OAuth) and an e-mail sign-in link (magic link). | `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`. The client refuses to start without them. The API needs `AUTH_MODE=supabase` and `SUPABASE_URL`. |
+
+In dev mode the session (token and e-mail) is kept in `localStorage`. `apiFetch` sends the token as `Authorization: Bearer`. Full details: [docs-site/pages/dev/auth.md](../docs-site/pages/dev/auth.md).
+
+Pages: `/signin` (sign in), `/onboarding` (claim your profile: search, choose the records, confirm), `/` (Home, with the import status) and `/settings/privacy` (consents).
 
 ## Layout
 

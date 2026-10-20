@@ -1,3 +1,7 @@
 # User guide
 
-Stub. User-facing notes are added with each feature and finished in milestone M8.
+Step-by-step notes for researchers using Lattice Scout.
+
+- [Getting started](getting-started.md): sign in, find yourself, choose your records, set your privacy choices.
+
+More pages arrive with each feature and are finished in milestone M8.
