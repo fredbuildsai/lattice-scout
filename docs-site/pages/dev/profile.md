@@ -74,9 +74,9 @@ Claims are idempotent. Posting the same ids and primary again returns the same `
 |---|---|
 | `self_claimed` | Default. The user chose the records. |
 | `orcid_matched` | The primary record has an ORCID and every merged record was matched by that ORCID. |
-| `contested` | Another account has claimed one of the same OpenAlex records. |
+| `contested` | Internal only: another account has claimed one of the same OpenAlex records. The API never returns it (see below). |
 
-**Contested.** When two accounts claim the same author id, both researchers become `contested`. The claiming account gets a `profile.claim_conflict` audit row that lists the other researcher ids. No endpoint tells either user who the other is. Nothing resolves a contested profile yet: admin resolution arrives in M7, and matching (M5) must skip contested profiles. The API returns the level, but the web app does not show it yet.
+**Contested.** When two accounts claim the same author id, both researchers become `contested` internally and matching skips them. The API reports the level the profile would have without the conflict (`level_without_conflict`), so a claimant cannot learn that the person has an account (DECISIONS 36). The only trace is a `profile.claim_conflict` audit row listing the other researcher ids; admins resolve it in M7.
 
 ## Persistence
 

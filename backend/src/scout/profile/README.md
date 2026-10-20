@@ -42,7 +42,7 @@ Pure and deterministic: the result does not depend on the order of the input.
 
 ### Verification rules (`Researcher.recompute_verification`)
 
-- `contested` if another account has claimed one of the same OpenAlex ids. Both profiles become `contested`. The app never reveals the other account.
+- `contested` if another account has claimed one of the same OpenAlex ids. Both profiles become `contested` internally; the API shows the level without the conflict, never `contested`, and never reveals the other account (DECISIONS 36).
 - Otherwise `orcid_matched` if the primary record has an ORCID and every merged record was matched by that ORCID (basis `primary` or `orcid`).
 - Otherwise `self_claimed`.
 

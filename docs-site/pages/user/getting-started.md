@@ -72,4 +72,4 @@ Open **Profile and privacy** (or go to `/settings/privacy`). There are two switc
 
 Other people cannot see your profile through Scout. At the moment nothing is shared with other researchers.
 
-If someone else also claims one of your OpenAlex records, Scout marks both profiles as **contested**. Scout does not tell you who the other person is. You cannot resolve a contested profile in the app yet.
+If someone else also claims one of your OpenAlex records, Scout does not tell you or them. Behind the scenes both profiles are held back from matching until the Scout team can check ownership.
