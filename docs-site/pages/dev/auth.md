@@ -66,7 +66,7 @@ SUPABASE_URL=https://YOUR-PROJECT.supabase.co
 SUPABASE_JWKS_URL=                              # optional; defaults to <SUPABASE_URL>/auth/v1/.well-known/jwks.json
 ```
 
-`SUPABASE_URL` is required. The expected issuer (`<SUPABASE_URL>/auth/v1`) is derived from it. Setting only `SUPABASE_JWKS_URL` is a known gap: the API fails at startup with an `AssertionError`.
+`SUPABASE_URL` is required. The expected issuer (`<SUPABASE_URL>/auth/v1`) is derived from it. Setting only `SUPABASE_JWKS_URL` is rejected at startup with a clear settings error.
 
 Frontend (`frontend/.env`, read by Vite; the repository-root `.env` is not read by Vite):
 
