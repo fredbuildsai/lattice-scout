@@ -1,0 +1,60 @@
+name: CI
+on:
+  push:
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_USER: scout, POSTGRES_PASSWORD: scout, POSTGRES_DB: scout_test }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U scout" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql+psycopg://scout:scout@localhost:5432/scout_test
+      DATABASE_URL: postgresql+psycopg://scout:scout@localhost:5432/scout_test
+    defaults: { run: { working-directory: backend } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with: { python-version: "3.12" }
+      - run: uv sync --frozen
+      - run: uv run ruff check src tests
+      - run: uv run ruff format --check src tests
+      - run: uv run mypy src tests
+      - run: uv run lint-imports
+      - run: uv run pytest -q
+      - run: uv run interrogate -c pyproject.toml src/scout
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: frontend } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 9 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm, cache-dependency-path: frontend/pnpm-lock.yaml }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with: { python-version: "3.12" }
+      - run: python3 scripts/check_docs.py
+      - run: uv sync --frozen
+        working-directory: backend
+      - run: uv run --project ../backend mkdocs build --strict
+        working-directory: docs-site
+      - uses: DavidAnson/markdownlint-cli2-action@v16
+        with: { globs: "docs/**/*.md\ndocs-site/pages/**/*.md\n!docs/screens/**" }
+        continue-on-error: true

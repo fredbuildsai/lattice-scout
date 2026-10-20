@@ -1,0 +1,17 @@
+site_name: Lattice Scout
+site_description: Developer and user documentation
+docs_dir: pages
+strict: true
+theme:
+  name: material
+nav:
+  - Home: index.md
+  - Developer guide:
+      - dev/index.md
+      - Configuration: dev/configuration.md
+  - User guide:
+      - user/index.md
+validation:
+  links:
+    not_found: warn
+    absolute_links: warn

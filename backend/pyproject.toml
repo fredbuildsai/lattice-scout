@@ -37,6 +37,7 @@ dev = [
   "import-linter>=2.0",
   "interrogate>=1.7",
   "types-pyyaml",
+  "mkdocs-material>=9.5",
 ]
 
 [build-system]
@@ -66,7 +67,7 @@ select = ["E", "F", "I", "UP", "B", "ASYNC", "S", "RUF"]
 ignore = ["S101", "RUF012"]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**" = ["S105", "S106", "S311"]
+"tests/**" = ["S105", "S106", "S311", "S603", "S607"]
 
 [tool.mypy]
 python_version = "3.12"

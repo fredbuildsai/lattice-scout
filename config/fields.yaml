@@ -1,0 +1,4 @@
+# Launch fields (D14). OpenAlex topic/concept filters are filled in during M1/M3 from the fixtures.
+bio-based-materials:
+  label: Bio-based materials
+  openalex_topic_ids: []

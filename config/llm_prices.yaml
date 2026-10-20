@@ -1,0 +1,8 @@
+# Versioned price table: USD per 1M tokens. Update `version` whenever a price changes.
+version: 2026-10-20
+models:
+  fake:            { input: 1.00, output: 2.00, cached_input: 0.10, reasoning: 2.00 }
+  gpt-5:           { input: 1.25, output: 10.00, cached_input: 0.125, reasoning: 10.00 }
+  gpt-5-mini:      { input: 0.25, output: 2.00, cached_input: 0.025, reasoning: 2.00 }
+# Models not listed here are costed at 0 and flagged `unpriced` in llm_call.error_type = null, status = ok.
+default: { input: 0.0, output: 0.0, cached_input: 0.0, reasoning: 0.0 }
