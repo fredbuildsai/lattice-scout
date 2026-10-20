@@ -26,6 +26,10 @@ In dev mode the session (token and e-mail) is kept in `localStorage`. `apiFetch`
 
 Pages: `/signin` (sign in), `/onboarding` (claim your profile: search, choose the records, confirm), `/` (Home, with the import status) and `/settings/privacy` (consents).
 
+## Private vault (`/vault`, W3 / M3)
+
+`src/features/vault/`: `VaultPage` (page, upload queue), `UploadZone` (drop zone, picker, "Keep the original file" checkbox, unticked by default), `DocumentRow` (status chip, extracted summary and details, kind selector, delete confirm), `status.ts` (chip, failure and error messages, client-side checks: PDF/DOCX, 25 MB), `api.ts` (hooks; upload goes through XHR for progress and is injectable in tests). `GET /documents` is refetched every 2 s while any document is uploaded, extracting, extracted or analysing, and pauses while the tab is hidden. The e2e (`e2e/vault.spec.ts`) needs the API, the worker and the sample PDFs (`cd backend && uv run python ../scripts/make_sample_docs.py`).
+
 ## Layout
 
 - `src/routes.ts` route table (patterns are reported as `page` in analytics)

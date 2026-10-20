@@ -9,6 +9,7 @@ import { EmptyPage } from './features/pages/EmptyPage'
 import { HomePage } from './features/profile/HomePage'
 import { OnboardingPage } from './features/profile/OnboardingPage'
 import { PrivacyPage } from './features/profile/PrivacyPage'
+import { VaultPage } from './features/vault/VaultPage'
 import { Layout } from './Layout'
 import { ROUTES } from './routes'
 
@@ -16,6 +17,7 @@ const queryClient = new QueryClient({ defaultOptions: { queries: { retry: 1, ref
 
 const IMPLEMENTED: Record<string, JSX.Element> = {
   '/': <HomePage />,
+  '/vault': <VaultPage />,
   '/signin': <SignInPage />,
   '/onboarding': <OnboardingPage />,
   '/settings/privacy': <PrivacyPage />,

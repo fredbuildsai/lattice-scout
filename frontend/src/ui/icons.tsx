@@ -9,6 +9,7 @@ export const ICON_PATHS = {
   user: 'M12 12a4 4 0 1 0 0-8a4 4 0 1 0 0 8M4 21c0-4 4-6 8-6s8 2 8 6',
   lock: 'M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4',
   redo: 'M4 12a8 8 0 1 0 2.3-5.6M4 4v4h4',
+  upload: 'M12 16V4M7 9l5-5 5 5M5 20h14',
   sparkle: 'M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z',
 } as const
 
