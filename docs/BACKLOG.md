@@ -15,6 +15,9 @@ Ideas and out-of-scope items noticed during the build. Do not implement them in 
 - Move event enrichment out of `api/events.py` into an `IngestEvents` service; neutral module for logging config (review M0 #13)
 - Per-account daily cap for `/profile/candidates` and per-run OpenAlex budget (M3/M6)
 - Refuse `AUTH_MODE=dev` unless explicit `APP_ENV` (review M1 #12): today a loud startup warning is logged
+- **Deferred: docling as an optional `TextExtractionPort` adapter (OCR for scanned PDFs, PDF table structure, layout-aware Markdown).** Tried on 2026-10-20 (design note M2 §14, DECISIONS 46). `uv pip install docling` from PyPI resolved 121 packages, took 643 s and produced a 5.9 GB venv: the Linux torch wheel brings CUDA (nvidia-cudnn 528 MB, cublas 404 MB, torch 529 MB, triton 237 MB, and others). The CPU wheel index `download.pytorch.org` is blocked by the VM proxy. It was not run or benchmarked (timebox). It still needs: (1) a CPU-only torch source (a mirror or a vendored wheelhouse); (2) the layout and TableFormer model weights from Hugging Face, pre-downloaded into an image (`artifacts_path`) because offline workers cannot fetch them; (3) a separate worker image or an optional extra, never in CI's default lock; (4) a speed and determinism benchmark on the 30-page sample and a check that `prov.page_no` gives page offsets. Revisit if the pilot shows scanned uploads (`rejected: no_text_layer`) or poor table extraction
+- `markitdown` as a DOCX table-to-Markdown helper: not adopted in M2 (DECISIONS 46); reconsider if DOCX tables matter for insights
+- Vault: `POST /documents/{id}/retry` for `failed` documents with `retention=keep`; switch a kept document to `discard` from PATCH (design M2 §6)
 
 ## Fix list (found by running the app, 2026-10-20)
 
