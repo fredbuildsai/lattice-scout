@@ -1,0 +1,31 @@
+# For machines without the cloud VM's PostgreSQL. `docker compose up` starts api, worker and postgres.
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: scout
+      POSTGRES_PASSWORD: scout
+      POSTGRES_DB: scout
+    ports: ["5432:5432"]
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U scout"]
+      interval: 5s
+      retries: 10
+  api:
+    build: { context: ., dockerfile: docker/Dockerfile }
+    command: ["uvicorn", "scout.api.app:create_app", "--factory", "--host", "0.0.0.0", "--port", "8000"]
+    env_file: [.env]
+    environment:
+      DATABASE_URL: postgresql+psycopg://scout:scout@postgres:5432/scout
+    depends_on: { postgres: { condition: service_healthy } }
+    ports: ["8000:8000"]
+  worker:
+    build: { context: ., dockerfile: docker/Dockerfile }
+    command: ["python", "-m", "scout.worker"]
+    env_file: [.env]
+    environment:
+      DATABASE_URL: postgresql+psycopg://scout:scout@postgres:5432/scout
+    depends_on: { postgres: { condition: service_healthy } }
+volumes:
+  pgdata:
