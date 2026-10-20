@@ -15,6 +15,9 @@ from scout.adapters.observability.analytics import BufferedAnalytics, NullAnalyt
 from scout.adapters.observability.prices import load_price_table, resolve_path
 from scout.adapters.observability.usage_meter import BufferedUsageMeter
 from scout.adapters.persistence.db import Database
+from scout.identity.adapters.dev_auth import DevKeyPair, DevTokenIssuer, DevVerifier
+from scout.identity.adapters.jwks import HttpJwksFetcher, SupabaseJwksVerifier
+from scout.identity.ports.auth import AuthTokenVerifier
 from scout.ports.analytics import AnalyticsPort
 from scout.ports.llm import LLMPort, ModelTier
 from scout.ports.usage import PriceTable, UsageMeterPort
@@ -47,6 +50,8 @@ class Container:
     usage_meter: UsageMeterPort
     analytics: AnalyticsPort
     llm: LLMPort
+    auth_verifier: AuthTokenVerifier
+    dev_tokens: DevTokenIssuer | None = None
 
 
 def _select_llm(
@@ -90,6 +95,18 @@ def _select_llm(
             assert_never(unreachable)
 
 
+def _select_auth(s: Settings, clock: Clock) -> tuple[AuthTokenVerifier, DevTokenIssuer | None]:
+    match s.auth_mode:
+        case "dev":
+            keys = DevKeyPair.load_or_create(resolve_path(s.dev_keys_dir))
+            return DevVerifier(keys, s.dev_issuer, clock), DevTokenIssuer(keys, s.dev_issuer, clock)
+        case "supabase":
+            assert s.jwks_url and s.supabase_issuer  # guaranteed by Settings validation
+            return SupabaseJwksVerifier(HttpJwksFetcher(s.jwks_url), s.supabase_issuer, clock), None
+        case _ as unreachable:
+            assert_never(unreachable)
+
+
 def build_container(
     settings: Settings, *, clock: Clock | None = None, ids: IdGenerator | None = None
 ) -> Container:
@@ -103,7 +120,9 @@ def build_container(
         if settings.analytics_enabled
         else NullAnalytics()
     )
+    verifier, dev_tokens = _select_auth(settings, clock)
     return Container(
+        auth_verifier=verifier, dev_tokens=dev_tokens,
         settings=settings, clock=clock, ids=ids, db=db, prices=prices, usage_meter=usage, analytics=analytics,
         llm=_select_llm(settings, prices, usage, clock, ids),
     )  # fmt: skip

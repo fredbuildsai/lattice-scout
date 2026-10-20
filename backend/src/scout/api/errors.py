@@ -17,7 +17,8 @@ log = structlog.get_logger()
 
 def _problem(request: Request, status: int, body: dict[str, object]) -> JSONResponse:
     body = {**body, "instance": request.url.path, "request_id": get_context().request_id}
-    return JSONResponse(body, status_code=status, media_type=PROBLEM_JSON)
+    headers = {"WWW-Authenticate": "Bearer"} if status == 401 else None
+    return JSONResponse(body, status_code=status, media_type=PROBLEM_JSON, headers=headers)
 
 
 def install_error_handlers(app: FastAPI) -> None:

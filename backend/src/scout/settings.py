@@ -25,6 +25,8 @@ class Settings(BaseSettings):
     storage_backend: Literal["local", "supabase"] = "local"
     email_provider: Literal["console", "resend"] = "console"
     auth_mode: Literal["dev", "supabase"] = "dev"
+    dev_keys_dir: Path = Path("var/dev-keys")
+    dev_issuer: str = "http://localhost:8000/dev-auth"
     local_storage_dir: Path = Path("var/storage")
 
     supabase_url: str | None = None
@@ -76,6 +78,11 @@ class Settings(BaseSettings):
 
     embedding_model: str | None = None
     embedding_dim: int | None = None
+
+    @property
+    def supabase_issuer(self) -> str | None:
+        """Expected ``iss`` of Supabase access tokens."""
+        return f"{self.supabase_url.rstrip('/')}/auth/v1" if self.supabase_url else None
 
     @property
     def jwks_url(self) -> str | None:
