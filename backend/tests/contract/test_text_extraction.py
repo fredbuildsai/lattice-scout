@@ -9,7 +9,6 @@ from typing import Any
 import pytest
 from tests.fakes.extraction import FakeTextExtractor
 
-from scout.vault.adapters import extraction as extraction_module
 from scout.vault.adapters.extraction import PdfDocxExtractor
 from scout.vault.domain.enums import DocumentMime, PageBasis
 from scout.vault.ports.extraction import ExtractionRejected, TextExtractionPort
@@ -132,7 +131,7 @@ async def test_timeout_kills_the_child(monkeypatch: pytest.MonkeyPatch) -> None:
         coro.close()
         raise TimeoutError
 
-    monkeypatch.setattr(extraction_module.asyncio, "wait_for", never)
+    monkeypatch.setattr("scout.vault.adapters.extraction.asyncio.wait_for", never)
     with pytest.raises(ExtractionRejected) as e:
         await PdfDocxExtractor().extract_text(samples.to_pdf(PROPOSAL), DocumentMime.PDF)
     assert e.value.reject_code == "extraction_timeout"
