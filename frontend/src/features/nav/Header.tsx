@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { track } from '../../analytics/client'
+import { useAuth } from '../../auth/AuthProvider'
 import { LogoMark } from '../../ui/icons'
 import { NavMenu } from './NavMenu'
 import { TOP_LINKS } from './menuItems'
@@ -8,6 +9,7 @@ import { TOP_LINKS } from './menuItems'
 /** App header: burger button, logo, and top links (from 768 px). */
 export function Header() {
   const [open, setOpen] = useState(false)
+  const { client } = useAuth()
   const burger = useRef<HTMLButtonElement>(null)
 
   const close = useCallback(() => {
@@ -51,6 +53,9 @@ export function Header() {
             </NavLink>
           ))}
         </nav>
+        <button type="button" onClick={() => void client.signOut()} className="ml-auto h-11 rounded-btn px-3 text-sm text-ink-2 hover:text-ink">
+          Sign out
+        </button>
       </div>
       {open && <NavMenu onClose={close} />}
     </header>

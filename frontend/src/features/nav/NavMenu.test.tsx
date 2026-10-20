@@ -1,7 +1,8 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { fakeAuthClient, mockApi, ME_WITH_RESEARCHER, PROFILE } from '../../test-utils'
 import { analytics } from '../../analytics/client'
 import { App } from '../../App'
 import { routePattern } from '../../analytics/PageViewTracker'
@@ -15,15 +16,19 @@ describe('routePattern', () => {
 })
 
 describe('header menu', () => {
+  beforeEach(() => {
+    mockApi({ '/api/v1/me': ME_WITH_RESEARCHER, '/api/v1/profile': PROFILE })
+  })
+
   it('opens, navigates, closes, and tracks', async () => {
     const track = vi.spyOn(analytics, 'track')
     const user = userEvent.setup()
     render(
       <MemoryRouter initialEntries={['/']}>
-        <App />
+        <App authClient={fakeAuthClient()} />
       </MemoryRouter>,
     )
-    expect(screen.getByRole('heading', { level: 1, name: 'Home' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { level: 1, name: 'Home' })).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Open menu' }))
     expect(track).toHaveBeenCalledWith('menu_opened', undefined)
     expect(screen.getByRole('navigation', { name: 'All destinations' })).toBeInTheDocument()
@@ -38,10 +43,10 @@ describe('header menu', () => {
     const user = userEvent.setup()
     render(
       <MemoryRouter>
-        <App />
+        <App authClient={fakeAuthClient()} />
       </MemoryRouter>,
     )
-    await user.click(screen.getByRole('button', { name: 'Open menu' }))
+    await user.click(await screen.findByRole('button', { name: 'Open menu' }))
     await user.keyboard('{Escape}')
     expect(screen.queryByRole('navigation', { name: 'All destinations' })).toBeNull()
     await user.click(screen.getByRole('button', { name: 'Ask Scout' }))

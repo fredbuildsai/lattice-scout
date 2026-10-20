@@ -1,4 +1,5 @@
 import { expect, test, type Page, type Request } from '@playwright/test'
+import { mockSignedIn } from './helpers'
 
 interface Batch {
   session: { id: string }
@@ -11,6 +12,7 @@ async function viaMenu(page: Page, name: RegExp) {
 }
 
 test('navigates five pages through the menu and reports page_view events', async ({ page }) => {
+  await mockSignedIn(page)
   const batches: Batch[] = []
   const statuses: number[] = []
   page.on('request', (r: Request) => {
@@ -60,6 +62,7 @@ test('navigates five pages through the menu and reports page_view events', async
 })
 
 test('mobile layout at 390 px: no horizontal scroll, menu keyboard accessible', async ({ page }) => {
+  await mockSignedIn(page)
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto('/matches')
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)
