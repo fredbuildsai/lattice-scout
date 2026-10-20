@@ -19,7 +19,7 @@ dev: db migrate  ## api + worker + (frontend if installed)
 	 if [ -d frontend/node_modules ]; then cd frontend && pnpm dev; else wait; fi
 
 lint:
-	$(BACKEND) ruff check src tests && $(BACKEND) ruff format --check src tests
+	cd backend && uv run ruff check src tests && uv run ruff format --check src tests
 
 typecheck:
 	$(BACKEND) mypy src tests
@@ -44,7 +44,8 @@ fe-check:
 	cd frontend && pnpm lint && pnpm typecheck && pnpm test && pnpm build
 
 docs-check:
-	$(BACKEND) interrogate -c pyproject.toml src/scout && python3 scripts/check_docs.py
+	$(BACKEND) interrogate -c pyproject.toml src/scout
+	python3 scripts/check_docs.py
 
 docs:
 	cd docs-site && uv run --project ../backend mkdocs build --strict
