@@ -75,6 +75,7 @@
 | `keep` | ignored | kept until DELETE | kept | `retention=keep, original_available=true` |
 | `discard` | ignored | deleted right after `ready/failed/rejected` (purge step); audit `document.original_discarded` | NULL; `quotes` (verified, at most 300 chars) + `summary` | `retention=discard, original_available=false` |
 | `user_choice` (default) | `true` gives keep; absent or `false` gives discard ("keep original" unticked) | as chosen | as chosen | as chosen |
+
 `retention` is fixed at upload, and in M2 PATCH cannot change it (keep→discard is in BACKLOG). The insight items keep their chunk ids and pages for both values. For M3: evidence for a discarded document can only quote the stored `quotes` (§16).
 
 ## 7. Persistence: Alembic `0004_vault` (plain PG16; RLS in the Supabase branch through `EXISTS` on `document.owner_id`)
@@ -87,7 +88,7 @@
 |---|---|---|---|
 | `POST /documents` | multipart: `file` (required), `keep_original: bool = false`, `kind: DocKind?` | **201** `DocumentOut` + `Location`; **200** for a duplicate sha256 (idempotent retry) | 413 `file_too_large` (also checked early on `Content-Length` above max + 64 KB), 415 `unsupported_file_type`, 422 `file_rejected`/`validation_failed`, 409 `vault_limit_reached` |
 | `GET /documents` | - | `DocumentListOut {items, next_cursor: null}`. All documents are returned, at most `VAULT_MAX_DOCUMENTS = 50`. The field is reserved for later paging. | - |
-| `GET /documents/{id}` | - | `DocumentDetailOut` = `DocumentOut` + `insights: InsightsOut | null` (**verified items only**) | 404 |
+| `GET /documents/{id}` | - | `DocumentDetailOut` = `DocumentOut` + `insights: InsightsOut \| null` (**verified items only**) | 404 |
 | `PATCH /documents/{id}` | `{kind: DocKind}` (no extra fields) | `DocumentOut` | 404, 422 |
 | `DELETE /documents/{id}` | - | 204 | 404 |
 - `DocumentOut {id, filename, mime, size_bytes, status, failure_code, kind, kind_source: user|scout|null, kind_suggested, retention, original_available, pages, chunk_count, created_at, updated_at, ready_at}`.
