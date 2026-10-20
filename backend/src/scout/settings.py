@@ -43,6 +43,7 @@ class Settings(BaseSettings):
 
     openalex_api_key: SecretStr | None = None
     openalex_mailto: str | None = None
+    literature_fixtures_dir: Path = Path("tests/fixtures/openalex")
     launch_field: str = "bio-based-materials"
 
     run_budget_usd: Decimal = Decimal("1.50")

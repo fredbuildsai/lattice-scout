@@ -10,6 +10,7 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from typing import Protocol, assert_never, runtime_checkable
 
+from scout.adapters.literature.fixtures import FixtureLiterature
 from scout.adapters.llm.fake_llm import FakeLLM
 from scout.adapters.observability.analytics import BufferedAnalytics, NullAnalytics
 from scout.adapters.observability.prices import load_price_table, resolve_path
@@ -19,6 +20,7 @@ from scout.identity.adapters.dev_auth import DevKeyPair, DevTokenIssuer, DevVeri
 from scout.identity.adapters.jwks import HttpJwksFetcher, SupabaseJwksVerifier
 from scout.identity.ports.auth import AuthTokenVerifier
 from scout.ports.analytics import AnalyticsPort
+from scout.ports.literature import LiteraturePort
 from scout.ports.llm import LLMPort, ModelTier
 from scout.ports.usage import PriceTable, UsageMeterPort
 from scout.settings import Settings
@@ -51,6 +53,7 @@ class Container:
     analytics: AnalyticsPort
     llm: LLMPort
     auth_verifier: AuthTokenVerifier
+    literature: LiteraturePort
     dev_tokens: DevTokenIssuer | None = None
 
 
@@ -95,6 +98,27 @@ def _select_llm(
             assert_never(unreachable)
 
 
+def _select_literature(
+    s: Settings, db: Database, clock: Clock, ids: IdGenerator, usage: UsageMeterPort
+) -> LiteraturePort:
+    match s.literature_backend:
+        case "fixtures":
+            return FixtureLiterature(resolve_path(s.literature_fixtures_dir))
+        case "openalex":
+            import httpx
+
+            from scout.adapters.literature.cache import PostgresOpenAlexCache
+            from scout.adapters.literature.openalex import OpenAlexClient
+
+            return OpenAlexClient(
+                httpx.AsyncClient(timeout=30), clock, ids, usage,
+                api_key=s.openalex_api_key.get_secret_value() if s.openalex_api_key else None,
+                mailto=s.openalex_mailto, cache=PostgresOpenAlexCache(db, clock),
+            )  # fmt: skip
+        case _ as unreachable:
+            assert_never(unreachable)
+
+
 def _select_auth(s: Settings, clock: Clock) -> tuple[AuthTokenVerifier, DevTokenIssuer | None]:
     match s.auth_mode:
         case "dev":
@@ -123,13 +147,14 @@ def build_container(
     verifier, dev_tokens = _select_auth(settings, clock)
     return Container(
         auth_verifier=verifier, dev_tokens=dev_tokens,
+        literature=_select_literature(settings, db, clock, ids, usage),
         settings=settings, clock=clock, ids=ids, db=db, prices=prices, usage_meter=usage, analytics=analytics,
         llm=_select_llm(settings, prices, usage, clock, ids),
     )  # fmt: skip
 
 
 def _lifecycles(c: Container) -> list[Lifecycle]:
-    return [x for x in (c.usage_meter, c.analytics) if isinstance(x, Lifecycle)]
+    return [x for x in (c.usage_meter, c.analytics, c.literature) if isinstance(x, Lifecycle)]
 
 
 async def start_container(container: Container) -> None:

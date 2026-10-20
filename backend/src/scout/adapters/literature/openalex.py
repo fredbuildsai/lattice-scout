@@ -64,6 +64,13 @@ class OpenAlexClient:
         self._max_calls, self._max_retries, self._sleep = max_calls, max_retries, sleep
         self.calls = 0
 
+    async def start(self) -> None:
+        """Lifecycle hook (nothing to start)."""
+
+    async def close(self) -> None:
+        """Close the HTTP client."""
+        await self._http.aclose()
+
     async def _get(self, path: str, params: dict[str, str], endpoint: str) -> dict[str, Any]:
         full = dict(sorted(params.items()))
         cache_key = hashlib.sha256(f"{path}?{json.dumps(full)}".encode()).hexdigest()
