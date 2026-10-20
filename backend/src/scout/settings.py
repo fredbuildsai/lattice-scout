@@ -72,6 +72,7 @@ class Settings(BaseSettings):
     analytics_queue_max: int = 20000
     usage_queue_max: int = 10000
     otel_service_name: str | None = None
+    cors_origins: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
 
     embedding_model: str | None = None
     embedding_dim: int | None = None
