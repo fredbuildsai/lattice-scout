@@ -24,6 +24,58 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/documents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List your documents
+         * @description Poll this every couple of seconds while a document is between ``uploaded`` and ``analysing``.
+         */
+        get: operations["list_documents_api_v1_documents_get"];
+        put?: never;
+        /**
+         * Upload a PDF or DOCX to your private vault
+         * @description The type is detected from the content. Re-uploading the same bytes returns the existing document (200).
+         */
+        post: operations["upload_document_api_v1_documents_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/documents/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * One document with its extracted insights
+         * @description Only verified insight items are returned. Another user's document answers 404.
+         */
+        get: operations["get_document_api_v1_documents__document_id__get"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete a document and everything extracted from it
+         * @description Extracted text and insights are removed immediately; the stored file is removed right after.
+         */
+        delete: operations["delete_document_api_v1_documents__document_id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Set what kind of document this is
+         * @description Your choice overrides Scout's suggestion.
+         */
+        patch: operations["patch_document_api_v1_documents__document_id__patch"];
+        trace?: never;
+    };
     "/api/v1/events": {
         parameters: {
             query?: never;
@@ -208,6 +260,22 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** Body_upload_document_api_v1_documents_post */
+        Body_upload_document_api_v1_documents_post: {
+            /**
+             * File
+             * @description PDF or DOCX, at most 25 MB.
+             */
+            file: string;
+            /**
+             * Keep Original
+             * @description Keep the original file (honoured when the policy allows).
+             * @default false
+             */
+            keep_original: boolean;
+            /** @description Optional classification hint. */
+            kind?: components["schemas"]["DocKind"] | null;
+        };
         /**
          * CandidateGroupOut
          * @description A candidate profile: merged records plus weakly linked ones the user may add.
@@ -310,6 +378,21 @@ export interface components {
             consent_vault_signals?: boolean | null;
         };
         /**
+         * DatasetOut
+         * @description A dataset the document mentions.
+         */
+        DatasetOut: {
+            /** Name */
+            name: string;
+            /** Refs */
+            refs: components["schemas"]["RefOut"][];
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "available" | "planned" | "partial";
+        };
+        /**
          * DevLoginRequest
          * @description Body of the dev login.
          */
@@ -341,6 +424,141 @@ export interface components {
              * @default bearer
              */
             token_type: string;
+        };
+        /**
+         * DocKind
+         * @description What a document is (ARCHITECTURE §4.2).
+         * @enum {string}
+         */
+        DocKind: "funded_grant" | "declined_grant" | "proposal" | "unpublished_results" | "raw_data_description" | "lab_notes" | "other";
+        /**
+         * DocStatus
+         * @description Document lifecycle (DECISIONS 41: ``analysing`` rather than ``analysing_insights``).
+         * @enum {string}
+         */
+        DocStatus: "uploaded" | "extracting" | "extracted" | "analysing" | "ready" | "failed" | "rejected" | "deleting";
+        /**
+         * DocumentDetailOut
+         * @description A document with its insights.
+         */
+        DocumentDetailOut: {
+            /** Chunk Count */
+            chunk_count?: number | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Failure Code
+             * @description Why a failed or rejected document stopped.
+             */
+            failure_code?: string | null;
+            /** Filename */
+            filename: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            insights?: components["schemas"]["InsightsOut"] | null;
+            /** @description Your classification, otherwise Scout's suggestion. */
+            kind?: components["schemas"]["DocKind"] | null;
+            /** Kind Source */
+            kind_source?: ("user" | "scout") | null;
+            kind_suggested?: components["schemas"]["DocKind"] | null;
+            mime: components["schemas"]["DocumentMime"];
+            /** Original Available */
+            original_available: boolean;
+            /** Pages */
+            pages?: number | null;
+            /** Ready At */
+            ready_at?: string | null;
+            /** @description keep: the original is stored; discard: only extracted content is kept. */
+            retention: components["schemas"]["Retention"];
+            /** Size Bytes */
+            size_bytes: number;
+            /** @description uploaded, extracting, extracted, analysing, ready, failed or rejected. */
+            status: components["schemas"]["DocStatus"];
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /**
+         * DocumentListOut
+         * @description All documents of the vault, newest first.
+         */
+        DocumentListOut: {
+            /** Items */
+            items: components["schemas"]["DocumentOut"][];
+            /**
+             * Next Cursor
+             * @description Reserved for paging; always null for now.
+             */
+            next_cursor?: string | null;
+        };
+        /**
+         * DocumentMime
+         * @description Accepted file types.
+         * @enum {string}
+         */
+        DocumentMime: "application/pdf" | "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+        /**
+         * DocumentOut
+         * @description A document in the vault.
+         */
+        DocumentOut: {
+            /** Chunk Count */
+            chunk_count?: number | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Failure Code
+             * @description Why a failed or rejected document stopped.
+             */
+            failure_code?: string | null;
+            /** Filename */
+            filename: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** @description Your classification, otherwise Scout's suggestion. */
+            kind?: components["schemas"]["DocKind"] | null;
+            /** Kind Source */
+            kind_source?: ("user" | "scout") | null;
+            kind_suggested?: components["schemas"]["DocKind"] | null;
+            mime: components["schemas"]["DocumentMime"];
+            /** Original Available */
+            original_available: boolean;
+            /** Pages */
+            pages?: number | null;
+            /** Ready At */
+            ready_at?: string | null;
+            /** @description keep: the original is stored; discard: only extracted content is kept. */
+            retention: components["schemas"]["Retention"];
+            /** Size Bytes */
+            size_bytes: number;
+            /** @description uploaded, extracting, extracted, analysing, ready, failed or rejected. */
+            status: components["schemas"]["DocStatus"];
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /**
+         * DocumentPatchIn
+         * @description Change the classification.
+         */
+        DocumentPatchIn: {
+            kind: components["schemas"]["DocKind"];
         };
         /**
          * EventsAccepted
@@ -395,6 +613,40 @@ export interface components {
             status: string;
         };
         /**
+         * InsightsOut
+         * @description What Scout extracted from a document (verified items only).
+         */
+        InsightsOut: {
+            /** Aims */
+            aims: components["schemas"]["ItemOut"][];
+            /** Datasets */
+            datasets: components["schemas"]["DatasetOut"][];
+            /** Findings */
+            findings: components["schemas"]["ItemOut"][];
+            /** Keywords */
+            keywords: string[];
+            /** Methods */
+            methods: components["schemas"]["MethodOut"][];
+            /** Open Questions */
+            open_questions: components["schemas"]["ItemOut"][];
+            /** Prompt Version */
+            prompt_version: string;
+            /** Reviewer Objections */
+            reviewer_objections: components["schemas"]["ObjectionOut"][];
+            /** Title */
+            title?: string | null;
+        };
+        /**
+         * ItemOut
+         * @description A statement with its sources.
+         */
+        ItemOut: {
+            /** Refs */
+            refs: components["schemas"]["RefOut"][];
+            /** Summary */
+            summary: string;
+        };
+        /**
          * MeOut
          * @description The signed-in account.
          */
@@ -438,6 +690,30 @@ export interface components {
              * @description user or admin.
              */
             role: string;
+        };
+        /**
+         * MethodOut
+         * @description A method or technique.
+         */
+        MethodOut: {
+            /** Detail */
+            detail?: string | null;
+            /** Name */
+            name: string;
+            /** Refs */
+            refs: components["schemas"]["RefOut"][];
+        };
+        /**
+         * ObjectionOut
+         * @description A reviewer objection: ``quote`` is verbatim from the document.
+         */
+        ObjectionOut: {
+            /** Quote */
+            quote: string;
+            /** Refs */
+            refs: components["schemas"]["RefOut"][];
+            /** Summary */
+            summary: string;
         };
         /**
          * OpenAlexIdOut
@@ -557,6 +833,28 @@ export interface components {
             works_count: number;
         };
         /**
+         * RefOut
+         * @description Where in the document an item is stated.
+         */
+        RefOut: {
+            /**
+             * Chunk Id
+             * Format: uuid
+             * @description Stable chunk id (also used as evidence reference).
+             */
+            chunk_id: string;
+            /**
+             * Page From
+             * @description First page (or section, when the file has no page numbers).
+             */
+            page_from: number;
+            /**
+             * Page To
+             * @description Last page.
+             */
+            page_to: number;
+        };
+        /**
          * Rejection
          * @description Why an event was not accepted.
          */
@@ -599,6 +897,12 @@ export interface components {
              */
             verified_level: string;
         };
+        /**
+         * Retention
+         * @description What happens to one document's original bytes and chunk text.
+         * @enum {string}
+         */
+        Retention: "keep" | "discard";
         /**
          * Status
          * @description Simple status body.
@@ -764,6 +1068,161 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DevLoginResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_documents_api_v1_documents_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentListOut"];
+                };
+            };
+        };
+    };
+    upload_document_api_v1_documents_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_document_api_v1_documents_post"];
+            };
+        };
+        responses: {
+            /** @description The same file is already in your vault; nothing was created. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_document_api_v1_documents__document_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentDetailOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_document_api_v1_documents__document_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_document_api_v1_documents__document_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DocumentPatchIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentOut"];
                 };
             };
             /** @description Validation Error */
