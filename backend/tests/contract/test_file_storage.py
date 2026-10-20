@@ -8,13 +8,31 @@ from tests.fakes.storage import InMemoryFileStorage
 
 from scout.adapters.storage.local import LocalFileStorage
 from scout.ports.storage import FileStoragePort, StorageObjectMissing
-from scout.shared import ValidationFailed
+from scout.shared import SystemClock, UuidGenerator, ValidationFailed
 
 Make = Callable[[Path], FileStoragePort]
+
+
+def _supabase() -> FileStoragePort:
+    """Needs SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY and a private bucket named by SUPABASE_STORAGE_BUCKET."""
+    import httpx
+    from tests.fakes import InMemoryUsageMeter
+
+    from scout.adapters.storage.supabase import SupabaseStorage
+    from scout.settings import get_settings
+
+    s = get_settings()
+    assert s.supabase_url and s.supabase_service_role_key, "set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY"
+    return SupabaseStorage(
+        httpx.AsyncClient(), s.supabase_url, s.supabase_service_role_key.get_secret_value(),
+        s.supabase_storage_bucket, InMemoryUsageMeter(), SystemClock(), UuidGenerator(),
+    )  # fmt: skip
+
 
 FACTORIES = [
     pytest.param(lambda tmp: InMemoryFileStorage(), id="memory"),
     pytest.param(lambda tmp: LocalFileStorage(tmp / "storage"), id="local"),
+    pytest.param(lambda tmp: _supabase(), id="supabase", marks=pytest.mark.needs_supabase),
 ]
 
 

@@ -85,8 +85,23 @@ def build_handlers(c: Container) -> dict[str, Handler]:
     async def profile_import(job: Job) -> dict[str, JsonValue]:
         return await c.import_profile.handle(job.payload, last_attempt=job.attempts >= job.max_attempts)
 
+    def last(job: Job) -> bool:
+        return job.attempts >= job.max_attempts
+
+    async def vault_ingest(job: Job) -> dict[str, JsonValue]:
+        return await c.ingest_document.handle(job.payload, last_attempt=last(job))
+
+    async def vault_delete(job: Job) -> dict[str, JsonValue]:
+        return await c.delete_document_job.handle(job.payload, last_attempt=last(job))
+
+    async def vault_sweep(job: Job) -> dict[str, JsonValue]:
+        return await c.sweep_vault.handle(job.payload, last_attempt=last(job))
+
     return {
         **DEFAULT_HANDLERS,
         partitions.KIND: partitions.make_handler(c.db, c.clock, c.job_queue),
         "profile.import": profile_import,
+        "vault.ingest": vault_ingest,
+        "vault.delete": vault_delete,
+        "vault.sweep": vault_sweep,
     }

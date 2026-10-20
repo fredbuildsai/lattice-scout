@@ -11,12 +11,14 @@ from dataclasses import dataclass
 from typing import Protocol, assert_never, runtime_checkable
 
 from scout.adapters.literature.fixtures import FixtureLiterature
+from scout.adapters.llm.factory import AgentFactory
 from scout.adapters.llm.fake_llm import FakeLLM
 from scout.adapters.observability.analytics import BufferedAnalytics, NullAnalytics
 from scout.adapters.observability.prices import load_price_table, resolve_path
 from scout.adapters.observability.usage_meter import BufferedUsageMeter
 from scout.adapters.persistence.db import Database
 from scout.adapters.queue.postgres import PostgresJobQueue
+from scout.adapters.storage.local import LocalFileStorage
 from scout.identity.adapters.dev_auth import DevKeyPair, DevTokenIssuer, DevVerifier
 from scout.identity.adapters.jwks import HttpJwksFetcher, SupabaseJwksVerifier
 from scout.identity.adapters.sql import SqlIdentityUnitOfWork
@@ -26,12 +28,23 @@ from scout.ports.analytics import AnalyticsPort
 from scout.ports.jobs import JobQueuePort
 from scout.ports.literature import LiteraturePort
 from scout.ports.llm import LLMPort, ModelTier
+from scout.ports.storage import FileStoragePort
 from scout.ports.usage import PriceTable, UsageMeterPort
 from scout.profile.adapters.sql import SqlProfileUnitOfWork
 from scout.profile.application.import_profile import ImportProfile
 from scout.profile.application.service import ProfileConfig, ProfileService
 from scout.settings import Settings
 from scout.shared import Clock, IdGenerator, SystemClock, UuidGenerator
+from scout.vault.adapters.extraction import PdfDocxExtractor
+from scout.vault.adapters.insight_extractor import AgentsInsightExtractor
+from scout.vault.adapters.sql import SqlVaultUnitOfWork
+from scout.vault.application.delete_job import DeleteDocumentJob
+from scout.vault.application.extract_insights import ExtractInsights
+from scout.vault.application.ingest import IngestDocument
+from scout.vault.application.service import VaultService
+from scout.vault.application.sweep import SweepVault
+from scout.vault.application.upload import UploadDocument
+from scout.vault.domain.enums import RetentionPolicy
 
 
 @runtime_checkable
@@ -65,6 +78,13 @@ class Container:
     identity: IdentityService
     profile: ProfileService
     import_profile: ImportProfile
+    storage: FileStoragePort
+    agents: AgentFactory
+    vault: VaultService
+    upload_document: UploadDocument
+    ingest_document: IngestDocument
+    delete_document_job: DeleteDocumentJob
+    sweep_vault: SweepVault
     dev_tokens: DevTokenIssuer | None = None
 
 
@@ -130,6 +150,24 @@ def _select_literature(
             assert_never(unreachable)
 
 
+def _select_storage(s: Settings, usage: UsageMeterPort, clock: Clock, ids: IdGenerator) -> FileStoragePort:
+    match s.storage_backend:
+        case "local":
+            return LocalFileStorage(resolve_path(s.local_storage_dir))
+        case "supabase":
+            import httpx
+
+            from scout.adapters.storage.supabase import SupabaseStorage
+
+            assert s.supabase_url and s.supabase_service_role_key  # guaranteed by Settings validation
+            return SupabaseStorage(
+                httpx.AsyncClient(), s.supabase_url, s.supabase_service_role_key.get_secret_value(),
+                s.supabase_storage_bucket, usage, clock, ids,
+            )  # fmt: skip
+        case _ as unreachable:
+            assert_never(unreachable)
+
+
 def _select_auth(s: Settings, clock: Clock) -> tuple[AuthTokenVerifier, DevTokenIssuer | None]:
     match s.auth_mode:
         case "dev":
@@ -159,7 +197,32 @@ def build_container(
     literature = _select_literature(settings, db, clock, ids, usage)
     queue = PostgresJobQueue(db, clock, ids, lease_seconds=settings.job_lease_seconds)
     cfg = ProfileConfig()
+    llm = _select_llm(settings, prices, usage, clock, ids)
+    storage = _select_storage(settings, usage, clock, ids)
+    agents = AgentFactory(
+        llm, resolve_path(settings.prompts_dir),
+        {"field_name": settings.launch_field, "today": clock.now().date().isoformat()},
+    )  # fmt: skip
+    vault_uow = lambda: SqlVaultUnitOfWork(db)  # noqa: E731
+    extract_insights = ExtractInsights(
+        AgentsInsightExtractor(agents), settings.insight_full_max_chars, settings.insight_slice_chars,
+        settings.insight_map_concurrency,
+    )  # fmt: skip
+    extractor = PdfDocxExtractor(
+        timeout_s=settings.vault_extract_timeout_s, memory_mb=settings.vault_extract_memory_mb,
+        max_pages=settings.vault_max_pages, max_chars=settings.vault_max_text_chars,
+    )  # fmt: skip
     return Container(
+        storage=storage, agents=agents,
+        vault=VaultService(vault_uow, queue, clock, ids),
+        upload_document=UploadDocument(
+            vault_uow, storage, queue, clock, ids, RetentionPolicy(settings.retention_policy),
+            settings.vault_max_bytes, settings.vault_max_documents,
+        ),
+        ingest_document=IngestDocument(vault_uow, storage, extractor, extract_insights, clock),
+        delete_document_job=DeleteDocumentJob(vault_uow, storage, clock),
+        sweep_vault=SweepVault(vault_uow, queue, clock),
+
         auth_verifier=verifier, dev_tokens=dev_tokens,
         literature=literature,
         job_queue=queue,
@@ -167,7 +230,7 @@ def build_container(
         profile=ProfileService(lambda: SqlProfileUnitOfWork(db), literature, queue, clock, ids, cfg),
         import_profile=ImportProfile(lambda: SqlProfileUnitOfWork(db), literature, clock, ids, cfg),
         settings=settings, clock=clock, ids=ids, db=db, prices=prices, usage_meter=usage, analytics=analytics,
-        llm=_select_llm(settings, prices, usage, clock, ids),
+        llm=llm,
     )  # fmt: skip
 
 

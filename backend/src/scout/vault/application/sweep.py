@@ -42,14 +42,20 @@ class SweepVault:
             )  # fmt: skip
         )
 
-    async def handle(self, payload: dict[str, JsonValue], *, last_attempt: bool) -> dict[str, JsonValue]:
-        """One sweep. The next one is scheduled first, so a failure below never ends the chain."""
+    async def ensure_scheduled(self) -> None:
+        """Queue the next sweep (deduplicated per time slot, so calling this twice queues one job)."""
         now = self._clock.now()
         period = timedelta(minutes=self._interval)
         slot = int(now.timestamp() // period.total_seconds()) + 1
         await self._jobs.enqueue(
             JobSpec(kind="vault.sweep", run_at=now + period, dedupe_key=f"vault.sweep:{slot}", max_attempts=3)
         )
+
+    async def handle(self, payload: dict[str, JsonValue], *, last_attempt: bool) -> dict[str, JsonValue]:
+        """One sweep. The next one is scheduled first, so a failure below never ends the chain."""
+        now = self._clock.now()
+        period = timedelta(minutes=self._interval)
+        await self.ensure_scheduled()
         async with self._uow() as uow:
             stale = await uow.documents.list_stale(
                 now - period, now - timedelta(minutes=self._stalled), self._limit

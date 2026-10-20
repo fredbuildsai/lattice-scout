@@ -30,6 +30,7 @@ async def main() -> None:
     SQLAlchemyInstrumentor().instrument(engine=c.db.engine.sync_engine)
     queue = c.job_queue
     await schedule_today(queue, c.clock)
+    await c.sweep_vault.ensure_scheduled()
     handlers = build_handlers(c)
     stop = asyncio.Event()
     loop = asyncio.get_running_loop()
