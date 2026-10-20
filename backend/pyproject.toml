@@ -22,6 +22,9 @@ dependencies = [
   "opentelemetry-instrumentation-fastapi>=0.48b0",
   "opentelemetry-instrumentation-httpx>=0.48b0",
   "opentelemetry-instrumentation-sqlalchemy>=0.48b0",
+  "pypdf>=6.21.1",
+  "pdfplumber>=0.11.10",
+  "python-docx>=1.2.0",
 ]
 
 [project.optional-dependencies]
@@ -40,6 +43,7 @@ dev = [
   "types-pyyaml",
   "hypothesis>=6.100",
   "mkdocs-material>=9.5",
+  "reportlab>=5.0.1",
 ]
 
 [build-system]
