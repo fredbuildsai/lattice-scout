@@ -26,6 +26,22 @@ class FileRejected(ScoutError):
         self.reason = reason
 
 
+class FileTooLarge(ScoutError):
+    """The upload exceeds the size limit."""
+
+    code = "file_too_large"
+    http_status = 413
+    title = "File too large"
+
+
+class UnsupportedFileType(ScoutError):
+    """Only PDF and DOCX are accepted."""
+
+    code = "unsupported_file_type"
+    http_status = 415
+    title = "Unsupported file type"
+
+
 def sniff_mime(data: bytes) -> DocumentMime | None:
     """Detect PDF or DOCX from the bytes. The declared Content-Type and the extension are ignored."""
     if b"%PDF-" in data[:1024]:
