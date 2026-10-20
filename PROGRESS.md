@@ -35,7 +35,8 @@ Last session: 2026-10-20 s01 — M0 tasks 1-12 done, make check green; reviewer 
 - [x] F1–F3 auth clients, sign-in, claim flow [frontend] 
 - [x] doc-writer pass
 - [x] reviewer rounds 1–2 (docs/reviews/M1.md), all findings fixed; PR #1 extended with M1
-## M2 — Vault + ingestion
+## M2 — Vault + ingestion (in progress)
+- [ ] architect design note (state machine, retention, agent factory)
 ## M3 — Gap analysis engine
 ## M4 — Opportunities UX + feedback
 ## M5 — Matching
