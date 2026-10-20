@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lattice Scout mobile — Profile</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F3F4F1}
+a{color:#2446C7}a:hover{color:#16308F}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; overflow: hidden; display: flex; flex-direction: column; background: #F3F4F1; font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #14171A">
+<div style="flex-shrink: 0; background: #FFFFFF; border-bottom: 1px solid #D9DCD6; padding: 10px 12px; display: flex; align-items: center; gap: 6px">
+<a href="MHome.dc.html" aria-label="Back" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #14171A"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+<span style="flex-grow: 1; font-size: 15px; font-weight: 600">Profile</span>
+<a href="MLogin.dc.html" style="font-size: 14px; color: #555C63; text-decoration: none; padding: 10px">Sign out</a>
+</div>
+
+<div style="flex-grow: 1; overflow-y: auto; padding: 18px 16px 24px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center">
+<span style="width: 76px; height: 76px; border-radius: 50%; background: {{accent}}; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 600">JF</span>
+<b style="font-family: 'Source Serif 4', Georgia, serif; font-size: 24px">Dr. E. Johan Foster</b>
+<span style="font-size: 14px; color: #3A4047">UBC · Bio-based materials</span>
+<span style="font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: #E3F1EF; color: #0F5E5E">Open to matching</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<span style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; align-items: center"><b style="font-family: 'IBM Plex Mono', monospace; font-size: 19px; font-weight: 500">159</b><span style="font-size: 11px; color: #555C63">works</span></span>
+<span style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; align-items: center"><b style="font-family: 'IBM Plex Mono', monospace; font-size: 19px; font-weight: 500">9,970</b><span style="font-size: 11px; color: #555C63">citations</span></span>
+<span style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; align-items: center"><b style="font-family: 'IBM Plex Mono', monospace; font-size: 19px; font-weight: 500">50</b><span style="font-size: 11px; color: #555C63">h-index</span></span>
+</div>
+
+<div style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; overflow: hidden">
+<sc-for list="{{links}}" as="l" hint-placeholder-count="4">
+<a href="{{l.href}}" style="display: flex; gap: 12px; align-items: center; padding: 14px 16px; border-bottom: 1px solid #ECEEE9; text-decoration: none; color: #14171A; min-height: 52px; box-sizing: border-box">
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><b style="font-size: 15px">{{l.t}}</b><span style="font-size: 12px; color: #555C63">{{l.d}}</span></span>
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A9ADA6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>
+</a>
+</sc-for>
+</div>
+
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #555C63; padding-top: 4px">Privacy</span>
+<div style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 0 16px">
+<sc-for list="{{privacy}}" as="p" hint-placeholder-count="4">
+<label style="display: flex; gap: 12px; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #ECEEE9; cursor: pointer">
+<span style="display: flex; flex-direction: column; gap: 2px"><b style="font-size: 15px">{{p.t}}</b><span style="font-size: 12px; color: #555C63; line-height: 1.4">{{p.d}}</span></span>
+<input type="checkbox" defaultChecked="{{p.on}}" disabled="{{p.locked}}" style="width: 24px; height: 24px; accent-color: #0F6E6E; flex-shrink: 0">
+</label>
+</sc-for>
+</div>
+<button type="button" style="font: inherit; font-size: 15px; font-weight: 600; background: #FFFFFF; color: #A02A1A; border: 1px solid #E3B5AD; border-radius: 10px; min-height: 48px; cursor: pointer">Delete my vault</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#2446C7","options":["#2446C7","#0F6E6E","#5B3FB5","#14171A"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      accent: this.props.accent ?? '#2446C7',
+      links: [
+        { t: 'Public profile', d: 'Summary, what you offer, what you seek', href: 'MClaim.dc.html' },
+        { t: 'Sources', d: 'OpenAlex A5059588273 · ORCID matched · synced today', href: 'MClaim.dc.html' },
+        { t: 'Private vault', d: '12 files · encrypted', href: 'MUpload.dc.html' },
+        { t: 'Notifications', d: 'Opportunities, matches, runs', href: 'MProfile.dc.html' }
+      ],
+      privacy: [
+        { t: 'Suggest me as a match', d: 'Anonymous until both accept', on: true, locked: false },
+        { t: 'Use vault topics for matching', d: 'Topics only, never file contents', on: true, locked: false },
+        { t: 'Show me on reach maps', d: 'As an institution dot', on: true, locked: false },
+        { t: 'Train AI on my documents', d: 'Always off', on: false, locked: true }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+{
+ "id": "https://openalex.org/A5033675494",
+ "display_name": "Raphaell Moreira",
+ "orcid": "https://orcid.org/0000-0001-6636-725X",
+ "works_count": 30,
+ "cited_by_count": 1044,
+ "summary_stats": {
+  "h_index": 10
+ },
+ "last_known_institutions": [
+  {
+   "id": "https://openalex.org/I141945490",
+   "display_name": "University of British Columbia",
+   "country_code": "CA"
+  },
+  {
+   "id": "https://openalex.org/I180437899",
+   "display_name": "University of Bremen",
+   "country_code": "DE"
+  },
+  {
+   "id": "https://openalex.org/I4210105683",
+   "display_name": "Universidade Regional de Blumenau",
+   "country_code": "BR"
+  }
+ ],
+ "topics": [
+  {
+   "id": "https://openalex.org/T10192",
+   "display_name": "Catalytic Processes in Materials Science",
+   "subfield": {
+    "display_name": "Materials Chemistry"
+   },
+   "count": 6
+  },
+  {
+   "id": "https://openalex.org/T10078",
+   "display_name": "Advanced Photocatalysis Techniques",
+   "subfield": {
+    "display_name": "Renewable Energy, Sustainability and the Environment"
+   },
+   "count": 4
+  },
+  {
+   "id": "https://openalex.org/T10210",
+   "display_name": "Advanced oxidation water treatment",
+   "subfield": {
+    "display_name": "Water Science and Technology"
+   },
+   "count": 4
+  },
+  {
+   "id": "https://openalex.org/T10024",
+   "display_name": "TiO2 Photocatalysis and Solar Cells",
+   "subfield": {
+    "display_name": "Renewable Energy, Sustainability and the Environment"
+   },
+   "count": 3
+  },
+  {
+   "id": "https://openalex.org/T10030",
+   "display_name": "Electrocatalysts for Energy Conversion",
+   "subfield": {
+    "display_name": "Renewable Energy, Sustainability and the Environment"
+   },
+   "count": 3
+  }
+ ]
+}

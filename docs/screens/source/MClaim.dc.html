@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lattice Scout mobile — Claim profile</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F3F4F1}
+a{color:#2446C7}a:hover{color:#16308F}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; overflow: hidden; display: flex; flex-direction: column; background: #F3F4F1; font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #14171A">
+<div style="flex-shrink: 0; background: #FFFFFF; border-bottom: 1px solid #D9DCD6; padding: 12px 16px; display: flex; align-items: center; gap: 12px">
+<a href="MLogin.dc.html" aria-label="Back" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #14171A"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 13px; color: #555C63">Step 1 of 3</span>
+<span style="height: 4px; background: #E6E8E3; border-radius: 999px; overflow: hidden"><span style="display: block; width: 33%; height: 100%; background: {{accent}}"></span></span>
+</span>
+<a href="MHome.dc.html" style="font-size: 14px; color: #555C63; text-decoration: none; padding: 10px 4px">Skip</a>
+</div>
+
+<div style="flex-grow: 1; overflow-y: auto; padding: 20px 16px; display: flex; flex-direction: column; gap: 16px">
+<h1 style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: 28px">Is this you, Johan?</h1>
+<div style="display: flex; gap: 12px; align-items: flex-start; background: #F4F1FB; border: 1px solid #D9CFF0; border-radius: 12px; padding: 14px">
+<span style="flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: #5B3FB5; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path></svg></span>
+<span style="font-size: 14px; line-height: 1.5"><b style="color: #4A2F9A">159 works, 9,970 citations</b> in OpenAlex. I merged 2 split profiles and unticked 1 that may be a namesake.</span>
+</div>
+
+<div style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 16px; display: flex; gap: 12px; align-items: center">
+<span style="width: 52px; height: 52px; border-radius: 50%; background: {{accent}}; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 600">JF</span>
+<span style="display: flex; flex-direction: column; gap: 2px"><b style="font-size: 17px">Dr. E. Johan Foster</b><span style="font-size: 13px; color: #555C63">UBC · Bio-based materials · h-index 50</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #555C63">ORCID 0000-0002-4103-8510</span></span>
+</div>
+
+<div style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 4px 16px">
+<sc-for list="{{works}}" as="w" hint-placeholder-count="5">
+<label style="display: flex; gap: 12px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid #ECEEE9; cursor: pointer">
+<input type="checkbox" defaultChecked="{{w.on}}" style="width: 22px; height: 22px; margin: 0; flex-shrink: 0; accent-color: {{accent}}">
+<span style="display: flex; flex-direction: column; gap: 3px"><span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 16px; font-weight: 600; line-height: 1.3">{{w.title}}</span><span style="font-size: 12px; color: #555C63">{{w.meta}}</span></span>
+</label>
+</sc-for>
+<button type="button" style="font: inherit; font-size: 14px; font-weight: 600; background: transparent; color: {{accent}}; border: 0; min-height: 44px; cursor: pointer">Show all 159</button>
+</div>
+
+<label style="display: flex; gap: 12px; align-items: center; justify-content: space-between; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 14px 16px; cursor: pointer">
+<span style="display: flex; flex-direction: column; gap: 2px"><b style="font-size: 15px">Suggest me as a match</b><span style="font-size: 13px; color: #555C63">Anonymous until you both accept</span></span>
+<input type="checkbox" checked style="width: 24px; height: 24px; accent-color: #0F6E6E; flex-shrink: 0">
+</label>
+</div>
+
+<div style="flex-shrink: 0; background: #FFFFFF; border-top: 1px solid #D9DCD6; padding: 12px 16px 20px">
+<a href="MUpload.dc.html" style="display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 600; background: {{accent}}; color: #FFFFFF; text-decoration: none; border-radius: 10px; min-height: 52px">Confirm 159 works</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#2446C7","options":["#2446C7","#0F6E6E","#5B3FB5","#14171A"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      accent: this.props.accent ?? '#2446C7',
+      works: [
+        { on: true, title: 'Current characterization methods for cellulose nanomaterials', meta: 'Chem. Soc. Rev. · 2018 · 1,025 citations' },
+        { on: true, title: 'Recent advances in nanocellulose for biomedical applications', meta: 'J. Appl. Polym. Sci. · 2014 · 738 citations' },
+        { on: true, title: 'Isolation of Thermally Stable Cellulose Nanocrystals by Phosphoric Acid Hydrolysis', meta: 'Biomacromolecules · 2013 · 665 citations' },
+        { on: false, title: '2 works on membrane separation and solar water purification', meta: '“Johan Foster” profile · no ORCID — possibly a namesake' },
+        { on: true, title: 'Lignin Type and Content Influence the Foaming Dynamics and Properties of Flexible Polyurethane Foams', meta: 'ACS Appl. Polym. Mater. · 2026' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

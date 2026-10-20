@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lattice Scout — Web app walkthrough</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1280px; height: 720px; position: relative; overflow: hidden; background: #101316; font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #14171A">
+
+<div style="position: absolute; left: 50px; top: 22px; right: 50px; display: flex; align-items: baseline; gap: 16px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #C9BCE8">{{cap.n}}</span>
+<span style="font-size: 24px; font-weight: 600; color: #F3F4F1">{{cap.title}}</span>
+<span style="font-size: 16px; color: #A8AEA6; flex-grow: 1">{{cap.sub}}</span>
+<span style="font-size: 13px; font-weight: 600; color: #8F968D">Lattice Scout · web app</span>
+</div>
+
+<div style="position: absolute; left: 50px; top: 70px; width: 1180px; height: 560px; background: #F3F4F1; border-radius: 10px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.45)">
+<div style="position: absolute; left: 0; top: 0; width: 1180px; height: 32px; background: #E6E8E3; display: flex; align-items: center; gap: 8px; padding: 0 14px; box-sizing: border-box">
+<span style="width: 10px; height: 10px; border-radius: 50%; background: #C4C8C1"></span><span style="width: 10px; height: 10px; border-radius: 50%; background: #C4C8C1"></span><span style="width: 10px; height: 10px; border-radius: 50%; background: #C4C8C1"></span>
+<span style="margin-left: 16px; background: #FFFFFF; border-radius: 6px; padding: 3px 14px; font-size: 12px; color: #555C63; font-family: 'IBM Plex Mono', monospace; min-width: 360px">scout.latticepress.org/{{cap.url}}</span>
+</div>
+
+<div style="position: absolute; left: 0; top: 32px; width: 1180px; height: 528px; overflow: hidden">
+
+<sc-if value="{{f.s0}}" hint-placeholder-val="{{ true }}">
+<div style="position: absolute; inset: 0">
+<div style="position: absolute; left: 0; top: 0; width: 560px; height: 528px; background: #FFFFFF; border-right: 1px solid #D9DCD6">
+<div style="position: absolute; left: 44px; top: 36px; display: flex; gap: 10px; align-items: center"><svg width="26" height="26" viewBox="0 0 28 28" fill="none" stroke="#2446C7" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="22" height="22"></rect><path d="M3 14h22M14 3v22"></path><circle cx="14" cy="14" r="3" fill="#5B3FB5" stroke="#5B3FB5"></circle></svg><b style="font-size: 18px">Lattice Scout</b></div>
+<div style="position: absolute; left: 44px; top: 140px; width: 470px; transition: opacity .8s ease, transform .8s ease; {{a.s0h}}"><span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 40px; font-weight: 600; line-height: 1.12">Find the paper hiding in your drawer.</span></div>
+<div style="position: absolute; left: 44px; top: 262px; width: 460px; font-size: 16px; line-height: 1.55; color: #3A4047; transition: opacity .8s ease, transform .8s ease; {{a.s0p}}">Upload unpublished results, funded and declined grants. Scout reads them against the literature and your papers — and finds who could do the next step with you.</div>
+<div style="position: absolute; left: 44px; top: 380px; display: flex; flex-direction: column; gap: 10px; font-size: 14px; color: #3A4047; transition: opacity .8s ease, transform .8s ease; {{a.s0b}}"><span>· A private vault for what never got published</span><span>· An AI scout with a team of sub-agents</span><span>· Anonymous matching, revealed only on a mutual yes</span></div>
+</div>
+<div style="position: absolute; left: 690px; top: 70px; width: 400px; height: 360px; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px">
+<sc-if value="{{f.s0email}}" hint-placeholder-val="{{ true }}">
+<div style="position: absolute; inset: 0">
+<div style="position: absolute; left: 0; right: 0; top: 24px; text-align: center; font-size: 20px; font-weight: 600">Sign in or create an account</div>
+<div style="position: absolute; left: 28px; right: 28px; top: 70px; height: 42px; border: 1px solid #C4C8C1; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 15px; font-weight: 600"><span style="width: 20px; height: 20px; border-radius: 50%; background: #A6CE39; color: #FFFFFF; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center">iD</span>Continue with ORCID</div>
+<div style="position: absolute; left: 28px; right: 28px; top: 122px; height: 42px; border: 1px solid #C4C8C1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600">Continue with Google</div>
+<div style="position: absolute; left: 28px; right: 28px; top: 178px; display: flex; gap: 10px; align-items: center; font-size: 12px; color: #6B7178"><span style="flex-grow: 1; height: 1px; background: #D9DCD6"></span>or with email<span style="flex-grow: 1; height: 1px; background: #D9DCD6"></span></div>
+<div style="position: absolute; left: 28px; top: 200px; font-size: 13px; font-weight: 600">Work email</div>
+<div style="position: absolute; left: 28px; right: 28px; top: 220px; height: 44px; box-sizing: border-box; border-radius: 6px; padding: 0 12px; display: flex; align-items: center; font-size: 15px; {{pr.input}}">{{ty.email}}<span style="width: 1px; height: 18px; margin-left: 1px; {{pr.caret}}"></span></div>
+<div style="position: absolute; left: 28px; right: 28px; top: 280px; height: 46px; border-radius: 8px; background: #2446C7; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; transition: transform .2s ease, filter .2s ease; {{pr.cont}}">Continue</div>
+</div>
+</sc-if>
+<sc-if value="{{f.s0sent}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 40px 30px; box-sizing: border-box; text-align: center">
+<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#2446C7" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 7l9 6 9-6"></path></svg>
+<b style="font-size: 21px">Check your email</b>
+<span style="font-size: 14px; color: #3A4047; line-height: 1.5">Sign-in link sent to johan.foster@university.edu</span>
+<span style="display: flex; gap: 8px; align-items: center; font-size: 13px; color: #4A2F9A; background: #EEE9F8; border-radius: 999px; padding: 6px 12px; transition: opacity .7s ease, transform .7s ease; {{a.s0chip}}"><span style="width: 8px; height: 8px; border-radius: 50%; background: #5B3FB5"></span>Scout is finding your public work in OpenAlex…</span>
+<span style="font-size: 14px; font-weight: 600; background: #2446C7; color: #FFFFFF; border-radius: 6px; padding: 11px 18px; transition: opacity .7s ease, transform .7s ease; {{a.s0open}}">Open link</span>
+</div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{f.s1}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0">
+<div style="position: absolute; left: 40px; top: 22px; font-family: 'Source Serif 4', Georgia, serif; font-size: 30px; font-weight: 600; transition: opacity .7s ease, transform .7s ease; {{a.s1h}}">Is this you, Johan?</div>
+<div style="position: absolute; left: 40px; top: 76px; width: 1100px; height: 56px; box-sizing: border-box; background: #F4F1FB; border: 1px solid #D9CFF0; border-radius: 10px; display: flex; align-items: center; gap: 12px; padding: 0 16px; font-size: 14px; transition: opacity .7s ease, transform .7s ease; {{a.s1b}}"><span style="width: 28px; height: 28px; border-radius: 50%; background: #5B3FB5; flex-shrink: 0"></span><span><b style="color: #4A2F9A">159 works in OpenAlex, cited 9,970 times, under 11 spellings of your name.</b> I merged 2 split profiles that share your ORCID; 1 is uncertain.</span></div>
+<div style="position: absolute; left: 40px; top: 150px; width: 300px; height: 300px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 14px; transition: opacity .7s ease, transform .7s ease; {{a.s1p}}">
+<span style="display: flex; gap: 12px; align-items: center"><span style="width: 50px; height: 50px; border-radius: 50%; background: #2446C7; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 18px">JF</span><span style="display: flex; flex-direction: column"><b style="font-size: 17px">Dr. E. Johan Foster</b><span style="font-size: 13px; color: #555C63">University of British Columbia</span></span></span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #555C63">ORCID 0000-0002-4103-8510</span>
+<span style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; border-top: 1px solid #ECEEE9; padding-top: 14px">
+<span style="display: flex; flex-direction: column"><b style="font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 500">{{cn.works}}</b><span style="font-size: 12px; color: #555C63">works</span></span>
+<span style="display: flex; flex-direction: column"><b style="font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 500">{{cn.cites}}</b><span style="font-size: 12px; color: #555C63">citations</span></span>
+<span style="display: flex; flex-direction: column"><b style="font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 500">{{cn.h}}</b><span style="font-size: 12px; color: #555C63">h-index</span></span>
+</span>
+<span style="font-size: 13px; color: #3A4047; line-height: 1.5">Cellulose nanomaterials · lignin &amp; wood chemistry · nanocomposites · membranes</span>
+</div>
+<div style="position: absolute; left: 370px; top: 150px; width: 770px; height: 300px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 14px 20px">
+<b style="font-size: 15px">Publications &amp; outputs</b>
+<sc-for list="{{works}}" as="w" hint-placeholder-count="5">
+<div style="display: flex; gap: 12px; align-items: center; height: 52px; border-top: 1px solid #ECEEE9; transition: opacity .6s ease, transform .6s ease; {{w.vis}}">
+<span style="width: 18px; height: 18px; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: background .3s ease; {{w.box}}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg></span>
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{w.t}}</span><span style="font-size: 12px; color: #555C63">{{w.m}}</span></span>
+<span style="{{w.chip}}">{{w.k}}</span>
+</div>
+</sc-for>
+</div>
+<div style="position: absolute; left: 890px; top: 468px; width: 250px; height: 44px; border-radius: 8px; background: #2446C7; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; transition: opacity .7s ease, transform .2s ease, filter .2s ease; {{a.s1btn}} {{pr.confirm}}">Confirm 159 works</div>
+</div>
+</sc-if>
+
+<sc-if value="{{f.s2}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0">
+<div style="position: absolute; left: 40px; top: 18px; display: flex; gap: 12px; align-items: center; transition: opacity .7s ease, transform .7s ease; {{a.s2h}}"><b style="font-size: 26px">Private vault</b><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; background: #FBF0E4; color: #7A3A06">Sample files · demo</span><span style="font-size: 13px; color: #555C63">Encrypted · never used for training</span></div>
+<div style="position: absolute; left: 40px; top: 64px; width: 1100px; height: 100px; box-sizing: border-box; background: #FFFFFF; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; transition: border-color .4s ease, background .4s ease; {{pr.drop}}">
+<b style="font-size: 16px">Drop grants, proposals, results and data here</b>
+<span style="display: flex; gap: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #3A4047"><span style="background: #F1F2EF; padding: 3px 7px; border-radius: 4px">PDF</span><span style="background: #F1F2EF; padding: 3px 7px; border-radius: 4px">DOCX</span><span style="background: #F1F2EF; padding: 3px 7px; border-radius: 4px">XLSX</span><span style="background: #F1F2EF; padding: 3px 7px; border-radius: 4px">PPTX</span><span style="background: #F1F2EF; padding: 3px 7px; border-radius: 4px">HEIC</span></span>
+</div>
+<sc-for list="{{files}}" as="x" hint-placeholder-count="4">
+<div style="position: absolute; left: 40px; width: 1100px; height: 52px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 10px; display: flex; align-items: center; gap: 14px; padding: 0 16px; transition: opacity .6s ease, transform .6s ease; {{x.pos}} {{x.vis}}">
+<span style="width: 44px; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; padding: 4px 0; border-radius: 4px; background: #F1F2EF">{{x.fmt}}</span>
+<span style="flex-grow: 1; font-size: 14px; font-weight: 600">{{x.name}}</span>
+<span style="font-size: 12px; color: #555C63; transition: opacity .6s ease; {{x.foundVis}}">{{x.found}}</span>
+<span style="transition: opacity .6s ease; {{x.chipVis}} {{x.chip}}">{{x.kind}}</span>
+</div>
+</sc-for>
+<div style="position: absolute; left: 40px; top: 440px; width: 820px; height: 44px; box-sizing: border-box; background: #F4F1FB; border-radius: 10px; display: flex; align-items: center; gap: 10px; padding: 0 14px; font-size: 14px; transition: opacity .7s ease, transform .7s ease; {{a.s2note}}"><span style="width: 22px; height: 22px; border-radius: 50%; background: #5B3FB5"></span><span><b style="color: #4A2F9A">4 files read.</b> Here's what I think they are — correct me before I start the analysis.</span></div>
+<div style="position: absolute; left: 900px; top: 438px; width: 240px; height: 48px; border-radius: 8px; background: #5B3FB5; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; transition: opacity .7s ease, transform .2s ease, filter .2s ease; {{a.s2btn}} {{pr.analyse}}">Analyse with Scout</div>
+</div>
+</sc-if>
+
+<sc-if value="{{f.s3}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0">
+<div style="position: absolute; left: 40px; top: 18px; font-size: 24px; font-weight: 600; transition: opacity .7s ease, transform .7s ease; {{a.s3h}}">Scout is analysing 12 documents</div>
+<div style="position: absolute; left: 40px; top: 62px; width: 1100px; height: 10px; background: #EEE9F8; border-radius: 999px; overflow: hidden"><div style="height: 100%; background: #5B3FB5; border-radius: 999px; transition: width 6.5s linear; {{gw.total}}"></div></div>
+<div style="position: absolute; left: 40px; top: 80px; font-size: 13px; color: #3A4047; transition: opacity .7s ease; {{a.s3stat}}"><b style="font-family: 'IBM Plex Mono', monospace">{{cn.papers}}</b> papers screened · 8 agents · about 12 minutes left</div>
+<sc-for list="{{agents}}" as="g" hint-placeholder-count="8">
+<div style="position: absolute; left: 40px; width: 520px; height: 42px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #E1E3DE; border-radius: 8px; display: flex; align-items: center; gap: 12px; padding: 0 14px; transition: opacity .6s ease, transform .6s ease; {{g.pos}} {{g.vis}}">
+<b style="width: 96px; font-size: 14px">{{g.name}}</b>
+<span style="flex-grow: 1; height: 6px; background: #ECEEE9; border-radius: 999px; overflow: hidden"><span style="display: block; height: 100%; transition: width 3.2s ease; {{g.bar}}"></span></span>
+<span style="width: 70px; text-align: right; font-size: 12px; color: #3A4047">{{g.state}}</span>
+</div>
+</sc-for>
+<div style="position: absolute; left: 600px; top: 112px; width: 540px; height: 384px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 14px 18px; transition: opacity .7s ease; {{a.s3log}}">
+<span style="display: flex; justify-content: space-between"><b style="font-size: 14px">Literature agent · live log</b><span style="font-size: 12px; color: #4A2F9A">● live</span></span>
+<sc-for list="{{logs}}" as="l" hint-placeholder-count="6">
+<div style="display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid #F1F2EF; font-size: 13px; line-height: 1.45; transition: opacity .6s ease, transform .6s ease; {{l.vis}}"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #555C63; flex-shrink: 0; padding-top: 2px">{{l.t}}</span><span>{{l.m}}</span></div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{f.s4}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0">
+<div style="position: absolute; left: 40px; top: 18px; display: flex; gap: 14px; align-items: baseline; transition: opacity .7s ease, transform .7s ease; {{a.s4h}}"><b style="font-size: 26px">Opportunities</b><span style="font-size: 14px; color: #3A4047">11 ideas from run #7 · each cites its sources</span></div>
+<div style="position: absolute; left: 40px; top: 70px; width: 400px; height: 410px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; transition: opacity .7s ease; {{a.s4chart}}">
+<b style="position: absolute; left: 18px; top: 14px; font-size: 14px">Where the ideas sit</b>
+<div style="position: absolute; left: 44px; top: 50px; width: 330px; height: 310px; border-left: 1px solid #C4C8C1; border-bottom: 1px solid #C4C8C1; background: #FAFBF8">
+<span style="position: absolute; left: 50%; top: 0; bottom: 0; border-left: 1px dashed #E1E3DE"></span><span style="position: absolute; top: 50%; left: 0; right: 0; border-top: 1px dashed #E1E3DE"></span>
+<span style="position: absolute; right: 8px; top: 6px; font-size: 11px; font-weight: 600; color: #0F5E5E">Sweet spot</span>
+<sc-for list="{{dots}}" as="d" hint-placeholder-count="6"><span style="position: absolute; width: 26px; height: 26px; border-radius: 50%; color: #FFFFFF; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 3px #FFFFFF; transition: opacity .5s ease, transform .5s ease; {{d.s}}">{{d.n}}</span></sc-for>
+</div>
+<span style="position: absolute; right: 26px; bottom: 22px; font-size: 11px; color: #555C63">Novelty →</span>
+<span style="position: absolute; left: 10px; top: 54px; font-size: 11px; color: #555C63; writing-mode: vertical-rl; transform: rotate(180deg)">Readiness →</span>
+</div>
+<sc-for list="{{opps}}" as="o" hint-placeholder-count="4">
+<div style="position: absolute; left: 470px; width: 670px; height: 94px; box-sizing: border-box; background: #FFFFFF; border-radius: 12px; padding: 12px 18px; display: flex; flex-direction: column; gap: 5px; transition: opacity .6s ease, transform .6s ease, border-color .3s ease, box-shadow .3s ease; {{o.pos}} {{o.vis}} {{o.hl}}">
+<span style="display: flex; justify-content: space-between; align-items: center"><span style="{{o.chip}}">{{o.kind}}</span><span style="font-size: 12px; color: #3A4047">fit <b style="font-family: 'IBM Plex Mono', monospace">{{o.fit}}</b></span></span>
+<span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 16px; font-weight: 600; line-height: 1.25">{{o.title}}</span>
+<span style="font-size: 12px; color: #555C63; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{o.why}}</span>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{f.s5}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0">
+<div style="position: absolute; left: 40px; top: 16px; width: 1100px; display: flex; flex-direction: column; gap: 8px; transition: opacity .7s ease, transform .7s ease; {{a.s5h}}">
+<span style="display: flex; gap: 8px"><span style="font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; background: #FBF0E4; color: #7A3A06">Resubmission</span><span style="font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; background: #E3F1EF; color: #0F5E5E">Verified · 12 sources</span></span>
+<span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 26px; font-weight: 600">Resubmit the declined lignin-polyurethane foam proposal with the new evidence</span>
+</div>
+<div style="position: absolute; left: 40px; top: 108px; width: 1100px; height: 66px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #D9CFF0; border-radius: 10px; display: flex; gap: 12px; align-items: center; padding: 0 16px; font-family: 'Source Serif 4', Georgia, serif; font-size: 15px; line-height: 1.45; transition: opacity .7s ease, transform .7s ease; {{a.s5why}}"><span style="width: 28px; height: 28px; border-radius: 50%; background: #5B3FB5; flex-shrink: 0"></span>Reviewers doubted lignin foams could meet seating specs and flagged batch variability. Your 2026 paper and the 48-foam compression series answer both.</div>
+<div style="position: absolute; left: 40px; top: 190px; width: 1100px; height: 312px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 12px 20px">
+<b style="font-size: 15px">Reviewer objections, re-checked</b>
+<sc-for list="{{objs}}" as="o" hint-placeholder-count="5">
+<div style="display: flex; gap: 14px; align-items: center; height: 54px; border-top: 1px solid #ECEEE9; transition: opacity .6s ease, transform .6s ease; {{o.vis}}">
+<span style="{{o.chip}}">{{o.st}}</span>
+<span style="flex-grow: 1; font-size: 14px; font-style: italic">“{{o.q}}”</span>
+<span style="font-size: 13px; font-weight: 600; color: #2446C7; padding: 5px 10px; border-radius: 6px; background: #F7F8F5; border: 1px solid #E1E3DE; transition: box-shadow .3s ease; {{o.hl}}">Evidence: {{o.ev}}</span>
+</div>
+</sc-for>
+</div>
+<div style="position: absolute; left: 640px; top: 290px; width: 420px; box-sizing: border-box; background: #14171A; color: #FFFFFF; border-radius: 8px; padding: 10px 14px; font-size: 13px; line-height: 1.45; box-shadow: 0 10px 30px rgba(0,0,0,0.3); transition: opacity .5s ease, transform .5s ease; {{a.s5tip}}">Opening <b>Lignin foam compression set 2026.xlsx</b> · sheet “summary” · rows 2–49</div>
+</div>
+</sc-if>
+
+<sc-if value="{{f.s6}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0">
+<div style="position: absolute; left: 40px; top: 16px; display: flex; gap: 14px; align-items: baseline; transition: opacity .7s ease, transform .7s ease; {{a.s6h}}"><b style="font-size: 26px">Matches</b><span style="font-size: 14px; color: #3A4047">Anonymous until you both say yes</span></div>
+<div style="position: absolute; left: 40px; top: 64px; width: 520px; height: 432px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 14px; padding: 22px 24px; display: flex; flex-direction: column; gap: 14px; transition: opacity .7s ease, transform .7s ease; {{a.s6card}}">
+<span style="display: flex; gap: 14px; align-items: center"><span style="width: 56px; height: 56px; border-radius: 50%; border: 2px dashed #0F6E6E; color: #0F5E5E; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; box-sizing: border-box">?</span><span style="flex-grow: 1; display: flex; flex-direction: column"><b style="font-family: 'Source Serif 4', Georgia, serif; font-size: 20px">Photocatalysis &amp; water treatment</b><span style="font-size: 13px; color: #3A4047">Anonymous · Europe · early-mid career</span></span><span style="display: flex; flex-direction: column; align-items: flex-end"><b style="font-family: 'IBM Plex Mono', monospace; font-size: 26px; color: #0F5E5E">{{cn.match}}</b><span style="font-size: 11px; color: #555C63">complementary</span></span></span>
+<span style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<span style="display: flex; flex-direction: column; gap: 6px; background: #E8ECFA; border-radius: 10px; padding: 12px; font-size: 13px; transition: opacity .6s ease, transform .6s ease; {{a.s6you}}"><b style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #16308F">YOU BRING</b>Fungal adsorption membrane<br>BDD electrochemistry for PFAS<br>Unpublished PFAS pilot data</span>
+<span style="display: flex; flex-direction: column; gap: 6px; background: #E3F1EF; border-radius: 10px; padding: 12px; font-size: 13px; transition: opacity .6s ease, transform .6s ease; {{a.s6them}}"><b style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #0F5E5E">THEY BRING</b>Graphenic photocatalysts<br>Visible-LED degradation<br>Catalyst synthesis</span>
+</span>
+<span style="font-size: 13px; color: #3A4047; display: flex; gap: 8px; align-items: center; transition: opacity .6s ease; {{a.s6lock}}">Name, contact and 2 joint opportunities unlock on a mutual yes</span>
+<span style="display: flex; gap: 10px; margin-top: auto">
+<span style="width: 200px; height: 46px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; transition: background .3s ease, transform .2s ease; {{pr.yes}}">{{yesLabel}}</span>
+<span style="width: 130px; height: 46px; border-radius: 8px; border: 1px solid #C4C8C1; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; color: #3A4047">Not now</span>
+</span>
+</div>
+<div style="position: absolute; left: 600px; top: 64px; width: 540px; height: 432px; box-sizing: border-box; background: #FFFFFF; border: 2px solid #0F6E6E; border-radius: 14px; overflow: hidden; transition: opacity .8s ease, transform .8s ease; {{a.s6mut}}">
+<div style="background: #0F6E6E; color: #FFFFFF; padding: 18px 22px; display: flex; gap: 14px; align-items: center"><span style="display: flex"><span style="width: 46px; height: 46px; border-radius: 50%; background: #2446C7; border: 3px solid #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 600">JF</span><span style="width: 46px; height: 46px; border-radius: 50%; background: #FFFFFF; color: #0F5E5E; border: 3px solid #FFFFFF; margin-left: -10px; display: flex; align-items: center; justify-content: center; font-weight: 700">RM</span></span><span style="display: flex; flex-direction: column"><b style="font-family: 'Source Serif 4', Georgia, serif; font-size: 22px">It's mutual</b><span style="font-size: 13px; color: #D3ECE9">Contacts shared · a familiar name</span></span></div>
+<div style="padding: 16px 22px; display: flex; flex-direction: column; gap: 8px">
+<b style="font-size: 18px">Dr. Raphaell Moreira</b>
+<span style="font-size: 13px; color: #3A4047">University of Bremen · previously UBC · 5 joint papers (2024–25)</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #555C63">ORCID 0000-0001-6636-725X · 30 works · 1,044 citations</span>
+<span style="margin-top: 6px; padding: 10px 12px; border: 1px solid #D9DCD6; border-radius: 8px; font-size: 13px"><b style="font-size: 11px; color: #0F5E5E; letter-spacing: 0.04em">JOINT PAPER</b><br><span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 15px; font-weight: 600">Capture-and-destroy: light-regenerable fungal membranes for PFAS</span></span>
+<b style="font-size: 14px; margin-top: 8px">How good was this match?</b>
+<span style="display: flex; gap: 4px; align-items: center">
+<sc-for list="{{stars}}" as="s" hint-placeholder-count="5"><span style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center"><svg width="28" height="28" viewBox="0 0 24 24" stroke="#B4570F" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true" style="transition: fill .25s ease; {{s.f}}"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"></path></svg></span></sc-for>
+<span style="font-size: 14px; color: #3A4047; padding-left: 8px; transition: opacity .5s ease; {{a.s6rate}}">Excellent · methods fit</span>
+</span>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{f.s7}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0">
+<div style="position: absolute; left: 40px; top: 18px; display: flex; gap: 12px; transition: opacity .7s ease, transform .7s ease; {{a.s7h}}">
+<span style="width: 250px; height: 66px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 10px; padding: 10px 14px; display: flex; flex-direction: column"><span style="font-size: 12px; color: #555C63">Countries citing you</span><b style="font-family: 'IBM Plex Mono', monospace; font-size: 24px; font-weight: 500">{{cn.countries}}</b></span>
+<span style="width: 250px; height: 66px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 10px; padding: 10px 14px; display: flex; flex-direction: column"><span style="font-size: 12px; color: #555C63">Citing works</span><b style="font-family: 'IBM Plex Mono', monospace; font-size: 24px; font-weight: 500">{{cn.citing}}</b></span>
+<span style="width: 250px; height: 66px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 10px; padding: 10px 14px; display: flex; flex-direction: column"><span style="font-size: 12px; color: #555C63">Citations</span><b style="font-family: 'IBM Plex Mono', monospace; font-size: 24px; font-weight: 500">{{cn.cit2}}</b></span>
+</div>
+<div style="position: absolute; left: 40px; top: 104px; width: 760px; height: 304px; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 10px; overflow: hidden">
+<img src="/_blob/5647a98e1f540297645e31d484158c68" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%">
+<svg viewBox="0 0 1000 400" preserveAspectRatio="none" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%" fill="none" stroke-width="1.6" stroke-linecap="round">
+<sc-for list="{{arcs}}" as="r" hint-placeholder-count="12"><path d="{{r.d}}" stroke="{{r.c}}" style="transition: opacity .8s ease; {{r.o}}"></path></sc-for>
+</svg>
+<sc-for list="{{pins}}" as="p" hint-placeholder-count="12"><span style="position: absolute; transform: translate(-50%, -50%); border-radius: 50%; border: 2px solid #FFFFFF; transition: opacity .5s ease, box-shadow .3s ease; {{p.s}}"></span></sc-for>
+<span style="position: absolute; left: 15.8%; top: 24.6%; transform: translate(-50%, -50%); width: 16px; height: 16px; border-radius: 50%; background: #2446C7; border: 3px solid #FFFFFF; box-shadow: 0 0 0 3px #C9D3F2"></span>
+<span style="position: absolute; left: 12px; bottom: 10px; display: flex; gap: 12px; font-size: 11px; color: #3A4047; background: rgba(255,255,255,0.9); padding: 4px 8px; border-radius: 4px"><span>● <span style="color: #2446C7">co-authors</span></span><span>● <span style="color: #B4570F">citing you</span></span><span>● <span style="color: #0F6E6E">mutual match</span></span></span>
+</div>
+<div style="position: absolute; left: 830px; top: 104px; width: 310px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 6px; transition: opacity .7s ease, transform .7s ease; {{a.s7card}}">
+<span style="align-self: flex-start; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; background: #FBF0E4; color: #7A3A06">Cites your work</span>
+<b style="font-size: 17px">Beijing — Chinese Academy of Sciences</b>
+<span style="font-size: 13px; color: #3A4047; line-height: 1.45">152 citing works. China overall: 1,533 — your largest audience.</span>
+</div>
+<div style="position: absolute; left: 830px; top: 300px; width: 310px; box-sizing: border-box; background: #F4F1FB; border: 1px solid #D9CFF0; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 6px; transition: opacity .7s ease, transform .7s ease; {{a.s7note}}">
+<b style="font-size: 14px; color: #4A2F9A">Scout noticed</b>
+<span style="font-size: 13px; line-height: 1.5">Only 1 of your 159 works has a co-author in China, and none in India (552 citing works).</span>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{f.s8}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0">
+<div style="position: absolute; left: 140px; top: 16px; width: 900px; height: 412px; display: flex; flex-direction: column; gap: 14px">
+<div style="align-self: flex-end; max-width: 70%; background: #E8ECFA; border-radius: 14px 14px 4px 14px; padding: 10px 14px; display: flex; flex-direction: column; gap: 6px; transition: opacity .7s ease, transform .7s ease; {{a.s8voice}}">
+<span style="display: flex; gap: 10px; align-items: center"><span style="width: 32px; height: 32px; border-radius: 50%; background: #2446C7"></span><span style="display: flex; gap: 3px; align-items: center; height: 26px"><sc-for list="{{wave}}" as="w" hint-placeholder-count="26"><span style="{{w}}"></span></sc-for></span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #3A4047">0:11</span></span>
+<span style="font-size: 13px; color: #3A4047; font-style: italic">“Here's the whiteboard from this morning — does any of this connect?”</span>
+</div>
+<div style="align-self: flex-end; width: 260px; height: 130px; border-radius: 12px; background: #FFFFFF; border: 1px solid #D9DCD6; position: relative; overflow: hidden; transition: opacity .7s ease, transform .7s ease; {{a.s8photo}}">
+<svg width="260" height="130" viewBox="0 0 260 130" fill="none" stroke="#3A4047" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><rect x="18" y="20" width="80" height="54" rx="4"></rect><path d="M30 20v54M86 20v54M18 90h80"></path><path d="M122 26h112M122 46h90M122 66h104M122 86h76" stroke="#2446C7"></path><path d="M24 110c18-12 36 12 54 0s36 12 54 0" stroke="#B4570F"></path></svg>
+<span style="position: absolute; left: 8px; top: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #555C63; background: #F7F8F5; padding: 2px 5px; border-radius: 3px">IMG_2291.heic</span>
+</div>
+<div style="display: flex; gap: 12px; align-items: flex-start; max-width: 86%; transition: opacity .6s ease; {{a.s8dots}}"><span style="width: 32px; height: 32px; border-radius: 50%; background: #5B3FB5; flex-shrink: 0"></span><span style="display: flex; gap: 5px; padding: 12px 0"><span style="width: 8px; height: 8px; border-radius: 50%; background: #5B3FB5"></span><span style="width: 8px; height: 8px; border-radius: 50%; background: #8F79D6"></span><span style="width: 8px; height: 8px; border-radius: 50%; background: #C9BCE8"></span></span></div>
+<div style="display: flex; gap: 12px; align-items: flex-start; max-width: 86%; transition: opacity .6s ease; {{a.s8ans}}"><span style="width: 32px; height: 32px; border-radius: 50%; background: #5B3FB5; flex-shrink: 0"></span><span style="display: flex; flex-direction: column; gap: 10px"><span style="font-size: 15px; line-height: 1.6; background: #FFFFFF; border: 1px solid #E1E3DE; border-radius: 4px 14px 14px 14px; padding: 12px 14px; min-height: 24px">{{ty.ans}}</span><span style="display: flex; gap: 8px; transition: opacity .6s ease; {{a.s8chips}}"><span style="font-size: 12px; font-weight: 600; color: #4A2F9A; border: 1px solid #D9CFF0; background: #FFFFFF; border-radius: 6px; padding: 7px 10px">Save photo to vault</span><span style="font-size: 12px; font-weight: 600; color: #4A2F9A; border: 1px solid #D9CFF0; background: #FFFFFF; border-radius: 6px; padding: 7px 10px">Draft a note to Raphaell</span></span></span></div>
+</div>
+<div style="position: absolute; left: 140px; top: 446px; width: 900px; height: 56px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #C9BCE8; border-radius: 14px; display: flex; align-items: center; gap: 10px; padding: 0 10px; font-size: 15px; color: #6B7178">
+<span style="width: 38px; height: 38px; border-radius: 10px; background: #F1F2EF"></span><span style="width: 38px; height: 38px; border-radius: 10px; background: #F1F2EF"></span>
+<span style="flex-grow: 1">Ask about your work, an idea, a paper…</span>
+<span style="width: 38px; height: 38px; border-radius: 10px; background: #F4F1FB"></span><span style="width: 38px; height: 38px; border-radius: 10px; background: #5B3FB5"></span>
+</div>
+</div>
+</sc-if>
+</div>
+
+<div style="{{cursorStyle}}"><svg width="22" height="26" viewBox="0 0 22 26" aria-hidden="true"><path d="M2 2 L2 20 L7 15.5 L10.5 23.5 L13.6 22.2 L10.2 14.4 L17 14 Z" fill="#14171A" stroke="#FFFFFF" stroke-width="1.5" stroke-linejoin="round"></path></svg><span style="{{dragStyle}}">4 files</span></div>
+<span style="{{ringStyle}}"></span>
+</div>
+
+<div style="position: absolute; left: 50px; top: 646px; width: 1180px; display: flex; align-items: center; gap: 10px">
+<button type="button" onClick="{{toggle}}" style="font: inherit; font-size: 13px; font-weight: 600; width: 76px; min-height: 36px; border-radius: 8px; border: 0; background: #F3F4F1; color: #14171A; cursor: pointer">{{playLabel}}</button>
+<button type="button" onClick="{{restart}}" style="font: inherit; font-size: 13px; min-height: 36px; padding: 0 12px; border-radius: 8px; border: 1px solid #3A4047; background: transparent; color: #C4C8C1; cursor: pointer">Restart</button>
+<div style="display: flex; gap: 4px; flex-grow: 1; overflow: hidden">
+<sc-for list="{{chips}}" as="c" hint-placeholder-count="9"><button type="button" onClick="{{c.go}}" style="{{c.style}}">{{c.label}}</button></sc-for>
+</div>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #A8AEA6; white-space: nowrap">{{clock}}</span>
+</div>
+<div style="position: absolute; left: 50px; top: 694px; width: 1180px; height: 4px; background: #2A2E33; border-radius: 999px; overflow: hidden"><div style="{{progressStyle}}"></div></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"autoplay":{"editor":"boolean","default":true},"speed":{"editor":"range","default":1,"min":0.5,"max":1.5,"step":0.1},"$preview":{"width":1280,"height":720}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { t: 0, playing: null };
+  }
+  componentDidMount() {
+    this.last = performance.now();
+    this.timer = setInterval(() => {
+      const now = performance.now();
+      const dt = Math.min(0.5, (now - this.last) / 1000);
+      this.last = now;
+      const playing = this.state.playing ?? (this.props.autoplay ?? true);
+      if (!playing) return;
+      const total = this.D().reduce((s, d) => s + d, 0);
+      this.setState({ t: (this.state.t + dt * (this.props.speed ?? 1)) % total });
+    }, 50);
+  }
+  componentWillUnmount() { clearInterval(this.timer); }
+  D() { return [9, 9, 9, 9, 9, 9, 10, 9, 10]; }
+  renderVals() {
+    const D = this.D();
+    const t = this.state.t;
+    const playing = this.state.playing ?? (this.props.autoplay ?? true);
+    const starts = []; D.reduce((s, d) => { starts.push(s); return s + d; }, 0);
+    const total = D.reduce((s, d) => s + d, 0);
+    let si = 0; for (let i = 0; i < D.length; i++) { if (t >= starts[i]) si = i; }
+    const L = t - starts[si];
+    const VIS = 'opacity: 1; transform: none;', HID = 'opacity: 0; transform: translateY(12px);';
+    const on = (sc, s, e) => si === sc && L >= s && (e == null || L < e);
+    const ap = (sc, s, e) => on(sc, s, e) ? VIS : HID;
+    const typed = (sc, s, txt, cps) => si !== sc ? '' : txt.slice(0, Math.max(0, Math.min(txt.length, Math.floor((L - s) * cps))));
+    const count = (sc, s, d, v, suf) => { const f = si !== sc ? 0 : Math.max(0, Math.min(1, (L - s) / d)); const e = 1 - Math.pow(1 - f, 3); return Math.round(v * e).toLocaleString('en-US') + (suf || ''); };
+    const press = (sc, s) => on(sc, s, s + 0.35) ? 'transform: scale(0.96); filter: brightness(0.9);' : '';
+    const chip = (bg, fg) => 'flex-shrink: 0; font-size: 11px; font-weight: 600; letter-spacing: 0.03em; padding: 3px 8px; border-radius: 4px; white-space: nowrap; background: ' + bg + '; color: ' + fg + ';';
+
+    const caps = [
+      { n: '01 / 09', title: 'Sign in', sub: 'ORCID, institutional login, Google or an email link.', url: 'sign-in', chip: 'Sign in' },
+      { n: '02 / 09', title: 'Your profile builds itself', sub: 'Scout pulls public work from OpenAlex — you confirm what is yours.', url: 'onboarding', chip: 'Profile' },
+      { n: '03 / 09', title: 'A private vault', sub: 'Drop declined grants, proposals and unpublished data. Scout sorts them.', url: 'vault', chip: 'Vault' },
+      { n: '04 / 09', title: 'Scout and its sub-agents', sub: 'Eight agents read your files and the literature in parallel.', url: 'runs/7', chip: 'Agents' },
+      { n: '05 / 09', title: 'Opportunities', sub: 'White spots, synergies, resubmissions and funding calls — ranked by fit.', url: 'opportunities', chip: 'Ideas' },
+      { n: '06 / 09', title: 'Evidence for every claim', sub: 'Each reviewer objection is re-checked and linked to its source.', url: 'opportunities/1', chip: 'Evidence' },
+      { n: '07 / 09', title: 'Matching, double opt-in', sub: 'Anonymous until both say yes — then contacts and joint ideas appear.', url: 'matches', chip: 'Match' },
+      { n: '08 / 09', title: 'Your reach', sub: 'Who cites you and works with you, on a world map. (OpenAlex data.)', url: 'reach', chip: 'Reach' },
+      { n: '09 / 09', title: 'Ask Scout — text, voice, photo', sub: 'Talk an idea through or show Scout a whiteboard.', url: 'assistant', chip: 'Ask Scout' }
+    ];
+
+    const cur = [
+      [[0, 980, 480], [1.0, 890, 344], [4.9, 890, 405], [7.2, 890, 356]],
+      [[0, 760, 420], [6.0, 1015, 522]],
+      [[0, 260, 470], [0.3, 590, 150], [3.0, 760, 400], [5.0, 1020, 492]],
+      [[0, 900, 470]],
+      [[0, 760, 470], [5.4, 820, 140]],
+      [[0, 760, 470], [5.2, 1010, 300]],
+      [[0, 500, 300], [2.2, 164, 485], [5.8, 700, 470], [6.6, 818, 386]],
+      [[0, 900, 470], [4.4, 665, 231]],
+      [[0, 1000, 520]]
+    ];
+    const clicks = [[[1.6, 890, 344], [5.6, 890, 405], [8.1, 890, 356]], [[7.2, 1015, 522]], [[6.3, 1020, 492]], [], [[7.0, 820, 140]], [[6.4, 1010, 300]], [[3.3, 164, 485], [7.0, 818, 386]], [[5.4, 665, 231]], []];
+    const fr = cur[si]; let cp = fr[0]; for (const k of fr) { if (L >= k[0]) cp = k; }
+    let ring = null; for (const c of clicks[si]) { if (L >= c[0] && L < c[0] + 0.5) ring = c; }
+
+    const f = {}; D.forEach((d, i) => { f['s' + i] = i === si; });
+    f.s0email = si === 0 && L < 6.0; f.s0sent = si === 0 && L >= 6.0;
+
+    const a = {
+      s0h: ap(0, 0.3), s0p: ap(0, 0.9), s0b: ap(0, 1.4), s0chip: ap(0, 6.7), s0open: ap(0, 7.3),
+      s1h: ap(1, 0.2), s1b: ap(1, 0.8), s1p: ap(1, 1.1), s1btn: ap(1, 5.4),
+      s2h: ap(2, 0.2), s2note: ap(2, 4.8), s2btn: ap(2, 4.8),
+      s3h: ap(3, 0.2), s3stat: ap(3, 0.6), s3log: ap(3, 0.8),
+      s4h: ap(4, 0.2), s4chart: ap(4, 0.5),
+      s5h: ap(5, 0.2), s5why: ap(5, 0.9), s5tip: ap(5, 6.7),
+      s6h: ap(6, 0.2), s6card: ap(6, 0.4), s6you: ap(6, 1.2), s6them: ap(6, 1.7), s6lock: ap(6, 2.2), s6mut: ap(6, 5.0), s6rate: ap(6, 8.4),
+      s7h: ap(7, 0.2), s7card: ap(7, 5.8), s7note: ap(7, 6.9),
+      s8voice: ap(8, 0.5), s8photo: ap(8, 1.6), s8dots: ap(8, 2.5, 3.6), s8ans: ap(8, 3.6), s8chips: ap(8, 9.2)
+    };
+    const ty = {
+      email: typed(0, 2.0, 'johan.foster@university.edu', 10),
+      ans: typed(8, 3.8, 'I read 5 ideas and a membrane sketch. Idea 3 — an LED strip behind the fungal membrane — is your capture-and-destroy concept. Raphaell Moreira’s visible-LED photocatalysts fit it directly.', 34)
+    };
+    const cn = {
+      works: count(1, 1.4, 1.8, 159), cites: count(1, 1.4, 2.2, 9970), h: count(1, 1.4, 1.6, 50),
+      papers: count(3, 0.6, 7.5, 1842),
+      match: count(6, 0.8, 1.4, 88, '%'),
+      countries: count(7, 0.4, 2.0, 109), citing: count(7, 0.4, 2.4, 6498), cit2: count(7, 0.4, 2.4, 9970)
+    };
+    const typing = on(0, 1.6, 4.9);
+    const pr = {
+      input: typing ? 'border: 2px solid #2446C7;' : 'border: 1px solid #C4C8C1;',
+      caret: typing && Math.floor(L * 2) % 2 === 0 ? 'background: #14171A;' : 'background: transparent;',
+      cont: press(0, 5.6),
+      confirm: press(1, 7.2),
+      drop: on(2, 0.4, 1.4) ? 'border: 2px dashed #2446C7; background: #EEF1FC;' : 'border: 2px dashed #A9B6E6; background: #FFFFFF;',
+      analyse: press(2, 6.3),
+      yes: on(6, 3.4) ? 'background: #E3F1EF; color: #0F5E5E;' + press(6, 3.3) : 'background: #0F6E6E; color: #FFFFFF;'
+    };
+    const gw = { total: 'width: ' + (on(3, 0.5) ? '68%' : '0%') + ';' };
+
+    const K = { gb: ['#FBF0E4', '#7A3A06'], ok: ['#E3F1EF', '#0F5E5E'], pu: ['#EEE9F8', '#4A2F9A'], bl: ['#E8ECFA', '#16308F'], gr: ['#F1F2EF', '#3A4047'] };
+    const works = [
+      ['Current characterization methods for cellulose nanomaterials', 'Chem. Soc. Rev. · 2018 · 1,025 citations', 'Review', 'bl'],
+      ['Isolation of Thermally Stable Cellulose Nanocrystals by Phosphoric Acid Hydrolysis', 'Biomacromolecules · 2013 · 665 citations', 'Article', 'bl'],
+      ['Lignin Type and Content Influence the Foaming Dynamics and Properties of Flexible PU Foams', 'ACS Appl. Polym. Mater. · 2026', 'Article', 'bl'],
+      ['2 works on membrane separation and solar water purification', '“Johan Foster” profile · no ORCID — possibly a namesake', 'Uncertain', 'gr'],
+      ['Robust ion-selective membrane from sulfonated cellulose nanofibers for Zn–I₂ flow batteries', 'J. Membrane Sci. · 2025', 'Article', 'bl']
+    ].map(([tt, m, k, c], i) => {
+      const s = 1.8 + i * 0.7; const ticked = i !== 3 && on(1, s + 0.5);
+      return { t: tt, m, k, chip: chip(K[c][0], K[c][1]), vis: ap(1, s), box: ticked ? 'background: #2446C7; border: 0;' : 'background: #FFFFFF; border: 2px solid #C4C8C1; box-sizing: border-box;' };
+    });
+    const files = [
+      ['PDF', 'Lignin-PU foams 2025 — proposal + reviewer reports.pdf', '3 reviewer reports · 5 objections', 'Declined grant', 'gb'],
+      ['XLSX', 'Lignin foam compression set 2026.xlsx', '48 foams · 4 lignin types', 'Unpublished results', 'pu'],
+      ['XLSX', 'CNF membrane Zn–I2 cycling 500 h.xlsx', '3 cells · 500 h', 'Unpublished results', 'pu'],
+      ['HEIC', 'IMG_2291.heic — whiteboard', 'Handwriting read · 5 ideas', 'Lab notes', 'gr']
+    ].map(([fmt, name, found, kind, c], i) => {
+      const s = 1.2 + i * 0.8;
+      return { fmt, name, found, kind, chip: chip(K[c][0], K[c][1]), pos: 'top: ' + (182 + i * 62) + 'px;', vis: ap(2, s), foundVis: on(2, s + 0.8) ? 'opacity: 1;' : 'opacity: 0;', chipVis: on(2, s + 1.1) ? 'opacity: 1;' : 'opacity: 0;' };
+    });
+    const agents = [['Ingest', 100, 'Done'], ['Profile', 100, 'Done'], ['Literature', 72, 'Running'], ['White spots', 40, 'Running'], ['Synergy', 55, 'Running'], ['Critic', 30, 'Running'], ['Funding', 6, 'Queued'], ['Matching', 4, 'Queued']].map(([name, p, st], i) => {
+      const s = 0.5 + i * 0.25;
+      return { name, state: st, pos: 'top: ' + (112 + i * 48) + 'px;', vis: ap(3, s), bar: 'width: ' + (on(3, s + 0.6) ? p : 0) + '%; background: ' + (st === 'Done' ? '#0F6E6E' : st === 'Queued' ? '#A9ADA6' : '#5B3FB5') + ';' };
+    });
+    const logs = [
+      ['21:39:31', 'Started from your 159 OpenAlex works and the 6,498 papers citing them'],
+      ['21:40:03', 'Excluded 38 retracted or predatory-venue papers'],
+      ['21:40:47', 'Pulled 214 new papers on lignin and nanocellulose'],
+      ['21:41:20', 'Expanded the search from the 5 reviewer objections in the foam proposal'],
+      ['21:41:52', 'Fewest papers: “PFAS capture + in-situ degradation in one membrane”'],
+      ['21:42:10', 'Query 14/22: lignin AND “polyurethane foam” AND flammab* — 6 relevant']
+    ].map(([tt, m], i) => ({ t: tt, m, vis: ap(3, 1.4 + i * 1.0) }));
+    const OC = { res: ['#FBF0E4', '#7A3A06', '#B4570F'], syn: ['#E3F1EF', '#0F5E5E', '#0F6E6E'], gap: ['#EEE9F8', '#4A2F9A', '#5B3FB5'], fund: ['#E8ECFA', '#16308F', '#2446C7'], col: ['#F1F2EF', '#3A4047', '#555C63'] };
+    const dotsData = [['res', 62, 84], ['syn', 80, 70], ['gap', 86, 62], ['fund', 40, 78], ['col', 74, 38], ['gap', 90, 24]];
+    const dots = dotsData.map(([k, x, y], i) => ({ n: String(i + 1), s: 'left: calc(' + x + '% - 13px); bottom: calc(' + y + '% - 13px); background: ' + OC[k][2] + '; ' + (on(4, 0.9 + i * 0.35) ? 'opacity: 1; transform: none;' : 'opacity: 0; transform: scale(0.4);') }));
+    const opps = [
+      ['res', 'Resubmission', '0.86', 'Resubmit the declined lignin-polyurethane foam proposal', 'Your 2026 paper and the compression series answer 2 of 5 objections.'],
+      ['syn', 'Synergy', '0.81', 'Capture-and-destroy PFAS membranes', 'Your fungal membrane (Chem. Eng. J. 2024) + R. Moreira’s photocatalysts (Commun. Eng. 2024).'],
+      ['gap', 'White spot', '0.77', 'CNF membranes for Zn–I₂ flow batteries beyond 500 h', 'Your unpublished cycling data is longer than any bio-based separator test reported.'],
+      ['fund', 'Funding call', '0.71', 'Bio-based materials call fits the EMI-shielding wood draft', 'Builds on Adv. Eng. Mater. 2026 · needs an industry partner.']
+    ].map(([k, kind, fit, title, why], i) => ({
+      kind, fit, title, why, chip: chip(OC[k][0], OC[k][1]), pos: 'top: ' + (70 + i * 106) + 'px;', vis: ap(4, 1.5 + i * 0.9),
+      hl: i === 0 && on(4, 5.8) ? 'border: 2px solid #2446C7; box-shadow: 0 6px 18px rgba(36,70,199,0.15);' : 'border: 2px solid #E1E3DE;'
+    }));
+    const objs = [
+      ['Answered', 'ok', 'Not shown to meet seating specifications', 'compression set 2026.xlsx'],
+      ['Answered', 'ok', 'Lignin batch variability not addressed', 'ACS Appl. Polym. Mater. 2026'],
+      ['Partly', 'gb', 'End-of-life not quantified', 'LCA paper (DOI)'],
+      ['Partly', 'gb', 'Scale-up pathway unclear', 'call text'],
+      ['Still open', 'gr', 'No flammability data', 'reviewer report 2, p. 3']
+    ].map(([st, c, q, ev], i) => ({ st, q, ev, chip: chip(K[c][0], K[c][1]) + ' width: 90px; text-align: center;', vis: ap(5, 1.7 + i * 0.6), hl: i === 0 && on(5, 5.6) ? 'box-shadow: 0 0 0 3px #C9D3F2;' : '' }));
+    const stars = [0, 1, 2, 3, 4].map((i) => ({ f: on(6, 7.2 + i * 0.22) ? 'fill: #E8A15C;' : 'fill: none;' }));
+    const C3 = { co: '#2446C7', cite: '#B4570F', match: '#0F6E6E' };
+    const P = [
+      ['co', 27.7, 32.9, 'M158 99Q217 84 277 132', 10], ['co', 52.0, 26.3, 'M158 99Q339 27 520 105', 10], ['co', 49.9, 54.7, 'M158 99Q329 87 499 219', 10],
+      ['cite', 82.3, 31.1, 'M158 99Q490 5 823 124', 20], ['cite', 50.7, 24.9, 'M158 99Q332 26 507 100', 16], ['cite', 71.6, 49.7, 'M158 99Q437 38 716 199', 16],
+      ['cite', 56.9, 17.1, 'M158 99Q363 5 569 68', 12], ['cite', 88.8, 34.0, 'M158 99Q523 5 888 136', 12], ['cite', 37.0, 74.9, 'M158 99Q264 151 370 299', 13],
+      ['cite', 78.2, 56.5, 'M158 99Q470 40 782 226', 13], ['cite', 92.0, 82.0, 'M158 99Q539 66 920 328', 12], ['match', 52.4, 22.0, 'M158 99Q341 17 524 88', 12]
+    ];
+    const arcs = P.map(([k, x, y, d], i) => ({ d, c: C3[k], o: on(7, 1.0 + i * 0.3) ? 'opacity: 0.6;' : 'opacity: 0;' }));
+    const pins = P.map(([k, x, y, d, sz], i) => ({ s: 'left: ' + x + '%; top: ' + y + '%; width: ' + sz + 'px; height: ' + sz + 'px; background: ' + C3[k] + '; ' + (on(7, 1.3 + i * 0.3) ? 'opacity: 1;' : 'opacity: 0;') + (i === 3 && on(7, 5.4) ? ' box-shadow: 0 0 0 3px #14171A;' : '') }));
+    const hs = [8, 14, 20, 12, 18, 24, 10, 16, 22, 18, 8, 12, 20, 24, 14, 10, 16, 22, 12, 8, 14, 20, 24, 14, 10, 16];
+    const wave = hs.map((v) => 'width: 3px; height: ' + v + 'px; border-radius: 2px; background: #2446C7;');
+
+    const chips = caps.map((c, i) => ({ label: c.chip, go: () => this.setState({ t: starts[i] + 0.01 }),
+      style: 'font: inherit; font-size: 12px; white-space: nowrap; border-radius: 999px; padding: 6px 10px; min-height: 30px; cursor: pointer; ' + (i === si ? 'background: #F3F4F1; color: #14171A; border: 1px solid #F3F4F1; font-weight: 600;' : 'background: transparent; color: #A8AEA6; border: 1px solid #3A4047;') }));
+    const mm = (x) => Math.floor(x / 60) + ':' + String(Math.floor(x % 60)).padStart(2, '0');
+    const dragging = si === 2 && L < 1.2;
+    return {
+      cap: caps[si], f, a, ty, cn, pr, gw, works, files, agents, logs, dots, opps, objs, stars, arcs, pins, wave, chips,
+      yesLabel: on(6, 3.4) ? 'You said yes ✓' : 'Yes, interested',
+      playLabel: playing ? 'Pause' : 'Play',
+      toggle: () => this.setState({ playing: !playing }),
+      restart: () => this.setState({ t: 0, playing: true }),
+      cursorStyle: 'position: absolute; z-index: 30; pointer-events: none; display: flex; align-items: flex-start; gap: 4px; transition: left 1.2s cubic-bezier(.45,0,.2,1), top 1.2s cubic-bezier(.45,0,.2,1); left: ' + cp[1] + 'px; top: ' + cp[2] + 'px;',
+      dragStyle: 'margin-top: 16px; font-size: 12px; font-weight: 600; background: #2446C7; color: #FFFFFF; border-radius: 6px; padding: 4px 8px; box-shadow: 0 6px 16px rgba(0,0,0,0.25); transition: opacity .4s ease; opacity: ' + (dragging ? 1 : 0) + ';',
+      ringStyle: 'position: absolute; z-index: 29; pointer-events: none; width: 36px; height: 36px; border-radius: 50%; border: 3px solid #5B3FB5; box-sizing: border-box; transition: opacity .25s ease, transform .4s ease; ' + (ring ? 'opacity: 1; transform: scale(1.2); left: ' + (ring[1] - 16) + 'px; top: ' + (ring[2] - 16) + 'px;' : 'opacity: 0; transform: scale(.4); left: 0px; top: 0px;'),
+      progressStyle: 'height: 100%; background: #C9BCE8; width: ' + (t / total * 100).toFixed(2) + '%;',
+      clock: mm(t) + ' / ' + mm(total)
+    };
+  }
+}
+</script>
+</body>
+</html>

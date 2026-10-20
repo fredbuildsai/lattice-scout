@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lattice Scout — Mobile app walkthrough</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1280px; height: 720px; position: relative; overflow: hidden; background: #101316; font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #14171A">
+
+<div style="position: absolute; left: 170px; top: 30px; width: 330px; height: 620px; border-radius: 46px; background: #1E2125; box-shadow: 0 30px 80px rgba(0,0,0,0.55), inset 0 0 0 2px #33373C"></div>
+<div style="position: absolute; left: 182px; top: 42px; width: 306px; height: 596px; border-radius: 36px; overflow: hidden; background: #F3F4F1">
+
+<sc-if value="{{f.s0}}" hint-placeholder-val="{{ true }}">
+<div style="position: absolute; inset: 0; background: #FFFFFF">
+<div style="position: absolute; left: 22px; top: 40px; display: flex; gap: 8px; align-items: center"><svg width="24" height="24" viewBox="0 0 28 28" fill="none" stroke="#2446C7" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="22" height="22"></rect><path d="M3 14h22M14 3v22"></path><circle cx="14" cy="14" r="3" fill="#5B3FB5" stroke="#5B3FB5"></circle></svg><b style="font-size: 16px">Lattice Scout</b></div>
+<sc-if value="{{f.s0email}}" hint-placeholder-val="{{ true }}">
+<div style="position: absolute; inset: 0">
+<div style="position: absolute; left: 22px; top: 86px; width: 262px; font-family: 'Source Serif 4', Georgia, serif; font-size: 26px; font-weight: 600; line-height: 1.15; transition: opacity .8s ease, transform .8s ease; {{a.s0h}}">Find the paper hiding in your drawer.</div>
+<div style="position: absolute; left: 22px; top: 182px; width: 262px; font-size: 13px; color: #3A4047; line-height: 1.5; transition: opacity .8s ease, transform .8s ease; {{a.s0p}}">Your unpublished work and grants, read by an AI scout.</div>
+<div style="position: absolute; left: 22px; top: 244px; width: 262px; height: 42px; border: 1px solid #C4C8C1; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; font-weight: 600"><span style="width: 18px; height: 18px; border-radius: 50%; background: #A6CE39; color: #FFFFFF; font-size: 8px; font-weight: 700; display: flex; align-items: center; justify-content: center">iD</span>Continue with ORCID</div>
+<div style="position: absolute; left: 22px; top: 294px; width: 262px; height: 42px; border: 1px solid #C4C8C1; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600">Continue with Google</div>
+<div style="position: absolute; left: 22px; top: 352px; font-size: 12px; font-weight: 600">Work email</div>
+<div style="position: absolute; left: 22px; top: 372px; width: 262px; height: 44px; box-sizing: border-box; border-radius: 8px; padding: 0 10px; display: flex; align-items: center; font-size: 14px; {{pr.input}}">{{ty.email}}<span style="width: 1px; height: 16px; {{pr.caret}}"></span></div>
+<div style="position: absolute; left: 22px; top: 428px; width: 262px; height: 48px; border-radius: 10px; background: #2446C7; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; transition: transform .2s ease, filter .2s ease; {{pr.cont}}">Continue</div>
+</div>
+</sc-if>
+<sc-if value="{{f.s0sent}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; left: 22px; right: 22px; top: 150px; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center">
+<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#2446C7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 7l9 6 9-6"></path></svg>
+<b style="font-size: 22px">Check your email</b>
+<span style="font-size: 13px; color: #3A4047; line-height: 1.5">Tap the link sent to johan.foster@university.edu</span>
+<span style="display: flex; gap: 6px; align-items: center; font-size: 12px; color: #4A2F9A; background: #EEE9F8; border-radius: 999px; padding: 6px 10px; transition: opacity .7s ease, transform .7s ease; {{a.s0chip}}"><span style="width: 7px; height: 7px; border-radius: 50%; background: #5B3FB5"></span>Finding your work in OpenAlex…</span>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{f.s1}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0">
+<div style="position: absolute; left: 0; top: 0; width: 306px; height: 64px; background: #FFFFFF; border-bottom: 1px solid #D9DCD6; display: flex; align-items: flex-end; padding: 0 16px 10px; box-sizing: border-box; gap: 10px"><span style="font-size: 12px; color: #555C63">Step 1 of 3</span><span style="flex-grow: 1; height: 4px; background: #E6E8E3; border-radius: 999px; overflow: hidden; margin-bottom: 5px"><span style="display: block; width: 33%; height: 100%; background: #2446C7"></span></span></div>
+<div style="position: absolute; left: 16px; top: 78px; font-family: 'Source Serif 4', Georgia, serif; font-size: 23px; font-weight: 600; transition: opacity .7s ease, transform .7s ease; {{a.s1h}}">Is this you, Johan?</div>
+<div style="position: absolute; left: 16px; top: 118px; width: 274px; box-sizing: border-box; background: #F4F1FB; border: 1px solid #D9CFF0; border-radius: 10px; padding: 10px 12px; font-size: 12px; line-height: 1.45; transition: opacity .7s ease, transform .7s ease; {{a.s1b}}"><b style="color: #4A2F9A">159 works · 9,970 citations</b> in OpenAlex. 2 split profiles merged, 1 uncertain.</div>
+<div style="position: absolute; left: 16px; top: 180px; width: 274px; height: 70px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 10px; padding: 0 12px; display: flex; gap: 10px; align-items: center; transition: opacity .7s ease, transform .7s ease; {{a.s1p}}"><span style="width: 42px; height: 42px; border-radius: 50%; background: #2446C7; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 600">JF</span><span style="display: flex; flex-direction: column; flex-grow: 1"><b style="font-size: 14px">Dr. E. Johan Foster</b><span style="font-size: 11px; color: #555C63">UBC · h-index {{cn.h}}</span></span><b style="font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 500">{{cn.works}}</b></div>
+<sc-for list="{{works}}" as="w" hint-placeholder-count="4">
+<div style="position: absolute; left: 16px; width: 274px; height: 56px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #E1E3DE; border-radius: 10px; padding: 0 12px; display: flex; gap: 10px; align-items: center; transition: opacity .6s ease, transform .6s ease; {{w.pos}} {{w.vis}}">
+<span style="width: 18px; height: 18px; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: background .3s ease; {{w.box}}"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg></span>
+<span style="display: flex; flex-direction: column; min-width: 0"><span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{w.t}}</span><span style="font-size: 11px; color: #555C63">{{w.m}}</span></span>
+</div>
+</sc-for>
+<div style="position: absolute; left: 16px; top: 528px; width: 274px; height: 48px; border-radius: 10px; background: #2446C7; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; transition: opacity .7s ease, transform .2s ease, filter .2s ease; {{a.s1btn}} {{pr.confirm}}">Confirm 159 works</div>
+</div>
+</sc-if>
+
+<sc-if value="{{f.s2}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0">
+<div style="position: absolute; left: 0; top: 0; width: 306px; height: 64px; background: #FFFFFF; border-bottom: 1px solid #D9DCD6; display: flex; align-items: flex-end; gap: 8px; padding: 0 14px 10px; box-sizing: border-box"><b style="font-size: 15px; flex-grow: 1">Lattice Scout</b><span style="font-size: 11px; font-weight: 600; color: #4A2F9A; background: #EEE9F8; border-radius: 999px; padding: 5px 8px">68%</span><span style="width: 30px; height: 30px; border-radius: 50%; background: #2446C7; color: #FFFFFF; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center">JF</span></div>
+<div style="position: absolute; left: 16px; top: 76px; font-family: 'Source Serif 4', Georgia, serif; font-size: 22px; font-weight: 600; transition: opacity .7s ease, transform .7s ease; {{a.s2h}}">Good evening, Johan</div>
+<div style="position: absolute; left: 16px; top: 114px; width: 274px; box-sizing: border-box; background: #F4F1FB; border: 1px solid #D9CFF0; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 6px; transition: opacity .7s ease, transform .7s ease; {{a.s2brief}}"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.06em; color: #4A2F9A">SCOUT'S BRIEFING</span><span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 14px; line-height: 1.45">Your declined foam proposal looks stronger now. <b>3 new opportunities</b>, <b>1 match</b> waiting.</span></div>
+<div style="position: absolute; left: 16px; top: 232px; width: 274px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; transition: opacity .7s ease, transform .7s ease; {{a.s2quick}}">
+<span style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 10px; padding: 10px 4px; text-align: center; font-size: 11px; font-weight: 600">Upload</span>
+<span style="border-radius: 10px; padding: 10px 4px; text-align: center; font-size: 11px; font-weight: 600; transition: background .3s ease, transform .2s ease; {{pr.snap}}">Snap a page</span>
+<span style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 10px; padding: 10px 4px; text-align: center; font-size: 11px; font-weight: 600">Voice idea</span>
+</div>
+<sc-for list="{{homeOpps}}" as="o" hint-placeholder-count="2">
+<div style="position: absolute; left: 16px; width: 274px; height: 84px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 5px; transition: opacity .6s ease, transform .6s ease; {{o.pos}} {{o.vis}}"><span style="{{o.chip}}">{{o.kind}}</span><span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 14px; font-weight: 600; line-height: 1.3">{{o.title}}</span></div>
+</sc-for>
+<div style="position: absolute; left: 16px; top: 474px; width: 274px; height: 50px; box-sizing: border-box; background: #E3F1EF; border-radius: 12px; padding: 0 12px; display: flex; gap: 10px; align-items: center; font-size: 12px; transition: opacity .6s ease, transform .6s ease; {{a.s2match}}"><span style="width: 30px; height: 30px; border-radius: 50%; border: 2px dashed #0F6E6E; box-sizing: border-box; display: flex; align-items: center; justify-content: center; color: #0F5E5E; font-weight: 700">?</span><b style="flex-grow: 1">New match proposal</b><span style="color: #0F5E5E; font-weight: 600">Answer</span></div>
+<div style="position: absolute; left: 0; bottom: 0; width: 306px; height: 62px; background: #FFFFFF; border-top: 1px solid #D9DCD6; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center; font-size: 10px; color: #555C63; text-align: center"><span style="color: #2446C7; font-weight: 600">Home</span><span>Ideas</span><span style="justify-self: center; width: 50px; height: 50px; margin-top: -24px; border-radius: 50%; background: #5B3FB5; border: 4px solid #FFFFFF; box-sizing: border-box; {{pr.ai}}"></span><span>Matches</span><span>Reach</span></div>
+</div>
+</sc-if>
+
+<sc-if value="{{f.s3}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0; background: #14171A; color: #FFFFFF">
+<div style="position: absolute; left: 0; right: 0; top: 46px; display: flex; justify-content: center; font-size: 13px; font-weight: 600">{{scanLabel}}</div>
+<div style="position: absolute; left: 18px; top: 84px; width: 270px; height: 360px; border-radius: 14px; background: #2A2E33; overflow: hidden">
+<div style="position: absolute; left: 34px; right: 34px; top: 40px; bottom: 50px; background: #EFEBDF; transform: rotate(-3deg); border-radius: 4px; display: flex; flex-direction: column; gap: 14px; padding: 26px 18px; box-sizing: border-box"><span style="height: 2px; background: #8A8676; width: 80%"></span><span style="height: 2px; background: #8A8676; width: 92%"></span><span style="height: 2px; background: #8A8676; width: 64%"></span><span style="height: 2px; background: #8A8676; width: 88%"></span><span style="height: 2px; background: #8A8676; width: 70%"></span><span style="height: 2px; background: #8A8676; width: 86%"></span><span style="height: 2px; background: #8A8676; width: 52%"></span></div>
+<div style="position: absolute; left: 28px; right: 28px; top: 34px; bottom: 44px; border: 3px solid #8FE3D6; border-radius: 6px; transform: rotate(-3deg); transition: opacity .5s ease; {{a.s3edge}}"></div>
+<span style="position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); white-space: nowrap; font-size: 12px; background: rgba(20,23,26,0.8); padding: 5px 10px; border-radius: 999px; transition: opacity .5s ease; {{a.s3found}}">Page found — hold still</span>
+<div style="position: absolute; inset: 0; background: #FFFFFF; transition: opacity .25s ease; {{pr.flash}}"></div>
+</div>
+<div style="position: absolute; left: 24px; right: 24px; top: 470px; display: flex; align-items: center; justify-content: space-between">
+<span style="position: relative; width: 40px; height: 50px; border-radius: 5px; background: #EFEBDF; border: 2px solid #FFFFFF"><span style="position: absolute; right: -8px; top: -8px; min-width: 20px; height: 20px; border-radius: 999px; background: #5B3FB5; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center">{{scanDone}}</span></span>
+<span style="width: 66px; height: 66px; border-radius: 50%; border: 4px solid #FFFFFF; box-sizing: border-box; display: flex; align-items: center; justify-content: center"><span style="width: 52px; height: 52px; border-radius: 50%; background: #FFFFFF; transition: transform .2s ease; {{pr.shutter}}"></span></span>
+<span style="font-size: 14px; font-weight: 600; background: #5B3FB5; border-radius: 999px; padding: 10px 14px; transition: transform .2s ease; {{pr.done}}">Done</span>
+</div>
+<div style="position: absolute; left: 30px; right: 30px; top: 548px; display: flex; justify-content: center; transition: opacity .6s ease, transform .6s ease; {{a.s3read}}"><span style="font-size: 12px; color: #E6DFF5; background: rgba(91,63,181,0.5); border-radius: 999px; padding: 6px 12px">Reading handwriting · 3 pages to vault</span></div>
+</div>
+</sc-if>
+
+<sc-if value="{{f.s4}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0">
+<div style="position: absolute; left: 0; top: 0; width: 306px; height: 64px; background: #FFFFFF; border-bottom: 1px solid #D9DCD6; display: flex; align-items: flex-end; padding: 0 16px 10px; box-sizing: border-box"><b style="font-size: 20px">Opportunities</b></div>
+<div style="position: absolute; left: 16px; top: 76px; display: flex; gap: 6px; transition: opacity .6s ease; {{a.s4chips}}"><span style="font-size: 12px; padding: 6px 10px; border-radius: 999px; background: #14171A; color: #FFFFFF">All 11</span><span style="font-size: 12px; padding: 6px 10px; border-radius: 999px; border: 1px solid #C4C8C1; background: #FFFFFF">Resubmission</span><span style="font-size: 12px; padding: 6px 10px; border-radius: 999px; border: 1px solid #C4C8C1; background: #FFFFFF">Synergy</span></div>
+<sc-for list="{{mopps}}" as="o" hint-placeholder-count="3">
+<div style="position: absolute; left: 16px; width: 274px; height: 116px; box-sizing: border-box; background: #FFFFFF; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 6px; transition: opacity .6s ease, transform .6s ease, border-color .3s ease; {{o.pos}} {{o.vis}} {{o.hl}}"><span style="display: flex; justify-content: space-between"><span style="{{o.chip}}">{{o.kind}}</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px">{{o.fit}}</span></span><span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 15px; font-weight: 600; line-height: 1.3">{{o.title}}</span><span style="font-size: 12px; color: #555C63; line-height: 1.4">{{o.why}}</span></div>
+</sc-for>
+<div style="position: absolute; left: 0; top: 0; width: 306px; height: 596px; background: #F3F4F1; transition: transform .7s cubic-bezier(.3,0,.2,1); {{pr.detail}}">
+<div style="position: absolute; left: 0; top: 0; width: 306px; height: 64px; background: #FFFFFF; border-bottom: 1px solid #D9DCD6; display: flex; align-items: flex-end; padding: 0 16px 12px; box-sizing: border-box; font-size: 14px; font-weight: 600">‹ Opportunity #1</div>
+<div style="position: absolute; left: 16px; top: 76px; width: 274px; display: flex; flex-direction: column; gap: 8px"><span style="display: flex; gap: 6px"><span style="font-size: 10px; font-weight: 600; padding: 3px 7px; border-radius: 4px; background: #FBF0E4; color: #7A3A06">RESUBMISSION</span><span style="font-size: 10px; font-weight: 600; padding: 3px 7px; border-radius: 4px; background: #E3F1EF; color: #0F5E5E">VERIFIED</span></span><span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 19px; font-weight: 600; line-height: 1.25">Resubmit the declined lignin-polyurethane foam proposal</span></div>
+<div style="position: absolute; left: 16px; top: 180px; width: 274px; box-sizing: border-box; background: #F4F1FB; border: 1px solid #D9CFF0; border-radius: 10px; padding: 10px 12px; font-size: 12px; line-height: 1.45; transition: opacity .6s ease, transform .6s ease; {{a.s4why}}">Your 2026 paper and 48-foam compression series answer 2 of 5 objections. Only 3 of 141 lignin-foam papers also report fire data.</div>
+<sc-for list="{{mobjs}}" as="o" hint-placeholder-count="4">
+<div style="position: absolute; left: 16px; width: 274px; height: 58px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #E1E3DE; border-radius: 10px; padding: 8px 12px; display: flex; flex-direction: column; gap: 3px; transition: opacity .6s ease, transform .6s ease; {{o.pos}} {{o.vis}}"><span style="{{o.chip}}">{{o.st}}</span><span style="font-size: 12px; font-weight: 600">{{o.q}}</span></div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{f.s5}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0">
+<div style="position: absolute; left: 0; top: 0; width: 306px; height: 64px; background: #FFFFFF; border-bottom: 1px solid #D9DCD6; display: flex; align-items: flex-end; padding: 0 16px 10px; box-sizing: border-box"><b style="font-size: 20px">Matches</b></div>
+<div style="position: absolute; left: 16px; top: 78px; width: 274px; height: 390px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px; transition: opacity .7s ease, transform .7s ease; {{a.s5card}}">
+<span style="display: flex; gap: 10px; align-items: center"><span style="width: 46px; height: 46px; border-radius: 50%; border: 2px dashed #0F6E6E; box-sizing: border-box; display: flex; align-items: center; justify-content: center; color: #0F5E5E; font-weight: 700; font-size: 18px">?</span><span style="flex-grow: 1; display: flex; flex-direction: column"><b style="font-family: 'Source Serif 4', Georgia, serif; font-size: 15px; line-height: 1.25">Photocatalysis &amp; water treatment</b><span style="font-size: 11px; color: #3A4047">Anonymous · Europe</span></span><b style="font-family: 'IBM Plex Mono', monospace; font-size: 19px; color: #0F5E5E">{{cn.match}}</b></span>
+<span style="display: flex; flex-direction: column; gap: 4px; background: #E8ECFA; border-radius: 10px; padding: 10px; font-size: 12px; transition: opacity .6s ease, transform .6s ease; {{a.s5you}}"><b style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #16308F">YOU BRING</b>Fungal adsorption membrane · PFAS pilot data</span>
+<span style="display: flex; flex-direction: column; gap: 4px; background: #E3F1EF; border-radius: 10px; padding: 10px; font-size: 12px; transition: opacity .6s ease, transform .6s ease; {{a.s5them}}"><b style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #0F5E5E">THEY BRING</b>Graphenic photocatalysts · visible-LED degradation</span>
+<span style="font-size: 11px; color: #555C63">Name and contact unlock on a mutual yes</span>
+<span style="display: flex; gap: 8px; margin-top: auto"><span style="flex: 1; height: 46px; border: 1px solid #C4C8C1; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: #3A4047">Not now</span><span style="flex: 1.5; height: 46px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; transition: background .3s ease, transform .2s ease; {{pr.yes}}">{{yesLabel}}</span></span>
+</div>
+<div style="position: absolute; left: 0; top: 0; width: 306px; height: 596px; background: #F3F4F1; transition: transform .8s cubic-bezier(.3,0,.2,1); {{pr.mutual}}">
+<div style="position: absolute; left: 16px; top: 56px; width: 274px; box-sizing: border-box; background: #0F6E6E; color: #FFFFFF; border-radius: 16px; padding: 18px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center"><span style="display: flex"><span style="width: 48px; height: 48px; border-radius: 50%; background: #2446C7; border: 3px solid #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 600">JF</span><span style="width: 48px; height: 48px; border-radius: 50%; background: #FFFFFF; color: #0F5E5E; border: 3px solid #FFFFFF; margin-left: -10px; display: flex; align-items: center; justify-content: center; font-weight: 700">RM</span></span><b style="font-family: 'Source Serif 4', Georgia, serif; font-size: 21px">You both said yes</b><span style="font-size: 12px; color: #D3ECE9">A familiar name: 5 joint papers in 2024–25</span></div>
+<div style="position: absolute; left: 16px; top: 236px; width: 274px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 4px"><b style="font-size: 16px">Dr. Raphaell Moreira</b><span style="font-size: 12px; color: #3A4047">University of Bremen · previously UBC</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #555C63">30 works · 1,044 citations</span></div>
+<div style="position: absolute; left: 16px; top: 340px; width: 274px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 12px 14px; font-size: 12px"><b style="font-size: 10px; color: #0F5E5E; letter-spacing: 0.04em">JOINT PAPER · NOW VISIBLE</b><br><span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 14px; font-weight: 600">Capture-and-destroy: light-regenerable fungal membranes for PFAS</span></div>
+<div style="position: absolute; left: 16px; top: 446px; width: 274px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px"><b style="font-size: 13px">Rate this match</b><span style="display: flex; gap: 2px; align-items: center"><sc-for list="{{stars}}" as="s" hint-placeholder-count="5"><span style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center"><svg width="28" height="28" viewBox="0 0 24 24" stroke="#B4570F" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true" style="transition: fill .25s ease; {{s.f}}"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"></path></svg></span></sc-for></span></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{f.s6}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0">
+<div style="position: absolute; left: 0; top: 0; width: 306px; height: 64px; background: #FFFFFF; border-bottom: 1px solid #D9DCD6; display: flex; align-items: flex-end; justify-content: space-between; padding: 0 16px 10px; box-sizing: border-box"><b style="font-size: 20px">Reach</b><span style="display: flex; background: #E6E8E3; border-radius: 6px; padding: 2px; font-size: 11px; font-weight: 600"><span style="background: #FFFFFF; border-radius: 5px; padding: 4px 8px">Map</span><span style="padding: 4px 8px; color: #3A4047">Network</span></span></div>
+<div style="position: absolute; left: 16px; top: 80px; width: 274px; height: 256px; border-radius: 12px; border: 1px solid #D9DCD6; background: #FAFBF8; overflow: hidden">
+<div style="position: absolute; left: 0; top: 0; width: 640px; height: 256px; transition: transform 4.5s cubic-bezier(.4,0,.3,1); {{pr.pan}}">
+<img src="/_blob/5647a98e1f540297645e31d484158c68" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%">
+<svg viewBox="0 0 1000 400" preserveAspectRatio="none" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%" fill="none" stroke-width="1.8" stroke-linecap="round"><sc-for list="{{arcs}}" as="r" hint-placeholder-count="8"><path d="{{r.d}}" stroke="{{r.c}}" style="transition: opacity .8s ease; {{r.o}}"></path></sc-for></svg>
+<sc-for list="{{pins}}" as="p" hint-placeholder-count="8"><span style="position: absolute; transform: translate(-50%, -50%); border-radius: 50%; border: 2px solid #FFFFFF; transition: opacity .5s ease; {{p.s}}"></span></sc-for>
+<span style="position: absolute; left: 15.8%; top: 24.6%; transform: translate(-50%, -50%); width: 14px; height: 14px; border-radius: 50%; background: #2446C7; border: 3px solid #FFFFFF; box-shadow: 0 0 0 3px #C9D3F2"></span>
+</div>
+</div>
+<div style="position: absolute; left: 16px; top: 350px; width: 274px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 4px; transition: opacity .6s ease, transform .6s ease; {{a.s6card}}"><span style="align-self: flex-start; font-size: 10px; font-weight: 600; padding: 3px 7px; border-radius: 4px; background: #FBF0E4; color: #7A3A06">CITES YOUR WORK</span><b style="font-size: 15px">Beijing — CAS</b><span style="font-size: 12px; color: #3A4047; line-height: 1.4">152 citing works · China overall 1,533, your largest audience</span></div>
+<div style="position: absolute; left: 16px; top: 458px; width: 274px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; transition: opacity .6s ease, transform .6s ease; {{a.s6stats}}">
+<span style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 10px; padding: 8px; display: flex; flex-direction: column"><b style="font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 500">{{cn.countries}}</b><span style="font-size: 10px; color: #555C63">countries</span></span>
+<span style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 10px; padding: 8px; display: flex; flex-direction: column"><b style="font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 500">{{cn.citing}}</b><span style="font-size: 10px; color: #555C63">citing works</span></span>
+<span style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 10px; padding: 8px; display: flex; flex-direction: column"><b style="font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 500">{{cn.cit}}</b><span style="font-size: 10px; color: #555C63">citations</span></span>
+</div>
+<div style="position: absolute; left: 0; bottom: 0; width: 306px; height: 62px; background: #FFFFFF; border-top: 1px solid #D9DCD6; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center; font-size: 10px; color: #555C63; text-align: center"><span>Home</span><span>Ideas</span><span style="justify-self: center; width: 50px; height: 50px; margin-top: -24px; border-radius: 50%; background: #5B3FB5; border: 4px solid #FFFFFF; box-sizing: border-box"></span><span>Matches</span><span style="color: #2446C7; font-weight: 600">Reach</span></div>
+</div>
+</sc-if>
+
+<sc-if value="{{f.s7}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0; background: #1E1A2E; color: #FFFFFF">
+<div style="position: absolute; left: 0; right: 0; top: 48px; text-align: center; font-size: 13px; font-weight: 600; color: #E6DFF5">Talking with Scout</div>
+<div style="position: absolute; left: 63px; top: 96px; width: 180px; height: 180px">
+<span style="position: absolute; inset: 0; border-radius: 50%; background: rgba(143,121,214,0.14); transition: transform .3s ease; {{pr.orbOuter}}"></span>
+<span style="position: absolute; inset: 22px; border-radius: 50%; background: rgba(143,121,214,0.24)"></span>
+<span style="position: absolute; inset: 42px; border-radius: 50%; background: #5B3FB5; display: flex; align-items: center; justify-content: center; gap: 5px"><sc-for list="{{orb}}" as="b" hint-placeholder-count="5"><span style="width: 6px; border-radius: 3px; background: #FFFFFF; transition: height .2s ease; {{b}}"></span></sc-for></span>
+</div>
+<div style="position: absolute; left: 0; right: 0; top: 292px; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; color: #C9BCE8">{{voiceState}}</div>
+<div style="position: absolute; left: 22px; right: 22px; top: 318px; text-align: center; font-family: 'Source Serif 4', Georgia, serif; font-size: 19px; line-height: 1.4; min-height: 80px">{{ty.voice}}</div>
+<div style="position: absolute; left: 18px; right: 18px; top: 428px; box-sizing: border-box; background: rgba(255,255,255,0.09); border-radius: 14px; padding: 12px; font-size: 13px; line-height: 1.5; color: #E6DFF5; transition: opacity .7s ease, transform .7s ease; {{a.s7ans}}">That's the capture-and-destroy idea: capture PFAS, then regenerate the membrane with light. Raphaell Moreira's visible-LED photocatalysts fit it.</div>
+<div style="position: absolute; left: 0; right: 0; top: 530px; display: flex; justify-content: center; gap: 28px; align-items: center">
+<span style="width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.12)"></span>
+<span style="width: 62px; height: 62px; border-radius: 50%; border: 4px solid #FFFFFF; box-sizing: border-box; background: #5B3FB5"></span>
+<span style="width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.12)"></span>
+</div>
+</div>
+</sc-if>
+
+<span style="{{fingerStyle}}"></span>
+<span style="{{tapStyle}}"></span>
+</div>
+
+<div style="position: absolute; left: 600px; top: 120px; width: 580px; display: flex; flex-direction: column; gap: 18px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: #C9BCE8">{{cap.n}}</span>
+<span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 44px; font-weight: 600; line-height: 1.1; color: #F3F4F1">{{cap.title}}</span>
+<span style="font-size: 19px; line-height: 1.55; color: #A8AEA6">{{cap.sub}}</span>
+<span style="font-size: 13px; font-weight: 600; color: #8F968D; padding-top: 12px">Lattice Scout · mobile app · demo data from OpenAlex</span>
+</div>
+
+<div style="position: absolute; left: 600px; top: 600px; width: 630px; display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{chips}}" as="c" hint-placeholder-count="8"><button type="button" onClick="{{c.go}}" style="{{c.style}}">{{c.label}}</button></sc-for>
+</div>
+<div style="position: absolute; left: 600px; top: 554px; display: flex; gap: 10px; align-items: center">
+<button type="button" onClick="{{toggle}}" style="font: inherit; font-size: 13px; font-weight: 600; width: 76px; min-height: 36px; border-radius: 8px; border: 0; background: #F3F4F1; color: #14171A; cursor: pointer">{{playLabel}}</button>
+<button type="button" onClick="{{restart}}" style="font: inherit; font-size: 13px; min-height: 36px; padding: 0 12px; border-radius: 8px; border: 1px solid #3A4047; background: transparent; color: #C4C8C1; cursor: pointer">Restart</button>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #A8AEA6">{{clock}}</span>
+</div>
+<div style="position: absolute; left: 50px; top: 694px; width: 1180px; height: 4px; background: #2A2E33; border-radius: 999px; overflow: hidden"><div style="{{progressStyle}}"></div></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"autoplay":{"editor":"boolean","default":true},"speed":{"editor":"range","default":1,"min":0.5,"max":1.5,"step":0.1},"$preview":{"width":1280,"height":720}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { t: 0, playing: null };
+  }
+  componentDidMount() {
+    this.last = performance.now();
+    this.timer = setInterval(() => {
+      const now = performance.now();
+      const dt = Math.min(0.5, (now - this.last) / 1000);
+      this.last = now;
+      const playing = this.state.playing ?? (this.props.autoplay ?? true);
+      if (!playing) return;
+      const total = this.D().reduce((s, d) => s + d, 0);
+      this.setState({ t: (this.state.t + dt * (this.props.speed ?? 1)) % total });
+    }, 50);
+  }
+  componentWillUnmount() { clearInterval(this.timer); }
+  D() { return [8, 9, 8, 9, 9, 10, 8, 9]; }
+  renderVals() {
+    const D = this.D();
+    const t = this.state.t;
+    const playing = this.state.playing ?? (this.props.autoplay ?? true);
+    const starts = []; D.reduce((s, d) => { starts.push(s); return s + d; }, 0);
+    const total = D.reduce((s, d) => s + d, 0);
+    let si = 0; for (let i = 0; i < D.length; i++) { if (t >= starts[i]) si = i; }
+    const L = t - starts[si];
+    const VIS = 'opacity: 1; transform: none;', HID = 'opacity: 0; transform: translateY(12px);';
+    const on = (sc, s, e) => si === sc && L >= s && (e == null || L < e);
+    const ap = (sc, s, e) => on(sc, s, e) ? VIS : HID;
+    const typed = (sc, s, txt, cps) => si !== sc ? '' : txt.slice(0, Math.max(0, Math.min(txt.length, Math.floor((L - s) * cps))));
+    const count = (sc, s, d, v, suf) => { const f = si !== sc ? 0 : Math.max(0, Math.min(1, (L - s) / d)); const e = 1 - Math.pow(1 - f, 3); return Math.round(v * e).toLocaleString('en-US') + (suf || ''); };
+    const press = (sc, s) => on(sc, s, s + 0.35) ? 'transform: scale(0.95); filter: brightness(0.9);' : '';
+    const chip = (bg, fg) => 'align-self: flex-start; font-size: 10px; font-weight: 600; letter-spacing: 0.03em; padding: 3px 7px; border-radius: 4px; background: ' + bg + '; color: ' + fg + ';';
+
+    const caps = [
+      { n: '01 / 08', title: 'Sign in in seconds', sub: 'ORCID, Google or a magic link to your work email. No password.', chip: 'Sign in' },
+      { n: '02 / 08', title: 'A profile that fills itself in', sub: 'Scout finds your papers in OpenAlex and merges split author records. You confirm.', chip: 'Profile' },
+      { n: '03 / 08', title: 'Home: Scout’s briefing', sub: 'What changed since last time — new ideas, a match waiting, your reach.', chip: 'Home' },
+      { n: '04 / 08', title: 'Scan your lab notebook', sub: 'Point the camera at pages or a whiteboard. Handwriting goes straight into your private vault.', chip: 'Scan' },
+      { n: '05 / 08', title: 'Opportunities with evidence', sub: 'Tap an idea to see which reviewer objections your new data now answers.', chip: 'Ideas' },
+      { n: '06 / 08', title: 'Match — only on a mutual yes', sub: 'Anonymous first. When both accept, names, contacts and joint ideas appear. Then rate the match.', chip: 'Match' },
+      { n: '07 / 08', title: 'See your reach', sub: 'Who cites you and works with you, worldwide. Drag to pan, tap a place for detail.', chip: 'Reach' },
+      { n: '08 / 08', title: 'Just talk to Scout', sub: 'Voice mode for ideas on the go — Scout answers with your own data and papers.', chip: 'Voice' }
+    ];
+    const fing = [
+      [[0, 200, 560], [1.0, 153, 394], [4.6, 153, 452]],
+      [[0, 230, 560], [6.0, 153, 552]],
+      [[0, 230, 560], [5.4, 153, 250]],
+      [[0, 230, 560], [1.8, 153, 503], [6.2, 252, 503]],
+      [[0, 230, 560], [3.0, 153, 190]],
+      [[0, 230, 560], [2.6, 204, 429], [6.4, 216, 502]],
+      [[0, 200, 560], [1.0, 220, 210], [5.4, 200, 540]],
+      [[0, 153, 650]]
+    ];
+    const taps = [[[1.4, 153, 394], [5.2, 153, 452]], [[6.8, 153, 552]], [[6.3, 153, 250]], [[2.4, 153, 503], [3.9, 153, 503], [5.4, 153, 503], [6.8, 252, 503]], [[3.6, 153, 190]], [[3.2, 204, 429], [7.0, 216, 502]], [], []];
+    const fr = fing[si]; let fp = fr[0]; for (const k of fr) { if (L >= k[0]) fp = k; }
+    let tap = null; for (const c of taps[si]) { if (L >= c[0] && L < c[0] + 0.5) tap = c; }
+    const dragging = si === 6 && L >= 1.0 && L < 5.4;
+
+    const f = {}; D.forEach((d, i) => { f['s' + i] = i === si; });
+    f.s0email = si === 0 && L < 5.6; f.s0sent = si === 0 && L >= 5.6;
+    const a = {
+      s0h: ap(0, 0.3), s0p: ap(0, 0.9), s0chip: ap(0, 6.2),
+      s1h: ap(1, 0.2), s1b: ap(1, 0.7), s1p: ap(1, 1.1), s1btn: ap(1, 4.8),
+      s2h: ap(2, 0.2), s2brief: ap(2, 0.8), s2quick: ap(2, 1.7), s2match: ap(2, 3.8),
+      s3edge: on(3, 1.0) ? 'opacity: 1;' : 'opacity: 0;', s3found: on(3, 1.3, 6.8) ? 'opacity: 1;' : 'opacity: 0;', s3read: ap(3, 7.2),
+      s4chips: on(4, 0.2) ? 'opacity: 1;' : 'opacity: 0;', s4why: ap(4, 4.6),
+      s5card: ap(5, 0.3), s5you: ap(5, 1.2), s5them: ap(5, 1.7),
+      s6card: ap(6, 5.6), s6stats: ap(6, 6.3),
+      s7ans: ap(7, 5.6)
+    };
+    const ty = {
+      email: typed(0, 1.8, 'johan.foster@university.edu', 10),
+      voice: typed(7, 0.8, '“What if we put an LED strip behind the fungal membrane…”', 15)
+    };
+    const cn = {
+      works: count(1, 1.3, 1.8, 159), h: count(1, 1.3, 1.6, 50),
+      match: count(5, 0.8, 1.4, 88, '%'),
+      countries: count(6, 6.3, 1.6, 109), citing: count(6, 6.3, 2.0, 6498), cit: count(6, 6.3, 2.0, 9970)
+    };
+    const typing = on(0, 1.4, 4.6);
+    const shots = [2.4, 3.9, 5.4];
+    const flashing = shots.some((s) => on(3, s, s + 0.25));
+    const done = si === 3 ? shots.filter((s) => L >= s).length : 0;
+    const pr = {
+      input: typing ? 'border: 2px solid #2446C7;' : 'border: 1px solid #C4C8C1;',
+      caret: typing && Math.floor(L * 2) % 2 === 0 ? 'background: #14171A;' : 'background: transparent;',
+      cont: press(0, 5.2), confirm: press(1, 6.8),
+      snap: on(2, 6.0) ? 'background: #E8ECFA; border: 1px solid #2446C7; color: #16308F;' + press(2, 6.3) : 'background: #FFFFFF; border: 1px solid #D9DCD6;',
+      ai: 'box-shadow: 0 0 0 ' + (si === 2 ? (3 + 3 * Math.sin(t * 2.4)).toFixed(1) : 0) + 'px rgba(91,63,181,0.25);',
+      flash: flashing ? 'opacity: 0.85;' : 'opacity: 0;',
+      shutter: shots.some((s) => on(3, s, s + 0.3)) ? 'transform: scale(0.85);' : '',
+      done: press(3, 6.8),
+      detail: on(4, 3.9) ? 'transform: translateX(0);' : 'transform: translateX(306px);',
+      yes: on(5, 3.3) ? 'background: #E3F1EF; color: #0F5E5E;' : 'background: #0F6E6E; color: #FFFFFF;',
+      mutual: on(5, 4.6) ? 'transform: translateY(0);' : 'transform: translateY(596px);',
+      pan: on(6, 1.2) ? 'transform: translateX(-300px);' : 'transform: translateX(0);',
+      orbOuter: 'transform: scale(' + (si === 7 ? (1 + 0.05 * Math.sin(t * 3)).toFixed(3) : 1) + ');'
+    };
+    const K = { bl: ['#E8ECFA', '#16308F'], gr: ['#F1F2EF', '#3A4047'], gb: ['#FBF0E4', '#7A3A06'], ok: ['#E3F1EF', '#0F5E5E'], pu: ['#EEE9F8', '#4A2F9A'] };
+    const works = [
+      ['Current characterization methods for cellulose nanomaterials', 'Chem. Soc. Rev. 2018 · 1,025 cit.', true],
+      ['Isolation of Thermally Stable Cellulose Nanocrystals', 'Biomacromolecules 2013 · 665 cit.', true],
+      ['2 works on membrane separation', '“Johan Foster” profile · possibly a namesake', false],
+      ['Lignin Type and Content Influence the Foaming Dynamics of PU Foams', 'ACS Appl. Polym. Mater. 2026', true]
+    ].map(([tt, m, ok], i) => { const s = 1.8 + i * 0.7; return { t: tt, m, pos: 'top: ' + (262 + i * 64) + 'px;', vis: ap(1, s), box: ok && on(1, s + 0.5) ? 'background: #2446C7; border: 0;' : 'background: #FFFFFF; border: 2px solid #C4C8C1; box-sizing: border-box;' }; });
+    const homeOpps = [
+      ['Resubmission', 'gb', 'Resubmit the lignin-PU foam proposal with the new evidence'],
+      ['Synergy', 'ok', 'Capture-and-destroy PFAS membranes with R. Moreira']
+    ].map(([kind, c, title], i) => ({ kind, title, chip: chip(K[c][0], K[c][1]), pos: 'top: ' + (290 + i * 92) + 'px;', vis: ap(2, 2.5 + i * 0.7) }));
+    const mopps = [
+      ['Resubmission', 'gb', '0.86', 'Resubmit the declined lignin-PU foam proposal', 'Your 2026 paper and compression data answer 2 of 5 objections.'],
+      ['Synergy', 'ok', '0.81', 'Capture-and-destroy PFAS membranes', 'Fungal membrane + Moreira’s photocatalysts.'],
+      ['White spot', 'pu', '0.77', 'CNF membranes for Zn–I₂ flow batteries beyond 500 h', 'Longest bio-based separator test reported.']
+    ].map(([kind, c, fit, title, why], i) => ({ kind, fit, title, why, chip: chip(K[c][0], K[c][1]), pos: 'top: ' + (124 + i * 128) + 'px;', vis: ap(4, 0.6 + i * 0.7), hl: i === 0 && on(4, 3.3) ? 'border: 2px solid #2446C7;' : 'border: 2px solid #E1E3DE;' }));
+    const mobjs = [
+      ['ANSWERED', 'ok', 'Not shown to meet seating specs'],
+      ['ANSWERED', 'ok', 'Lignin batch variability'],
+      ['PARTLY', 'gb', 'End-of-life not quantified'],
+      ['STILL OPEN', 'gr', 'No flammability data']
+    ].map(([st, c, q], i) => ({ st, q, chip: chip(K[c][0], K[c][1]), pos: 'top: ' + (270 + i * 66) + 'px;', vis: ap(4, 5.2 + i * 0.6) }));
+    const stars = [0, 1, 2, 3, 4].map((i) => ({ f: on(5, 7.2 + i * 0.22) ? 'fill: #E8A15C;' : 'fill: none;' }));
+    const C3 = { co: '#2446C7', cite: '#B4570F', match: '#0F6E6E' };
+    const P = [
+      ['co', 27.7, 32.9, 'M158 99Q217 84 277 132', 10], ['co', 52.0, 26.3, 'M158 99Q339 27 520 105', 10], ['co', 49.9, 54.7, 'M158 99Q329 87 499 219', 10],
+      ['cite', 82.3, 31.1, 'M158 99Q490 5 823 124', 18], ['cite', 50.7, 24.9, 'M158 99Q332 26 507 100', 14], ['cite', 71.6, 49.7, 'M158 99Q437 38 716 199', 14],
+      ['cite', 37.0, 74.9, 'M158 99Q264 151 370 299', 12], ['match', 52.4, 22.0, 'M158 99Q341 17 524 88', 12]
+    ];
+    const arcs = P.map(([k, x, y, d], i) => ({ d, c: C3[k], o: on(6, 1.4 + i * 0.4) ? 'opacity: 0.6;' : 'opacity: 0;' }));
+    const pins = P.map(([k, x, y, d, sz], i) => ({ s: 'left: ' + x + '%; top: ' + y + '%; width: ' + sz + 'px; height: ' + sz + 'px; background: ' + C3[k] + '; ' + (on(6, 1.7 + i * 0.4) ? 'opacity: 1;' : 'opacity: 0;') }));
+    const speaking = on(7, 0.6, 4.6);
+    const orb = [0, 1, 2, 3, 4].map((i) => {
+      const base = [20, 40, 58, 38, 24][i];
+      const h = speaking ? base * (0.55 + 0.45 * Math.abs(Math.sin(t * 3.1 + i * 1.3))) : base * 0.35;
+      return 'height: ' + Math.round(h) + 'px;';
+    });
+    const chips = caps.map((c, i) => ({ label: c.chip, go: () => this.setState({ t: starts[i] + 0.01 }),
+      style: 'font: inherit; font-size: 12px; white-space: nowrap; border-radius: 999px; padding: 6px 12px; min-height: 30px; cursor: pointer; ' + (i === si ? 'background: #F3F4F1; color: #14171A; border: 1px solid #F3F4F1; font-weight: 600;' : 'background: transparent; color: #A8AEA6; border: 1px solid #3A4047;') }));
+    const mm = (x) => Math.floor(x / 60) + ':' + String(Math.floor(x % 60)).padStart(2, '0');
+    return {
+      cap: caps[si], f, a, ty, cn, pr, works, homeOpps, mopps, mobjs, stars, arcs, pins, orb, chips,
+      scanLabel: 'Scan · page ' + Math.min(3, done + 1), scanDone: String(done),
+      yesLabel: on(5, 3.3) ? 'You said yes ✓' : 'Yes, interested',
+      voiceState: si === 7 ? (L < 4.6 ? 'LISTENING' : L < 5.6 ? 'THINKING' : 'SCOUT') : '',
+      playLabel: playing ? 'Pause' : 'Play',
+      toggle: () => this.setState({ playing: !playing }),
+      restart: () => this.setState({ t: 0, playing: true }),
+      fingerStyle: 'position: absolute; z-index: 30; pointer-events: none; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; background: rgba(20,23,26,0.28); border: 2px solid rgba(255,255,255,0.85); box-sizing: border-box; transition: left 1.2s cubic-bezier(.45,0,.2,1), top 1.2s cubic-bezier(.45,0,.2,1), transform .2s ease, opacity .4s ease; left: ' + fp[1] + 'px; top: ' + fp[2] + 'px; ' + (tap || dragging ? 'transform: scale(0.85);' : '') + (si === 7 ? ' opacity: 0;' : ' opacity: 1;'),
+      tapStyle: 'position: absolute; z-index: 29; pointer-events: none; width: 44px; height: 44px; border-radius: 50%; border: 3px solid #5B3FB5; box-sizing: border-box; transition: opacity .25s ease, transform .4s ease; ' + (tap ? 'opacity: 1; transform: scale(1.25); left: ' + (tap[1] - 22) + 'px; top: ' + (tap[2] - 22) + 'px;' : 'opacity: 0; transform: scale(.4); left: 0px; top: 0px;'),
+      progressStyle: 'height: 100%; background: #C9BCE8; width: ' + (t / total * 100).toFixed(2) + '%;',
+      clock: mm(t) + ' / ' + mm(total)
+    };
+  }
+}
+</script>
+</body>
+</html>

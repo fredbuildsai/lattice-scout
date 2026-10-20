@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lattice Scout — Navigation menu</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #14171A; display: inline-flex">
+<button type="button" onClick="{{openMenu}}" aria-label="Open menu" aria-expanded="{{open}}" style="font: inherit; width: 44px; height: 44px; border-radius: 10px; border: 1px solid #D9DCD6; background: #FFFFFF; color: #14171A; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button>
+
+<sc-if value="{{open}}" hint-placeholder-val="{{ false }}">
+<div style="position: fixed; inset: 0; z-index: 60; display: flex">
+<nav aria-label="All destinations" style="width: 340px; max-width: 88vw; height: 100%; background: #FFFFFF; border-right: 1px solid #D9DCD6; box-shadow: 12px 0 40px rgba(20,23,26,0.18); display: flex; flex-direction: column; overflow-y: auto; box-sizing: border-box">
+<div style="display: flex; align-items: center; gap: 10px; padding: 16px 16px 12px">
+<svg width="24" height="24" viewBox="0 0 28 28" fill="none" stroke="#2446C7" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="22" height="22"></rect><path d="M3 14h22M14 3v22"></path><circle cx="14" cy="14" r="3" fill="#5B3FB5" stroke="#5B3FB5"></circle></svg>
+<b style="font-size: 17px; flex-grow: 1">Lattice Scout</b>
+<button type="button" onClick="{{closeMenu}}" aria-label="Close menu" style="font: inherit; width: 44px; height: 44px; border-radius: 10px; border: 0; background: transparent; color: #3A4047; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<label style="margin: 0 16px 8px; display: flex; align-items: center; gap: 8px; border: 1px solid #C4C8C1; border-radius: 8px; padding: 0 10px; color: #555C63"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14M20 20l-4-4"></path></svg><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Jump to</span><input type="search" placeholder="Jump to a page, idea or person…" style="font: inherit; font-size: 14px; border: 0; outline: none; flex-grow: 1; padding: 10px 0; background: transparent; color: #14171A"></label>
+
+<sc-for list="{{groups}}" as="g" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column; padding: 8px 8px 4px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #555C63; padding: 6px 10px">{{g.title}}</span>
+<sc-for list="{{g.items}}" as="i" hint-placeholder-count="4">
+<a href="{{i.href}}" aria-current="{{i.cur}}" style="{{i.style}}">
+<span style="{{i.iconBox}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{i.icon}}"></path></svg></span>
+<span style="flex-grow: 1; display: flex; flex-direction: column; min-width: 0"><span style="font-size: 14px; font-weight: 600">{{i.label}}</span><span style="font-size: 12px; color: #555C63; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{i.desc}}</span></span>
+<span style="{{i.badgeStyle}}">{{i.badge}}</span>
+</a>
+</sc-for>
+</div>
+</sc-for>
+
+<div style="margin-top: auto; border-top: 1px solid #ECEEE9; padding: 12px 16px; display: flex; align-items: center; gap: 10px">
+<span style="width: 36px; height: 36px; border-radius: 50%; background: #2446C7; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600">JF</span>
+<span style="flex-grow: 1; display: flex; flex-direction: column"><b style="font-size: 14px">Dr. E. Johan Foster</b><span style="font-size: 12px; color: #555C63">University of British Columbia</span></span>
+<a href="Main.dc.html" style="font-size: 13px; color: #555C63; padding: 10px 4px">Sign out</a>
+</div>
+</nav>
+<button type="button" onClick="{{closeMenu}}" aria-label="Close menu" style="flex-grow: 1; border: 0; background: rgba(20,23,26,0.35); cursor: pointer; padding: 0"></button>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"current":{"editor":null,"default":""},"$preview":{"width":400,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { open: !props.current };
+  }
+  renderVals() {
+    const cur = this.props.current || 'Home';
+    const P = {
+      home: 'M3 11l9-7 9 7v9h-6v-6H9v6H3z',
+      vault: 'M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4',
+      run: 'M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z',
+      idea: 'M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z',
+      doc: 'M14 3H6v18h12V7zM14 3v4h4M9 13h6M9 17h4',
+      people: 'M7 11a3 3 0 1 0 0-.1M17 11a3 3 0 1 0 0-.1M2 21c0-3 2-5 5-5s5 2 5 5M12 21c0-3 2-5 5-5s5 2 5 5',
+      globe: 'M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18',
+      chat: 'M4 5h16v11H9l-5 4z',
+      mic: 'M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3zM5 11a7 7 0 0 0 14 0M12 18v3',
+      cam: 'M4 8h3l2-3h6l2 3h3v11H4zM12 9.5a3.5 3.5 0 1 0 0 7a3.5 3.5 0 1 0 0-7',
+      user: 'M12 12a4 4 0 1 0 0-8a4 4 0 1 0 0 8M4 21c0-4 4-6 8-6s8 2 8 6',
+      link: 'M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1',
+      lock: 'M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4',
+      bell: 'M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 21h4',
+      redo: 'M4 12a8 8 0 1 0 2.3-5.6M4 4v4h4'
+    };
+    const G = [
+      ['Workspace', [
+        ['Home', 'Home.dc.html', 'home', 'Scout’s briefing', ''],
+        ['Vault', 'Documents.dc.html', 'vault', 'Private vault · 12 files', ''],
+        ['Agent', 'Agent.dc.html', 'run', 'Analysis run #7', '68%'],
+        ['Opportunities', 'Opportunities.dc.html', 'idea', 'All ideas, ranked by fit', '11']
+      ]],
+      ['People & reach', [
+        ['Matches', 'Matches.dc.html', 'people', 'Double opt-in matching', '1 new'],
+        ['Reach', 'Reach.dc.html', 'globe', 'World map & network', '']
+      ]],
+      ['Recent', [
+        ['OppDetail', 'OppDetail.dc.html', 'doc', 'Resubmit the lignin-PU foam proposal', ''],
+        ['MatchRM', 'Matches.dc.html', 'people', 'Mutual match · Dr. Raphaell Moreira', '']
+      ]],
+      ['Ask Scout', [
+        ['Assistant', 'Assistant.dc.html', 'chat', 'Chat with text, voice or photo', ''],
+        ['Voice', 'Assistant.dc.html', 'mic', 'Talk an idea through', ''],
+        ['Photo', 'Assistant.dc.html', 'cam', 'Show Scout a page or whiteboard', '']
+      ]],
+      ['Account', [
+        ['Profile', 'Profile.dc.html', 'user', 'Public profile', ''],
+        ['Sources', 'Profile.dc.html', 'link', 'OpenAlex, ORCID & split profiles', ''],
+        ['Privacy', 'Profile.dc.html', 'lock', 'Privacy & data', ''],
+        ['Notifications', 'Profile.dc.html', 'bell', 'What Scout tells you, and when', ''],
+        ['Onboard', 'Onboard.dc.html', 'redo', 'Review your claimed profile', '']
+      ]]
+    ];
+    const label = { Home: 'Home', Vault: 'Private vault', Agent: 'Analysis runs', Opportunities: 'Opportunities', Matches: 'Matches', Reach: 'Reach', OppDetail: 'Opportunity #1', MatchRM: 'Raphaell Moreira', Assistant: 'Ask Scout', Voice: 'Voice', Photo: 'Photo', Profile: 'Profile', Sources: 'Sources', Privacy: 'Privacy & data', Notifications: 'Notifications', Onboard: 'Claim profile' };
+    return {
+      open: this.state.open,
+      openMenu: () => this.setState({ open: true }),
+      closeMenu: () => this.setState({ open: false }),
+      groups: G.map(([title, items]) => ({
+        title,
+        items: items.map(([id, href, icon, desc, badge]) => {
+          const isCur = id === cur;
+          return {
+            href, desc, badge, label: label[id], icon: P[icon], cur: isCur ? 'page' : 'false',
+            style: 'display: flex; gap: 12px; align-items: center; padding: 8px 10px; min-height: 48px; box-sizing: border-box; border-radius: 10px; text-decoration: none; color: #14171A; ' + (isCur ? 'background: #E8ECFA;' : ''),
+            iconBox: 'flex-shrink: 0; width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; ' + (title === 'Ask Scout' ? 'background: #EEE9F8; color: #4A2F9A;' : isCur ? 'background: #2446C7; color: #FFFFFF;' : 'background: #F1F2EF; color: #3A4047;'),
+            badgeStyle: badge ? 'flex-shrink: 0; font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 999px; background: ' + (id === 'Agent' ? '#EEE9F8; color: #4A2F9A;' : '#FBF0E4; color: #7A3A06;') : 'display: none;'
+          };
+        })
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

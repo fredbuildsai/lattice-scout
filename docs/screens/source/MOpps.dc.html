@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lattice Scout mobile — Opportunities</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F3F4F1}
+a{color:#2446C7}a:hover{color:#16308F}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; overflow: hidden; display: flex; flex-direction: column; background: #F3F4F1; font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #14171A">
+<div style="flex-shrink: 0; background: #FFFFFF; border-bottom: 1px solid #D9DCD6; padding: 14px 16px 0; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; gap: 10px">
+<h1 style="margin: 0; font-size: 24px; font-weight: 600; flex-grow: 1">Opportunities</h1>
+<button type="button" aria-label="Sort and filter" style="width: 44px; height: 44px; border-radius: 10px; border: 1px solid #D9DCD6; background: #FFFFFF; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #3A4047"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"></path></svg></button>
+</div>
+<div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 12px">
+<sc-for list="{{types}}" as="t" hint-placeholder-count="6">
+<button type="button" onClick="{{t.pick}}" aria-pressed="{{t.on}}" style="{{t.style}}">{{t.label}}</button>
+</sc-for>
+</div>
+</div>
+
+<div style="flex-grow: 1; overflow-y: auto; padding: 14px 16px 24px; display: flex; flex-direction: column; gap: 12px">
+<span style="font-size: 13px; color: #555C63">{{count}} from run #7 · sorted by best fit</span>
+<sc-for list="{{opps}}" as="o" hint-placeholder-count="5">
+<a href="MOppDetail.dc.html" style="display: flex; flex-direction: column; gap: 8px; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 16px; text-decoration: none; color: #14171A">
+<span style="display: flex; justify-content: space-between; align-items: center; gap: 8px"><span style="{{o.chip}}">{{o.kind}}</span><span style="font-size: 12px; color: #3A4047">fit <b style="font-family: 'IBM Plex Mono', monospace">{{o.fit}}</b></span></span>
+<span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; font-weight: 600; line-height: 1.3">{{o.title}}</span>
+<span style="font-size: 14px; color: #3A4047; line-height: 1.45">{{o.why}}</span>
+<span style="font-size: 12px; color: #555C63">{{o.extra}}</span>
+</a>
+</sc-for>
+</div>
+
+<nav aria-label="Main" style="flex-shrink: 0; height: 78px; background: #FFFFFF; border-top: 1px solid #D9DCD6; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center; padding: 0 4px 10px; box-sizing: border-box">
+<a href="MHome.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 48px; justify-content: center; text-decoration: none; color: #555C63; font-size: 11px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9h-6v-6H9v6H3z"></path></svg>Home</a>
+<a href="MOpps.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 48px; justify-content: center; text-decoration: none; color: {{accent}}; font-size: 11px; font-weight: 600"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"></path></svg>Ideas</a>
+<a href="MChat.dc.html" aria-label="Ask Scout" style="justify-self: center; width: 60px; height: 60px; margin-top: -26px; border-radius: 50%; background: #5B3FB5; border: 4px solid #FFFFFF; box-shadow: 0 6px 18px rgba(91,63,181,0.35); display: flex; align-items: center; justify-content: center; color: #FFFFFF"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path><path d="M19 16l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"></path></svg></a>
+<a href="MMatch.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 48px; justify-content: center; text-decoration: none; color: #555C63; font-size: 11px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="8" r="3"></circle><circle cx="17" cy="8" r="3"></circle><path d="M2 20c0-3 2.2-5 5-5 1.6 0 3 .6 4 1.7M22 20c0-3-2.2-5-5-5-1.6 0-3 .6-4 1.7"></path></svg>Matches</a>
+<a href="MReach.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 48px; justify-content: center; text-decoration: none; color: #555C63; font-size: 11px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"></path></svg>Reach</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#2446C7","options":["#2446C7","#0F6E6E","#5B3FB5","#14171A"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { type: 'all' };
+  }
+  renderVals() {
+    const T = { res: ['Resubmission', '#FBF0E4', '#7A3A06'], gap: ['White spot', '#EEE9F8', '#4A2F9A'], syn: ['Synergy', '#E3F1EF', '#0F5E5E'], fund: ['Funding call', '#E8ECFA', '#16308F'], col: ['Collaboration', '#F1F2EF', '#3A4047'] };
+    const all = [
+      { k: 'res', fit: '0.86', title: 'Resubmit the declined lignin-PU foam proposal', why: 'Your 2026 foam paper and compression data answer 2 of 5 objections.', extra: 'Built on 2 private files + 1 paper' },
+      { k: 'syn', fit: '0.81', title: 'Capture-and-destroy PFAS membranes', why: 'Your fungal membrane + Moreira’s graphenic photocatalysts.', extra: 'Chem. Eng. J. 2024 + Commun. Eng. 2024' },
+      { k: 'gap', fit: '0.77', title: 'CNF membranes for Zn–I₂ flow batteries beyond 500 h', why: 'Your unpublished 500 h data is longer than any bio-based separator test reported.', extra: 'Builds on J. Membrane Sci. 2025' },
+      { k: 'fund', fit: '0.71', title: 'Bio-based materials call fits the EMI-shielding wood draft', why: 'Scope and TRL match; needs an industry partner.', extra: 'Deadline [DATE]' },
+      { k: 'col', fit: '0.69', title: 'Photocatalytic membrane regeneration with Dr. Raphaell Moreira', why: 'Former co-author, now in Bremen, working on visible-LED photocatalysts.', extra: 'Mutual match' }
+    ];
+    const type = this.state.type;
+    const shown = type === 'all' ? all : all.filter((o) => o.k === type);
+    const list = [['all', 'All 11']].concat(Object.keys(T).map((k) => [k, T[k][0]]));
+    return {
+      accent: this.props.accent ?? '#2446C7',
+      count: type === 'all' ? '11 ideas' : shown.length + (shown.length === 1 ? ' idea' : ' ideas'),
+      types: list.map(([id, label]) => ({
+        label, on: type === id,
+        pick: () => this.setState({ type: id }),
+        style: 'flex-shrink: 0; font: inherit; font-size: 14px; padding: 8px 14px; min-height: 40px; border-radius: 999px; cursor: pointer; white-space: nowrap; ' + (type === id ? 'background: #14171A; color: #FFFFFF; border: 1px solid #14171A;' : 'background: #FFFFFF; color: #3A4047; border: 1px solid #C4C8C1;')
+      })),
+      opps: shown.map((o) => ({ ...o, kind: T[o.k][0], chip: 'font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; background: ' + T[o.k][1] + '; color: ' + T[o.k][2] + ';' }))
+    };
+  }
+}
+</script>
+</body>
+</html>

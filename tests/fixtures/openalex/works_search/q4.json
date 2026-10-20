@@ -1,0 +1,840 @@
+{
+ "meta": {
+  "count": 1712,
+  "per_page": 6
+ },
+ "results": [
+  {
+   "id": "https://openalex.org/W7203860180",
+   "doi": "https://doi.org/10.1016/j.jece.2026.124717",
+   "display_name": "Oxidative and reductive mechanisms for the photocatalytic degradation of per- and polyfluoroalkyl substances (PFAS): A critical review",
+   "title": "Oxidative and reductive mechanisms for the photocatalytic degradation of per- and polyfluoroalkyl substances (PFAS): A critical review",
+   "publication_year": 2026,
+   "cited_by_count": 0,
+   "type": "T11869 T10078",
+   "primary_topic": {
+    "id": "https://openalex.org/T11869",
+    "display_name": "Per- and polyfluoroalkyl substances research",
+    "subfield": {
+     "display_name": "Environmental Chemistry"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T11869",
+     "display_name": "Per- and polyfluoroalkyl substances research",
+     "subfield": {
+      "display_name": "Environmental Chemistry"
+     }
+    },
+    {
+     "id": "https://openalex.org/T10078",
+     "display_name": "Advanced Photocatalysis Techniques",
+     "subfield": {
+      "display_name": "Renewable Energy, Sustainability and the Environment"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": {
+    "Per-": [
+     0
+    ],
+    "and": [
+     1,
+     20,
+     33,
+     47
+    ],
+    "polyfluoroalkyl": [
+     2
+    ],
+    "substances": [
+     3
+    ],
+    "(PFAS)": [
+     4
+    ],
+    "are": [
+     5
+    ],
+    "highly": [
+     6
+    ],
+    "persistent": [
+     7
+    ],
+    "environmental": [
+     8
+    ],
+    "contaminants": [
+     9
+    ],
+    "whose": [
+     10
+    ],
+    "stability": [
+     11
+    ],
+    "originates": [
+     12
+    ],
+    "from": [
+     13,
+     39
+    ],
+    "strong": [
+     14
+    ],
+    "C-F": [
+     15
+    ],
+    "bonds,": [
+     16
+    ],
+    "electron-deficient": [
+     17
+    ],
+    "fluorinated": [
+     18
+    ],
+    "chains,": [
+     19
+    ],
+    "resistance": [
+     21
+    ],
+    "to": [
+     22
+    ],
+    "conventional": [
+     23
+    ],
+    "degradation": [
+     24
+    ],
+    "processes.": [
+     25
+    ],
+    "Separation-based": [
+     26
+    ],
+    "technologies": [
+     27
+    ],
+    "such": [
+     28
+    ],
+    "as": [
+     29
+    ],
+    "adsorption,": [
+     30
+    ],
+    "ion": [
+     31
+    ],
+    "exchange,": [
+     32
+    ],
+    "membrane": [
+     34
+    ],
+    "filtration": [
+     35
+    ],
+    "can": [
+     36
+    ],
+    "remove": [
+     37
+    ],
+    "PFAS": [
+     38
+    ],
+    "water": [
+     40
+    ],
+    "but": [
+     41
+    ],
+    "do": [
+     42
+    ],
+    "not": [
+     43
+    ],
+    "achieve": [
+     44
+    ],
+    "chemical": [
+     45
+    ],
+    "destruction": [
+     46
+    ],
+    "often": [
+     48
+    ],
+    "generate": [
+     49
+    ],
+    "secondary": [
+     50
+    ],
+    "w": [
+     51
+    ]
+   }
+  },
+  {
+   "id": "https://openalex.org/W4308040918",
+   "doi": "https://doi.org/10.1007/s11270-022-05911-3",
+   "display_name": "Demonstration of Photocatalytic Degradation of Per- and Polyfluoroalkyl Substances (PFAS) in Landfill Leachate Using 3D Printed TiO2 Composite Tiles",
+   "title": "Demonstration of Photocatalytic Degradation of Per- and Polyfluoroalkyl Substances (PFAS) in Landfill Leachate Using 3D Printed TiO2 Composite Tiles",
+   "publication_year": 2022,
+   "cited_by_count": 34,
+   "type": "T11869 T10210",
+   "primary_topic": {
+    "id": "https://openalex.org/T11869",
+    "display_name": "Per- and polyfluoroalkyl substances research",
+    "subfield": {
+     "display_name": "Environmental Chemistry"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T11869",
+     "display_name": "Per- and polyfluoroalkyl substances research",
+     "subfield": {
+      "display_name": "Environmental Chemistry"
+     }
+    },
+    {
+     "id": "https://openalex.org/T10210",
+     "display_name": "Advanced oxidation water treatment",
+     "subfield": {
+      "display_name": "Water Science and Technology"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": null
+  },
+  {
+   "id": "https://openalex.org/W7168127245",
+   "doi": "https://doi.org/10.1016/j.watres.2026.126489",
+   "display_name": "Burstein–Moss band engineering of amine-functionalised In2S3 for visible-light photocatalytic degradation of PFAS",
+   "title": "Burstein–Moss band engineering of amine-functionalised In2S3 for visible-light photocatalytic degradation of PFAS",
+   "publication_year": 2026,
+   "cited_by_count": 1,
+   "type": "T10078 T11869",
+   "primary_topic": {
+    "id": "https://openalex.org/T10078",
+    "display_name": "Advanced Photocatalysis Techniques",
+    "subfield": {
+     "display_name": "Renewable Energy, Sustainability and the Environment"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T10078",
+     "display_name": "Advanced Photocatalysis Techniques",
+     "subfield": {
+      "display_name": "Renewable Energy, Sustainability and the Environment"
+     }
+    },
+    {
+     "id": "https://openalex.org/T11869",
+     "display_name": "Per- and polyfluoroalkyl substances research",
+     "subfield": {
+      "display_name": "Environmental Chemistry"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": {
+    "Per-": [
+     0
+    ],
+    "and": [
+     1,
+     8,
+     20
+    ],
+    "polyfluoroalkyl": [
+     2
+    ],
+    "substances": [
+     3
+    ],
+    "(PFAS)": [
+     4
+    ],
+    "are": [
+     5
+    ],
+    "persistent,": [
+     6
+    ],
+    "mobile,": [
+     7
+    ],
+    "toxic": [
+     9
+    ],
+    "pollutants": [
+     10
+    ],
+    "whose": [
+     11
+    ],
+    "remediation": [
+     12
+    ],
+    "in": [
+     13,
+     48,
+     56
+    ],
+    "water": [
+     14
+    ],
+    "remains": [
+     15
+    ],
+    "a": [
+     16
+    ],
+    "major": [
+     17
+    ],
+    "environmental": [
+     18
+    ],
+    "challenge,": [
+     19
+    ],
+    "most": [
+     21
+    ],
+    "reported": [
+     22
+    ],
+    "photocatalytic": [
+     23
+    ],
+    "systems": [
+     24
+    ],
+    "still": [
+     25
+    ],
+    "rely": [
+     26
+    ],
+    "on": [
+     27
+    ],
+    "ultraviolet": [
+     28
+    ],
+    "(UV)": [
+     29
+    ],
+    "irradiation,": [
+     30
+    ],
+    "chemical": [
+     31
+    ],
+    "reductants,": [
+     32
+    ],
+    "or": [
+     33
+    ],
+    "sacrificial": [
+     34
+    ],
+    "reagents.": [
+     35
+    ],
+    "Here": [
+     36
+    ],
+    "we": [
+     37
+    ],
+    "report": [
+     38
+    ],
+    "amine-functionalised": [
+     39
+    ],
+    "indium": [
+     40
+    ],
+    "sulfide": [
+     41
+    ],
+    "(Am-In": [
+     42
+    ],
+    "2": [
+     43
+    ],
+    "S": [
+     44
+    ],
+    "3": [
+     45
+    ],
+    ")": [
+     46
+    ],
+    "nanoplates": [
+     47
+    ],
+    "which": [
+     49
+    ],
+    "the": [
+     50
+    ],
+    "formation": [
+     51
+    ],
+    "of": [
+     52
+    ],
+    "In–N": [
+     53
+    ],
+    "surface": [
+     54
+    ],
+    "bonds": [
+     55
+    ]
+   }
+  },
+  {
+   "id": "https://openalex.org/W4390708195",
+   "doi": "https://doi.org/10.1016/j.chemosphere.2024.141164",
+   "display_name": "Progress and perspectives on carbon-based materials for adsorptive removal and photocatalytic degradation of perfluoroalkyl and polyfluoroalkyl substances (PFAS)",
+   "title": "Progress and perspectives on carbon-based materials for adsorptive removal and photocatalytic degradation of perfluoroalkyl and polyfluoroalkyl substances (PFAS)",
+   "publication_year": 2024,
+   "cited_by_count": 65,
+   "type": "T11869 T12078",
+   "primary_topic": {
+    "id": "https://openalex.org/T11869",
+    "display_name": "Per- and polyfluoroalkyl substances research",
+    "subfield": {
+     "display_name": "Environmental Chemistry"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T11869",
+     "display_name": "Per- and polyfluoroalkyl substances research",
+     "subfield": {
+      "display_name": "Environmental Chemistry"
+     }
+    },
+    {
+     "id": "https://openalex.org/T12078",
+     "display_name": "Environmental remediation with nanomaterials",
+     "subfield": {
+      "display_name": "Biomedical Engineering"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": null
+  },
+  {
+   "id": "https://openalex.org/W7167079830",
+   "doi": "https://doi.org/10.36922/ajwep026210151",
+   "display_name": "Insights into development trends for photocatalytic degradation of PFAS: A bibliometric time-series perspective",
+   "title": "Insights into development trends for photocatalytic degradation of PFAS: A bibliometric time-series perspective",
+   "publication_year": 2026,
+   "cited_by_count": 0,
+   "type": "T11869 T10210",
+   "primary_topic": {
+    "id": "https://openalex.org/T11869",
+    "display_name": "Per- and polyfluoroalkyl substances research",
+    "subfield": {
+     "display_name": "Environmental Chemistry"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T11869",
+     "display_name": "Per- and polyfluoroalkyl substances research",
+     "subfield": {
+      "display_name": "Environmental Chemistry"
+     }
+    },
+    {
+     "id": "https://openalex.org/T10210",
+     "display_name": "Advanced oxidation water treatment",
+     "subfield": {
+      "display_name": "Water Science and Technology"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": {
+    "Photocatalytic": [
+     0
+    ],
+    "degradation": [
+     1
+    ],
+    "has": [
+     2
+    ],
+    "attracted": [
+     3
+    ],
+    "increasing": [
+     4
+    ],
+    "attention": [
+     5
+    ],
+    "for": [
+     6
+    ],
+    "the": [
+     7,
+     34
+    ],
+    "remediation": [
+     8
+    ],
+    "of": [
+     9,
+     16,
+     36
+    ],
+    "per-": [
+     10
+    ],
+    "and": [
+     11,
+     24,
+     55
+    ],
+    "polyfluoroalkyl": [
+     12
+    ],
+    "substances": [
+     13
+    ],
+    "(PFAS)": [
+     14
+    ],
+    "because": [
+     15
+    ],
+    "its": [
+     17
+    ],
+    "mild": [
+     18
+    ],
+    "operating": [
+     19
+    ],
+    "conditions,": [
+     20
+    ],
+    "high": [
+     21,
+     52
+    ],
+    "treatment": [
+     22
+    ],
+    "efficiency": [
+     23
+    ],
+    "relatively": [
+     25
+    ],
+    "low": [
+     26
+    ],
+    "energy": [
+     27
+    ],
+    "demand.": [
+     28
+    ],
+    "Based": [
+     29
+    ],
+    "on": [
+     30
+    ],
+    "literature": [
+     31
+    ],
+    "indexed": [
+     32
+    ],
+    "in": [
+     33
+    ],
+    "Web": [
+     35
+    ],
+    "Science": [
+     37
+    ],
+    "from": [
+     38
+    ],
+    "1999": [
+     39
+    ],
+    "to": [
+     40,
+     46
+    ],
+    "2025,": [
+     41
+    ],
+    "this": [
+     42
+    ],
+    "study": [
+     43
+    ],
+    "used": [
+     44
+    ],
+    "CiteSpace": [
+     45
+    ],
+    "analyze": [
+     47
+    ],
+    "research": [
+     48
+    ],
+    "output,": [
+     49
+    ],
+    "collaboration": [
+     50
+    ],
+    "networks,": [
+     51
+    ],
+    "impact": [
+     53
+    ],
+    "journals": [
+     54
+    ],
+    "keyword": [
+     56
+    ],
+    "evolution,": [
+     57
+    ]
+   }
+  },
+  {
+   "id": "https://openalex.org/W7119226140",
+   "doi": "https://doi.org/10.1016/j.wroa.2026.100485",
+   "display_name": "Photocatalytic degradation of PFAS under field water matrix conditions using an adsorptive photocatalyst",
+   "title": "Photocatalytic degradation of PFAS under field water matrix conditions using an adsorptive photocatalyst",
+   "publication_year": 2026,
+   "cited_by_count": 4,
+   "type": "T11869 T10210",
+   "primary_topic": {
+    "id": "https://openalex.org/T11869",
+    "display_name": "Per- and polyfluoroalkyl substances research",
+    "subfield": {
+     "display_name": "Environmental Chemistry"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T11869",
+     "display_name": "Per- and polyfluoroalkyl substances research",
+     "subfield": {
+      "display_name": "Environmental Chemistry"
+     }
+    },
+    {
+     "id": "https://openalex.org/T10210",
+     "display_name": "Advanced oxidation water treatment",
+     "subfield": {
+      "display_name": "Water Science and Technology"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": {
+    "•": [
+     0,
+     12,
+     23,
+     35,
+     48
+    ],
+    "Tested": [
+     1
+    ],
+    "an": [
+     2
+    ],
+    "adsorptive": [
+     3
+    ],
+    "photocatalyst": [
+     4
+    ],
+    "(Ga/TNTs@AC)": [
+     5
+    ],
+    "for": [
+     6
+    ],
+    "treating": [
+     7
+    ],
+    "PFAS": [
+     8,
+     22,
+     31,
+     43,
+     49
+    ],
+    "in": [
+     9
+    ],
+    "field": [
+     10
+    ],
+    "water": [
+     11,
+     14,
+     47
+    ],
+    "Field": [
+     13
+    ],
+    "matrix": [
+     15
+    ],
+    "impeded": [
+     16
+    ],
+    "column": [
+     17,
+     53
+    ],
+    "adsorption": [
+     18
+    ],
+    "and": [
+     19,
+     33,
+     61
+    ],
+    "photocatalysis": [
+     20,
+     29
+    ],
+    "of": [
+     21,
+     25,
+     41
+    ],
+    "Addition": [
+     24
+    ],
+    "Fe": [
+     26
+    ],
+    "3+": [
+     27
+    ],
+    "during": [
+     28
+    ],
+    "enhanced": [
+     30
+    ],
+    "degradation": [
+     32
+    ],
+    "mineralization": [
+     34
+    ],
+    "Column": [
+     36
+    ],
+    "tests": [
+     37
+    ],
+    "confirmed": [
+     38
+    ],
+    "effective": [
+     39
+    ],
+    "sorption": [
+     40
+    ],
+    "all": [
+     42
+    ],
+    "from": [
+     44
+    ],
+    "the": [
+     45,
+     52,
+     58
+    ],
+    "surface": [
+     46
+    ],
+    "retained": [
+     50
+    ],
+    "by": [
+     51
+    ],
+    "were": [
+     54
+    ],
+    "effectively": [
+     55
+    ],
+    "photodegraded,": [
+     56
+    ],
+    "regenerating": [
+     57
+    ],
+    "media": [
+     59
+    ],
+    "Per-": [
+     60
+    ],
+    "pol": [
+     62
+    ]
+   }
+  }
+ ]
+}

@@ -1,0 +1,49 @@
+{
+ "meta": {
+  "count": 4
+ },
+ "results": [
+  {
+   "id": "https://openalex.org/A5033675494",
+   "display_name": "Raphaell Moreira",
+   "orcid": "https://orcid.org/0000-0001-6636-725X",
+   "works_count": 30,
+   "last_known_institutions": [
+    {
+     "display_name": "University of British Columbia"
+    },
+    {
+     "display_name": "University of Bremen"
+    },
+    {
+     "display_name": "Universidade Regional de Blumenau"
+    }
+   ]
+  },
+  {
+   "id": "https://openalex.org/A5043128895",
+   "display_name": "Raphaell Moreira Martins",
+   "orcid": "https://orcid.org/0000-0001-6988-7795",
+   "works_count": 50,
+   "last_known_institutions": [
+    {
+     "display_name": "Instituto Federal de Educação, Ciência e Tecnologia do Ceará"
+    }
+   ]
+  },
+  {
+   "id": "https://openalex.org/A5102305508",
+   "display_name": "Raphaell Martins Moreira",
+   "orcid": null,
+   "works_count": 1,
+   "last_known_institutions": []
+  },
+  {
+   "id": "https://openalex.org/A5072432539",
+   "display_name": "Raphaell Júnnio Moreira Silva",
+   "orcid": null,
+   "works_count": 2,
+   "last_known_institutions": []
+  }
+ ]
+}

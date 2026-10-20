@@ -1,0 +1,1164 @@
+{
+ "meta": {
+  "count": 5139,
+  "per_page": 6
+ },
+ "results": [
+  {
+   "id": "https://openalex.org/W4412978443",
+   "doi": "https://doi.org/10.1016/j.memsci.2025.124486",
+   "display_name": "Development of a robust ion-selective membrane from sulfonated cellulose nanofibers for zinc–iodine redox flow batteries",
+   "title": "Development of a robust ion-selective membrane from sulfonated cellulose nanofibers for zinc–iodine redox flow batteries",
+   "publication_year": 2025,
+   "cited_by_count": 6,
+   "type": "T11690 T10409",
+   "primary_topic": {
+    "id": "https://openalex.org/T11690",
+    "display_name": "Advanced battery technologies research",
+    "subfield": {
+     "display_name": "Electrical and Electronic Engineering"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T11690",
+     "display_name": "Advanced battery technologies research",
+     "subfield": {
+      "display_name": "Electrical and Electronic Engineering"
+     }
+    },
+    {
+     "id": "https://openalex.org/T10409",
+     "display_name": "Fuel Cells and Related Materials",
+     "subfield": {
+      "display_name": "Electrical and Electronic Engineering"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": {
+    "Electrochemical": [
+     0
+    ],
+    "cells": [
+     1
+    ],
+    "play": [
+     2
+    ],
+    "a": [
+     3
+    ],
+    "critical": [
+     4
+    ],
+    "role": [
+     5
+    ],
+    "across": [
+     6
+    ],
+    "various": [
+     7
+    ],
+    "sectors,": [
+     8
+    ],
+    "enabling": [
+     9
+    ],
+    "technologies": [
+     10
+    ],
+    "in": [
+     11
+    ],
+    "renewable": [
+     12
+    ],
+    "energy": [
+     13,
+     33,
+     43
+    ],
+    "generation": [
+     14
+    ],
+    "and": [
+     15,
+     19,
+     42,
+     55
+    ],
+    "storage,": [
+     16
+    ],
+    "environmental": [
+     17
+    ],
+    "monitoring,": [
+     18
+    ],
+    "management.": [
+     20
+    ],
+    "Among": [
+     21
+    ],
+    "different": [
+     22
+    ],
+    "options,": [
+     23
+    ],
+    "redox": [
+     24
+    ],
+    "flow": [
+     25
+    ],
+    "batteries": [
+     26
+    ],
+    "(RFBs)": [
+     27
+    ],
+    "are": [
+     28
+    ],
+    "gaining": [
+     29
+    ],
+    "importance": [
+     30
+    ],
+    "for": [
+     31
+    ],
+    "large-scale": [
+     32
+    ],
+    "storage": [
+     34
+    ],
+    "applications": [
+     35
+    ],
+    "due": [
+     36
+    ],
+    "mainly": [
+     37
+    ],
+    "to": [
+     38
+    ],
+    "their": [
+     39
+    ],
+    "decoupled": [
+     40
+    ],
+    "power": [
+     41
+    ],
+    "outputs": [
+     44
+    ],
+    "associated": [
+     45
+    ],
+    "with": [
+     46
+    ],
+    "easily": [
+     47
+    ],
+    "scalable": [
+     48
+    ],
+    "design.": [
+     49
+    ],
+    "As": [
+     50
+    ],
+    "part": [
+     51
+    ],
+    "of": [
+     52
+    ],
+    "most": [
+     53
+    ],
+    "acidic": [
+     54
+    ],
+    "neu": [
+     56
+    ]
+   }
+  },
+  {
+   "id": "https://openalex.org/W4391533065",
+   "doi": "https://doi.org/10.1007/s10570-024-05760-9",
+   "display_name": "Impact of cellulose nanofibers on cellulose acetate membrane performance",
+   "title": "Impact of cellulose nanofibers on cellulose acetate membrane performance",
+   "publication_year": 2024,
+   "cited_by_count": 40,
+   "type": "T10610 T10729",
+   "primary_topic": {
+    "id": "https://openalex.org/T10610",
+    "display_name": "Advanced Cellulose Research Studies",
+    "subfield": {
+     "display_name": "Biomaterials"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T10610",
+     "display_name": "Advanced Cellulose Research Studies",
+     "subfield": {
+      "display_name": "Biomaterials"
+     }
+    },
+    {
+     "id": "https://openalex.org/T10729",
+     "display_name": "Electrospun Nanofibers in Biomedical Applications",
+     "subfield": {
+      "display_name": "Biomaterials"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": {
+    "Membranes": [
+     0
+    ],
+    "find": [
+     1
+    ],
+    "applications": [
+     2
+    ],
+    "across": [
+     3
+    ],
+    "a": [
+     4
+    ],
+    "wide": [
+     5
+    ],
+    "spectrum": [
+     6
+    ],
+    "of": [
+     7,
+     34
+    ],
+    "industries,": [
+     8
+    ],
+    "including": [
+     9
+    ],
+    "water": [
+     10
+    ],
+    "treatment,": [
+     11
+    ],
+    "energy": [
+     12
+    ],
+    "production,": [
+     13
+    ],
+    "and": [
+     14
+    ],
+    "biomedicine.": [
+     15
+    ],
+    "In": [
+     16
+    ],
+    "this": [
+     17
+    ],
+    "study,": [
+     18
+    ],
+    "nonwoven": [
+     19
+    ],
+    "membranes": [
+     20
+    ],
+    "were": [
+     21,
+     43
+    ],
+    "fabricated": [
+     22
+    ],
+    "using": [
+     23
+    ],
+    "cellulose": [
+     24,
+     35
+    ],
+    "acetate": [
+     25
+    ],
+    "(CA)": [
+     26
+    ],
+    "as": [
+     27,
+     39
+    ],
+    "the": [
+     28
+    ],
+    "primary": [
+     29
+    ],
+    "component,": [
+     30
+    ],
+    "with": [
+     31
+    ],
+    "varying": [
+     32
+    ],
+    "percentages": [
+     33
+    ],
+    "nanofibers": [
+     36
+    ],
+    "(CNFs)": [
+     37
+    ],
+    "embedded": [
+     38
+    ],
+    "reinforcement.": [
+     40
+    ],
+    "These": [
+     41
+    ],
+    "CNFs": [
+     42
+    ],
+    "prepared": [
+     44
+    ],
+    "through": [
+     45
+    ],
+    "an": [
+     46
+    ],
+    "oxalic": [
+     47
+    ],
+    "acid": [
+     48
+    ],
+    "pretreatment": [
+     49
+    ],
+    "(Oxalic-CNFs).": [
+     50
+    ],
+    "Their": [
+     51
+    ],
+    "incorporatio": [
+     52
+    ]
+   }
+  },
+  {
+   "id": "https://openalex.org/W4309772438",
+   "doi": "https://doi.org/10.1016/j.carpta.2022.100262",
+   "display_name": "A review on fabrication methods of nanofibers and a special focus on application of cellulose nanofibers",
+   "title": "A review on fabrication methods of nanofibers and a special focus on application of cellulose nanofibers",
+   "publication_year": 2022,
+   "cited_by_count": 137,
+   "type": "T10729 T10610",
+   "primary_topic": {
+    "id": "https://openalex.org/T10729",
+    "display_name": "Electrospun Nanofibers in Biomedical Applications",
+    "subfield": {
+     "display_name": "Biomaterials"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T10729",
+     "display_name": "Electrospun Nanofibers in Biomedical Applications",
+     "subfield": {
+      "display_name": "Biomaterials"
+     }
+    },
+    {
+     "id": "https://openalex.org/T10610",
+     "display_name": "Advanced Cellulose Research Studies",
+     "subfield": {
+      "display_name": "Biomaterials"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": {
+    "Nanofibers": [
+     0
+    ],
+    "have": [
+     1
+    ],
+    "become": [
+     2
+    ],
+    "significant": [
+     3
+    ],
+    "in": [
+     4,
+     15
+    ],
+    "almost": [
+     5
+    ],
+    "many": [
+     6
+    ],
+    "industries": [
+     7
+    ],
+    "due": [
+     8
+    ],
+    "to": [
+     9,
+     48
+    ],
+    "their": [
+     10,
+     39
+    ],
+    "extraordinary": [
+     11
+    ],
+    "engineering": [
+     12
+    ],
+    "properties,": [
+     13
+    ],
+    "particularly": [
+     14
+    ],
+    "the": [
+     16
+    ],
+    "packaging,": [
+     17
+    ],
+    "purification,": [
+     18
+    ],
+    "textile,": [
+     19
+    ],
+    "pharmaceutical,": [
+     20
+    ],
+    "and": [
+     21,
+     51,
+     53
+    ],
+    "biomedical": [
+     22
+    ],
+    "sectors.": [
+     23
+    ],
+    "Nano-scale": [
+     24
+    ],
+    "fibres,": [
+     25
+    ],
+    "also": [
+     26
+    ],
+    "known": [
+     27
+    ],
+    "as": [
+     28
+    ],
+    "nanofibers,": [
+     29
+    ],
+    "are": [
+     30
+    ],
+    "manufactured": [
+     31
+    ],
+    "from": [
+     32
+    ],
+    "a": [
+     33
+    ],
+    "variety": [
+     34
+    ],
+    "of": [
+     35,
+     43
+    ],
+    "polymers,": [
+     36
+    ],
+    "depending": [
+     37
+    ],
+    "on": [
+     38
+    ],
+    "intended": [
+     40
+    ],
+    "function.": [
+     41
+    ],
+    "Most": [
+     42
+    ],
+    "these": [
+     44
+    ],
+    "nanofibers": [
+     45
+    ],
+    "were": [
+     46
+    ],
+    "discovered": [
+     47
+    ],
+    "be": [
+     49
+    ],
+    "biodegradable": [
+     50
+    ],
+    "biocompatible,": [
+     52
+    ],
+    "ha": [
+     54
+    ]
+   }
+  },
+  {
+   "id": "https://openalex.org/W3096818993",
+   "doi": "https://doi.org/10.2115/fiberst.2020-0039",
+   "display_name": "Cellulose Nanofibers: Recent Progress and Future Prospects",
+   "title": "Cellulose Nanofibers: Recent Progress and Future Prospects",
+   "publication_year": 2020,
+   "cited_by_count": 77,
+   "type": "T10610 T11208",
+   "primary_topic": {
+    "id": "https://openalex.org/T10610",
+    "display_name": "Advanced Cellulose Research Studies",
+    "subfield": {
+     "display_name": "Biomaterials"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T10610",
+     "display_name": "Advanced Cellulose Research Studies",
+     "subfield": {
+      "display_name": "Biomaterials"
+     }
+    },
+    {
+     "id": "https://openalex.org/T11208",
+     "display_name": "Lignin and Wood Chemistry",
+     "subfield": {
+      "display_name": "Biomedical Engineering"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": {
+    "Nanocelluloses": [
+     0
+    ],
+    "are": [
+     1,
+     9,
+     42
+    ],
+    "prepared": [
+     2
+    ],
+    "by": [
+     3
+    ],
+    "downsizing": [
+     4
+    ],
+    "plant": [
+     5
+    ],
+    "cellulose": [
+     6
+    ],
+    "fibers,": [
+     7
+    ],
+    "which": [
+     8
+    ],
+    "efficiently": [
+     10
+    ],
+    "produced": [
+     11
+    ],
+    "at": [
+     12
+    ],
+    "the": [
+     13
+    ],
+    "industrial": [
+     14
+    ],
+    "level": [
+     15
+    ],
+    "as": [
+     16
+    ],
+    "paper": [
+     17
+    ],
+    "and": [
+     18,
+     31
+    ],
+    "dissolving": [
+     19
+    ],
+    "pulps": [
+     20
+    ],
+    "from": [
+     21
+    ],
+    "renewable": [
+     22
+    ],
+    "wood": [
+     23
+    ],
+    "biomass": [
+     24
+    ],
+    "resources.": [
+     25
+    ],
+    "The": [
+     26
+    ],
+    "number": [
+     27
+    ],
+    "of": [
+     28,
+     48,
+     55
+    ],
+    "scientific": [
+     29
+    ],
+    "publications": [
+     30
+    ],
+    "patents": [
+     32
+    ],
+    "concerning": [
+     33
+    ],
+    "nanocelluloses": [
+     34,
+     41
+    ],
+    "has": [
+     35
+    ],
+    "been": [
+     36
+    ],
+    "increasing": [
+     37
+    ],
+    "every": [
+     38
+    ],
+    "year,": [
+     39
+    ],
+    "because": [
+     40
+    ],
+    "expected": [
+     43
+    ],
+    "to": [
+     44,
+     46
+    ],
+    "contribute": [
+     45
+    ],
+    "creation": [
+     47
+    ],
+    "a": [
+     49
+    ],
+    "sustainable": [
+     50
+    ],
+    "society": [
+     51
+    ],
+    "partly": [
+     52
+    ],
+    "in": [
+     53
+    ],
+    "place": [
+     54
+    ],
+    "petroleumbased": [
+     56
+    ],
+    "m": [
+     57
+    ]
+   }
+  },
+  {
+   "id": "https://openalex.org/W4224699394",
+   "doi": "https://doi.org/10.1002/cey2.203",
+   "display_name": "Cellulose nanofiber‐derived carbon aerogel for advanced room‐temperature sodium–sulfur batteries",
+   "title": "Cellulose nanofiber‐derived carbon aerogel for advanced room‐temperature sodium–sulfur batteries",
+   "publication_year": 2022,
+   "cited_by_count": 73,
+   "type": "T10281 T11690",
+   "primary_topic": {
+    "id": "https://openalex.org/T10281",
+    "display_name": "Advanced Battery Materials and Technologies",
+    "subfield": {
+     "display_name": "Electrical and Electronic Engineering"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T10281",
+     "display_name": "Advanced Battery Materials and Technologies",
+     "subfield": {
+      "display_name": "Electrical and Electronic Engineering"
+     }
+    },
+    {
+     "id": "https://openalex.org/T11690",
+     "display_name": "Advanced battery technologies research",
+     "subfield": {
+      "display_name": "Electrical and Electronic Engineering"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": {
+    "Room‐temperature": [
+     0
+    ],
+    "sodium–sulfur": [
+     1
+    ],
+    "(RT/Na–S)": [
+     2
+    ],
+    "batteries": [
+     3
+    ],
+    "are": [
+     4,
+     43
+    ],
+    "regarded": [
+     5
+    ],
+    "as": [
+     6,
+     22,
+     24
+    ],
+    "promising": [
+     7
+    ],
+    "large‐scale": [
+     8
+    ],
+    "stationary": [
+     9
+    ],
+    "energy": [
+     10,
+     17
+    ],
+    "storage": [
+     11
+    ],
+    "systems": [
+     12
+    ],
+    "owing": [
+     13
+    ],
+    "to": [
+     14
+    ],
+    "their": [
+     15,
+     48
+    ],
+    "high": [
+     16
+    ],
+    "density": [
+     18
+    ],
+    "and": [
+     19,
+     30,
+     37,
+     55
+    ],
+    "low": [
+     20
+    ],
+    "cost": [
+     21
+    ],
+    "well": [
+     23
+    ],
+    "the": [
+     25,
+     33
+    ],
+    "earth‐abundant": [
+     26
+    ],
+    "reserves": [
+     27
+    ],
+    "of": [
+     28,
+     35,
+     40
+    ],
+    "sodium": [
+     29
+    ],
+    "sulfur.": [
+     31
+    ],
+    "However,": [
+     32
+    ],
+    "diffusion": [
+     34
+    ],
+    "polysulfides": [
+     36
+    ],
+    "sluggish": [
+     38
+    ],
+    "kinetics": [
+     39
+    ],
+    "conversion": [
+     41
+    ],
+    "reactions": [
+     42
+    ],
+    "still": [
+     44
+    ],
+    "major": [
+     45
+    ],
+    "challenges": [
+     46
+    ],
+    "for": [
+     47
+    ],
+    "application.": [
+     49
+    ],
+    "Herein,": [
+     50
+    ],
+    "we": [
+     51
+    ],
+    "developed": [
+     52
+    ],
+    "a": [
+     53
+    ],
+    "powerful": [
+     54
+    ],
+    "function": [
+     56
+    ]
+   }
+  },
+  {
+   "id": "https://openalex.org/W3118918678",
+   "doi": "https://doi.org/10.1007/s10570-020-03593-w",
+   "display_name": "Spray deposition of sulfonated cellulose nanofibers as electrolyte membranes in fuel cells",
+   "title": "Spray deposition of sulfonated cellulose nanofibers as electrolyte membranes in fuel cells",
+   "publication_year": 2021,
+   "cited_by_count": 56,
+   "type": "T10409 T10610",
+   "primary_topic": {
+    "id": "https://openalex.org/T10409",
+    "display_name": "Fuel Cells and Related Materials",
+    "subfield": {
+     "display_name": "Electrical and Electronic Engineering"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T10409",
+     "display_name": "Fuel Cells and Related Materials",
+     "subfield": {
+      "display_name": "Electrical and Electronic Engineering"
+     }
+    },
+    {
+     "id": "https://openalex.org/T10610",
+     "display_name": "Advanced Cellulose Research Studies",
+     "subfield": {
+      "display_name": "Biomaterials"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": {
+    "Nanocellulose": [
+     0
+    ],
+    "is": [
+     1,
+     23,
+     26,
+     41
+    ],
+    "a": [
+     2
+    ],
+    "promising": [
+     3
+    ],
+    "new": [
+     4
+    ],
+    "membrane": [
+     5,
+     59
+    ],
+    "material": [
+     6
+    ],
+    "for": [
+     7
+    ],
+    "fuel": [
+     8,
+     62
+    ],
+    "cells,": [
+     9
+    ],
+    "with": [
+     10,
+     18
+    ],
+    "much": [
+     11
+    ],
+    "lower": [
+     12
+    ],
+    "cost": [
+     13
+    ],
+    "and": [
+     14,
+     31,
+     61
+    ],
+    "environmental": [
+     15
+    ],
+    "impact": [
+     16
+    ],
+    "compared": [
+     17
+    ],
+    "Nafion": [
+     19
+    ],
+    "or": [
+     20
+    ],
+    "Aquivion.": [
+     21
+    ],
+    "It": [
+     22
+    ],
+    "mechanically": [
+     24
+    ],
+    "strong,": [
+     25
+    ],
+    "an": [
+     27
+    ],
+    "excellent": [
+     28
+    ],
+    "hydrogen": [
+     29
+    ],
+    "barrier": [
+     30
+    ],
+    "has": [
+     32
+    ],
+    "reasonable": [
+     33
+    ],
+    "proton": [
+     34
+    ],
+    "conductivity.": [
+     35
+    ],
+    "Here,": [
+     36
+    ],
+    "sulfonation": [
+     37
+    ],
+    "of": [
+     38
+    ],
+    "cellulose": [
+     39
+    ],
+    "nanofibers": [
+     40
+    ],
+    "performed": [
+     42
+    ],
+    "to": [
+     43,
+     48
+    ],
+    "enhance": [
+     44
+    ],
+    "the": [
+     45,
+     58
+    ],
+    "conductivity": [
+     46
+    ],
+    "(up": [
+     47
+    ],
+    "2": [
+     49
+    ],
+    "×": [
+     50
+    ],
+    "10−": [
+     51
+    ],
+    "3": [
+     52
+    ],
+    "S": [
+     53
+    ],
+    "cm−": [
+     54
+    ],
+    "1)": [
+     55
+    ],
+    "without": [
+     56
+    ],
+    "compromising": [
+     57
+    ],
+    "integrity,": [
+     60
+    ],
+    "c": [
+     63
+    ]
+   }
+  }
+ ]
+}

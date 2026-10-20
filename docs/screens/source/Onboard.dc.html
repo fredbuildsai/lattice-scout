@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lattice Scout — Claim your profile</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F3F4F1;font-family:"IBM Plex Sans",system-ui,sans-serif;color:#14171A}
+a{color:#2446C7}a:hover{color:#16308F}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #F3F4F1; font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #14171A">
+
+<header style="background: #FFFFFF; border-bottom: 1px solid #D9DCD6">
+<div style="max-width: 1240px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; gap: 24px; flex-wrap: wrap">
+<dc-import name="NavMenu" current="Onboard" hint-size="44px,44px"></dc-import>
+<a href="Main.dc.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #14171A">
+<svg width="26" height="26" viewBox="0 0 28 28" fill="none" stroke="{{accent}}" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="22" height="22"></rect><path d="M3 14h22M14 3v22"></path><circle cx="14" cy="14" r="3" fill="#5B3FB5" stroke="#5B3FB5"></circle></svg>
+<span style="font-weight: 700; font-size: 18px">Lattice Scout</span>
+</a>
+<ol style="list-style: none; margin: 0; padding: 0; display: flex; gap: 8px; flex-wrap: wrap; flex-grow: 1; justify-content: center; font-size: 14px">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="3">
+<li style="{{s.style}}"><span style="{{s.dot}}">{{s.n}}</span>{{s.label}}</li>
+</sc-for>
+</ol>
+<a href="Home.dc.html" style="font-size: 14px; color: #555C63; text-decoration: none; padding: 10px">Skip for now</a>
+</div>
+</header>
+
+<main style="max-width: 1240px; margin: 0 auto; padding: 40px 24px 120px; display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h1 style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: 38px; letter-spacing: -0.01em">Is this you, Johan?</h1>
+<p style="margin: 0; font-size: 16px; color: #3A4047; line-height: 1.55; max-width: 760px">Scout built a starting profile from public sources. Confirm what's yours — it decides what Scout compares your private work against, and how you're matched.</p>
+</div>
+
+<div style="display: flex; gap: 14px; align-items: flex-start; background: #F4F1FB; border: 1px solid #D9CFF0; border-radius: 12px; padding: 16px 18px">
+<span style="flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; background: #5B3FB5; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path></svg></span>
+<div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1">
+<b style="font-size: 15px; color: #4A2F9A">Scout found 159 works, cited 9,970 times, under 11 spellings of your name</b>
+<span style="font-size: 14px; color: #3A4047; line-height: 1.5">OpenAlex also lists 6 smaller profiles named “Johan Foster”. Two share your ORCID and UBC affiliation, so I merged them. One (membranes &amp; water purification, no ORCID) is uncertain — I've left it unticked.</span>
+</div>
+<a href="Assistant.dc.html" style="font-size: 14px; font-weight: 600; color: #4A2F9A; text-decoration: none; padding: 8px 4px; white-space: nowrap">Ask why</a>
+</div>
+
+<div style="display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start">
+
+<aside style="flex: 1 1 300px; display: flex; flex-direction: column; gap: 16px">
+<div style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 22px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; gap: 14px; align-items: center">
+<span style="width: 56px; height: 56px; border-radius: 50%; background: {{accent}}; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 600">JF</span>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<b style="font-size: 18px">Dr. E. Johan Foster</b>
+<span style="font-size: 14px; color: #555C63">University of British Columbia</span>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px">
+<span style="display: flex; justify-content: space-between; gap: 8px"><span style="color: #555C63">ORCID</span><span style="font-family: 'IBM Plex Mono', monospace">0000-0002-4103-8510</span></span>
+<span style="display: flex; justify-content: space-between; gap: 8px"><span style="color: #555C63">Field</span><span>Bio-based materials</span></span>
+<span style="display: flex; justify-content: space-between; gap: 8px"><span style="color: #555C63">h-index</span><span>50 · i10 111</span></span>
+<span style="display: flex; justify-content: space-between; gap: 8px"><span style="color: #555C63">Path</span><span style="text-align: right">SFU → TU/e → Adolphe Merkle Inst. → Virginia Tech → UBC</span></span>
+</div>
+</div>
+
+<div style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 22px; display: flex; flex-direction: column; gap: 12px">
+<b style="font-size: 15px">Sources</b>
+<sc-for list="{{sources}}" as="s" hint-placeholder-count="6">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid #ECEEE9">
+<span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">{{s.name}}</span><span style="font-size: 12px; color: #555C63">{{s.detail}}</span></span>
+<span style="{{s.chip}}">{{s.status}}</span>
+</div>
+</sc-for>
+<button type="button" style="font: inherit; font-size: 14px; font-weight: 600; background: #FFFFFF; color: {{accent}}; border: 1px solid #C4C8C1; border-radius: 8px; padding: 10px; min-height: 44px; cursor: pointer">Add a source or profile link</button>
+</div>
+</aside>
+
+<section style="flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+<div style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 22px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; padding-bottom: 8px">
+<b style="font-size: 17px">Publications &amp; outputs</b>
+<span style="font-size: 13px; color: #555C63">159 confirmed · 1 uncertain</span>
+</div>
+<sc-for list="{{works}}" as="w" hint-placeholder-count="6">
+<label style="display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-top: 1px solid #ECEEE9; cursor: pointer">
+<input type="checkbox" defaultChecked="{{w.on}}" style="width: 20px; height: 20px; margin: 2px 0 0; flex-shrink: 0; accent-color: {{accent}}">
+<span style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1">
+<span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 17px; font-weight: 600; line-height: 1.35">{{w.title}}</span>
+<span style="font-size: 13px; color: #555C63">{{w.meta}}</span>
+</span>
+<span style="{{w.chip}}">{{w.kind}}</span>
+</label>
+</sc-for>
+<button type="button" style="font: inherit; font-size: 14px; font-weight: 600; background: transparent; color: {{accent}}; border: 0; padding: 10px 0; min-height: 44px; cursor: pointer; align-self: flex-start">Show all 159</button>
+</div>
+
+<div style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 22px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap">
+<b style="font-size: 17px">Research topics Scout detected</b>
+<span style="font-size: 13px; color: #555C63">Remove any that aren't you; add what's missing</span>
+</div>
+<div style="display: flex; gap: 8px; flex-wrap: wrap">
+<sc-for list="{{topics}}" as="t" hint-placeholder-count="8">
+<span style="display: inline-flex; align-items: center; gap: 6px; font-size: 14px; padding: 7px 8px 7px 12px; border-radius: 999px; background: #E8ECFA; color: #16308F">{{t}}<button type="button" aria-label="Remove topic" style="font: inherit; width: 22px; height: 22px; border-radius: 50%; border: 0; background: transparent; color: #16308F; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></span>
+</sc-for>
+<button type="button" style="font: inherit; font-size: 14px; padding: 7px 14px; border-radius: 999px; background: #FFFFFF; border: 1px dashed #A9ADA6; color: #3A4047; cursor: pointer">+ Add topic</button>
+</div>
+</div>
+
+<div style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 22px; display: flex; flex-direction: column; gap: 14px">
+<b style="font-size: 17px">Matching with other researchers</b>
+<label style="display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 12px 14px; background: #F7F8F5; border-radius: 8px; cursor: pointer">
+<span style="display: flex; flex-direction: column; gap: 2px"><b style="font-size: 15px">Suggest me to complementary researchers</b><span style="font-size: 13px; color: #555C63; line-height: 1.45">You stay anonymous. Contacts are shared only if you both accept.</span></span>
+<input type="checkbox" checked style="width: 22px; height: 22px; accent-color: #0F6E6E; flex-shrink: 0">
+</label>
+<span style="font-size: 14px; font-weight: 600">Match me using</span>
+<label style="display: flex; gap: 10px; align-items: center; font-size: 15px"><input type="radio" name="basis" style="width: 18px; height: 18px; accent-color: {{accent}}">Published work only</label>
+<label style="display: flex; gap: 10px; align-items: center; font-size: 15px"><input type="radio" name="basis" checked style="width: 18px; height: 18px; accent-color: {{accent}}">Published work + topic signals from my private vault <span style="font-size: 12px; color: #555C63">(never the files themselves)</span></label>
+<span style="font-size: 14px; font-weight: 600; padding-top: 6px">I'm looking for</span>
+<div style="display: flex; gap: 8px; flex-wrap: wrap">
+<sc-for list="{{looking}}" as="l" hint-placeholder-count="5">
+<label style="{{l.style}}"><input type="checkbox" defaultChecked="{{l.on}}" style="width: 16px; height: 16px; margin: 0; accent-color: #0F6E6E">{{l.label}}</label>
+</sc-for>
+</div>
+</div>
+
+<div style="display: flex; justify-content: flex-end; gap: 12px; flex-wrap: wrap">
+<a href="Home.dc.html" style="font-size: 16px; font-weight: 600; color: #3A4047; text-decoration: none; border: 1px solid #C4C8C1; background: #FFFFFF; border-radius: 8px; padding: 13px 20px">Save and finish later</a>
+<a href="Documents.dc.html" style="font-size: 16px; font-weight: 600; color: #FFFFFF; text-decoration: none; background: {{accent}}; border-radius: 8px; padding: 13px 20px">Confirm and add private work</a>
+</div>
+</section>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#2446C7","options":["#2446C7","#0F6E6E","#5B3FB5","#14171A"]},"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const accent = this.props.accent ?? '#2446C7';
+    const chip = (bg, fg) => 'flex-shrink: 0; font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 4px; background: ' + bg + '; color: ' + fg + ';';
+    const step = (n, label, state) => ({
+      n, label,
+      style: 'display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; ' + (state === 'now' ? 'background: #E8ECFA; color: #16308F; font-weight: 600;' : 'color: #555C63;'),
+      dot: 'width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; ' + (state === 'now' ? 'background: ' + accent + '; color: #FFFFFF;' : 'background: #E6E8E3; color: #3A4047;')
+    });
+    return {
+      accent,
+      steps: [step('1', 'Confirm profile', 'now'), step('2', 'Add private work', ''), step('3', 'First analysis', '')],
+      sources: [
+        { name: 'ORCID', detail: '0000-0002-4103-8510 · on the OpenAlex record', status: 'Matched', chip: chip('#E3F1EF', '#0F5E5E') },
+        { name: 'OpenAlex', detail: '159 works · 9,970 citations · 2003–2026', status: 'Found', chip: chip('#E3F1EF', '#0F5E5E') },
+        { name: 'OpenAlex — split profiles', detail: '6 more “Johan Foster” records · 2 merged', status: 'Review', chip: chip('#FBF0E4', '#7A3A06') },
+        { name: 'Funders named on papers', detail: 'NSERC 32 · SNSF 31 · CFI 25 · NSF 12', status: 'Found', chip: chip('#E3F1EF', '#0F5E5E') },
+        { name: 'Datasets', detail: '1 crystal structure (CCDC, 2023)', status: 'Found', chip: chip('#E3F1EF', '#0F5E5E') },
+        { name: 'Google Scholar', detail: 'Paste your profile link', status: 'Not linked', chip: chip('#F1F2EF', '#3A4047') }
+      ],
+      works: [
+        { on: true, title: 'Current characterization methods for cellulose nanomaterials', meta: 'Chemical Society Reviews · 2018 · 1,025 citations · 25 co-authors', kind: 'Review', chip: chip('#E8ECFA', '#16308F') },
+        { on: true, title: 'Recent advances in nanocellulose for biomedical applications', meta: 'J. Applied Polymer Science · 2014 · 738 citations', kind: 'Article', chip: chip('#E8ECFA', '#16308F') },
+        { on: true, title: 'Isolation of Thermally Stable Cellulose Nanocrystals by Phosphoric Acid Hydrolysis', meta: 'Biomacromolecules · 2013 · 665 citations', kind: 'Article', chip: chip('#E8ECFA', '#16308F') },
+        { on: true, title: 'Lignin Type and Content Influence the Foaming Dynamics and Properties of Flexible Polyurethane Foams', meta: 'ACS Applied Polymer Materials · 2026 · new', kind: 'Article', chip: chip('#E8ECFA', '#16308F') },
+        { on: false, title: '2 works on membrane separation and solar water purification', meta: 'OpenAlex profile “Johan Foster” · no ORCID, no affiliation — possibly a namesake', kind: 'Uncertain', chip: chip('#F1F2EF', '#3A4047') },
+        { on: true, title: 'Development of a robust ion-selective membrane from sulfonated cellulose nanofibers for zinc–iodine redox flow batteries', meta: 'Journal of Membrane Science · 2025 · 6 citations', kind: 'Article', chip: chip('#E8ECFA', '#16308F') }
+      ],
+      topics: ['Cellulose nanomaterials', 'Nanocomposite films for packaging', 'Lignin & wood chemistry', 'Polymer nanocomposites', 'Bio-based polyurethane foams', 'Shape-memory & water-responsive materials', 'Biomedical nanocellulose', 'Flow-battery membranes'],
+      looking: [
+        { label: 'Complementary methods', on: true },
+        { label: 'Grant co-applicants', on: true },
+        { label: 'Data sharing', on: true },
+        { label: 'Industry partners', on: false },
+        { label: 'Students & postdocs', on: false }
+      ].map((l) => ({ ...l, style: 'display: inline-flex; gap: 8px; align-items: center; font-size: 14px; padding: 9px 14px; border-radius: 999px; border: 1px solid #C4C8C1; background: #FFFFFF; cursor: pointer;' }))
+    };
+  }
+}
+</script>
+</body>
+</html>

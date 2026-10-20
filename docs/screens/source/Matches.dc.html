@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lattice Scout — Matches</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F3F4F1;font-family:"IBM Plex Sans",system-ui,sans-serif;color:#14171A}
+a{color:#2446C7}a:hover{color:#16308F}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #F3F4F1; font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #14171A">
+
+<header style="background: #FFFFFF; border-bottom: 1px solid #D9DCD6; position: sticky; top: 0; z-index: 10">
+<div style="max-width: 1240px; margin: 0 auto; padding: 8px 24px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap">
+<dc-import name="NavMenu" current="Matches" hint-size="44px,44px"></dc-import>
+<a href="Home.dc.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #14171A">
+<svg width="26" height="26" viewBox="0 0 28 28" fill="none" stroke="{{accent}}" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="22" height="22"></rect><path d="M3 14h22M14 3v22"></path><circle cx="14" cy="14" r="3" fill="#5B3FB5" stroke="#5B3FB5"></circle></svg>
+<span style="font-weight: 700; font-size: 18px">Lattice Scout</span>
+</a>
+<nav aria-label="Main" style="display: flex; gap: 2px; flex-wrap: wrap; flex-grow: 1">
+<a href="Home.dc.html" style="color: #3A4047; text-decoration: none; font-size: 15px; padding: 14px 10px">Home</a>
+<a href="Documents.dc.html" style="color: #3A4047; text-decoration: none; font-size: 15px; padding: 14px 10px">Vault</a>
+<a href="Opportunities.dc.html" style="color: #3A4047; text-decoration: none; font-size: 15px; padding: 14px 10px">Opportunities</a>
+<a href="Matches.dc.html" aria-current="page" style="color: #14171A; font-weight: 600; text-decoration: none; font-size: 15px; padding: 14px 10px; box-shadow: inset 0 -2px 0 {{accent}}">Matches</a>
+<a href="Reach.dc.html" style="color: #3A4047; text-decoration: none; font-size: 15px; padding: 14px 10px">Reach</a>
+</nav>
+<a href="Agent.dc.html" style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #0F5E5E; background: #E3F1EF; border-radius: 999px; padding: 8px 12px; text-decoration: none"><span style="width: 8px; height: 8px; border-radius: 50%; background: #0F6E6E"></span>Run #7 complete</a>
+<a href="Profile.dc.html" aria-label="Your profile" style="width: 40px; height: 40px; border-radius: 50%; background: {{accent}}; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; text-decoration: none">JF</a>
+</div>
+</header>
+
+<div style="max-width: 1240px; margin: 0 auto; padding: 32px 24px 120px; display: flex; flex-direction: column; gap: 22px">
+<div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h1 style="margin: 0; font-size: 30px; font-weight: 600; letter-spacing: -0.01em">Matches</h1>
+<span style="font-size: 15px; color: #3A4047; max-width: 760px; line-height: 1.5">Researchers whose work complements yours. Both sides stay anonymous until both say yes — only then are names, contacts and joint opportunities shown.</span>
+</div>
+<a href="Profile.dc.html" style="font-size: 14px; font-weight: 600; color: #3A4047; background: #FFFFFF; border: 1px solid #C4C8C1; border-radius: 8px; padding: 10px 14px; text-decoration: none">Matching preferences</a>
+</div>
+
+<div style="display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start">
+<aside aria-label="Match list" style="flex: 1 1 300px; max-width: 380px; display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{list}}" as="m" hint-placeholder-count="4">
+<button type="button" onClick="{{m.pick}}" aria-pressed="{{m.on}}" style="{{m.style}}">
+<span style="{{m.av}}">{{m.initials}}</span>
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px; text-align: left; min-width: 0">
+<b style="font-size: 15px">{{m.title}}</b>
+<span style="font-size: 13px; color: #3A4047">{{m.sub}}</span>
+<span style="{{m.badge}}">{{m.statusLabel}}</span>
+</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 500; color: #0F5E5E">{{m.score}}</span>
+</button>
+</sc-for>
+</aside>
+
+<main style="flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; gap: 18px">
+
+<section style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 14px; padding: 24px; display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap">
+<span style="{{cur.bigAv}}">{{cur.initials}}</span>
+<div style="flex: 1 1 300px; display: flex; flex-direction: column; gap: 4px">
+<h2 style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 26px; font-weight: 600">{{cur.heading}}</h2>
+<span style="font-size: 14px; color: #3A4047">{{cur.subhead}}</span>
+</div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px"><b style="font-family: 'IBM Plex Mono', monospace; font-size: 28px; color: #0F5E5E">{{cur.score}}</b><span style="font-size: 12px; color: #555C63">complementary</span></div>
+</div>
+
+<div style="display: flex; gap: 8px; flex-wrap: wrap">
+<span style="font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: #F1F2EF; color: #3A4047">{{cur.basis}}</span>
+<span style="font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: #F1F2EF; color: #3A4047">{{cur.region}}</span>
+<span style="font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: #F1F2EF; color: #3A4047">{{cur.career}}</span>
+</div>
+
+<div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: center">
+<div aria-hidden="true" style="position: relative; width: 300px; height: 190px; flex-shrink: 0">
+<span style="position: absolute; left: 0; top: 0; width: 190px; height: 190px; border-radius: 50%; background: rgba(36,70,199,0.12); border: 2px solid #2446C7; box-sizing: border-box"></span>
+<span style="position: absolute; right: 0; top: 0; width: 190px; height: 190px; border-radius: 50%; background: rgba(15,110,110,0.12); border: 2px solid #0F6E6E; box-sizing: border-box"></span>
+<span style="position: absolute; left: 22px; top: 78px; font-size: 13px; font-weight: 600; color: #16308F">You</span>
+<span style="position: absolute; right: 22px; top: 78px; font-size: 13px; font-weight: 600; color: #0F5E5E">{{cur.short}}</span>
+<span style="position: absolute; left: 112px; width: 76px; top: 68px; font-size: 11px; line-height: 1.3; text-align: center; color: #14171A; font-weight: 600">{{cur.shared}}</span>
+</div>
+<div style="flex: 1 1 300px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: #16308F">You bring</span>
+<sc-for list="{{cur.you}}" as="y" hint-placeholder-count="3"><span style="font-size: 14px; line-height: 1.4">{{y}}</span></sc-for>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: #0F5E5E">{{cur.theyLabel}}</span>
+<sc-for list="{{cur.them}}" as="t" hint-placeholder-count="3"><span style="font-size: 14px; line-height: 1.4">{{t}}</span></sc-for>
+</div>
+</div>
+</div>
+
+<div style="display: flex; gap: 14px; align-items: flex-start; background: #F4F1FB; border-radius: 10px; padding: 14px 16px">
+<span style="flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; background: #5B3FB5; display: flex; align-items: center; justify-content: center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path></svg></span>
+<span style="font-size: 15px; line-height: 1.5"><b style="color: #4A2F9A">Why Scout matched you: </b>{{cur.why}}</span>
+</div>
+</section>
+
+<sc-if value="{{showLocked}}" hint-placeholder-val="{{ true }}">
+<section style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 14px; padding: 24px; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; gap: 10px; align-items: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3A4047" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><b style="font-size: 16px">Revealed only if you both say yes</b></div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px">
+<span style="display: flex; flex-direction: column; gap: 6px; padding: 14px; border-radius: 10px; background: #F7F8F5; border: 1px dashed #C4C8C1"><span style="font-size: 12px; color: #555C63">Name &amp; institution</span><span style="height: 10px; width: 80%; background: #E1E3DE; border-radius: 4px"></span></span>
+<span style="display: flex; flex-direction: column; gap: 6px; padding: 14px; border-radius: 10px; background: #F7F8F5; border: 1px dashed #C4C8C1"><span style="font-size: 12px; color: #555C63">Email &amp; profile</span><span style="height: 10px; width: 65%; background: #E1E3DE; border-radius: 4px"></span></span>
+<span style="display: flex; flex-direction: column; gap: 6px; padding: 14px; border-radius: 10px; background: #F7F8F5; border: 1px dashed #C4C8C1"><span style="font-size: 12px; color: #555C63">{{cur.oppCount}} joint opportunities</span><span style="height: 10px; width: 90%; background: #E1E3DE; border-radius: 4px"></span></span>
+</div>
+<sc-if value="{{isProposed}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center">
+<button type="button" onClick="{{accept}}" style="font: inherit; font-size: 16px; font-weight: 600; background: #0F6E6E; color: #FFFFFF; border: 0; border-radius: 8px; padding: 13px 20px; min-height: 48px; cursor: pointer">Yes, I'm interested</button>
+<button type="button" onClick="{{decline}}" style="font: inherit; font-size: 16px; font-weight: 600; background: #FFFFFF; color: #3A4047; border: 1px solid #C4C8C1; border-radius: 8px; padding: 13px 20px; min-height: 48px; cursor: pointer">Not now</button>
+<span style="font-size: 13px; color: #555C63">They won't know if you decline.</span>
+</div>
+</sc-if>
+<sc-if value="{{isWaiting}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center; background: #E3F1EF; border-radius: 10px; padding: 14px 16px">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F5E5E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+<span style="flex: 1 1 260px; font-size: 15px; color: #0F3F3F"><b>You said yes.</b> We'll tell you the moment they answer. Proposals expire after 21 days.</span>
+<button type="button" onClick="{{simulate}}" style="font: inherit; font-size: 13px; font-weight: 600; background: #FFFFFF; color: #0F5E5E; border: 1px solid #9CCFC9; border-radius: 6px; padding: 8px 12px; min-height: 40px; cursor: pointer">Simulate their yes (demo)</button>
+<button type="button" onClick="{{undo}}" style="font: inherit; font-size: 13px; background: transparent; color: #0F5E5E; border: 0; padding: 8px; min-height: 40px; cursor: pointer">Withdraw</button>
+</div>
+</sc-if>
+<sc-if value="{{isDeclined}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center; background: #F1F2EF; border-radius: 10px; padding: 14px 16px">
+<span style="flex-grow: 1; font-size: 15px; color: #3A4047">Declined. Help Scout learn — what was off?</span>
+<button type="button" onClick="{{undo}}" style="font: inherit; font-size: 13px; font-weight: 600; background: #FFFFFF; color: #3A4047; border: 1px solid #C4C8C1; border-radius: 6px; padding: 8px 12px; min-height: 40px; cursor: pointer">Undo</button>
+</div>
+</sc-if>
+</section>
+</sc-if>
+
+<sc-if value="{{isMutual}}" hint-placeholder-val="{{ false }}">
+<section style="background: #FFFFFF; border: 2px solid #0F6E6E; border-radius: 14px; padding: 24px; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap"><span style="font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; background: #0F6E6E; color: #FFFFFF">Mutual match</span><span style="font-size: 14px; color: #3A4047">You both said yes · contacts shared</span></div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px">
+<span style="display: flex; flex-direction: column; gap: 4px; padding: 14px; border-radius: 10px; background: #F7F8F5"><span style="font-size: 12px; color: #555C63">Institution</span><b style="font-size: 15px">{{cur.realInst}}</b></span>
+<span style="display: flex; flex-direction: column; gap: 4px; padding: 14px; border-radius: 10px; background: #F7F8F5"><span style="font-size: 12px; color: #555C63">Email</span><a href="mailto:{{cur.email}}" style="font-size: 15px; font-weight: 600">{{cur.email}}</a></span>
+<span style="display: flex; flex-direction: column; gap: 4px; padding: 14px; border-radius: 10px; background: #F7F8F5"><span style="font-size: 12px; color: #555C63">Public profile</span><a href="Profile.dc.html" style="font-size: 15px; font-weight: 600">{{cur.works}}</a></span>
+</div>
+<div style="display: flex; gap: 10px; flex-wrap: wrap">
+<a href="Assistant.dc.html" style="font-size: 15px; font-weight: 600; color: #FFFFFF; background: #0F6E6E; border-radius: 8px; padding: 12px 16px; text-decoration: none">Write an intro (Scout drafts it)</a>
+<button type="button" style="font: inherit; font-size: 15px; font-weight: 600; color: #3A4047; background: #FFFFFF; border: 1px solid #C4C8C1; border-radius: 8px; padding: 12px 16px; min-height: 46px; cursor: pointer">Propose a 30-min call</button>
+<button type="button" style="font: inherit; font-size: 15px; font-weight: 600; color: #3A4047; background: #FFFFFF; border: 1px solid #C4C8C1; border-radius: 8px; padding: 12px 16px; min-height: 46px; cursor: pointer">Open shared workspace</button>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<b style="font-size: 16px">Joint opportunities</b>
+<sc-for list="{{cur.joint}}" as="j" hint-placeholder-count="2">
+<a href="OppDetail.dc.html" style="display: flex; flex-direction: column; gap: 4px; padding: 14px 16px; border: 1px solid #D9DCD6; border-radius: 10px; text-decoration: none; color: #14171A"><span style="font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #0F5E5E">{{j.kind}}</span><span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 17px; font-weight: 600">{{j.title}}</span></a>
+</sc-for>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 12px; border-top: 1px solid #ECEEE9; padding-top: 18px">
+<b style="font-size: 16px">How good was this match?</b>
+<div role="radiogroup" aria-label="Match quality" style="display: flex; gap: 6px; flex-wrap: wrap">
+<sc-for list="{{stars}}" as="s" hint-placeholder-count="5">
+<button type="button" role="radio" aria-checked="{{s.on}}" aria-label="{{s.label}}" onClick="{{s.pick}}" style="{{s.style}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="{{s.fill}}" stroke="#B4570F" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"></path></svg></button>
+</sc-for>
+<span style="align-self: center; font-size: 14px; color: #3A4047; padding-left: 8px">{{ratingLabel}}</span>
+</div>
+<div style="display: flex; gap: 6px; flex-wrap: wrap">
+<sc-for list="{{reasons}}" as="r" hint-placeholder-count="6">
+<button type="button" onClick="{{r.pick}}" aria-pressed="{{r.on}}" style="{{r.style}}">{{r.label}}</button>
+</sc-for>
+</div>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 600">Anything else? <span style="font-weight: 400; font-size: 13px; color: #555C63">Private — only Scout sees this</span>
+<textarea rows="2" placeholder="e.g. Great methods fit, but different timelines" style="font: inherit; font-weight: 400; font-size: 15px; border: 1px solid #C4C8C1; border-radius: 6px; padding: 10px; resize: vertical"></textarea>
+</label>
+<button type="button" style="align-self: flex-start; font: inherit; font-size: 15px; font-weight: 600; background: #14171A; color: #FFFFFF; border: 0; border-radius: 8px; padding: 11px 18px; min-height: 44px; cursor: pointer">Send feedback</button>
+</div>
+</section>
+</sc-if>
+</main>
+</div>
+</div>
+
+<div style="position: fixed; right: 24px; bottom: 24px; display: flex; align-items: center; gap: 6px; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 999px; padding: 6px; box-shadow: 0 8px 28px rgba(20,23,26,0.16); z-index: 20">
+<a href="Assistant.dc.html" aria-label="Talk to Scout" style="width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #4A2F9A; background: #F4F1FB"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"></path><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg></a>
+<a href="Assistant.dc.html" aria-label="Show Scout a photo" style="width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #4A2F9A; background: #F4F1FB"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg></a>
+<a href="Assistant.dc.html" style="display: flex; align-items: center; gap: 8px; background: #5B3FB5; color: #FFFFFF; text-decoration: none; border-radius: 999px; padding: 0 18px; height: 44px; font-weight: 600; font-size: 15px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path></svg>Ask Scout</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#2446C7","options":["#2446C7","#0F6E6E","#5B3FB5","#14171A"]},"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { sel: 'm2', status: { m1: 'proposed', m2: 'mutual', m3: 'waiting', m4: 'proposed' }, stars: 4, reasons: { 'Methods fit': true } };
+  }
+  renderVals() {
+    const s = this.state;
+    const M = {
+      m1: { anonTitle: 'Life-cycle assessment of bio-based materials', region: 'Europe', career: 'Mid-career · 12–18 yrs', basis: 'Published work + private signals', score: '91%', oppCount: 2,
+        realName: 'Dr. Tomás Reyes', initials: 'TR', field: 'LCA & techno-economics (fictional sample)', realInst: '[UNIVERSITY], Madrid', email: 't.reyes@example.edu', works: 'ORCID · 58 works',
+        shared: 'Bio-based polyols', you: ['Lignin-PU foams (ACS Appl. Polym. Mater. 2026)', 'Compression data on 48 foams', 'Lab-scale formulations'], them: ['Cradle-to-grave LCA of foams', 'Techno-economic models', 'No primary lab data on lignin'],
+        why: 'Their LCA papers on bio-polyols call for primary data from lab-scale lignin foams — you have it. This closes objection 3 in your declined foam proposal.',
+        joint: [{ kind: 'Joint paper', title: 'Cradle-to-gate LCA of lignin-based flexible PU foams' }, { kind: 'Grant co-application', title: 'End-of-life work package for the foam resubmission' }] },
+      m2: { anonTitle: 'Photocatalysis & water treatment', region: 'Europe', career: 'Early-mid career · since 2013', basis: 'Published work', score: '88%', oppCount: 2,
+        realName: 'Dr. Raphaell Moreira', initials: 'RM', field: 'Photocatalysis & water treatment', realInst: 'University of Bremen (previously UBC)', email: 'r.moreira@example.edu', works: 'ORCID 0000-0001-6636-725X · 30 works · 1,044 citations',
+        shared: 'PFAS removal', you: ['Fungal-derived adsorption membrane (Chem. Eng. J. 2024)', 'BDD electrochemistry for PFAS (Environ. Res. 2024)', 'Unpublished PFAS pilot data'], them: ['Graphenic / iron-oxide photocatalysts (Commun. Eng. 2024)', 'Visible-LED photocatalysis (2026)', 'Nanoporous gold catalysis (Bremen)'],
+        why: 'You co-authored 5 papers in 2024–25 while he was at UBC. Since moving to Bremen he works on visible-LED photocatalysts — the missing “destroy” step for your PFAS-capturing membrane.',
+        joint: [{ kind: 'Joint paper', title: 'Capture-and-destroy: photocatalytically regenerable fungal membranes for PFAS' }, { kind: 'Grant co-application', title: 'Canada–Germany call: [CALL NAME] · [DEADLINE]' }] },
+      m3: { anonTitle: 'Pilot-scale foam processing', region: 'North America · industry', career: 'Industry R&D group', basis: 'Published work & patents', score: '79%', oppCount: 1,
+        realName: 'Foam R&D group', initials: 'FR', field: 'Slabstock foam pilot line', realInst: '[COMPANY]', email: 'rnd@example.com', works: '14 patents · 6 papers',
+        shared: 'PU foams', you: ['Lignin-PU formulations', 'Foaming-dynamics data'], them: ['Pilot foaming line', 'Seating certification tests'],
+        why: 'Their patents cover bio-polyol slabstock foams; the call in opportunity #4 asks for an industry partner for scale-up (objection 4).',
+        joint: [{ kind: 'Funding call', title: 'Industry partner for the foam resubmission' }] },
+      m4: { anonTitle: 'Fire science of bio-based polymers', region: 'Asia', career: 'Mid-career · 10–15 yrs', basis: 'Published work only', score: '74%', oppCount: 1,
+        realName: 'Dr. [NAME]', initials: 'FS', field: 'Cone calorimetry & flame retardants', realInst: '[UNIVERSITY]', email: 'fire@example.edu', works: 'ORCID · 42 works',
+        shared: 'Flammability', you: ['12-foam oxygen-index screen', 'Lignin chemistry'], them: ['Cone calorimetry', 'Halogen-free flame retardants'],
+        why: 'Their halogen-free flame-retardant work fills objection 5 (no flammability data) in your foam proposal.',
+        joint: [{ kind: 'Joint paper', title: 'Halogen-free fire performance of lignin-PU foams' }] }
+    };
+    const stLabel = { proposed: 'Waiting on you', waiting: 'Waiting on them', mutual: 'Mutual match', declined: 'Declined' };
+    const stBadge = { proposed: ['#FBF0E4', '#7A3A06'], waiting: ['#F1F2EF', '#3A4047'], mutual: ['#E3F1EF', '#0F5E5E'], declined: ['#F1F2EF', '#555C63'] };
+    const setSt = (id, v) => this.setState({ status: { ...s.status, [id]: v } });
+    const order = ['m1', 'm2', 'm3', 'm4'];
+    const listData = M;
+    const curId = s.sel;
+    const st = s.status[curId];
+    const d = listData[curId];
+    const mutual = st === 'mutual';
+    const av = (isMutual, size) => 'flex-shrink: 0; width: ' + size + 'px; height: ' + size + 'px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: ' + (size > 50 ? 20 : 14) + 'px; box-sizing: border-box; ' + (isMutual ? 'background: #0F6E6E; color: #FFFFFF;' : 'background: #FFFFFF; color: #0F5E5E; border: 2px dashed #0F6E6E;');
+    const stars = s.stars;
+    const reasonList = ['Methods fit', 'Right seniority', 'Shared timeline', 'Too similar to me', 'Wrong field', 'Already knew them'];
+    return {
+      accent: this.props.accent ?? '#2446C7',
+      list: order.map((id) => {
+        const m = listData[id];
+        const ms = s.status[id];
+        const isM = ms === 'mutual';
+        return {
+          on: id === curId,
+          pick: () => this.setState({ sel: id }),
+          initials: isM ? m.initials : '?',
+          av: av(isM, 44),
+          title: isM ? m.realName : m.anonTitle,
+          sub: isM ? m.field : 'Anonymous · ' + m.region,
+          score: m.score,
+          statusLabel: stLabel[ms],
+          badge: 'align-self: flex-start; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 4px; background: ' + stBadge[ms][0] + '; color: ' + stBadge[ms][1] + ';',
+          style: 'font: inherit; color: #14171A; display: flex; gap: 12px; align-items: center; padding: 14px; border-radius: 12px; cursor: pointer; background: #FFFFFF; ' + (id === curId ? 'border: 2px solid #0F6E6E;' : 'border: 2px solid #E1E3DE;')
+        };
+      }),
+      cur: {
+        ...d,
+        initials: mutual ? d.initials : '?',
+        bigAv: av(mutual, 60),
+        heading: mutual ? d.realName : d.anonTitle,
+        subhead: mutual ? d.field + ' · ' + d.realInst : 'Anonymous researcher · identity hidden until you both accept',
+        short: mutual ? d.realName.split(' ').slice(-1)[0] : 'Them',
+        theyLabel: mutual ? 'They bring' : 'They bring'
+      },
+      showLocked: !mutual,
+      isProposed: st === 'proposed',
+      isWaiting: st === 'waiting',
+      isDeclined: st === 'declined',
+      isMutual: mutual,
+      accept: () => setSt(curId, 'waiting'),
+      decline: () => setSt(curId, 'declined'),
+      undo: () => setSt(curId, 'proposed'),
+      simulate: () => setSt(curId, 'mutual'),
+      stars: [1, 2, 3, 4, 5].map((n) => ({
+        on: n === stars, label: n + ' of 5',
+        fill: n <= stars ? '#E8A15C' : 'none',
+        pick: () => this.setState({ stars: n }),
+        style: 'width: 44px; height: 44px; border-radius: 8px; border: 1px solid #E1E3DE; background: #FFFFFF; cursor: pointer; display: flex; align-items: center; justify-content: center;'
+      })),
+      ratingLabel: ['', 'Poor', 'Weak', 'OK', 'Good', 'Excellent'][stars],
+      reasons: reasonList.map((label) => ({
+        label, on: !!s.reasons[label],
+        pick: () => this.setState({ reasons: { ...s.reasons, [label]: !s.reasons[label] } }),
+        style: 'font: inherit; font-size: 13px; padding: 8px 12px; min-height: 36px; border-radius: 999px; cursor: pointer; ' + (s.reasons[label] ? 'background: #0F6E6E; color: #FFFFFF; border: 1px solid #0F6E6E;' : 'background: #FFFFFF; color: #3A4047; border: 1px solid #C4C8C1;')
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

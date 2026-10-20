@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lattice Scout — Opportunities</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F3F4F1;font-family:"IBM Plex Sans",system-ui,sans-serif;color:#14171A}
+a{color:#2446C7}a:hover{color:#16308F}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #F3F4F1; font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #14171A">
+
+<header style="background: #FFFFFF; border-bottom: 1px solid #D9DCD6; position: sticky; top: 0; z-index: 10">
+<div style="max-width: 1240px; margin: 0 auto; padding: 8px 24px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap">
+<dc-import name="NavMenu" current="Opportunities" hint-size="44px,44px"></dc-import>
+<a href="Home.dc.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #14171A">
+<svg width="26" height="26" viewBox="0 0 28 28" fill="none" stroke="{{accent}}" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="22" height="22"></rect><path d="M3 14h22M14 3v22"></path><circle cx="14" cy="14" r="3" fill="#5B3FB5" stroke="#5B3FB5"></circle></svg>
+<span style="font-weight: 700; font-size: 18px">Lattice Scout</span>
+</a>
+<nav aria-label="Main" style="display: flex; gap: 2px; flex-wrap: wrap; flex-grow: 1">
+<a href="Home.dc.html" style="color: #3A4047; text-decoration: none; font-size: 15px; padding: 14px 10px">Home</a>
+<a href="Documents.dc.html" style="color: #3A4047; text-decoration: none; font-size: 15px; padding: 14px 10px">Vault</a>
+<a href="Opportunities.dc.html" aria-current="page" style="color: #14171A; font-weight: 600; text-decoration: none; font-size: 15px; padding: 14px 10px; box-shadow: inset 0 -2px 0 {{accent}}">Opportunities</a>
+<a href="Matches.dc.html" style="color: #3A4047; text-decoration: none; font-size: 15px; padding: 14px 10px">Matches</a>
+<a href="Reach.dc.html" style="color: #3A4047; text-decoration: none; font-size: 15px; padding: 14px 10px">Reach</a>
+</nav>
+<a href="Agent.dc.html" style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #0F5E5E; background: #E3F1EF; border-radius: 999px; padding: 8px 12px; text-decoration: none"><span style="width: 8px; height: 8px; border-radius: 50%; background: #0F6E6E"></span>Run #7 complete</a>
+<a href="Profile.dc.html" aria-label="Your profile" style="width: 40px; height: 40px; border-radius: 50%; background: {{accent}}; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; text-decoration: none">JF</a>
+</div>
+</header>
+
+<div style="max-width: 1240px; margin: 0 auto; padding: 32px 24px 120px; display: flex; gap: 28px; flex-wrap: wrap; align-items: flex-start">
+
+<aside aria-label="Filters" style="flex: 1 1 220px; max-width: 280px; display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: #555C63">Type</span>
+<sc-for list="{{types}}" as="t" hint-placeholder-count="6">
+<button type="button" onClick="{{t.pick}}" aria-pressed="{{t.on}}" style="{{t.style}}"><span style="{{t.sw}}"></span><span style="flex-grow: 1; text-align: left">{{t.label}}</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #555C63">{{t.n}}</span></button>
+</sc-for>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: #555C63">Built on</span>
+<label style="display: flex; gap: 10px; align-items: center; font-size: 14px"><input type="checkbox" checked style="width: 18px; height: 18px; accent-color: {{accent}}">My private vault</label>
+<label style="display: flex; gap: 10px; align-items: center; font-size: 14px"><input type="checkbox" checked style="width: 18px; height: 18px; accent-color: {{accent}}">My published work</label>
+<label style="display: flex; gap: 10px; align-items: center; font-size: 14px"><input type="checkbox" checked style="width: 18px; height: 18px; accent-color: {{accent}}">Lab colleagues' work</label>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: #555C63">Status</span>
+<label style="display: flex; gap: 10px; align-items: center; font-size: 14px"><input type="radio" name="st" checked style="width: 18px; height: 18px; accent-color: {{accent}}">New &amp; saved</label>
+<label style="display: flex; gap: 10px; align-items: center; font-size: 14px"><input type="radio" name="st" style="width: 18px; height: 18px; accent-color: {{accent}}">In progress</label>
+<label style="display: flex; gap: 10px; align-items: center; font-size: 14px"><input type="radio" name="st" style="width: 18px; height: 18px; accent-color: {{accent}}">Dismissed</label>
+</div>
+</aside>
+
+<main style="flex: 999 1 640px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h1 style="margin: 0; font-size: 30px; font-weight: 600; letter-spacing: -0.01em">Opportunities</h1>
+<span style="font-size: 15px; color: #3A4047">11 ideas from run #7 · every one cites the files and papers it builds on</span>
+</div>
+<label style="display: flex; gap: 8px; align-items: center; font-size: 14px; color: #3A4047">Sort by
+<select style="font: inherit; font-size: 14px; border: 1px solid #C4C8C1; border-radius: 6px; padding: 9px 10px; background: #FFFFFF; color: #14171A"><option>Best fit</option><option>Most novel</option><option>Closest deadline</option><option>Least new work needed</option></select>
+</label>
+</div>
+
+<section aria-label="Opportunity map" style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap"><b style="font-size: 15px">Where the ideas sit</b><span style="font-size: 13px; color: #555C63">Top right: novel, and you already have most of what's needed</span></div>
+<div style="position: relative; height: 260px; margin-left: 28px; margin-bottom: 22px; border-left: 1px solid #C4C8C1; border-bottom: 1px solid #C4C8C1; background: #FAFBF8">
+<span style="position: absolute; left: 50%; top: 0; bottom: 0; border-left: 1px dashed #E1E3DE"></span>
+<span style="position: absolute; top: 50%; left: 0; right: 0; border-top: 1px dashed #E1E3DE"></span>
+<span style="position: absolute; right: 10px; top: 8px; font-size: 12px; color: #0F5E5E; font-weight: 600">Sweet spot</span>
+<sc-for list="{{dots}}" as="d" hint-placeholder-count="11">
+<a href="OppDetail.dc.html" aria-label="{{d.label}}" title="{{d.label}}" style="{{d.style}}">{{d.n}}</a>
+</sc-for>
+<span style="position: absolute; left: -26px; top: 50%; transform: rotate(-90deg) translateX(50%); transform-origin: left top; font-size: 12px; color: #555C63; white-space: nowrap">Readiness →</span>
+<span style="position: absolute; right: 0; bottom: -22px; font-size: 12px; color: #555C63">Novelty (fewer existing papers) →</span>
+</div>
+</section>
+
+<sc-for list="{{opps}}" as="o" hint-placeholder-count="6">
+<article style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 20px 22px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; justify-content: space-between; gap: 10px; align-items: center; flex-wrap: wrap">
+<span style="display: flex; gap: 8px; align-items: center"><span style="{{o.num}}">{{o.n}}</span><span style="{{o.chip}}">{{o.kind}}</span><span style="font-size: 12px; color: #555C63">{{o.extra}}</span></span>
+<span style="font-size: 13px; color: #3A4047">Fit <b style="font-family: 'IBM Plex Mono', monospace">{{o.fit}}</b></span>
+</div>
+<a href="OppDetail.dc.html" style="font-family: 'Source Serif 4', Georgia, serif; font-size: 20px; font-weight: 600; line-height: 1.3; color: #14171A; text-decoration: none">{{o.title}}</a>
+<p style="margin: 0; font-size: 14px; color: #3A4047; line-height: 1.55">{{o.why}}</p>
+<div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; border-top: 1px solid #ECEEE9; padding-top: 12px">
+<a href="OppDetail.dc.html" style="font-size: 14px; font-weight: 600; color: #FFFFFF; background: {{accent}}; border-radius: 6px; padding: 9px 14px; text-decoration: none">Open</a>
+<button type="button" style="font: inherit; font-size: 14px; font-weight: 600; background: #FFFFFF; color: #3A4047; border: 1px solid #C4C8C1; border-radius: 6px; padding: 8px 14px; min-height: 40px; cursor: pointer">Save</button>
+<button type="button" style="font: inherit; font-size: 14px; background: transparent; color: #555C63; border: 0; padding: 8px 10px; min-height: 40px; cursor: pointer">Dismiss</button>
+<span style="flex-grow: 1"></span>
+<span style="font-size: 13px; color: #555C63">Useful?</span>
+<button type="button" aria-label="Useful" style="width: 40px; height: 40px; border-radius: 8px; border: 1px solid #D9DCD6; background: #FFFFFF; color: #3A4047; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 11v9H4v-9zM7 11l4-8a2 2 0 0 1 3 2l-1 5h6a2 2 0 0 1 2 2.3l-1.4 6.6A2 2 0 0 1 17.6 20H7"></path></svg></button>
+<button type="button" aria-label="Not useful" style="width: 40px; height: 40px; border-radius: 8px; border: 1px solid #D9DCD6; background: #FFFFFF; color: #3A4047; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 13V4h3v9zM17 13l-4 8a2 2 0 0 1-3-2l1-5H5a2 2 0 0 1-2-2.3l1.4-6.6A2 2 0 0 1 6.4 4H17"></path></svg></button>
+</div>
+</article>
+</sc-for>
+</main>
+</div>
+
+<div style="position: fixed; right: 24px; bottom: 24px; display: flex; align-items: center; gap: 6px; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 999px; padding: 6px; box-shadow: 0 8px 28px rgba(20,23,26,0.16); z-index: 20">
+<a href="Assistant.dc.html" aria-label="Talk to Scout" style="width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #4A2F9A; background: #F4F1FB"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"></path><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg></a>
+<a href="Assistant.dc.html" aria-label="Show Scout a photo" style="width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #4A2F9A; background: #F4F1FB"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg></a>
+<a href="Assistant.dc.html" style="display: flex; align-items: center; gap: 8px; background: #5B3FB5; color: #FFFFFF; text-decoration: none; border-radius: 999px; padding: 0 18px; height: 44px; font-weight: 600; font-size: 15px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path></svg>Ask Scout</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#2446C7","options":["#2446C7","#0F6E6E","#5B3FB5","#14171A"]},"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { type: 'all' };
+  }
+  renderVals() {
+    const accent = this.props.accent ?? '#2446C7';
+    const T = {
+      res: ['Resubmission', '#FBF0E4', '#7A3A06', '#B4570F'],
+      gap: ['White spot', '#EEE9F8', '#4A2F9A', '#5B3FB5'],
+      syn: ['Synergy', '#E3F1EF', '#0F5E5E', '#0F6E6E'],
+      fund: ['Funding call', '#E8ECFA', '#16308F', '#2446C7'],
+      col: ['Collaboration', '#F1F2EF', '#3A4047', '#555C63']
+    };
+    const all = [
+      { k: 'res', fit: '0.86', x: 62, y: 84, extra: 'Next call: [DEADLINE]', title: 'Resubmit the declined lignin-polyurethane foam proposal with the new evidence', why: 'Two of five reviewer objections are answered by your 2026 ACS Appl. Polym. Mater. paper (lignin type and content) and the unpublished compression-set series (48 foams). Scout drafted a revised aims page.' },
+      { k: 'syn', fit: '0.81', x: 80, y: 70, extra: 'With R. Moreira · 5 joint papers', title: 'Capture-and-destroy PFAS membranes: fungal adsorption + graphenic photocatalysts', why: 'Combines your fungal-derived adsorption membrane (Chem. Eng. J. 2024) with Moreira’s graphenic/iron-oxide photocatalysts (Commun. Eng. 2024) and your BDD-electrochemistry PFAS work (Environ. Res. 2024).' },
+      { k: 'gap', fit: '0.77', x: 86, y: 62, extra: 'Few bio-based Zn–I₂ separators', title: 'Cellulose-nanofiber membranes for zinc–iodine flow batteries beyond 500 h', why: 'Your sulfonated-CNF membrane (J. Membrane Sci. 2025) plus 500 h of unpublished cycling data would be the longest bio-based separator test reported.' },
+      { k: 'fund', fit: '0.71', x: 40, y: 78, extra: 'Call [CALL ID] · [DEADLINE]', title: 'Open call on bio-based materials fits the EMI-shielding wood draft', why: 'Builds on your magnetic, conductive wood (Adv. Eng. Mater. 2026). Scope and TRL match; the call asks for an industry partner.' },
+      { k: 'col', fit: '0.69', x: 74, y: 38, extra: 'Mutual match', title: 'Photocatalytic regeneration of PFAS-loaded membranes with Dr. Raphaell Moreira (Bremen)', why: 'Since moving to Bremen he publishes on visible-LED photocatalysis (Surf. Interfaces 2026, Catal. Today 2026) — exactly the light source a regenerable membrane needs.' },
+      { k: 'gap', fit: '0.61', x: 90, y: 24, extra: 'Builds on Langmuir 2026', title: 'EEM fluorescence + DUV Raman as a general probe for bio-fibre interfaces', why: 'Your fiber–cement method (Langmuir 2026) could map lignin at interfaces in your PU foams and EMI wood too. 2 results in your group-meeting slides aren’t published.' }
+    ];
+    const type = this.state.type;
+    const shown = type === 'all' ? all : all.filter((o) => o.k === type);
+    const typeList = [['all', 'All types', '#14171A']].concat(Object.keys(T).map((k) => [k, T[k][0], T[k][3]]));
+    return {
+      accent,
+      types: typeList.map(([id, label, c]) => ({
+        label, on: type === id,
+        n: id === 'all' ? 11 : ({ res: 2, gap: 4, syn: 2, fund: 2, col: 1 })[id],
+        pick: () => this.setState({ type: id }),
+        sw: 'width: 10px; height: 10px; border-radius: 50%; background: ' + c + ';',
+        style: 'font: inherit; font-size: 14px; display: flex; gap: 10px; align-items: center; padding: 10px 12px; min-height: 44px; border-radius: 8px; cursor: pointer; color: #14171A; ' + (type === id ? 'background: #FFFFFF; border: 1px solid #C4C8C1; font-weight: 600;' : 'background: transparent; border: 1px solid transparent;')
+      })),
+      dots: all.map((o, i) => ({
+        n: String(i + 1),
+        label: T[o.k][0] + ': ' + o.title,
+        style: 'position: absolute; left: ' + o.x + '%; bottom: ' + o.y + '%; transform: translate(-50%, 50%); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; text-decoration: none; color: #FFFFFF; background: ' + T[o.k][3] + '; ' + (type === 'all' || type === o.k ? 'opacity: 1;' : 'opacity: 0.2;') + ' box-shadow: 0 0 0 3px #FFFFFF;'
+      })),
+      opps: shown.map((o) => ({
+        ...o,
+        n: String(all.indexOf(o) + 1),
+        kind: T[o.k][0],
+        num: 'width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: #FFFFFF; background: ' + T[o.k][3] + ';',
+        chip: 'font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; background: ' + T[o.k][1] + '; color: ' + T[o.k][2] + ';'
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

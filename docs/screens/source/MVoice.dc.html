@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lattice Scout mobile — Voice and photo</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#14171A}
+a{color:#FFFFFF}a:hover{color:#E6DFF5}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; overflow: hidden; display: flex; flex-direction: column; background: #1E1A2E; font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #FFFFFF">
+<div style="flex-shrink: 0; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between">
+<a href="MChat.dc.html" aria-label="Close" style="width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.10); display: flex; align-items: center; justify-content: center; color: #FFFFFF"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a>
+<span style="font-size: 14px; font-weight: 600; color: #E6DFF5">{{title}}</span>
+<a href="MChat.dc.html" aria-label="Switch to keyboard" style="width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.10); display: flex; align-items: center; justify-content: center; color: #FFFFFF"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"></rect><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"></path></svg></a>
+</div>
+
+<sc-if value="{{isVoice}}" hint-placeholder-val="{{ true }}">
+<div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; gap: 28px; padding: 20px 24px">
+<div aria-hidden="true" style="position: relative; width: 220px; height: 220px; margin-top: 30px">
+<span style="position: absolute; inset: 0; border-radius: 50%; background: rgba(143,121,214,0.14)"></span>
+<span style="position: absolute; inset: 24px; border-radius: 50%; background: rgba(143,121,214,0.24)"></span>
+<span style="position: absolute; inset: 50px; border-radius: 50%; background: #5B3FB5; display: flex; align-items: center; justify-content: center; gap: 5px">
+<span style="width: 6px; height: 22px; border-radius: 3px; background: #FFFFFF"></span><span style="width: 6px; height: 44px; border-radius: 3px; background: #FFFFFF"></span><span style="width: 6px; height: 64px; border-radius: 3px; background: #FFFFFF"></span><span style="width: 6px; height: 40px; border-radius: 3px; background: #FFFFFF"></span><span style="width: 6px; height: 26px; border-radius: 3px; background: #FFFFFF"></span>
+</span>
+</div>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: #C9BCE8">Listening</span>
+<p style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 22px; line-height: 1.45; text-align: center; color: #FFFFFF">“What if we put an LED strip <span style="color: #A99BD9">behind the fungal membrane</span>…”</p>
+<div style="width: 100%; background: rgba(255,255,255,0.08); border-radius: 14px; padding: 14px; display: flex; gap: 10px; align-items: flex-start">
+<span style="flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: #5B3FB5; display: flex; align-items: center; justify-content: center"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path></svg></span>
+<span style="font-size: 14px; line-height: 1.5; color: #E6DFF5">Last answer: that is the capture-and-destroy idea — Raphaell Moreira’s visible-LED photocatalysts (2026) could regenerate it.</span>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isPhoto}}" hint-placeholder-val="{{ false }}">
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 12px; padding: 4px 16px 10px">
+<div style="flex-grow: 1; position: relative; border-radius: 18px; background: #2A2E33; overflow: hidden" role="img" aria-label="Camera view of a lab whiteboard">
+<div style="position: absolute; left: 22px; right: 22px; top: 40px; bottom: 120px; background: #F4F5F2; border-radius: 6px">
+<svg width="100%" height="100%" viewBox="0 0 300 300" fill="none" stroke="#3A4047" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="24" y="30" width="96" height="70" rx="4"></rect><path d="M44 30v70M100 30v70M24 120h96"></path><path d="M150 36h120M150 62h96M150 88h110M150 114h80" stroke="#2446C7"></path><path d="M30 190c24-18 48 18 72 0s48 18 72 0s48 18 72 0" stroke="#B4570F"></path><circle cx="250" cy="250" r="16"></circle></svg>
+</div>
+<div style="position: absolute; left: 16px; right: 16px; bottom: 16px; display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 13px; color: #E6DFF5">Ask about what you see</span>
+<div style="display: flex; gap: 6px; flex-wrap: wrap">
+<button type="button" style="font: inherit; font-size: 13px; padding: 9px 12px; min-height: 38px; border-radius: 999px; border: 0; background: rgba(255,255,255,0.92); color: #14171A; cursor: pointer">What's new here?</button>
+<button type="button" style="font: inherit; font-size: 13px; padding: 9px 12px; min-height: 38px; border-radius: 999px; border: 0; background: rgba(255,255,255,0.92); color: #14171A; cursor: pointer">Find related papers</button>
+<button type="button" style="font: inherit; font-size: 13px; padding: 9px 12px; min-height: 38px; border-radius: 999px; border: 0; background: rgba(255,255,255,0.92); color: #14171A; cursor: pointer">Save to vault</button>
+</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<div style="flex-shrink: 0; padding: 10px 24px 28px; display: flex; flex-direction: column; gap: 18px; align-items: center">
+<div role="tablist" aria-label="Input mode" style="display: flex; background: rgba(255,255,255,0.10); border-radius: 999px; padding: 4px">
+<button type="button" role="tab" aria-selected="{{isVoice}}" onClick="{{toVoice}}" style="{{voiceBtn}}">Voice</button>
+<button type="button" role="tab" aria-selected="{{isPhoto}}" onClick="{{toPhoto}}" style="{{photoBtn}}">Photo</button>
+</div>
+<div style="display: flex; align-items: center; justify-content: center; gap: 36px">
+<button type="button" aria-label="Pause listening" style="width: 52px; height: 52px; border-radius: 50%; border: 0; background: rgba(255,255,255,0.12); color: #FFFFFF; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg></button>
+<button type="button" aria-label="{{mainLabel}}" style="width: 78px; height: 78px; border-radius: 50%; border: 4px solid #FFFFFF; background: #5B3FB5; color: #FFFFFF; cursor: pointer; display: flex; align-items: center; justify-content: center">
+<sc-if value="{{isVoice}}" hint-placeholder-val="{{ true }}"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"></path><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg></sc-if>
+<sc-if value="{{isPhoto}}" hint-placeholder-val="{{ false }}"><span style="width: 58px; height: 58px; border-radius: 50%; background: #FFFFFF"></span></sc-if>
+</button>
+<a href="MUpload.dc.html" aria-label="Choose from library" style="width: 52px; height: 52px; border-radius: 50%; background: rgba(255,255,255,0.12); color: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="M21 17l-5-5-9 8"></path></svg></a>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#2446C7","options":["#2446C7","#0F6E6E","#5B3FB5","#14171A"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { mode: 'voice' };
+  }
+  renderVals() {
+    const m = this.state.mode;
+    const seg = (on) => 'font: inherit; font-size: 14px; font-weight: 600; border: 0; border-radius: 999px; padding: 9px 20px; min-height: 40px; cursor: pointer; ' + (on ? 'background: #FFFFFF; color: #1E1A2E;' : 'background: transparent; color: #E6DFF5;');
+    return {
+      accent: this.props.accent ?? '#2446C7',
+      isVoice: m === 'voice', isPhoto: m === 'photo',
+      toVoice: () => this.setState({ mode: 'voice' }),
+      toPhoto: () => this.setState({ mode: 'photo' }),
+      voiceBtn: seg(m === 'voice'), photoBtn: seg(m === 'photo'),
+      title: m === 'voice' ? 'Talking with Scout' : 'Show Scout something',
+      mainLabel: m === 'voice' ? 'Hold to talk' : 'Take photo'
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lattice Scout mobile — Reach</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F3F4F1}
+a{color:#2446C7}a:hover{color:#16308F}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; overflow: hidden; display: flex; flex-direction: column; background: #F3F4F1; font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #14171A">
+<div style="flex-shrink: 0; background: #FFFFFF; border-bottom: 1px solid #D9DCD6; padding: 14px 16px; display: flex; align-items: center; gap: 10px">
+<h1 style="margin: 0; font-size: 24px; font-weight: 600; flex-grow: 1">Reach</h1>
+<div role="group" aria-label="View" style="display: flex; background: #E6E8E3; border-radius: 8px; padding: 3px">
+<button type="button" onClick="{{showMap}}" aria-pressed="{{isMap}}" style="{{mapBtn}}">Map</button>
+<button type="button" onClick="{{showNet}}" aria-pressed="{{isNet}}" style="{{netBtn}}">Network</button>
+</div>
+</div>
+
+<div style="flex-grow: 1; overflow-y: auto; padding: 14px 16px 20px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; gap: 6px; overflow-x: auto">
+<sc-for list="{{layers}}" as="l" hint-placeholder-count="3">
+<button type="button" onClick="{{l.pick}}" aria-pressed="{{l.on}}" style="{{l.style}}"><span style="{{l.sw}}"></span>{{l.label}}</button>
+</sc-for>
+</div>
+
+<sc-if value="{{isMap}}" hint-placeholder-val="{{ true }}">
+<div style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; overflow-x: auto">
+<div style="position: relative; width: 640px; height: 256px; background: #FAFBF8">
+<img src="/_blob/5647a98e1f540297645e31d484158c68" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%">
+<svg viewBox="0 0 1000 400" preserveAspectRatio="none" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%" fill="none" stroke-width="1.6" stroke-linecap="round">
+<sc-for list="{{arcs}}" as="a" hint-placeholder-count="10"><path d="{{a.d}}" stroke="{{a.c}}" stroke-opacity="0.55"></path></sc-for>
+</svg>
+<sc-for list="{{pins}}" as="p" hint-placeholder-count="14">
+<button type="button" onClick="{{p.pick}}" aria-label="{{p.aria}}" style="{{p.style}}"></button>
+</sc-for>
+<span style="position: absolute; left: 15.8%; top: 24.6%; transform: translate(-50%, -50%); width: 16px; height: 16px; border-radius: 50%; background: {{accent}}; border: 3px solid #FFFFFF; box-shadow: 0 0 0 3px #C9D3F2; pointer-events: none"></span>
+</div>
+</div>
+<span style="font-size: 12px; color: #555C63; text-align: center">Drag to pan · pinch to zoom · tap a dot</span>
+</sc-if>
+
+<sc-if value="{{isNet}}" hint-placeholder-val="{{ false }}">
+<div style="position: relative; height: 300px; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; overflow: hidden">
+<svg viewBox="0 0 358 300" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%" stroke-width="1.4">
+<sc-for list="{{nodes}}" as="n" hint-placeholder-count="10"><line x1="179" y1="150" x2="{{n.x}}" y2="{{n.y}}" stroke="{{n.c}}" stroke-opacity="0.5"></line></sc-for>
+</svg>
+<sc-for list="{{nodes}}" as="n" hint-placeholder-count="10">
+<button type="button" onClick="{{n.pick}}" style="{{n.style}}">{{n.label}}</button>
+</sc-for>
+<span style="position: absolute; left: 179px; top: 150px; transform: translate(-50%, -50%); width: 52px; height: 52px; border-radius: 50%; background: {{accent}}; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; border: 3px solid #FFFFFF; box-shadow: 0 0 0 3px #C9D3F2">You</span>
+</div>
+</sc-if>
+
+<div style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px">
+<span style="{{sel.chip}}">{{sel.kind}}</span>
+<b style="font-size: 17px">{{sel.city}}</b>
+<span style="font-size: 14px; color: #3A4047; line-height: 1.45">{{sel.detail}}</span>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<span style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 10px; padding: 10px; display: flex; flex-direction: column"><b style="font-family: 'IBM Plex Mono', monospace; font-size: 19px; font-weight: 500">109</b><span style="font-size: 11px; color: #555C63">countries</span></span>
+<span style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 10px; padding: 10px; display: flex; flex-direction: column"><b style="font-family: 'IBM Plex Mono', monospace; font-size: 19px; font-weight: 500">6,498</b><span style="font-size: 11px; color: #555C63">citing works</span></span>
+<span style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 10px; padding: 10px; display: flex; flex-direction: column"><b style="font-family: 'IBM Plex Mono', monospace; font-size: 19px; font-weight: 500">9,970</b><span style="font-size: 11px; color: #555C63">citations</span></span>
+</div>
+</div>
+
+<nav aria-label="Main" style="flex-shrink: 0; height: 78px; background: #FFFFFF; border-top: 1px solid #D9DCD6; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center; padding: 0 4px 10px; box-sizing: border-box">
+<a href="MHome.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 48px; justify-content: center; text-decoration: none; color: #555C63; font-size: 11px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9h-6v-6H9v6H3z"></path></svg>Home</a>
+<a href="MOpps.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 48px; justify-content: center; text-decoration: none; color: #555C63; font-size: 11px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"></path></svg>Ideas</a>
+<a href="MChat.dc.html" aria-label="Ask Scout" style="justify-self: center; width: 60px; height: 60px; margin-top: -26px; border-radius: 50%; background: #5B3FB5; border: 4px solid #FFFFFF; box-shadow: 0 6px 18px rgba(91,63,181,0.35); display: flex; align-items: center; justify-content: center; color: #FFFFFF"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path><path d="M19 16l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"></path></svg></a>
+<a href="MMatch.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 48px; justify-content: center; text-decoration: none; color: #555C63; font-size: 11px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="8" r="3"></circle><circle cx="17" cy="8" r="3"></circle><path d="M2 20c0-3 2.2-5 5-5 1.6 0 3 .6 4 1.7M22 20c0-3-2.2-5-5-5-1.6 0-3 .6-4 1.7"></path></svg>Matches</a>
+<a href="MReach.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 48px; justify-content: center; text-decoration: none; color: {{accent}}; font-size: 11px; font-weight: 600"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"></path></svg>Reach</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#2446C7","options":["#2446C7","#0F6E6E","#5B3FB5","#14171A"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { view: 'map', layers: { co: true, cite: true, match: true }, sel: 'beijing' };
+  }
+  renderVals() {
+    const s = this.state;
+    const C = { co: '#2446C7', cite: '#B4570F', match: '#0F6E6E' };
+    const P = [
+      { id: 'blacksburg', city: 'Virginia Tech', k: 'co', x: 27.7, y: 32.9, arc: 'M158 99Q217 84 277 132', d: '65 co-authored works (2014–2021)', nx: 120, ny: 40 },
+      { id: 'fribourg', city: 'Fribourg', k: 'co', x: 52.0, y: 26.3, arc: 'M158 99Q339 27 520 105', d: 'Adolphe Merkle Institute · 49 co-authored works', nx: 240, ny: 40 },
+      { id: 'grenoble', city: 'Grenoble', k: 'co', x: 51.6, y: 27.5, arc: 'M158 99Q337 30 516 110', d: '6 works · incl. Chem. Soc. Rev. 2018 (1,025 citations)', nx: 300, ny: 110 },
+      { id: 'accra', city: 'Accra', k: 'co', x: 49.9, y: 54.7, arc: 'M158 99Q329 87 499 219', d: 'University of Ghana · 6 co-authored works', nx: 50, ny: 110 },
+      { id: 'beijing', city: 'Beijing', k: 'cite', x: 82.3, y: 31.1, arc: 'M158 99Q490 5 823 124', d: 'Chinese Academy of Sciences · 152 citing works. China overall: 1,533 — your largest audience', nx: 310, ny: 200 },
+      { id: 'paris', city: 'Paris', k: 'cite', x: 50.7, y: 24.9, arc: 'M158 99Q332 26 507 100', d: 'CNRS · 236 citing works — your top citing institution', nx: 250, ny: 262 },
+      { id: 'bangalore', city: 'India', k: 'cite', x: 71.6, y: 49.7, arc: 'M158 99Q437 38 716 199', d: '552 citing works — no co-authors yet', nx: 50, ny: 200 },
+      { id: 'saopaulo', city: 'Brazil', k: 'cite', x: 37.0, y: 74.9, arc: 'M158 99Q264 151 370 299', d: '266 citing works', nx: 110, ny: 262 },
+      { id: 'bremen', city: 'Bremen', k: 'match', x: 52.4, y: 22.0, arc: 'M158 99Q341 17 524 88', d: 'Mutual match · Dr. Raphaell Moreira · 5 joint papers', nx: 179, ny: 275 }
+    ];
+    const kind = { co: 'Co-authors', cite: 'Cites your work', match: 'Mutual match' };
+    const bg = { co: ['#E8ECFA', '#16308F'], cite: ['#FBF0E4', '#7A3A06'], match: ['#E3F1EF', '#0F5E5E'] };
+    const vis = P.filter((p) => s.layers[p.k]);
+    const cur = P.find((p) => p.id === s.sel) || P[0];
+    const seg = (on) => 'font: inherit; font-size: 13px; font-weight: 600; border: 0; border-radius: 6px; padding: 8px 12px; min-height: 36px; cursor: pointer; ' + (on ? 'background: #FFFFFF; color: #14171A; box-shadow: 0 1px 3px rgba(20,23,26,0.12);' : 'background: transparent; color: #3A4047;');
+    return {
+      accent: this.props.accent ?? '#2446C7',
+      isMap: s.view === 'map', isNet: s.view === 'net',
+      showMap: () => this.setState({ view: 'map' }), showNet: () => this.setState({ view: 'net' }),
+      mapBtn: seg(s.view === 'map'), netBtn: seg(s.view === 'net'),
+      layers: [['co', 'Co-authors'], ['cite', 'Citing'], ['match', 'Matches']].map(([id, label]) => ({
+        label, on: s.layers[id],
+        pick: () => this.setState({ layers: { ...s.layers, [id]: !s.layers[id] } }),
+        sw: 'width: 10px; height: 10px; border-radius: 50%; background: ' + C[id] + ';',
+        style: 'flex-shrink: 0; font: inherit; font-size: 13px; display: flex; gap: 6px; align-items: center; padding: 8px 12px; min-height: 40px; border-radius: 999px; cursor: pointer; ' + (s.layers[id] ? 'background: #FFFFFF; color: #14171A; border: 1px solid #14171A;' : 'background: #E6E8E3; color: #555C63; border: 1px solid transparent;')
+      })),
+      arcs: vis.map((p) => ({ d: p.arc, c: C[p.k] })),
+      pins: vis.map((p) => ({
+        aria: p.city + ' — ' + kind[p.k],
+        pick: () => this.setState({ sel: p.id }),
+        style: 'position: absolute; left: ' + p.x + '%; top: ' + p.y + '%; transform: translate(-50%, -50%); width: 24px; height: 24px; padding: 0; border-radius: 50%; cursor: pointer; background: transparent; border: 0; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 0 7px ' + C[p.k] + (p.id === s.sel ? ', 0 0 0 2px #14171A' : '') + ';'
+      })),
+      nodes: vis.map((p) => ({
+        label: p.city, x: p.nx, y: p.ny, c: C[p.k],
+        pick: () => this.setState({ sel: p.id }),
+        style: 'position: absolute; left: ' + p.nx + 'px; top: ' + p.ny + 'px; transform: translate(-50%, -50%); font: inherit; font-size: 12px; font-weight: 600; padding: 6px 10px; min-height: 32px; border-radius: 999px; cursor: pointer; background: #FFFFFF; color: #14171A; white-space: nowrap; border: 2px solid ' + (p.id === s.sel ? '#14171A' : C[p.k]) + ';'
+      })),
+      sel: {
+        city: cur.city, kind: kind[cur.k], detail: cur.d,
+        chip: 'align-self: flex-start; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; background: ' + bg[cur.k][0] + '; color: ' + bg[cur.k][1] + ';'
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

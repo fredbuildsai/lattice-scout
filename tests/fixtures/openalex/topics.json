@@ -1,0 +1,666 @@
+{
+ "T10610": {
+  "name": "Advanced Cellulose Research Studies",
+  "subfield": "Biomaterials"
+ },
+ "T11208": {
+  "name": "Lignin and Wood Chemistry",
+  "subfield": "Biomedical Engineering"
+ },
+ "T10869": {
+  "name": "Polysaccharides and Plant Cell Walls",
+  "subfield": "Plant Science"
+ },
+ "T10729": {
+  "name": "Electrospun Nanofibers in Biomedical Applications",
+  "subfield": "Biomaterials"
+ },
+ "T10488": {
+  "name": "Nanocomposite Films for Food Packaging",
+  "subfield": "Biomaterials"
+ },
+ "T10105": {
+  "name": "Osteoarthritis Treatment and Mechanisms",
+  "subfield": "Rheumatology"
+ },
+ "T12264": {
+  "name": "Tissue Engineering and Regenerative Medicine",
+  "subfield": "Surgery"
+ },
+ "T10059": {
+  "name": "Bone Tissue Engineering Materials",
+  "subfield": "Biomedical Engineering"
+ },
+ "T11737": {
+  "name": "Advanced Materials and Mechanics",
+  "subfield": "Mechanical Engineering"
+ },
+ "T10810": {
+  "name": "Polymer composites and self-healing",
+  "subfield": "Polymers and Plastics"
+ },
+ "T10405": {
+  "name": "Advanced Polymer Synthesis and Characterization",
+  "subfield": "Organic Chemistry"
+ },
+ "T10578": {
+  "name": "Supramolecular Chemistry and Complexes",
+  "subfield": "Organic Chemistry"
+ },
+ "T11419": {
+  "name": "Supramolecular Self-Assembly in Materials",
+  "subfield": "Biomaterials"
+ },
+ "T10079": {
+  "name": "Nanoparticles: synthesis and applications",
+  "subfield": "Materials Chemistry"
+ },
+ "T12627": {
+  "name": "Graphene and Nanomaterials Applications",
+  "subfield": "Biomedical Engineering"
+ },
+ "T10306": {
+  "name": "Liquid Crystal Research Advancements",
+  "subfield": "Electronic, Optical and Magnetic Materials"
+ },
+ "T11298": {
+  "name": "Synthesis and Properties of Aromatic Compounds",
+  "subfield": "Organic Chemistry"
+ },
+ "T10238": {
+  "name": "Spine and Intervertebral Disc Pathology",
+  "subfield": "Pathology and Forensic Medicine"
+ },
+ "T11518": {
+  "name": "Cervical and Thoracic Myelopathy",
+  "subfield": "Surgery"
+ },
+ "T10207": {
+  "name": "Advanced biosensing and bioanalysis techniques",
+  "subfield": "Molecular Biology"
+ },
+ "T11393": {
+  "name": "Biosensors and Analytical Detection",
+  "subfield": "Biomedical Engineering"
+ },
+ "T10783": {
+  "name": "Additive Manufacturing and 3D Printing Technologies",
+  "subfield": "Automotive Engineering"
+ },
+ "T10501": {
+  "name": "Polymer Nanocomposites and Properties",
+  "subfield": "Polymers and Plastics"
+ },
+ "T10343": {
+  "name": "Hydrogels: synthesis, properties, applications",
+  "subfield": "Molecular Medicine"
+ },
+ "T11026": {
+  "name": "Occupational and environmental lung diseases",
+  "subfield": "Pulmonary and Respiratory Medicine"
+ },
+ "T14072": {
+  "name": "Immunotoxicology and immune responses",
+  "subfield": "Immunology"
+ },
+ "T11601": {
+  "name": "Neuroscience and Neural Engineering",
+  "subfield": "Cellular and Molecular Neuroscience"
+ },
+ "T10920": {
+  "name": "Advanced Drug Delivery Systems",
+  "subfield": "Pharmaceutical Science"
+ },
+ "T10660": {
+  "name": "Conducting polymers and applications",
+  "subfield": "Polymers and Plastics"
+ },
+ "T10513": {
+  "name": "Natural Fiber Reinforced Composites",
+  "subfield": "Polymers and Plastics"
+ },
+ "T11511": {
+  "name": "Dyeing and Modifying Textile Fibers",
+  "subfield": "Building and Construction"
+ },
+ "T10661": {
+  "name": "biodegradable polymer synthesis and properties",
+  "subfield": "Biomaterials"
+ },
+ "T11190": {
+  "name": "3D Printing in Biomedical Research",
+  "subfield": "Biomedical Engineering"
+ },
+ "T10389": {
+  "name": "Polymer crystallization and properties",
+  "subfield": "Polymers and Plastics"
+ },
+ "T10687": {
+  "name": "Innovative concrete reinforcement materials",
+  "subfield": "Civil and Structural Engineering"
+ },
+ "T10033": {
+  "name": "Concrete and Cement Materials Research",
+  "subfield": "Civil and Structural Engineering"
+ },
+ "T11869": {
+  "name": "Per- and polyfluoroalkyl substances research",
+  "subfield": "Environmental Chemistry"
+ },
+ "T10210": {
+  "name": "Advanced oxidation water treatment",
+  "subfield": "Water Science and Technology"
+ },
+ "T10030": {
+  "name": "Electrocatalysts for Energy Conversion",
+  "subfield": "Renewable Energy, Sustainability and the Environment"
+ },
+ "T10078": {
+  "name": "Advanced Photocatalysis Techniques",
+  "subfield": "Renewable Energy, Sustainability and the Environment"
+ },
+ "T10532": {
+  "name": "Molecular Sensors and Ion Detection",
+  "subfield": "Spectroscopy"
+ },
+ "T12163": {
+  "name": "Aerosol Filtration and Electrostatic Precipitation",
+  "subfield": "Electrical and Electronic Engineering"
+ },
+ "T10990": {
+  "name": "Infection Control and Ventilation",
+  "subfield": "Pulmonary and Respiratory Medicine"
+ },
+ "T10016": {
+  "name": "Adsorption and biosorption for pollutant removal",
+  "subfield": "Water Science and Technology"
+ },
+ "T10197": {
+  "name": "Membrane Separation Technologies",
+  "subfield": "Water Science and Technology"
+ },
+ "T12078": {
+  "name": "Environmental remediation with nanomaterials",
+  "subfield": "Biomedical Engineering"
+ },
+ "T10409": {
+  "name": "Fuel Cells and Related Materials",
+  "subfield": "Electrical and Electronic Engineering"
+ },
+ "T10281": {
+  "name": "Advanced Battery Materials and Technologies",
+  "subfield": "Electrical and Electronic Engineering"
+ },
+ "T10484": {
+  "name": "Wood Treatment and Properties",
+  "subfield": "Building and Construction"
+ },
+ "T12105": {
+  "name": "Hygrothermal properties of building materials",
+  "subfield": "Building and Construction"
+ },
+ "T11471": {
+  "name": "Block Copolymer Self-Assembly",
+  "subfield": "Materials Chemistry"
+ },
+ "T11278": {
+  "name": "Calcium Carbonate Crystallization and Inhibition",
+  "subfield": "Biomaterials"
+ },
+ "T10903": {
+  "name": "Porphyrin and Phthalocyanine Chemistry",
+  "subfield": "Materials Chemistry"
+ },
+ "T11651": {
+  "name": "Inhalation and Respiratory Drug Delivery",
+  "subfield": "Pulmonary and Respiratory Medicine"
+ },
+ "T10212": {
+  "name": "Electrochemical sensors and biosensors",
+  "subfield": "Electrical and Electronic Engineering"
+ },
+ "T10074": {
+  "name": "Carbon Nanotubes in Composites",
+  "subfield": "Materials Chemistry"
+ },
+ "T11362": {
+  "name": "Membrane Separation and Gas Transport",
+  "subfield": "Mechanical Engineering"
+ },
+ "T10857": {
+  "name": "Advanced Electron Microscopy Techniques and Applications",
+  "subfield": "Structural Biology"
+ },
+ "T12195": {
+  "name": "Aerogels and thermal insulation",
+  "subfield": "Spectroscopy"
+ },
+ "T10063": {
+  "name": "Nanoparticle-Based Drug Delivery",
+  "subfield": "Biomaterials"
+ },
+ "T10725": {
+  "name": "RNA Interference and Gene Delivery",
+  "subfield": "Molecular Biology"
+ },
+ "T10379": {
+  "name": "Cellular Mechanics and Interactions",
+  "subfield": "Cell Biology"
+ },
+ "T12570": {
+  "name": "Photopolymerization techniques and applications",
+  "subfield": "Organic Chemistry"
+ },
+ "T11881": {
+  "name": "Crystallization and Solubility Studies",
+  "subfield": "Materials Chemistry"
+ },
+ "T11690": {
+  "name": "Advanced battery technologies research",
+  "subfield": "Electrical and Electronic Engineering"
+ },
+ "T14454": {
+  "name": "Polymer Science and Applications",
+  "subfield": "Mechanical Engineering"
+ },
+ "T10096": {
+  "name": "Metal-Organic Frameworks: Synthesis and Applications",
+  "subfield": "Inorganic Chemistry"
+ },
+ "T11915": {
+  "name": "Pickering emulsions and particle stabilization",
+  "subfield": "Materials Chemistry"
+ },
+ "T10171": {
+  "name": "Biofuel production and bioconversion",
+  "subfield": "Biomedical Engineering"
+ },
+ "T10324": {
+  "name": "Microbial bioremediation and biosurfactants",
+  "subfield": "Pollution"
+ },
+ "T10721": {
+  "name": "Surfactants and Colloidal Systems",
+  "subfield": "Organic Chemistry"
+ },
+ "T13092": {
+  "name": "Environmental Chemistry and Analysis",
+  "subfield": "Environmental Chemistry"
+ },
+ "T10313": {
+  "name": "Surface Modification and Superhydrophobicity",
+  "subfield": "Surfaces, Coatings and Films"
+ },
+ "T12161": {
+  "name": "Plant Surface Properties and Treatments",
+  "subfield": "Plant Science"
+ },
+ "T11595": {
+  "name": "Textile materials and evaluations",
+  "subfield": "Polymers and Plastics"
+ },
+ "T12074": {
+  "name": "Membrane-based Ion Separation Techniques",
+  "subfield": "Biomedical Engineering"
+ },
+ "T11037": {
+  "name": "Fungal Infections and Studies",
+  "subfield": "Epidemiology"
+ },
+ "T10497": {
+  "name": "Fungal and yeast genetics research",
+  "subfield": "Molecular Biology"
+ },
+ "T10150": {
+  "name": "Antifungal resistance and susceptibility",
+  "subfield": "Infectious Diseases"
+ },
+ "T12642": {
+  "name": "Polymer-Based Agricultural Enhancements",
+  "subfield": "Biomedical Engineering"
+ },
+ "T12048": {
+  "name": "Microencapsulation and Drying Processes",
+  "subfield": "Food Science"
+ },
+ "T10404": {
+  "name": "Enzyme Catalysis and Immobilization",
+  "subfield": "Molecular Biology"
+ },
+ "T10835": {
+  "name": "Carbohydrate Chemistry and Synthesis",
+  "subfield": "Organic Chemistry"
+ },
+ "T10859": {
+  "name": "Polymer Surface Interaction Studies",
+  "subfield": "Surfaces, Coatings and Films"
+ },
+ "T12628": {
+  "name": "Polymer Foaming and Composites",
+  "subfield": "Polymers and Plastics"
+ },
+ "T12192": {
+  "name": "Polysaccharides Composition and Applications",
+  "subfield": "Food Science"
+ },
+ "T11608": {
+  "name": "Dielectric materials and actuators",
+  "subfield": "Biomedical Engineering"
+ },
+ "T12085": {
+  "name": "Collagen: Extraction and Characterization",
+  "subfield": "Biomaterials"
+ },
+ "T11966": {
+  "name": "Silk-based biomaterials and applications",
+  "subfield": "Biomaterials"
+ },
+ "T12236": {
+  "name": "Photoreceptor and optogenetics research",
+  "subfield": "Cellular and Molecular Neuroscience"
+ },
+ "T10205": {
+  "name": "Advanced Fiber Optic Sensors",
+  "subfield": "Electrical and Electronic Engineering"
+ },
+ "T12613": {
+  "name": "X-ray Diffraction in Crystallography",
+  "subfield": "Materials Chemistry"
+ },
+ "T11183": {
+  "name": "Advanced X-ray Imaging Techniques",
+  "subfield": "Radiation"
+ },
+ "T11664": {
+  "name": "Fiber-reinforced polymer composites",
+  "subfield": "Mechanical Engineering"
+ },
+ "T11240": {
+  "name": "Luminescence and Fluorescent Materials",
+  "subfield": "Materials Chemistry"
+ },
+ "T10097": {
+  "name": "Luminescence Properties of Advanced Materials",
+  "subfield": "Materials Chemistry"
+ },
+ "T11188": {
+  "name": "Coagulation and Flocculation Studies",
+  "subfield": "Water Science and Technology"
+ },
+ "T10707": {
+  "name": "Cellular and Composite Structures",
+  "subfield": "Mechanical Engineering"
+ },
+ "T11360": {
+  "name": "Flame retardant materials and properties",
+  "subfield": "Polymers and Plastics"
+ },
+ "T12358": {
+  "name": "Thermal and Kinetic Analysis",
+  "subfield": "Materials Chemistry"
+ },
+ "T10806": {
+  "name": "Energetic Materials and Combustion",
+  "subfield": "Mechanics of Materials"
+ },
+ "T13160": {
+  "name": "Synthesis and Biological Evaluation",
+  "subfield": "Organic Chemistry"
+ },
+ "T10131": {
+  "name": "Gold and Silver Nanoparticles Synthesis and Applications",
+  "subfield": "Electronic, Optical and Magnetic Materials"
+ },
+ "T10735": {
+  "name": "Mesoporous Materials and Catalysis",
+  "subfield": "Materials Chemistry"
+ },
+ "T10132": {
+  "name": "Advanced ceramic materials synthesis",
+  "subfield": "Ceramics and Composites"
+ },
+ "T12859": {
+  "name": "Cell Image Analysis Techniques",
+  "subfield": "Biophysics"
+ },
+ "T12706": {
+  "name": "Subcritical and Supercritical Water Processes",
+  "subfield": "Biomedical Engineering"
+ },
+ "T10402": {
+  "name": "Phase Equilibria and Thermodynamics",
+  "subfield": "Biomedical Engineering"
+ },
+ "T10266": {
+  "name": "Plant Water Relations and Carbon Dynamics",
+  "subfield": "Global and Planetary Change"
+ },
+ "T11828": {
+  "name": "Corneal Surgery and Treatments",
+  "subfield": "Radiology, Nuclear Medicine and Imaging"
+ },
+ "T10563": {
+  "name": "Corneal surgery and disorders",
+  "subfield": "Radiology, Nuclear Medicine and Imaging"
+ },
+ "T13315": {
+  "name": "Occupational Health and Safety in Workplaces",
+  "subfield": "Occupational Therapy"
+ },
+ "T14521": {
+  "name": "Medicinal Plant Research",
+  "subfield": "Plant Science"
+ },
+ "T10225": {
+  "name": "Essential Oils and Antimicrobial Activity",
+  "subfield": "Food Science"
+ },
+ "T11434": {
+  "name": "Electrochemical Analysis and Applications",
+  "subfield": "Electrochemistry"
+ },
+ "T11472": {
+  "name": "Analytical Chemistry and Sensors",
+  "subfield": "Bioengineering"
+ },
+ "T10024": {
+  "name": "TiO2 Photocatalysis and Solar Cells",
+  "subfield": "Renewable Energy, Sustainability and the Environment"
+ },
+ "T11890": {
+  "name": "Scientific Measurement and Uncertainty Evaluation",
+  "subfield": "Statistics, Probability and Uncertainty"
+ },
+ "T10083": {
+  "name": "Graphene research and applications",
+  "subfield": "Materials Chemistry"
+ },
+ "T10464": {
+  "name": "Crystal structures of chemical compounds",
+  "subfield": "Inorganic Chemistry"
+ },
+ "T10798": {
+  "name": "Crystallography and molecular interactions",
+  "subfield": "Physical and Theoretical Chemistry"
+ },
+ "T10939": {
+  "name": "Crystal Structures and Properties",
+  "subfield": "Electronic, Optical and Magnetic Materials"
+ },
+ "T12171": {
+  "name": "Open Education and E-Learning",
+  "subfield": "Computer Science Applications"
+ },
+ "T12124": {
+  "name": "Engineering Education and Curriculum Development",
+  "subfield": "Media Technology"
+ },
+ "T13682": {
+  "name": "Engineering Education and Pedagogy",
+  "subfield": "Architecture"
+ },
+ "T11224": {
+  "name": "Electromagnetic wave absorption materials",
+  "subfield": "Electronic, Optical and Magnetic Materials"
+ },
+ "T11444": {
+  "name": "Electromagnetic Compatibility and Noise Suppression",
+  "subfield": "Electrical and Electronic Engineering"
+ },
+ "T11383": {
+  "name": "Advanced Antenna and Metasurface Technologies",
+  "subfield": "Aerospace Engineering"
+ },
+ "T10617": {
+  "name": "Cellular transport and secretion",
+  "subfield": "Cell Biology"
+ },
+ "T11212": {
+  "name": "Cultural Heritage Materials Analysis",
+  "subfield": "Archeology"
+ },
+ "T11948": {
+  "name": "Machine Learning in Materials Science",
+  "subfield": "Materials Chemistry"
+ },
+ "T10247": {
+  "name": "Perovskite Materials and Applications",
+  "subfield": "Electrical and Electronic Engineering"
+ },
+ "T13889": {
+  "name": "Advanced Materials and Semiconductor Technologies",
+  "subfield": "Materials Chemistry"
+ },
+ "T10192": {
+  "name": "Catalytic Processes in Materials Science",
+  "subfield": "Materials Chemistry"
+ },
+ "T13463": {
+  "name": "Nanoporous metals and alloys",
+  "subfield": "Materials Chemistry"
+ },
+ "T11747": {
+  "name": "Metal-Catalyzed Oxygenation Mechanisms",
+  "subfield": "Inorganic Chemistry"
+ },
+ "T11746": {
+  "name": "Inorganic and Organometallic Chemistry",
+  "subfield": "Organic Chemistry"
+ },
+ "T12327": {
+  "name": "Various Chemistry Research Topics",
+  "subfield": "Physical and Theoretical Chemistry"
+ },
+ "T10640": {
+  "name": "Spectroscopy and Chemometric Analyses",
+  "subfield": "Analytical Chemistry"
+ },
+ "T12191": {
+  "name": "Chemical Reaction Mechanisms",
+  "subfield": "Organic Chemistry"
+ },
+ "T11748": {
+  "name": "Organophosphorus compounds synthesis",
+  "subfield": "Organic Chemistry"
+ },
+ "T13239": {
+  "name": "Phosphorus compounds and reactions",
+  "subfield": "Organic Chemistry"
+ },
+ "T10064": {
+  "name": "Complex Network Analysis Techniques",
+  "subfield": "Statistical and Nonlinear Physics"
+ },
+ "T10637": {
+  "name": "Advanced Clustering Algorithms Research",
+  "subfield": "Artificial Intelligence"
+ },
+ "T12285": {
+  "name": "Surface Chemistry and Catalysis",
+  "subfield": "Biomedical Engineering"
+ },
+ "T13531": {
+  "name": "Surface and Thin Film Phenomena",
+  "subfield": "Atomic and Molecular Physics, and Optics"
+ },
+ "T11825": {
+  "name": "Catalysis and Oxidation Reactions",
+  "subfield": "Catalysis"
+ },
+ "T10495": {
+  "name": "Catalysts for Methane Reforming",
+  "subfield": "Catalysis"
+ },
+ "T10548": {
+  "name": "Catalytic Cross-Coupling Reactions",
+  "subfield": "Organic Chemistry"
+ },
+ "T10354": {
+  "name": "Catalytic C–H Functionalization Methods",
+  "subfield": "Organic Chemistry"
+ },
+ "T10871": {
+  "name": "Catalytic Alkyne Reactions",
+  "subfield": "Organic Chemistry"
+ },
+ "T11634": {
+  "name": "Water Quality and Pollution Assessment",
+  "subfield": "Water Science and Technology"
+ },
+ "T13793": {
+  "name": "Environmental and Analytical Chemistry Studies",
+  "subfield": "Water Science and Technology"
+ },
+ "T12773": {
+  "name": "Water Quality and Resources Studies",
+  "subfield": "Water Science and Technology"
+ },
+ "T10726": {
+  "name": "Career Development and Diversity",
+  "subfield": "Safety Research"
+ },
+ "T13600": {
+  "name": "Science Education and Perceptions",
+  "subfield": "Developmental and Educational Psychology"
+ },
+ "T11906": {
+  "name": "Gender, Sexuality, and Education",
+  "subfield": "Gender Studies"
+ },
+ "T10666": {
+  "name": "Photonic Crystals and Applications",
+  "subfield": "Atomic and Molecular Physics, and Optics"
+ },
+ "T13217": {
+  "name": "Pigment Synthesis and Properties",
+  "subfield": "Inorganic Chemistry"
+ },
+ "T10461": {
+  "name": "Gas Sensing Nanomaterials and Sensors",
+  "subfield": "Electrical and Electronic Engineering"
+ },
+ "T10553": {
+  "name": "Combustion and flame dynamics",
+  "subfield": "Computational Mechanics"
+ },
+ "T10092": {
+  "name": "Organometallic Complex Synthesis and Catalysis",
+  "subfield": "Organic Chemistry"
+ },
+ "T12038": {
+  "name": "Covalent Organic Framework Applications",
+  "subfield": "Materials Chemistry"
+ },
+ "T12274": {
+  "name": "Electrostatics and Colloid Interactions",
+  "subfield": "Physical and Theoretical Chemistry"
+ },
+ "T10353": {
+  "name": "Zeolite Catalysis and Synthesis",
+  "subfield": "Inorganic Chemistry"
+ },
+ "T11852": {
+  "name": "Clay minerals and soil interactions",
+  "subfield": "Biomaterials"
+ }
+}

@@ -1,0 +1,654 @@
+{
+ "meta": {
+  "count": 7163,
+  "per_page": 6
+ },
+ "results": [
+  {
+   "id": "https://openalex.org/W4411077674",
+   "doi": "https://doi.org/10.3390/polym17111584",
+   "display_name": "Optimizing Mechanical and Microstructural Properties of Sandy Clayey Silt Stabilized with Lignin Fiber and Cement Synergy",
+   "title": "Optimizing Mechanical and Microstructural Properties of Sandy Clayey Silt Stabilized with Lignin Fiber and Cement Synergy",
+   "publication_year": 2025,
+   "cited_by_count": 6,
+   "type": "T11375 T13236",
+   "primary_topic": {
+    "id": "https://openalex.org/T11375",
+    "display_name": null,
+    "subfield": {
+     "display_name": null
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T11375",
+     "display_name": null,
+     "subfield": {
+      "display_name": null
+     }
+    },
+    {
+     "id": "https://openalex.org/T13236",
+     "display_name": null,
+     "subfield": {
+      "display_name": null
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": {
+    "Soil": [
+     0
+    ],
+    "treatment": [
+     1
+    ],
+    "with": [
+     2
+    ],
+    "natural": [
+     3
+    ],
+    "materials": [
+     4
+    ],
+    "is": [
+     5
+    ],
+    "an": [
+     6,
+     63
+    ],
+    "effective": [
+     7
+    ],
+    "method": [
+     8
+    ],
+    "to": [
+     9,
+     25
+    ],
+    "improve": [
+     10
+    ],
+    "the": [
+     11,
+     15,
+     27
+    ],
+    "mechanical": [
+     12
+    ],
+    "properties": [
+     13
+    ],
+    "of": [
+     14,
+     30
+    ],
+    "original": [
+     16
+    ],
+    "soil": [
+     17
+    ],
+    "for": [
+     18
+    ],
+    "recycling": [
+     19
+    ],
+    "engineering": [
+     20
+    ],
+    "construction.": [
+     21
+    ],
+    "This": [
+     22
+    ],
+    "research": [
+     23
+    ],
+    "aims": [
+     24
+    ],
+    "evaluate": [
+     26
+    ],
+    "synergistic": [
+     28
+    ],
+    "effects": [
+     29
+    ],
+    "lignin": [
+     31,
+     48
+    ],
+    "fiber": [
+     32,
+     49
+    ],
+    "and": [
+     33,
+     55,
+     57
+    ],
+    "cement": [
+     34,
+     59
+    ],
+    "on": [
+     35
+    ],
+    "sandy": [
+     36
+    ],
+    "clayey": [
+     37
+    ],
+    "silt": [
+     38
+    ],
+    "stabilization.": [
+     39
+    ],
+    "A": [
+     40
+    ],
+    "factorial": [
+     41
+    ],
+    "experimental": [
+     42
+    ],
+    "design": [
+     43
+    ],
+    "was": [
+     44
+    ],
+    "employed,": [
+     45
+    ],
+    "testing": [
+     46
+    ],
+    "five": [
+     47
+    ],
+    "contents": [
+     50,
+     60
+    ],
+    "(0%,": [
+     51,
+     61
+    ],
+    "2%,": [
+     52,
+     62
+    ],
+    "4%,": [
+     53
+    ],
+    "6%,": [
+     54
+    ],
+    "8%)": [
+     56
+    ],
+    "three": [
+     58
+    ]
+   }
+  },
+  {
+   "id": "https://openalex.org/W4403915241",
+   "doi": "https://doi.org/10.1016/j.tafmec.2024.104738",
+   "display_name": "Lignin fiber reinforced gypsum-cement composite materials: Investigation of fracture properties and freeze–thaw behaviors",
+   "title": "Lignin fiber reinforced gypsum-cement composite materials: Investigation of fracture properties and freeze–thaw behaviors",
+   "publication_year": 2024,
+   "cited_by_count": 8,
+   "type": "T10687 T10033",
+   "primary_topic": {
+    "id": "https://openalex.org/T10687",
+    "display_name": "Innovative concrete reinforcement materials",
+    "subfield": {
+     "display_name": "Civil and Structural Engineering"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T10687",
+     "display_name": "Innovative concrete reinforcement materials",
+     "subfield": {
+      "display_name": "Civil and Structural Engineering"
+     }
+    },
+    {
+     "id": "https://openalex.org/T10033",
+     "display_name": "Concrete and Cement Materials Research",
+     "subfield": {
+      "display_name": "Civil and Structural Engineering"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": null
+  },
+  {
+   "id": "https://openalex.org/W4413429759",
+   "doi": "https://doi.org/10.3390/ma18173929",
+   "display_name": "Synergistic Effects of Lignin Fiber and Sodium Sulfate on Mechanical Properties and Micro-Structure of Cement-Stabilized Soil",
+   "title": "Synergistic Effects of Lignin Fiber and Sodium Sulfate on Mechanical Properties and Micro-Structure of Cement-Stabilized Soil",
+   "publication_year": 2025,
+   "cited_by_count": 2,
+   "type": "T11375 T13236",
+   "primary_topic": {
+    "id": "https://openalex.org/T11375",
+    "display_name": null,
+    "subfield": {
+     "display_name": null
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T11375",
+     "display_name": null,
+     "subfield": {
+      "display_name": null
+     }
+    },
+    {
+     "id": "https://openalex.org/T13236",
+     "display_name": null,
+     "subfield": {
+      "display_name": null
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": {
+    "This": [
+     0
+    ],
+    "study": [
+     1
+    ],
+    "aims": [
+     2
+    ],
+    "to": [
+     3
+    ],
+    "develop": [
+     4
+    ],
+    "environmentally": [
+     5
+    ],
+    "friendly": [
+     6
+    ],
+    "soil-stabilization": [
+     7
+    ],
+    "materials": [
+     8
+    ],
+    "by": [
+     9
+    ],
+    "investigating": [
+     10
+    ],
+    "the": [
+     11,
+     26
+    ],
+    "synergistic": [
+     12
+    ],
+    "enhancement": [
+     13
+    ],
+    "mechanism": [
+     14
+    ],
+    "of": [
+     15,
+     31
+    ],
+    "industrial": [
+     16
+    ],
+    "by-product": [
+     17
+    ],
+    "lignin": [
+     18
+    ],
+    "fibers": [
+     19
+    ],
+    "(LFs)": [
+     20
+    ],
+    "and": [
+     21,
+     28,
+     47
+    ],
+    "sodium": [
+     22
+    ],
+    "sulfate": [
+     23
+    ],
+    "(Na2SO4)": [
+     24
+    ],
+    "on": [
+     25
+    ],
+    "mechanical": [
+     27
+    ],
+    "micro-structural": [
+     29
+    ],
+    "properties": [
+     30
+    ],
+    "cement-stabilized": [
+     32
+    ],
+    "soil.": [
+     33
+    ],
+    "A": [
+     34
+    ],
+    "systematic": [
+     35
+    ],
+    "evaluation": [
+     36
+    ],
+    "was": [
+     37
+    ],
+    "conducted": [
+     38
+    ],
+    "through": [
+     39
+    ],
+    "unconfined": [
+     40
+    ],
+    "compressive": [
+     41
+    ],
+    "strength": [
+     42
+    ],
+    "(UCS),": [
+     43
+    ],
+    "splitting": [
+     44
+    ],
+    "tensile": [
+     45
+    ],
+    "strength,": [
+     46
+    ],
+    "capillary": [
+     48
+    ],
+    "water": [
+     49
+    ],
+    "a": [
+     50
+    ]
+   }
+  },
+  {
+   "id": "https://openalex.org/W7214346167",
+   "doi": "https://doi.org/10.1021/acs.langmuir.6c03514",
+   "display_name": "Disruption of Lignin-Emissive Domains: Deciphering Fiber–Cement Interfacial Reactions by EEM Fluorescence and DUV Raman Spectroscopy",
+   "title": "Disruption of Lignin-Emissive Domains: Deciphering Fiber–Cement Interfacial Reactions by EEM Fluorescence and DUV Raman Spectroscopy",
+   "publication_year": 2026,
+   "cited_by_count": 0,
+   "type": "T11208 T10033",
+   "primary_topic": {
+    "id": "https://openalex.org/T11208",
+    "display_name": "Lignin and Wood Chemistry",
+    "subfield": {
+     "display_name": "Biomedical Engineering"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T11208",
+     "display_name": "Lignin and Wood Chemistry",
+     "subfield": {
+      "display_name": "Biomedical Engineering"
+     }
+    },
+    {
+     "id": "https://openalex.org/T10033",
+     "display_name": "Concrete and Cement Materials Research",
+     "subfield": {
+      "display_name": "Civil and Structural Engineering"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": {
+    "Deciphering": [
+     0
+    ],
+    "the": [
+     1,
+     23
+    ],
+    "fiber–cement": [
+     2
+    ],
+    "interfacial": [
+     3
+    ],
+    "reaction": [
+     4,
+     24
+    ],
+    "without": [
+     5
+    ],
+    "chemical": [
+     6
+    ],
+    "labeling": [
+     7
+    ],
+    "and": [
+     8,
+     16,
+     27,
+     37
+    ],
+    "digestion": [
+     9
+    ],
+    "remains": [
+     10
+    ],
+    "a": [
+     11
+    ],
+    "significant": [
+     12
+    ],
+    "challenge": [
+     13
+    ],
+    "in": [
+     14
+    ],
+    "vibrational": [
+     15
+    ],
+    "fluorescence": [
+     17,
+     36
+    ],
+    "spectroscopy.": [
+     18,
+     42
+    ],
+    "Herein,": [
+     19
+    ],
+    "we": [
+     20
+    ],
+    "have": [
+     21
+    ],
+    "elucidated": [
+     22
+    ],
+    "between": [
+     25
+    ],
+    "lignin": [
+     26,
+     44
+    ],
+    "calcium": [
+     28
+    ],
+    "hydroxide": [
+     29
+    ],
+    "(Ca(OH)2)": [
+     30
+    ],
+    "utilizing": [
+     31
+    ],
+    "excitation": [
+     32
+    ],
+    "emission": [
+     33
+    ],
+    "matrix": [
+     34
+    ],
+    "(EEM)": [
+     35
+    ],
+    "deep": [
+     38
+    ],
+    "ultraviolet": [
+     39
+    ],
+    "(DUV)": [
+     40
+    ],
+    "Raman": [
+     41
+    ],
+    "Tracking": [
+     43
+    ],
+    "photoluminescence": [
+     45
+    ],
+    "via": [
+     46
+    ],
+    "excitation–emis": [
+     47
+    ]
+   }
+  },
+  {
+   "id": "https://openalex.org/W4295599276",
+   "doi": "https://doi.org/10.1016/j.indcrop.2022.115585",
+   "display_name": "Impact of miscanthus lignin and arabinoxylan on Portland cement",
+   "title": "Impact of miscanthus lignin and arabinoxylan on Portland cement",
+   "publication_year": 2022,
+   "cited_by_count": 10,
+   "type": "T10033 T11208",
+   "primary_topic": {
+    "id": "https://openalex.org/T10033",
+    "display_name": "Concrete and Cement Materials Research",
+    "subfield": {
+     "display_name": "Civil and Structural Engineering"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T10033",
+     "display_name": "Concrete and Cement Materials Research",
+     "subfield": {
+      "display_name": "Civil and Structural Engineering"
+     }
+    },
+    {
+     "id": "https://openalex.org/T11208",
+     "display_name": "Lignin and Wood Chemistry",
+     "subfield": {
+      "display_name": "Biomedical Engineering"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": null
+  },
+  {
+   "id": "https://openalex.org/W3009004841",
+   "doi": "https://doi.org/10.1016/j.matpr.2020.01.394",
+   "display_name": "Coconut fibers and quartzite wastes for fiber-cement production by extrusion",
+   "title": "Coconut fibers and quartzite wastes for fiber-cement production by extrusion",
+   "publication_year": 2020,
+   "cited_by_count": 40,
+   "type": "T10687 T10513",
+   "primary_topic": {
+    "id": "https://openalex.org/T10687",
+    "display_name": "Innovative concrete reinforcement materials",
+    "subfield": {
+     "display_name": "Civil and Structural Engineering"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T10687",
+     "display_name": "Innovative concrete reinforcement materials",
+     "subfield": {
+      "display_name": "Civil and Structural Engineering"
+     }
+    },
+    {
+     "id": "https://openalex.org/T10513",
+     "display_name": "Natural Fiber Reinforced Composites",
+     "subfield": {
+      "display_name": "Polymers and Plastics"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": null
+  }
+ ]
+}

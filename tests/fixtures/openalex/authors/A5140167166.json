@@ -1,0 +1,43 @@
+{
+ "id": "https://openalex.org/A5140167166",
+ "display_name": "Johan Foster",
+ "orcid": "https://orcid.org/0000-0002-4103-8510",
+ "works_count": 1,
+ "cited_by_count": 0,
+ "summary_stats": {
+  "h_index": 0
+ },
+ "last_known_institutions": [
+  {
+   "id": "https://openalex.org/I141945490",
+   "display_name": "University of British Columbia",
+   "country_code": "CA"
+  }
+ ],
+ "topics": [
+  {
+   "id": "https://openalex.org/T10721",
+   "display_name": "Surfactants and Colloidal Systems",
+   "subfield": {
+    "display_name": "Organic Chemistry"
+   },
+   "count": 1
+  },
+  {
+   "id": "https://openalex.org/T12274",
+   "display_name": "Electrostatics and Colloid Interactions",
+   "subfield": {
+    "display_name": "Physical and Theoretical Chemistry"
+   },
+   "count": 1
+  },
+  {
+   "id": "https://openalex.org/T13092",
+   "display_name": "Environmental Chemistry and Analysis",
+   "subfield": {
+    "display_name": "Environmental Chemistry"
+   },
+   "count": 1
+  }
+ ]
+}

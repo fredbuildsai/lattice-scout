@@ -1,0 +1,701 @@
+{
+ "meta": {
+  "count": 3943,
+  "per_page": 6
+ },
+ "results": [
+  {
+   "id": "https://openalex.org/W3026932531",
+   "doi": "https://doi.org/10.1021/acs.chemmater.0c01507",
+   "display_name": "Conductive Wood for High-Performance Structural Electromagnetic Interference Shielding",
+   "title": "Conductive Wood for High-Performance Structural Electromagnetic Interference Shielding",
+   "publication_year": 2020,
+   "cited_by_count": 184,
+   "type": "T11224 T10484",
+   "primary_topic": {
+    "id": "https://openalex.org/T11224",
+    "display_name": "Electromagnetic wave absorption materials",
+    "subfield": {
+     "display_name": "Electronic, Optical and Magnetic Materials"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T11224",
+     "display_name": "Electromagnetic wave absorption materials",
+     "subfield": {
+      "display_name": "Electronic, Optical and Magnetic Materials"
+     }
+    },
+    {
+     "id": "https://openalex.org/T10484",
+     "display_name": "Wood Treatment and Properties",
+     "subfield": {
+      "display_name": "Building and Construction"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": {
+    "Electric": [
+     0
+    ],
+    "conductors": [
+     1
+    ],
+    "are": [
+     2
+    ],
+    "ubiquitously": [
+     3
+    ],
+    "used": [
+     4
+    ],
+    "for": [
+     5,
+     21
+    ],
+    "electromagnetic": [
+     6,
+     36
+    ],
+    "shielding,": [
+     7
+    ],
+    "flexible": [
+     8
+    ],
+    "electronics,": [
+     9
+    ],
+    "and": [
+     10,
+     15,
+     47
+    ],
+    "energy": [
+     11
+    ],
+    "storage,": [
+     12
+    ],
+    "with": [
+     13,
+     41
+    ],
+    "metals": [
+     14
+    ],
+    "carbon-based": [
+     16
+    ],
+    "compounds": [
+     17
+    ],
+    "as": [
+     18,
+     30
+    ],
+    "traditional": [
+     19
+    ],
+    "choices": [
+     20
+    ],
+    "these": [
+     22
+    ],
+    "applications.": [
+     23
+    ],
+    "Here,": [
+     24
+    ],
+    "we": [
+     25
+    ],
+    "develop": [
+     26
+    ],
+    "a": [
+     27,
+     31
+    ],
+    "conductive": [
+     28
+    ],
+    "wood": [
+     29
+    ],
+    "new": [
+     32
+    ],
+    "type": [
+     33
+    ],
+    "of": [
+     34
+    ],
+    "structural": [
+     35
+    ],
+    "interference": [
+     37
+    ],
+    "(EMI)": [
+     38
+    ],
+    "shielding": [
+     39
+    ],
+    "material": [
+     40
+    ],
+    "combined": [
+     42
+    ],
+    "load-bearing": [
+     43
+    ],
+    "function": [
+     44
+    ],
+    "via": [
+     45
+    ],
+    "delignification": [
+     46
+    ],
+    "subsequent": [
+     48
+    ],
+    "in": [
+     49
+    ],
+    "situ": [
+     50
+    ],
+    "chemical": [
+     51
+    ],
+    "vapor": [
+     52
+    ],
+    "depositi": [
+     53
+    ]
+   }
+  },
+  {
+   "id": "https://openalex.org/W3097374082",
+   "doi": "https://doi.org/10.1039/d0ta08372k",
+   "display_name": "Sustainable wood-based composites for microwave absorption and electromagnetic interference shielding",
+   "title": "Sustainable wood-based composites for microwave absorption and electromagnetic interference shielding",
+   "publication_year": 2020,
+   "cited_by_count": 213,
+   "type": "T11224 T10513",
+   "primary_topic": {
+    "id": "https://openalex.org/T11224",
+    "display_name": "Electromagnetic wave absorption materials",
+    "subfield": {
+     "display_name": "Electronic, Optical and Magnetic Materials"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T11224",
+     "display_name": "Electromagnetic wave absorption materials",
+     "subfield": {
+      "display_name": "Electronic, Optical and Magnetic Materials"
+     }
+    },
+    {
+     "id": "https://openalex.org/T10513",
+     "display_name": "Natural Fiber Reinforced Composites",
+     "subfield": {
+      "display_name": "Polymers and Plastics"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": {
+    "In": [
+     0
+    ],
+    "this": [
+     1
+    ],
+    "review,": [
+     2
+    ],
+    "wood-based": [
+     3
+    ],
+    "composites": [
+     4
+    ],
+    "for": [
+     5
+    ],
+    "efficient": [
+     6
+    ],
+    "EMI": [
+     7
+    ],
+    "shielding": [
+     8
+    ],
+    "and": [
+     9
+    ],
+    "MA": [
+     10
+    ],
+    "are": [
+     11
+    ],
+    "comprehensively": [
+     12
+    ],
+    "introduced.": [
+     13
+    ]
+   }
+  },
+  {
+   "id": "https://openalex.org/W4319766258",
+   "doi": "https://doi.org/10.1016/j.compositesa.2023.107476",
+   "display_name": "Highly anisotropic MXene@Wood composites for tunable electromagnetic interference shielding",
+   "title": "Highly anisotropic MXene@Wood composites for tunable electromagnetic interference shielding",
+   "publication_year": 2023,
+   "cited_by_count": 68,
+   "type": "T11224 T11444",
+   "primary_topic": {
+    "id": "https://openalex.org/T11224",
+    "display_name": "Electromagnetic wave absorption materials",
+    "subfield": {
+     "display_name": "Electronic, Optical and Magnetic Materials"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T11224",
+     "display_name": "Electromagnetic wave absorption materials",
+     "subfield": {
+      "display_name": "Electronic, Optical and Magnetic Materials"
+     }
+    },
+    {
+     "id": "https://openalex.org/T11444",
+     "display_name": "Electromagnetic Compatibility and Noise Suppression",
+     "subfield": {
+      "display_name": "Electrical and Electronic Engineering"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": null
+  },
+  {
+   "id": "https://openalex.org/W3033851578",
+   "doi": "https://doi.org/10.1002/adem.202000257",
+   "display_name": "Lightweight and Construable Magnetic Wood for Electromagnetic Interference Shielding",
+   "title": "Lightweight and Construable Magnetic Wood for Electromagnetic Interference Shielding",
+   "publication_year": 2020,
+   "cited_by_count": 24,
+   "type": "T11224 T11444",
+   "primary_topic": {
+    "id": "https://openalex.org/T11224",
+    "display_name": "Electromagnetic wave absorption materials",
+    "subfield": {
+     "display_name": "Electronic, Optical and Magnetic Materials"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T11224",
+     "display_name": "Electromagnetic wave absorption materials",
+     "subfield": {
+      "display_name": "Electronic, Optical and Magnetic Materials"
+     }
+    },
+    {
+     "id": "https://openalex.org/T11444",
+     "display_name": "Electromagnetic Compatibility and Noise Suppression",
+     "subfield": {
+      "display_name": "Electrical and Electronic Engineering"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": {
+    "Currently,": [
+     0
+    ],
+    "due": [
+     1
+    ],
+    "to": [
+     2
+    ],
+    "the": [
+     3,
+     29,
+     35,
+     50
+    ],
+    "rapid": [
+     4
+    ],
+    "development": [
+     5
+    ],
+    "of": [
+     6,
+     37
+    ],
+    "communication": [
+     7
+    ],
+    "technology,": [
+     8
+    ],
+    "electromagnetic": [
+     9
+    ],
+    "interference": [
+     10
+    ],
+    "(EMI)": [
+     11
+    ],
+    "and": [
+     12,
+     22
+    ],
+    "irradiation": [
+     13
+    ],
+    "have": [
+     14
+    ],
+    "become": [
+     15
+    ],
+    "an": [
+     16,
+     43
+    ],
+    "emerging": [
+     17
+    ],
+    "environmental": [
+     18
+    ],
+    "pollutant.": [
+     19
+    ],
+    "Herein,": [
+     20
+    ],
+    "hierarchical": [
+     21
+    ],
+    "porous": [
+     23
+    ],
+    "structured": [
+     24
+    ],
+    "wood": [
+     25
+    ],
+    "is": [
+     26
+    ],
+    "used": [
+     27
+    ],
+    "as": [
+     28
+    ],
+    "lightweight": [
+     30
+    ],
+    "three‐dimensional": [
+     31
+    ],
+    "organic": [
+     32
+    ],
+    "scaffold": [
+     33
+    ],
+    "for": [
+     34
+    ],
+    "incorporation": [
+     36
+    ],
+    "magnetic": [
+     38
+    ],
+    "iron": [
+     39
+    ],
+    "oxide": [
+     40
+    ],
+    "nanoparticles": [
+     41
+    ],
+    "through": [
+     42
+    ],
+    "in": [
+     44
+    ],
+    "situ": [
+     45
+    ],
+    "mineralization": [
+     46
+    ],
+    "process": [
+     47
+    ],
+    "that": [
+     48
+    ],
+    "endows": [
+     49
+    ],
+    "woodblock": [
+     51
+    ],
+    "with": [
+     52
+    ],
+    "favorable": [
+     53
+    ]
+   }
+  },
+  {
+   "id": "https://openalex.org/W4296639055",
+   "doi": "https://doi.org/10.1021/acsnano.2c07111",
+   "display_name": "Transparent and Flexible Electromagnetic Interference Shielding Materials by Constructing Sandwich AgNW@MXene/Wood Composites",
+   "title": "Transparent and Flexible Electromagnetic Interference Shielding Materials by Constructing Sandwich AgNW@MXene/Wood Composites",
+   "publication_year": 2022,
+   "cited_by_count": 183,
+   "type": "T11224 T11444",
+   "primary_topic": {
+    "id": "https://openalex.org/T11224",
+    "display_name": "Electromagnetic wave absorption materials",
+    "subfield": {
+     "display_name": "Electronic, Optical and Magnetic Materials"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T11224",
+     "display_name": "Electromagnetic wave absorption materials",
+     "subfield": {
+      "display_name": "Electronic, Optical and Magnetic Materials"
+     }
+    },
+    {
+     "id": "https://openalex.org/T11444",
+     "display_name": "Electromagnetic Compatibility and Noise Suppression",
+     "subfield": {
+      "display_name": "Electrical and Electronic Engineering"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": {
+    "Electromagnetic": [
+     0
+    ],
+    "interference": [
+     1
+    ],
+    "(EMI)": [
+     2
+    ],
+    "shielding": [
+     3,
+     42
+    ],
+    "materials": [
+     4
+    ],
+    "have": [
+     5
+    ],
+    "attracted": [
+     6
+    ],
+    "intensive": [
+     7
+    ],
+    "attention": [
+     8
+    ],
+    "with": [
+     9
+    ],
+    "the": [
+     10
+    ],
+    "increased": [
+     11
+    ],
+    "electromagnetic": [
+     12
+    ],
+    "pollution,": [
+     13
+    ],
+    "which": [
+     14
+    ],
+    "are": [
+     15
+    ],
+    "required": [
+     16
+    ],
+    "to": [
+     17,
+     38
+    ],
+    "possess": [
+     18
+    ],
+    "high": [
+     19
+    ],
+    "transparency": [
+     20
+    ],
+    "and": [
+     21,
+     30
+    ],
+    "flexibility": [
+     22
+    ],
+    "for": [
+     23
+    ],
+    "applications": [
+     24
+    ],
+    "in": [
+     25
+    ],
+    "visualization": [
+     26
+    ],
+    "windows,": [
+     27
+    ],
+    "aerospace": [
+     28
+    ],
+    "equipment,": [
+     29
+    ],
+    "wearable": [
+     31
+    ],
+    "devices.": [
+     32
+    ],
+    "However,": [
+     33
+    ],
+    "it": [
+     34
+    ],
+    "remains": [
+     35
+    ],
+    "a": [
+     36,
+     49
+    ],
+    "challenge": [
+     37
+    ],
+    "achieve": [
+     39
+    ],
+    "high-performance": [
+     40
+    ],
+    "EMI": [
+     41
+    ],
+    "while": [
+     43
+    ],
+    "maintaining": [
+     44
+    ],
+    "excellent": [
+     45
+    ],
+    "light": [
+     46
+    ],
+    "transmittance.": [
+     47
+    ],
+    "Herein,": [
+     48
+    ],
+    "s": [
+     50
+    ]
+   }
+  },
+  {
+   "id": "https://openalex.org/W3179719703",
+   "doi": "https://doi.org/10.1016/j.compscitech.2021.108931",
+   "display_name": "Lightweight and elastic wood-derived composites for pressure sensing and electromagnetic interference shielding",
+   "title": "Lightweight and elastic wood-derived composites for pressure sensing and electromagnetic interference shielding",
+   "publication_year": 2021,
+   "cited_by_count": 89,
+   "type": "T10338 T10610",
+   "primary_topic": {
+    "id": "https://openalex.org/T10338",
+    "display_name": null,
+    "subfield": {
+     "display_name": null
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T10338",
+     "display_name": null,
+     "subfield": {
+      "display_name": null
+     }
+    },
+    {
+     "id": "https://openalex.org/T10610",
+     "display_name": "Advanced Cellulose Research Studies",
+     "subfield": {
+      "display_name": "Biomaterials"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": null
+  }
+ ]
+}

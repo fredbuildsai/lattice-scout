@@ -1,0 +1,759 @@
+{
+ "meta": {
+  "count": 5529,
+  "per_page": 6
+ },
+ "results": [
+  {
+   "id": "https://openalex.org/W4412487818",
+   "doi": "https://doi.org/10.1021/acs.est.5c04092",
+   "display_name": "Interaction of Layer-by-Layer Nanofiltration Membranes and PFAS: Filtration after Adsorption",
+   "title": "Interaction of Layer-by-Layer Nanofiltration Membranes and PFAS: Filtration after Adsorption",
+   "publication_year": 2025,
+   "cited_by_count": 24,
+   "type": "T10197 T11869",
+   "primary_topic": {
+    "id": "https://openalex.org/T10197",
+    "display_name": "Membrane Separation Technologies",
+    "subfield": {
+     "display_name": "Water Science and Technology"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T10197",
+     "display_name": "Membrane Separation Technologies",
+     "subfield": {
+      "display_name": "Water Science and Technology"
+     }
+    },
+    {
+     "id": "https://openalex.org/T11869",
+     "display_name": "Per- and polyfluoroalkyl substances research",
+     "subfield": {
+      "display_name": "Environmental Chemistry"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": {
+    "Removal": [
+     0
+    ],
+    "of": [
+     1,
+     17,
+     28,
+     48
+    ],
+    "perfluoroalkyl": [
+     2
+    ],
+    "and": [
+     3,
+     53
+    ],
+    "polyfluoroalkyl": [
+     4
+    ],
+    "substances": [
+     5
+    ],
+    "(PFAS)": [
+     6
+    ],
+    "by": [
+     7
+    ],
+    "nanofiltration": [
+     8
+    ],
+    "(NF)": [
+     9
+    ],
+    "membranes": [
+     10,
+     32,
+     44
+    ],
+    "has": [
+     11,
+     33
+    ],
+    "been": [
+     12
+    ],
+    "well-documented,": [
+     13
+    ],
+    "but": [
+     14
+    ],
+    "the": [
+     15,
+     21,
+     26
+    ],
+    "impact": [
+     16
+    ],
+    "PFAS": [
+     18
+    ],
+    "interaction": [
+     19
+    ],
+    "with": [
+     20,
+     46
+    ],
+    "NF": [
+     22,
+     31
+    ],
+    "separation": [
+     23
+    ],
+    "layer": [
+     24
+    ],
+    "on": [
+     25
+    ],
+    "permselectivity": [
+     27
+    ],
+    "layer-by-layer": [
+     29
+    ],
+    "(LBL)": [
+     30
+    ],
+    "yet": [
+     34
+    ],
+    "to": [
+     35
+    ],
+    "be": [
+     36
+    ],
+    "explored.": [
+     37
+    ],
+    "The": [
+     38
+    ],
+    "work": [
+     39
+    ],
+    "reported": [
+     40
+    ],
+    "two": [
+     41
+    ],
+    "different": [
+     42
+    ],
+    "LBL": [
+     43
+    ],
+    "prepared": [
+     45
+    ],
+    "pairs": [
+     47
+    ],
+    "long-chain": [
+     49
+    ],
+    "polyelectrolytes": [
+     50,
+     55
+    ],
+    "(PVAm/PSS,": [
+     51
+    ],
+    "L/L)": [
+     52
+    ],
+    "short-chain": [
+     54
+    ],
+    "(S/": [
+     56
+    ]
+   }
+  },
+  {
+   "id": "https://openalex.org/W7166672107",
+   "doi": "https://doi.org/10.31699/ijcpe.2026.2.9",
+   "display_name": "Integrated adsorption-membrane separation for PFAS removal from complex wastewater",
+   "title": "Integrated adsorption-membrane separation for PFAS removal from complex wastewater",
+   "publication_year": 2026,
+   "cited_by_count": 0,
+   "type": "T11869 T10197",
+   "primary_topic": {
+    "id": "https://openalex.org/T11869",
+    "display_name": "Per- and polyfluoroalkyl substances research",
+    "subfield": {
+     "display_name": "Environmental Chemistry"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T11869",
+     "display_name": "Per- and polyfluoroalkyl substances research",
+     "subfield": {
+      "display_name": "Environmental Chemistry"
+     }
+    },
+    {
+     "id": "https://openalex.org/T10197",
+     "display_name": "Membrane Separation Technologies",
+     "subfield": {
+      "display_name": "Water Science and Technology"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": {
+    "Per-": [
+     0
+    ],
+    "and": [
+     1,
+     7,
+     24,
+     45
+    ],
+    "polyfluoroalkyl": [
+     2
+    ],
+    "substances": [
+     3
+    ],
+    "(PFAS)": [
+     4
+    ],
+    "are": [
+     5,
+     11
+    ],
+    "persistent": [
+     6
+    ],
+    "toxic": [
+     8
+    ],
+    "contaminants": [
+     9
+    ],
+    "that": [
+     10
+    ],
+    "difficult": [
+     12
+    ],
+    "to": [
+     13
+    ],
+    "remove": [
+     14
+    ],
+    "from": [
+     15
+    ],
+    "complex": [
+     16,
+     50
+    ],
+    "wastewater": [
+     17
+    ],
+    "because": [
+     18
+    ],
+    "dissolved": [
+     19
+    ],
+    "organic": [
+     20
+    ],
+    "matter,": [
+     21
+    ],
+    "salts,": [
+     22
+    ],
+    "co-pollutants,": [
+     23
+    ],
+    "membrane": [
+     25
+    ],
+    "fouling": [
+     26
+    ],
+    "reduce": [
+     27
+    ],
+    "treatment": [
+     28
+    ],
+    "efficiency.": [
+     29
+    ],
+    "This": [
+     30
+    ],
+    "study": [
+     31
+    ],
+    "evaluated": [
+     32
+    ],
+    "an": [
+     33
+    ],
+    "integrated": [
+     34
+    ],
+    "adsorption-membrane": [
+     35
+    ],
+    "process": [
+     36
+    ],
+    "for": [
+     37
+    ],
+    "PFAS": [
+     38
+    ],
+    "removal": [
+     39
+    ],
+    "through": [
+     40
+    ],
+    "combined": [
+     41
+    ],
+    "Aspen": [
+     42
+    ],
+    "Plus/MATLAB": [
+     43
+    ],
+    "simulation": [
+     44
+    ],
+    "bench-scale": [
+     46
+    ],
+    "validation": [
+     47
+    ],
+    "using": [
+     48
+    ],
+    "synthetic": [
+     49
+    ],
+    "was": [
+     51
+    ]
+   }
+  },
+  {
+   "id": "https://openalex.org/W4412868806",
+   "doi": "https://doi.org/10.5731/pdajpst.2025.25420",
+   "display_name": "A Comparative Study of Polysorbate Adsorption to Membrane Filters for Fill & Finish Applications, Considering a Potentially Upcoming Restriction of the Use of PFAS Based Membranes, Such as PVDF",
+   "title": "A Comparative Study of Polysorbate Adsorption to Membrane Filters for Fill & Finish Applications, Considering a Potentially Upcoming Restriction of the Use of PFAS Based Membranes, Such as PVDF",
+   "publication_year": 2025,
+   "cited_by_count": 0,
+   "type": "T10197 T11124",
+   "primary_topic": {
+    "id": "https://openalex.org/T10197",
+    "display_name": "Membrane Separation Technologies",
+    "subfield": {
+     "display_name": "Water Science and Technology"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T10197",
+     "display_name": "Membrane Separation Technologies",
+     "subfield": {
+      "display_name": "Water Science and Technology"
+     }
+    },
+    {
+     "id": "https://openalex.org/T11124",
+     "display_name": null,
+     "subfield": {
+      "display_name": null
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": {
+    "A": [
+     0
+    ],
+    "comparative": [
+     1
+    ],
+    "study": [
+     2
+    ],
+    "of": [
+     3,
+     19,
+     22
+    ],
+    "Polysorbate": [
+     4
+    ],
+    "adsorption": [
+     5
+    ],
+    "to": [
+     6
+    ],
+    "membrane": [
+     7
+    ],
+    "filters": [
+     8
+    ],
+    "for": [
+     9
+    ],
+    "Fill": [
+     10
+    ],
+    "&": [
+     11
+    ],
+    "Finish": [
+     12
+    ],
+    "applications,": [
+     13
+    ],
+    "considering": [
+     14
+    ],
+    "a": [
+     15
+    ],
+    "potentially": [
+     16
+    ],
+    "upcoming": [
+     17
+    ],
+    "restriction": [
+     18
+    ],
+    "the": [
+     20
+    ],
+    "use": [
+     21
+    ],
+    "PFAS": [
+     23
+    ],
+    "based": [
+     24
+    ],
+    "membranes,": [
+     25
+    ],
+    "such": [
+     26
+    ],
+    "as": [
+     27
+    ],
+    "PVDF.": [
+     28
+    ]
+   }
+  },
+  {
+   "id": "https://openalex.org/W4286511477",
+   "doi": "https://doi.org/10.1016/j.hazadv.2022.100130",
+   "display_name": "Adsorption of per- and polyfluoroalkyl substances (PFAS) to containers",
+   "title": "Adsorption of per- and polyfluoroalkyl substances (PFAS) to containers",
+   "publication_year": 2022,
+   "cited_by_count": 97,
+   "type": "T11869 T10180",
+   "primary_topic": {
+    "id": "https://openalex.org/T11869",
+    "display_name": "Per- and polyfluoroalkyl substances research",
+    "subfield": {
+     "display_name": "Environmental Chemistry"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T11869",
+     "display_name": "Per- and polyfluoroalkyl substances research",
+     "subfield": {
+      "display_name": "Environmental Chemistry"
+     }
+    },
+    {
+     "id": "https://openalex.org/T10180",
+     "display_name": null,
+     "subfield": {
+      "display_name": null
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": {
+    "Mass": [
+     0
+    ],
+    "transfer": [
+     1
+    ],
+    "of": [
+     2,
+     22
+    ],
+    "per-": [
+     3
+    ],
+    "and": [
+     4,
+     14,
+     34
+    ],
+    "polyfluoroalkyl": [
+     5
+    ],
+    "substances": [
+     6
+    ],
+    "(PFAS)": [
+     7
+    ],
+    "to": [
+     8,
+     48
+    ],
+    "container": [
+     9,
+     51
+    ],
+    "walls": [
+     10
+    ],
+    "during": [
+     11
+    ],
+    "sample": [
+     12
+    ],
+    "collection": [
+     13
+    ],
+    "storage": [
+     15
+    ],
+    "or": [
+     16
+    ],
+    "experimentation": [
+     17
+    ],
+    "is": [
+     18,
+     45
+    ],
+    "an": [
+     19
+    ],
+    "important": [
+     20
+    ],
+    "source": [
+     21
+    ],
+    "error": [
+     23
+    ],
+    "in": [
+     24
+    ],
+    "PFAS": [
+     25,
+     41
+    ],
+    "analysis.": [
+     26
+    ],
+    "To": [
+     27
+    ],
+    "minimize": [
+     28
+    ],
+    "this": [
+     29,
+     55
+    ],
+    "error,": [
+     30
+    ],
+    "high-density": [
+     31
+    ],
+    "polyethylene": [
+     32
+    ],
+    "(HDPE)": [
+     33
+    ],
+    "polypropylene": [
+     35
+    ],
+    "containers": [
+     36
+    ],
+    "are": [
+     37
+    ],
+    "widely": [
+     38
+    ],
+    "used": [
+     39
+    ],
+    "for": [
+     40
+    ],
+    "studies.": [
+     42
+    ],
+    "However,": [
+     43
+    ],
+    "there": [
+     44
+    ],
+    "sparse": [
+     46
+    ],
+    "data": [
+     47
+    ],
+    "justify": [
+     49
+    ],
+    "these": [
+     50
+    ],
+    "polymer": [
+     52
+    ],
+    "choices.": [
+     53
+    ],
+    "In": [
+     54
+    ],
+    "study,": [
+     56
+    ],
+    "we": [
+     57
+    ],
+    "investigated": [
+     58
+    ],
+    "the": [
+     59
+    ],
+    "adsorp": [
+     60
+    ]
+   }
+  },
+  {
+   "id": "https://openalex.org/W3180734447",
+   "doi": "https://doi.org/10.1016/j.scitotenv.2021.148821",
+   "display_name": "Perfluoroalkyl substances (PFAS) adsorption in drinking water by granular activated carbon: Influence of activated carbon and PFAS characteristics",
+   "title": "Perfluoroalkyl substances (PFAS) adsorption in drinking water by granular activated carbon: Influence of activated carbon and PFAS characteristics",
+   "publication_year": 2021,
+   "cited_by_count": 267,
+   "type": "T11869 T10016",
+   "primary_topic": {
+    "id": "https://openalex.org/T11869",
+    "display_name": "Per- and polyfluoroalkyl substances research",
+    "subfield": {
+     "display_name": "Environmental Chemistry"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T11869",
+     "display_name": "Per- and polyfluoroalkyl substances research",
+     "subfield": {
+      "display_name": "Environmental Chemistry"
+     }
+    },
+    {
+     "id": "https://openalex.org/T10016",
+     "display_name": "Adsorption and biosorption for pollutant removal",
+     "subfield": {
+      "display_name": "Water Science and Technology"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": null
+  },
+  {
+   "id": "https://openalex.org/W4200078914",
+   "doi": "https://doi.org/10.1016/j.cej.2021.134023",
+   "display_name": "High-pressure membrane filtration processes for separation of Per- and polyfluoroalkyl substances (PFAS)",
+   "title": "High-pressure membrane filtration processes for separation of Per- and polyfluoroalkyl substances (PFAS)",
+   "publication_year": 2021,
+   "cited_by_count": 174,
+   "type": "T11869 T10197",
+   "primary_topic": {
+    "id": "https://openalex.org/T11869",
+    "display_name": "Per- and polyfluoroalkyl substances research",
+    "subfield": {
+     "display_name": "Environmental Chemistry"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T11869",
+     "display_name": "Per- and polyfluoroalkyl substances research",
+     "subfield": {
+      "display_name": "Environmental Chemistry"
+     }
+    },
+    {
+     "id": "https://openalex.org/T10197",
+     "display_name": "Membrane Separation Technologies",
+     "subfield": {
+      "display_name": "Water Science and Technology"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": null
+  }
+ ]
+}

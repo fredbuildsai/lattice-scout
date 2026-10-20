@@ -1,0 +1,75 @@
+{
+ "meta": {
+  "count": 7
+ },
+ "results": [
+  {
+   "id": "https://openalex.org/A5059588273",
+   "display_name": "Earl Johan Foster",
+   "orcid": "https://orcid.org/0000-0002-4103-8510",
+   "works_count": 159,
+   "last_known_institutions": [
+    {
+     "display_name": "University of British Columbia"
+    }
+   ]
+  },
+  {
+   "id": "https://openalex.org/A5085584773",
+   "display_name": "Johan Foster",
+   "orcid": null,
+   "works_count": 2,
+   "last_known_institutions": []
+  },
+  {
+   "id": "https://openalex.org/A5030450974",
+   "display_name": "Foster E. Johan",
+   "orcid": null,
+   "works_count": 3,
+   "last_known_institutions": []
+  },
+  {
+   "id": "https://openalex.org/A5140167166",
+   "display_name": "Johan Foster",
+   "orcid": "https://orcid.org/0000-0002-4103-8510",
+   "works_count": 1,
+   "last_known_institutions": [
+    {
+     "display_name": "University of British Columbia"
+    }
+   ]
+  },
+  {
+   "id": "https://openalex.org/A5138740368",
+   "display_name": "E. Johan Foster (1620910)",
+   "orcid": null,
+   "works_count": 1,
+   "last_known_institutions": [
+    {
+     "display_name": "University of British Columbia"
+    }
+   ]
+  },
+  {
+   "id": "https://openalex.org/A5003854624",
+   "display_name": "Johan Foster",
+   "orcid": null,
+   "works_count": 3,
+   "last_known_institutions": []
+  },
+  {
+   "id": "https://openalex.org/A5158972402",
+   "display_name": "E. Johan Foster",
+   "orcid": null,
+   "works_count": 1,
+   "last_known_institutions": [
+    {
+     "display_name": "University of British Columbia"
+    },
+    {
+     "display_name": "University of Bremen"
+    }
+   ]
+  }
+ ]
+}

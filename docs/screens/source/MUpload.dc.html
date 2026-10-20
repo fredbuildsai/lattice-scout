@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lattice Scout mobile — Add to vault</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F3F4F1}
+a{color:#2446C7}a:hover{color:#16308F}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; overflow: hidden; display: flex; flex-direction: column; background: #F3F4F1; font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #14171A">
+
+<sc-if value="{{isPick}}" hint-placeholder-val="{{ true }}">
+<div style="flex-grow: 1; display: flex; flex-direction: column; min-height: 0">
+<div style="flex-shrink: 0; background: #FFFFFF; border-bottom: 1px solid #D9DCD6; padding: 10px 16px; display: flex; align-items: center; gap: 10px">
+<a href="MHome.dc.html" aria-label="Close" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #14171A"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a>
+<h1 style="margin: 0; font-size: 18px; font-weight: 600; flex-grow: 1">Add to your vault</h1>
+<span style="display: flex; gap: 4px; align-items: center; font-size: 12px; color: #3A4047"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Private</span>
+</div>
+<div style="flex-grow: 1; overflow-y: auto; padding: 18px 16px; display: flex; flex-direction: column; gap: 12px">
+<span style="font-size: 14px; color: #3A4047; line-height: 1.5">Grants (funded or rejected), proposals, unpublished results, data or notebook pages. Scout works out what each one is.</span>
+<button type="button" style="font: inherit; color: #14171A; display: flex; gap: 14px; align-items: center; text-align: left; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 14px; padding: 16px; min-height: 76px; cursor: pointer">
+<span style="width: 46px; height: 46px; border-radius: 12px; background: #E8ECFA; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16308F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6v18h12V7zM14 3v4h4"></path></svg></span>
+<span style="display: flex; flex-direction: column; gap: 2px"><b style="font-size: 16px">Choose files</b><span style="font-size: 13px; color: #555C63">PDF, Word, Excel, PowerPoint, LaTeX — phone or cloud drive</span></span>
+</button>
+<button type="button" onClick="{{scan}}" style="font: inherit; color: #14171A; display: flex; gap: 14px; align-items: center; text-align: left; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 14px; padding: 16px; min-height: 76px; cursor: pointer">
+<span style="width: 46px; height: 46px; border-radius: 12px; background: #E8ECFA; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16308F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg></span>
+<span style="display: flex; flex-direction: column; gap: 2px"><b style="font-size: 16px">Scan pages</b><span style="font-size: 13px; color: #555C63">Notebooks, printed reviews, whiteboards — handwriting is read</span></span>
+</button>
+<a href="MVoice.dc.html" style="color: #14171A; display: flex; gap: 14px; align-items: center; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 14px; padding: 16px; min-height: 76px; box-sizing: border-box; text-decoration: none">
+<span style="width: 46px; height: 46px; border-radius: 12px; background: #EEE9F8; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4A2F9A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"></path><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg></span>
+<span style="display: flex; flex-direction: column; gap: 2px"><b style="font-size: 16px">Record an idea</b><span style="font-size: 13px; color: #555C63">Talk it through — Scout transcribes and files it</span></span>
+</a>
+
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #555C63; padding-top: 10px">Just added</span>
+<sc-for list="{{recent}}" as="r" hint-placeholder-count="3">
+<div style="display: flex; gap: 12px; align-items: center; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 12px">
+<span style="flex-shrink: 0; width: 42px; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; padding: 4px 0; border-radius: 4px; background: #F1F2EF; color: #3A4047">{{r.fmt}}</span>
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0"><b style="font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.name}}</b><span style="{{r.kindStyle}}">{{r.kind}}</span></span>
+<span style="font-size: 12px; color: #3A4047; white-space: nowrap">{{r.status}}</span>
+</div>
+</sc-for>
+</div>
+<div style="flex-shrink: 0; background: #FFFFFF; border-top: 1px solid #D9DCD6; padding: 12px 16px 20px">
+<a href="MAgent.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 17px; font-weight: 600; background: #5B3FB5; color: #FFFFFF; text-decoration: none; border-radius: 10px; min-height: 52px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path></svg>Analyse 3 new files</a>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isScan}}" hint-placeholder-val="{{ false }}">
+<div style="flex-grow: 1; display: flex; flex-direction: column; background: #14171A; color: #FFFFFF">
+<div style="flex-shrink: 0; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between">
+<button type="button" onClick="{{back}}" aria-label="Close camera" style="width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(255,255,255,0.12); color: #FFFFFF; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+<span style="font-size: 14px; font-weight: 600">Scan · page {{pages}}</span>
+<span style="font-size: 13px; padding: 8px 12px; border-radius: 999px; background: rgba(255,255,255,0.12)">Auto</span>
+</div>
+<div style="flex-grow: 1; position: relative; margin: 8px 20px; border-radius: 16px; background: #2A2E33; overflow: hidden" role="img" aria-label="Camera view of a notebook page">
+<div style="position: absolute; left: 36px; right: 40px; top: 60px; bottom: 90px; background: #EFEBDF; transform: rotate(-3deg); border-radius: 4px; display: flex; flex-direction: column; gap: 14px; padding: 28px 22px; box-sizing: border-box">
+<span style="height: 2px; background: #8A8676; width: 80%"></span><span style="height: 2px; background: #8A8676; width: 92%"></span><span style="height: 2px; background: #8A8676; width: 66%"></span><span style="height: 2px; background: #8A8676; width: 88%"></span><span style="height: 2px; background: #8A8676; width: 72%"></span><span style="height: 2px; background: #8A8676; width: 90%"></span><span style="height: 2px; background: #8A8676; width: 50%"></span>
+</div>
+<div style="position: absolute; left: 30px; right: 34px; top: 54px; bottom: 84px; border: 3px solid #8FE3D6; border-radius: 6px; transform: rotate(-3deg)"></div>
+<span style="position: absolute; left: 50%; bottom: 24px; transform: translateX(-50%); font-size: 13px; background: rgba(20,23,26,0.75); padding: 6px 12px; border-radius: 999px; white-space: nowrap">Page found — hold still</span>
+</div>
+<div style="flex-shrink: 0; padding: 18px 24px 28px; display: flex; align-items: center; justify-content: space-between">
+<span style="width: 52px; height: 64px; border-radius: 6px; background: #EFEBDF; border: 2px solid #FFFFFF; position: relative"><span style="position: absolute; right: -8px; top: -8px; min-width: 22px; height: 22px; border-radius: 999px; background: #5B3FB5; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center">{{done}}</span></span>
+<button type="button" onClick="{{shoot}}" aria-label="Capture page" style="width: 76px; height: 76px; border-radius: 50%; border: 4px solid #FFFFFF; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center"><span style="width: 60px; height: 60px; border-radius: 50%; background: #FFFFFF"></span></button>
+<button type="button" onClick="{{back}}" style="font: inherit; font-size: 15px; font-weight: 600; background: #5B3FB5; color: #FFFFFF; border: 0; border-radius: 999px; padding: 12px 16px; min-height: 48px; cursor: pointer">Done</button>
+</div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#2446C7","options":["#2446C7","#0F6E6E","#5B3FB5","#14171A"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { mode: 'pick', done: 2 };
+  }
+  renderVals() {
+    const kind = (bg, fg) => 'align-self: flex-start; font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: ' + bg + '; color: ' + fg + ';';
+    return {
+      accent: this.props.accent ?? '#2446C7',
+      isPick: this.state.mode === 'pick',
+      isScan: this.state.mode === 'scan',
+      scan: () => this.setState({ mode: 'scan' }),
+      back: () => this.setState({ mode: 'pick' }),
+      shoot: () => this.setState({ done: this.state.done + 1 }),
+      done: String(this.state.done),
+      pages: String(this.state.done + 1),
+      recent: [
+        { fmt: 'PDF', name: 'Reviewer comments — EMI-shielding wood pre-proposal.pdf', kind: 'Rejected grant', kindStyle: kind('#FBF0E4', '#7A3A06'), status: 'Read' },
+        { fmt: 'XLSX', name: 'Lignin foams — flammability screen Oct 2026.xlsx', kind: 'Unpublished results', kindStyle: kind('#EEE9F8', '#4A2F9A'), status: 'Read' },
+        { fmt: 'HEIC', name: 'Whiteboard — 19 Oct', kind: 'Lab notes', kindStyle: kind('#F1F2EF', '#3A4047'), status: 'Reading…' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

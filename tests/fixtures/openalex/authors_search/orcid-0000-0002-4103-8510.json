@@ -1,0 +1,19 @@
+{
+ "meta": {
+  "count": 2
+ },
+ "results": [
+  {
+   "id": "https://openalex.org/A5059588273",
+   "display_name": "Earl Johan Foster",
+   "orcid": "https://orcid.org/0000-0002-4103-8510",
+   "works_count": 159
+  },
+  {
+   "id": "https://openalex.org/A5140167166",
+   "display_name": "Johan Foster",
+   "orcid": "https://orcid.org/0000-0002-4103-8510",
+   "works_count": 1
+  }
+ ]
+}

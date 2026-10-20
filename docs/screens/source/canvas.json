@@ -1,0 +1,47 @@
+{
+  "v": 3,
+  "createdOnFiles": {"v": 1, "at": "2026-10-19T20:10:00Z"},
+  "title": "Lattice Scout — AI opportunity finder & researcher matching",
+  "launch": {"view": "canvas"},
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {"x": 0, "y": 0, "w": 1440, "h": 900, "title": "W0 · Sign in / sign up", "expand": "fill", "is_interactive": true},
+    "Onboard.dc.html": {"x": 1520, "y": 0, "w": 1440, "h": 1500, "title": "W1 · Claim your profile — auto-filled from public sources", "expand": "fill", "is_interactive": true},
+    "Home.dc.html": {"x": 3040, "y": 0, "w": 1440, "h": 1400, "title": "W2 · Home — Scout's briefing", "expand": "fill", "is_interactive": true},
+    "Documents.dc.html": {"x": 4560, "y": 0, "w": 1440, "h": 1400, "title": "W3 · Private vault — upload unpublished work & grants", "expand": "fill", "is_interactive": true},
+    "Agent.dc.html": {"x": 6080, "y": 0, "w": 1440, "h": 1300, "title": "W4 · Analysis run — Scout and its sub-agents", "expand": "fill", "is_interactive": true},
+    "Opportunities.dc.html": {"x": 7600, "y": 0, "w": 1440, "h": 1500, "title": "W5 · Opportunities", "expand": "fill", "is_interactive": true},
+    "OppDetail.dc.html": {"x": 9120, "y": 0, "w": 1440, "h": 1900, "title": "W6 · Opportunity detail — evidence & next steps", "expand": "fill", "is_interactive": true},
+    "Matches.dc.html": {"x": 10640, "y": 0, "w": 1440, "h": 1500, "title": "W7 · Matches — double opt-in, then contact & feedback", "expand": "fill", "is_interactive": true},
+    "Reach.dc.html": {"x": 12160, "y": 0, "w": 1440, "h": 1300, "title": "W8 · Reach — world map & network", "expand": "fill", "is_interactive": true},
+    "Assistant.dc.html": {"x": 13680, "y": 0, "w": 1440, "h": 980, "title": "W9 · Ask Scout — text, voice, photo", "expand": "fill", "is_interactive": true},
+    "Profile.dc.html": {"x": 15200, "y": 0, "w": 1440, "h": 1500, "title": "W10 · Profile, sources & privacy", "expand": "fill", "is_interactive": true},
+    "NavMenu.dc.html": {"x": 16720, "y": 0, "w": 400, "h": 900, "title": "W11 · Menu (burger) — every destination, in every header", "is_interactive": true},
+    "MLogin.dc.html": {"x": 0, "y": 2300, "w": 390, "h": 844, "title": "M0 · Sign in", "is_interactive": true},
+    "MClaim.dc.html": {"x": 470, "y": 2300, "w": 390, "h": 844, "title": "M1 · Claim profile", "is_interactive": true},
+    "MHome.dc.html": {"x": 940, "y": 2300, "w": 390, "h": 844, "title": "M2 · Home", "is_interactive": true},
+    "MUpload.dc.html": {"x": 1410, "y": 2300, "w": 390, "h": 844, "title": "M3 · Add to vault — files, camera, voice note", "is_interactive": true},
+    "MAgent.dc.html": {"x": 1880, "y": 2300, "w": 390, "h": 844, "title": "M4 · Analysis run", "is_interactive": true},
+    "MOpps.dc.html": {"x": 2350, "y": 2300, "w": 390, "h": 844, "title": "M5 · Opportunities", "is_interactive": true},
+    "MOppDetail.dc.html": {"x": 2820, "y": 2300, "w": 390, "h": 844, "title": "M6 · Opportunity detail", "is_interactive": true},
+    "MMatch.dc.html": {"x": 3290, "y": 2300, "w": 390, "h": 844, "title": "M7 · Match proposal (anonymous)", "is_interactive": true},
+    "MMatchMutual.dc.html": {"x": 3760, "y": 2300, "w": 390, "h": 844, "title": "M8 · Mutual match — contact & feedback", "is_interactive": true},
+    "MReach.dc.html": {"x": 4230, "y": 2300, "w": 390, "h": 844, "title": "M9 · Reach map", "is_interactive": true},
+    "MChat.dc.html": {"x": 4700, "y": 2300, "w": 390, "h": 844, "title": "M10 · Ask Scout — chat", "is_interactive": true},
+    "MVoice.dc.html": {"x": 5170, "y": 2300, "w": 390, "h": 844, "title": "M11 · Ask Scout — voice & photo", "is_interactive": true},
+    "MProfile.dc.html": {"x": 5640, "y": 2300, "w": 390, "h": 844, "title": "M12 · Profile & privacy", "is_interactive": true},
+    "AnimWeb.dc.html": {"x": 0, "y": 3600, "w": 1280, "h": 720, "title": "▶ Web app walkthrough · sign-in to Ask Scout · 1:23", "is_interactive": true},
+    "AnimMobile.dc.html": {"x": 1360, "y": 3600, "w": 1280, "h": 720, "title": "▶ Mobile app walkthrough · sign-in to voice mode · 1:10", "is_interactive": true}
+  },
+  "order": [
+    "Main.dc.html", "Onboard.dc.html", "Home.dc.html", "Documents.dc.html", "Agent.dc.html", "Opportunities.dc.html", "OppDetail.dc.html", "Matches.dc.html", "Reach.dc.html", "Assistant.dc.html", "Profile.dc.html", "NavMenu.dc.html",
+    "MLogin.dc.html", "MClaim.dc.html", "MHome.dc.html", "MUpload.dc.html", "MAgent.dc.html", "MOpps.dc.html", "MOppDetail.dc.html", "MMatch.dc.html", "MMatchMutual.dc.html", "MReach.dc.html", "MChat.dc.html", "MVoice.dc.html", "MProfile.dc.html",
+    "AnimWeb.dc.html", "AnimMobile.dc.html"
+  ],
+  "notes": {
+    "webTitle": {"x": 0, "y": -300, "text": "Lattice Scout — web app (installable PWA)", "kind": "title1", "maxW": 8000},
+    "mobTitle": {"x": 0, "y": 2040, "text": "Lattice Scout — mobile app", "kind": "title1", "maxW": 6030},
+    "animTitle": {"x": 0, "y": 3340, "text": "Animated walkthroughs — press Play, or watch them loop", "kind": "title1", "maxW": 2640}
+  },
+  "designSystems": []
+}

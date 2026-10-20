@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lattice Scout mobile — Ask Scout</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F3F4F1}
+a{color:#2446C7}a:hover{color:#16308F}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; overflow: hidden; display: flex; flex-direction: column; background: #F3F4F1; font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #14171A">
+<div style="flex-shrink: 0; background: #FFFFFF; border-bottom: 1px solid #D9DCD6; padding: 10px 12px; display: flex; align-items: center; gap: 10px">
+<a href="MHome.dc.html" aria-label="Back" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #14171A"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+<span style="width: 36px; height: 36px; border-radius: 50%; background: #5B3FB5; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path></svg></span>
+<span style="flex-grow: 1; display: flex; flex-direction: column"><b style="font-size: 16px">Scout</b><span style="font-size: 12px; color: #555C63">Using your vault, papers &amp; run #7</span></span>
+<button type="button" aria-label="Conversation history" style="width: 44px; height: 44px; border: 0; background: transparent; color: #3A4047; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></button>
+</div>
+
+<div style="flex-grow: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px">
+<span style="align-self: center; font-size: 12px; color: #555C63">Today 21:48</span>
+<div style="align-self: flex-end; max-width: 80%; background: {{accent}}; color: #FFFFFF; border-radius: 16px 16px 4px 16px; padding: 11px 14px; font-size: 15px; line-height: 1.45">Which opportunity should I start this week?</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px; max-width: 92%">
+<div style="background: #FFFFFF; border: 1px solid #E1E3DE; border-radius: 16px 16px 16px 4px; padding: 12px 14px; font-size: 15px; line-height: 1.5">The zinc–iodine membrane paper. It needs the least new work — your 500-hour cycling file is most of the data — and it builds directly on your 2025 J. Membrane Sci. paper.<sup style="font-size: 10px; color: #4A2F9A"> [1]</sup></div>
+<a href="MOppDetail.dc.html" style="display: flex; flex-direction: column; gap: 4px; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 12px 14px; text-decoration: none; color: #14171A"><span style="font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #4A2F9A">White spot · fit 0.77</span><span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 16px; font-weight: 600; line-height: 1.3">CNF membranes for Zn–I₂ flow batteries beyond 500 h</span></a>
+<span style="font-size: 12px; padding: 3px 8px; border-radius: 4px; background: #F4F1FB; color: #4A2F9A; align-self: flex-start">[1] CNF membrane Zn–I2 cycling 500 h.xlsx</span>
+</div>
+
+<div style="align-self: flex-end; max-width: 80%; display: flex; flex-direction: column; gap: 6px; align-items: flex-end">
+<div style="background: {{accent}}; color: #FFFFFF; border-radius: 16px 16px 4px 16px; padding: 10px 12px; display: flex; gap: 10px; align-items: center">
+<span style="width: 30px; height: 30px; border-radius: 50%; background: #FFFFFF; color: {{accent}}; display: flex; align-items: center; justify-content: center"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4l13 8-13 8z"></path></svg></span>
+<span aria-hidden="true" style="display: flex; gap: 2px; align-items: center; height: 22px">
+<sc-for list="{{wave}}" as="w" hint-placeholder-count="22"><span style="{{w}}"></span></sc-for>
+</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px">0:09</span>
+</div>
+<span style="font-size: 12px; color: #3A4047; font-style: italic">“Draft me an outline for it”</span>
+</div>
+
+<div style="display: flex; gap: 8px; align-items: center; color: #4A2F9A; font-size: 14px">
+<span style="display: flex; gap: 4px"><span style="width: 7px; height: 7px; border-radius: 50%; background: #5B3FB5"></span><span style="width: 7px; height: 7px; border-radius: 50%; background: #8F79D6"></span><span style="width: 7px; height: 7px; border-radius: 50%; background: #C9BCE8"></span></span>
+Literature agent is checking 3 recent papers…
+</div>
+</div>
+
+<div style="flex-shrink: 0; background: #F3F4F1; padding: 6px 12px 18px; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; gap: 6px; overflow-x: auto">
+<button type="button" style="flex-shrink: 0; font: inherit; font-size: 13px; background: #FFFFFF; color: #3A4047; border: 1px solid #C4C8C1; border-radius: 999px; padding: 8px 12px; min-height: 36px; cursor: pointer; white-space: nowrap">Who could co-author?</button>
+<button type="button" style="flex-shrink: 0; font: inherit; font-size: 13px; background: #FFFFFF; color: #3A4047; border: 1px solid #C4C8C1; border-radius: 999px; padding: 8px 12px; min-height: 36px; cursor: pointer; white-space: nowrap">Best journal for it?</button>
+<button type="button" style="flex-shrink: 0; font: inherit; font-size: 13px; background: #FFFFFF; color: #3A4047; border: 1px solid #C4C8C1; border-radius: 999px; padding: 8px 12px; min-height: 36px; cursor: pointer; white-space: nowrap">Timeline</button>
+</div>
+<div style="background: #FFFFFF; border: 1px solid #C9BCE8; border-radius: 24px; padding: 4px; display: flex; gap: 2px; align-items: center">
+<a href="MUpload.dc.html" aria-label="Attach a file" style="width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #3A4047"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></a>
+<a href="MVoice.dc.html" aria-label="Take a photo" style="width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #3A4047"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg></a>
+<label style="flex-grow: 1; display: flex; min-width: 0"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Message Scout</span><input type="text" placeholder="Ask Scout…" style="font: inherit; font-size: 16px; border: 0; outline: none; width: 100%; padding: 10px 4px; background: transparent"></label>
+<a href="MVoice.dc.html" aria-label="Talk to Scout" style="width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #FFFFFF; background: #5B3FB5"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"></path><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg></a>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#2446C7","options":["#2446C7","#0F6E6E","#5B3FB5","#14171A"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const h = [6, 12, 18, 10, 16, 22, 8, 14, 20, 12, 6, 10, 18, 22, 12, 8, 14, 20, 10, 6, 12, 16];
+    return {
+      accent: this.props.accent ?? '#2446C7',
+      wave: h.map((v) => 'width: 3px; height: ' + v + 'px; border-radius: 2px; background: #FFFFFF;')
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+{
+ "source": "OpenAlex API (https://api.openalex.org)",
+ "retrieved": "2026-10-20",
+ "license": "CC0 (OpenAlex data)",
+ "entries": [
+  {
+   "port_method": "get_author",
+   "params": {
+    "author_id": "A5059588273"
+   },
+   "file": "authors/A5059588273.json"
+  },
+  {
+   "port_method": "get_author",
+   "params": {
+    "author_id": "A5033675494"
+   },
+   "file": "authors/A5033675494.json"
+  },
+  {
+   "port_method": "get_author",
+   "params": {
+    "author_id": "A5140167166"
+   },
+   "file": "authors/A5140167166.json"
+  },
+  {
+   "port_method": "search_authors",
+   "params": {
+    "name": "Johan Foster",
+    "affiliation_hint": null
+   },
+   "file": "authors_search/johan-foster.json"
+  },
+  {
+   "port_method": "search_authors",
+   "params": {
+    "name": "Raphaell Moreira",
+    "affiliation_hint": null
+   },
+   "file": "authors_search/raphaell-moreira.json"
+  },
+  {
+   "port_method": "search_authors",
+   "params": {
+    "orcid": "0000-0002-4103-8510"
+   },
+   "file": "authors_search/orcid-0000-0002-4103-8510.json"
+  },
+  {
+   "port_method": "list_author_works",
+   "params": {
+    "author_id": "A5059588273"
+   },
+   "file": "works_by_author/A5059588273.json"
+  },
+  {
+   "port_method": "list_author_works",
+   "params": {
+    "author_id": "A5033675494"
+   },
+   "file": "works_by_author/A5033675494.json"
+  },
+  {
+   "port_method": "search_works",
+   "params": {
+    "search": "lignin polyurethane foam",
+    "from_publication_date": "2020-01-01",
+    "type": "article",
+    "per_page": 6
+   },
+   "file": "works_search/q1.json"
+  },
+  {
+   "port_method": "search_works",
+   "params": {
+    "search": "cellulose nanofiber membrane flow battery",
+    "from_publication_date": "2020-01-01",
+    "type": "article",
+    "per_page": 6
+   },
+   "file": "works_search/q2.json"
+  },
+  {
+   "port_method": "search_works",
+   "params": {
+    "search": "PFAS adsorption membrane",
+    "from_publication_date": "2020-01-01",
+    "type": "article",
+    "per_page": 6
+   },
+   "file": "works_search/q3.json"
+  },
+  {
+   "port_method": "search_works",
+   "params": {
+    "search": "photocatalytic PFAS degradation",
+    "from_publication_date": "2020-01-01",
+    "type": "article",
+    "per_page": 6
+   },
+   "file": "works_search/q4.json"
+  },
+  {
+   "port_method": "search_works",
+   "params": {
+    "search": "lignin fiber cement",
+    "from_publication_date": "2020-01-01",
+    "type": "article",
+    "per_page": 6
+   },
+   "file": "works_search/q5.json"
+  },
+  {
+   "port_method": "search_works",
+   "params": {
+    "search": "wood electromagnetic interference shielding",
+    "from_publication_date": "2020-01-01",
+    "type": "article",
+    "per_page": 6
+   },
+   "file": "works_search/q6.json"
+  },
+  {
+   "port_method": "count_works",
+   "params": {
+    "search": "lignin polyurethane foam flame retardant",
+    "from_publication_date": "2021-01-01"
+   },
+   "file": "works_count/n1.json"
+  },
+  {
+   "port_method": "count_works",
+   "params": {
+    "search": "cellulose separator zinc iodine battery",
+    "from_publication_date": "2021-01-01"
+   },
+   "file": "works_count/n2.json"
+  },
+  {
+   "port_method": "count_works",
+   "params": {
+    "search": "photocatalytic regeneration PFAS membrane",
+    "from_publication_date": "2021-01-01"
+   },
+   "file": "works_count/n3.json"
+  },
+  {
+   "port_method": "count_works",
+   "params": {
+    "search": "lignin fluorescence fiber cement interface",
+    "from_publication_date": "2021-01-01"
+   },
+   "file": "works_count/n4.json"
+  }
+ ]
+}

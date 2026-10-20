@@ -1,0 +1,59 @@
+{
+ "id": "https://openalex.org/A5059588273",
+ "display_name": "Earl Johan Foster",
+ "orcid": "https://orcid.org/0000-0002-4103-8510",
+ "works_count": 159,
+ "cited_by_count": 9971,
+ "summary_stats": {
+  "h_index": 50
+ },
+ "last_known_institutions": [
+  {
+   "id": "https://openalex.org/I141945490",
+   "display_name": "University of British Columbia",
+   "country_code": "CA"
+  }
+ ],
+ "topics": [
+  {
+   "id": "https://openalex.org/T10610",
+   "display_name": "Advanced Cellulose Research Studies",
+   "subfield": {
+    "display_name": "Biomaterials"
+   },
+   "count": 83
+  },
+  {
+   "id": "https://openalex.org/T10488",
+   "display_name": "Nanocomposite Films for Food Packaging",
+   "subfield": {
+    "display_name": "Biomaterials"
+   },
+   "count": 25
+  },
+  {
+   "id": "https://openalex.org/T11208",
+   "display_name": "Lignin and Wood Chemistry",
+   "subfield": {
+    "display_name": "Biomedical Engineering"
+   },
+   "count": 19
+  },
+  {
+   "id": "https://openalex.org/T10501",
+   "display_name": "Polymer Nanocomposites and Properties",
+   "subfield": {
+    "display_name": "Polymers and Plastics"
+   },
+   "count": 18
+  },
+  {
+   "id": "https://openalex.org/T10513",
+   "display_name": "Natural Fiber Reinforced Composites",
+   "subfield": {
+    "display_name": "Polymers and Plastics"
+   },
+   "count": 16
+  }
+ ]
+}

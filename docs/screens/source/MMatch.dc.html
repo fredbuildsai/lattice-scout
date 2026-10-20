@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lattice Scout mobile — Match proposal</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F3F4F1}
+a{color:#2446C7}a:hover{color:#16308F}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; overflow: hidden; display: flex; flex-direction: column; background: #F3F4F1; font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #14171A">
+<div style="flex-shrink: 0; background: #FFFFFF; border-bottom: 1px solid #D9DCD6; padding: 14px 16px; display: flex; align-items: center; gap: 10px">
+<h1 style="margin: 0; font-size: 24px; font-weight: 600; flex-grow: 1">Matches</h1>
+<a href="MMatchMutual.dc.html" style="font-size: 13px; font-weight: 600; color: #0F5E5E; background: #E3F1EF; border-radius: 999px; padding: 8px 12px; text-decoration: none">1 mutual</a>
+</div>
+
+<div style="flex-grow: 1; overflow-y: auto; padding: 14px 16px 20px; display: flex; flex-direction: column; gap: 12px">
+<span style="font-size: 13px; color: #555C63">Proposal 1 of 3 · anonymous until you both say yes</span>
+<div style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; gap: 14px; align-items: center">
+<span style="width: 56px; height: 56px; border-radius: 50%; background: #FFFFFF; border: 2px dashed #0F6E6E; display: flex; align-items: center; justify-content: center; color: #0F5E5E; font-weight: 700; font-size: 22px; box-sizing: border-box; flex-shrink: 0">?</span>
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><b style="font-family: 'Source Serif 4', Georgia, serif; font-size: 20px; line-height: 1.25">Photocatalysis &amp; water treatment</b><span style="font-size: 13px; color: #3A4047">Europe · Early-mid career</span></span>
+<span style="display: flex; flex-direction: column; align-items: flex-end"><b style="font-family: 'IBM Plex Mono', monospace; font-size: 22px; color: #0F5E5E">88%</b><span style="font-size: 11px; color: #555C63">complementary</span></span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 6px; background: #E8ECFA; border-radius: 10px; padding: 12px"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #16308F">You bring</span><span style="font-size: 13px; line-height: 1.4">Fungal adsorption membrane</span><span style="font-size: 13px; line-height: 1.4">Unpublished PFAS pilot data</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px; background: #E3F1EF; border-radius: 10px; padding: 12px"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #0F5E5E">They bring</span><span style="font-size: 13px; line-height: 1.4">Graphenic photocatalysts</span><span style="font-size: 13px; line-height: 1.4">Visible-LED degradation</span></div>
+</div>
+<div style="display: flex; gap: 10px; align-items: flex-start; background: #F4F1FB; border-radius: 10px; padding: 12px">
+<span style="flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; background: #5B3FB5; display: flex; align-items: center; justify-content: center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path></svg></span>
+<span style="font-size: 14px; line-height: 1.45">Your membrane captures PFAS; their photocatalysts destroy it. Together: a membrane that cleans itself with light.</span>
+</div>
+<div style="display: flex; gap: 8px; align-items: center; font-size: 13px; color: #3A4047; border-top: 1px solid #ECEEE9; padding-top: 12px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Name, contact &amp; 2 joint opportunities unlock on a mutual yes</div>
+</div>
+
+<sc-if value="{{isOpen}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; gap: 10px">
+<button type="button" onClick="{{no}}" style="flex: 1; font: inherit; font-size: 16px; font-weight: 600; background: #FFFFFF; color: #3A4047; border: 1px solid #C4C8C1; border-radius: 12px; min-height: 54px; cursor: pointer">Not now</button>
+<button type="button" onClick="{{yes}}" style="flex: 1.5; font: inherit; font-size: 16px; font-weight: 600; background: #0F6E6E; color: #FFFFFF; border: 0; border-radius: 12px; min-height: 54px; cursor: pointer">Yes, interested</button>
+</div>
+</sc-if>
+<sc-if value="{{isWaiting}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 10px; background: #E3F1EF; border-radius: 12px; padding: 14px">
+<span style="font-size: 15px; color: #0F3F3F; line-height: 1.45"><b>You said yes.</b> We'll notify you when they answer.</span>
+<div style="display: flex; gap: 8px">
+<a href="MMatchMutual.dc.html" style="font-size: 13px; font-weight: 600; color: #0F5E5E; background: #FFFFFF; border: 1px solid #9CCFC9; border-radius: 8px; padding: 10px 12px; text-decoration: none">Simulate their yes (demo)</a>
+<button type="button" onClick="{{undo}}" style="font: inherit; font-size: 13px; background: transparent; color: #0F5E5E; border: 0; min-height: 40px; cursor: pointer">Withdraw</button>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{isNo}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 10px; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 14px">
+<span style="font-size: 15px">Skipped — they won't know. What was off?</span>
+<div style="display: flex; gap: 6px; flex-wrap: wrap">
+<button type="button" style="font: inherit; font-size: 13px; padding: 8px 12px; min-height: 36px; border-radius: 999px; background: #FFFFFF; color: #3A4047; border: 1px solid #C4C8C1; cursor: pointer">Wrong field</button>
+<button type="button" style="font: inherit; font-size: 13px; padding: 8px 12px; min-height: 36px; border-radius: 999px; background: #FFFFFF; color: #3A4047; border: 1px solid #C4C8C1; cursor: pointer">No time now</button>
+<button type="button" style="font: inherit; font-size: 13px; padding: 8px 12px; min-height: 36px; border-radius: 999px; background: #FFFFFF; color: #3A4047; border: 1px solid #C4C8C1; cursor: pointer">Too similar</button>
+<button type="button" onClick="{{undo}}" style="font: inherit; font-size: 13px; padding: 8px 12px; min-height: 36px; border-radius: 999px; background: transparent; color: #0F5E5E; border: 0; cursor: pointer">Undo</button>
+</div>
+</div>
+</sc-if>
+</div>
+
+<nav aria-label="Main" style="flex-shrink: 0; height: 78px; background: #FFFFFF; border-top: 1px solid #D9DCD6; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center; padding: 0 4px 10px; box-sizing: border-box">
+<a href="MHome.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 48px; justify-content: center; text-decoration: none; color: #555C63; font-size: 11px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9h-6v-6H9v6H3z"></path></svg>Home</a>
+<a href="MOpps.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 48px; justify-content: center; text-decoration: none; color: #555C63; font-size: 11px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"></path></svg>Ideas</a>
+<a href="MChat.dc.html" aria-label="Ask Scout" style="justify-self: center; width: 60px; height: 60px; margin-top: -26px; border-radius: 50%; background: #5B3FB5; border: 4px solid #FFFFFF; box-shadow: 0 6px 18px rgba(91,63,181,0.35); display: flex; align-items: center; justify-content: center; color: #FFFFFF"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path><path d="M19 16l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"></path></svg></a>
+<a href="MMatch.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 48px; justify-content: center; text-decoration: none; color: {{accent}}; font-size: 11px; font-weight: 600"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="8" r="3"></circle><circle cx="17" cy="8" r="3"></circle><path d="M2 20c0-3 2.2-5 5-5 1.6 0 3 .6 4 1.7M22 20c0-3-2.2-5-5-5-1.6 0-3 .6-4 1.7"></path></svg>Matches</a>
+<a href="MReach.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 48px; justify-content: center; text-decoration: none; color: #555C63; font-size: 11px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"></path></svg>Reach</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#2446C7","options":["#2446C7","#0F6E6E","#5B3FB5","#14171A"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { st: 'open' };
+  }
+  renderVals() {
+    const st = this.state.st;
+    return {
+      accent: this.props.accent ?? '#2446C7',
+      isOpen: st === 'open', isWaiting: st === 'waiting', isNo: st === 'no',
+      yes: () => this.setState({ st: 'waiting' }),
+      no: () => this.setState({ st: 'no' }),
+      undo: () => this.setState({ st: 'open' })
+    };
+  }
+}
+</script>
+</body>
+</html>

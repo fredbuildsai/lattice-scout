@@ -1,0 +1,614 @@
+{
+ "meta": {
+  "count": 5701,
+  "per_page": 6
+ },
+ "results": [
+  {
+   "id": "https://openalex.org/W4412382439",
+   "doi": "https://doi.org/10.1039/d5nj02713f",
+   "display_name": "Adsorbing nanoplastics through high-resilience lignin–polyurethane foam",
+   "title": "Adsorbing nanoplastics through high-resilience lignin–polyurethane foam",
+   "publication_year": 2025,
+   "cited_by_count": 4,
+   "type": "T10753 T10016",
+   "primary_topic": {
+    "id": "https://openalex.org/T10753",
+    "display_name": null,
+    "subfield": {
+     "display_name": null
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T10753",
+     "display_name": null,
+     "subfield": {
+      "display_name": null
+     }
+    },
+    {
+     "id": "https://openalex.org/T10016",
+     "display_name": "Adsorption and biosorption for pollutant removal",
+     "subfield": {
+      "display_name": "Water Science and Technology"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": {
+    "In": [
+     0
+    ],
+    "this": [
+     1
+    ],
+    "paper,": [
+     2
+    ],
+    "the": [
+     3,
+     17,
+     30
+    ],
+    "adsorbent": [
+     4
+    ],
+    "removes": [
+     5
+    ],
+    "NPs": [
+     6,
+     28
+    ],
+    "from": [
+     7
+    ],
+    "aqueous": [
+     8
+    ],
+    "media": [
+     9
+    ],
+    "via": [
+     10
+    ],
+    "two": [
+     11
+    ],
+    "mechanisms:": [
+     12
+    ],
+    "(1)": [
+     13
+    ],
+    "macropore": [
+     14
+    ],
+    "transport": [
+     15
+    ],
+    "in": [
+     16,
+     35
+    ],
+    "polyurethane": [
+     18
+    ],
+    "foam": [
+     19
+    ],
+    "and": [
+     20,
+     23,
+     29,
+     33
+    ],
+    "(2)": [
+     21
+    ],
+    "electrostatic": [
+     22
+    ],
+    "π–π": [
+     24
+    ],
+    "conjugation": [
+     25
+    ],
+    "interactions": [
+     26
+    ],
+    "between": [
+     27
+    ],
+    "benzene": [
+     31
+    ],
+    "rings": [
+     32
+    ],
+    "hydroxyl": [
+     34
+    ],
+    "lignin.": [
+     36
+    ]
+   }
+  },
+  {
+   "id": "https://openalex.org/W4402758757",
+   "doi": "https://doi.org/10.1016/j.cej.2024.156142",
+   "display_name": "Green co-solvent-assisted one-pot synthesis of high-performance flexible lignin polyurethane foam",
+   "title": "Green co-solvent-assisted one-pot synthesis of high-performance flexible lignin polyurethane foam",
+   "publication_year": 2024,
+   "cited_by_count": 31,
+   "type": "T11208 T12628",
+   "primary_topic": {
+    "id": "https://openalex.org/T11208",
+    "display_name": "Lignin and Wood Chemistry",
+    "subfield": {
+     "display_name": "Biomedical Engineering"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T11208",
+     "display_name": "Lignin and Wood Chemistry",
+     "subfield": {
+      "display_name": "Biomedical Engineering"
+     }
+    },
+    {
+     "id": "https://openalex.org/T12628",
+     "display_name": "Polymer Foaming and Composites",
+     "subfield": {
+      "display_name": "Polymers and Plastics"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": null
+  },
+  {
+   "id": "https://openalex.org/W7204036258",
+   "doi": "https://doi.org/10.1021/acsapm.6c02443",
+   "display_name": "High-Lignin Polyurethane Foams via a Eutectic-Like Polyol Strategy: Enabling Scalable Processing and Enhanced Structural Performance",
+   "title": "High-Lignin Polyurethane Foams via a Eutectic-Like Polyol Strategy: Enabling Scalable Processing and Enhanced Structural Performance",
+   "publication_year": 2026,
+   "cited_by_count": 1,
+   "type": "T11208 T12628",
+   "primary_topic": {
+    "id": "https://openalex.org/T11208",
+    "display_name": "Lignin and Wood Chemistry",
+    "subfield": {
+     "display_name": "Biomedical Engineering"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T11208",
+     "display_name": "Lignin and Wood Chemistry",
+     "subfield": {
+      "display_name": "Biomedical Engineering"
+     }
+    },
+    {
+     "id": "https://openalex.org/T12628",
+     "display_name": "Polymer Foaming and Composites",
+     "subfield": {
+      "display_name": "Polymers and Plastics"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": {
+    "Replacing": [
+     0
+    ],
+    "petroleum-derived": [
+     1
+    ],
+    "polyols": [
+     2
+    ],
+    "with": [
+     3,
+     43
+    ],
+    "lignin": [
+     4,
+     52
+    ],
+    "in": [
+     5
+    ],
+    "polyurethane": [
+     6
+    ],
+    "foams": [
+     7
+    ],
+    "is": [
+     8,
+     16
+    ],
+    "essential": [
+     9
+    ],
+    "for": [
+     10
+    ],
+    "increasing": [
+     11
+    ],
+    "renewable": [
+     12
+    ],
+    "carbon": [
+     13
+    ],
+    "utilization": [
+     14
+    ],
+    "but": [
+     15
+    ],
+    "hindered": [
+     17
+    ],
+    "by": [
+     18
+    ],
+    "lignin’s": [
+     19
+    ],
+    "heterogeneity,": [
+     20
+    ],
+    "poor": [
+     21
+    ],
+    "solubility,": [
+     22
+    ],
+    "and": [
+     23,
+     39
+    ],
+    "limited": [
+     24
+    ],
+    "reactivity.": [
+     25
+    ],
+    "Here,": [
+     26
+    ],
+    "we": [
+     27
+    ],
+    "report": [
+     28
+    ],
+    "a": [
+     29,
+     48
+    ],
+    "hydrogen-bond-engineered,": [
+     30
+    ],
+    "eutectic-like": [
+     31
+    ],
+    "polyol": [
+     32
+    ],
+    "platform": [
+     33
+    ],
+    "based": [
+     34
+    ],
+    "on": [
+     35
+    ],
+    "polyethylene": [
+     36
+    ],
+    "glycol": [
+     37
+    ],
+    "(PEG)": [
+     38
+    ],
+    "salicylic": [
+     40
+    ],
+    "acid": [
+     41
+    ],
+    "(SA),": [
+     42
+    ],
+    "ethylene": [
+     44
+    ],
+    "carbonate": [
+     45
+    ],
+    "(EC)": [
+     46
+    ],
+    "as": [
+     47
+    ],
+    "cosolvent,": [
+     49
+    ],
+    "enabling": [
+     50
+    ],
+    "high": [
+     51
+    ]
+   }
+  },
+  {
+   "id": "https://openalex.org/W4403557109",
+   "doi": "https://doi.org/10.1016/j.seppur.2024.130177",
+   "display_name": "Multifunctional aluminum 12-hydroxystearate/lignin polyurethane foam for selective gelation and efficient separation of oil and organic solvents",
+   "title": "Multifunctional aluminum 12-hydroxystearate/lignin polyurethane foam for selective gelation and efficient separation of oil and organic solvents",
+   "publication_year": 2024,
+   "cited_by_count": 6,
+   "type": "T10313 T11401",
+   "primary_topic": {
+    "id": "https://openalex.org/T10313",
+    "display_name": "Surface Modification and Superhydrophobicity",
+    "subfield": {
+     "display_name": "Surfaces, Coatings and Films"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T10313",
+     "display_name": "Surface Modification and Superhydrophobicity",
+     "subfield": {
+      "display_name": "Surfaces, Coatings and Films"
+     }
+    },
+    {
+     "id": "https://openalex.org/T11401",
+     "display_name": null,
+     "subfield": {
+      "display_name": null
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": null
+  },
+  {
+   "id": "https://openalex.org/W4313562066",
+   "doi": "https://doi.org/10.1038/s41893-022-01022-3",
+   "display_name": "Chemical recycling of a lignin-based non-isocyanate polyurethane foam",
+   "title": "Chemical recycling of a lignin-based non-isocyanate polyurethane foam",
+   "publication_year": 2023,
+   "cited_by_count": 96,
+   "type": "T11208 T10661",
+   "primary_topic": {
+    "id": "https://openalex.org/T11208",
+    "display_name": "Lignin and Wood Chemistry",
+    "subfield": {
+     "display_name": "Biomedical Engineering"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T11208",
+     "display_name": "Lignin and Wood Chemistry",
+     "subfield": {
+      "display_name": "Biomedical Engineering"
+     }
+    },
+    {
+     "id": "https://openalex.org/T10661",
+     "display_name": "biodegradable polymer synthesis and properties",
+     "subfield": {
+      "display_name": "Biomaterials"
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": null
+  },
+  {
+   "id": "https://openalex.org/W4210817058",
+   "doi": "https://doi.org/10.1021/acs.biomac.1c01465",
+   "display_name": "Antimicrobial Lignin-Based Polyurethane/Ag Composite Foams for Improving Wound Healing",
+   "title": "Antimicrobial Lignin-Based Polyurethane/Ag Composite Foams for Improving Wound Healing",
+   "publication_year": 2022,
+   "cited_by_count": 133,
+   "type": "T11208 T10771",
+   "primary_topic": {
+    "id": "https://openalex.org/T11208",
+    "display_name": "Lignin and Wood Chemistry",
+    "subfield": {
+     "display_name": "Biomedical Engineering"
+    }
+   },
+   "topics": [
+    {
+     "id": "https://openalex.org/T11208",
+     "display_name": "Lignin and Wood Chemistry",
+     "subfield": {
+      "display_name": "Biomedical Engineering"
+     }
+    },
+    {
+     "id": "https://openalex.org/T10771",
+     "display_name": null,
+     "subfield": {
+      "display_name": null
+     }
+    }
+   ],
+   "authorships": [],
+   "abstract_inverted_index": {
+    "Antimicrobial": [
+     0
+    ],
+    "materials": [
+     1
+    ],
+    "are": [
+     2
+    ],
+    "an": [
+     3
+    ],
+    "urgent": [
+     4
+    ],
+    "need": [
+     5
+    ],
+    "for": [
+     6,
+     23
+    ],
+    "modern": [
+     7
+    ],
+    "wound": [
+     8,
+     24
+    ],
+    "care": [
+     9
+    ],
+    "in": [
+     10,
+     36,
+     53
+    ],
+    "the": [
+     11
+    ],
+    "clinic.": [
+     12
+    ],
+    "Although": [
+     13
+    ],
+    "traditional": [
+     14
+    ],
+    "polyurethane": [
+     15,
+     50
+    ],
+    "foams": [
+     16,
+     51
+    ],
+    "have": [
+     17,
+     32
+    ],
+    "proven": [
+     18
+    ],
+    "to": [
+     19,
+     47
+    ],
+    "be": [
+     20
+    ],
+    "clinically": [
+     21
+    ],
+    "valuable": [
+     22
+    ],
+    "treatment,": [
+     25
+    ],
+    "their": [
+     26,
+     34
+    ],
+    "petroleum-originated": [
+     27
+    ],
+    "preparation": [
+     28
+    ],
+    "and": [
+     29
+    ],
+    "bioinert": [
+     30
+    ],
+    "nature": [
+     31
+    ],
+    "restricted": [
+     33
+    ],
+    "efficacy": [
+     35
+    ],
+    "biomedical": [
+     37
+    ],
+    "applications.": [
+     38
+    ],
+    "Here,": [
+     39
+    ],
+    "we": [
+     40
+    ],
+    "propose": [
+     41
+    ],
+    "a": [
+     42
+    ],
+    "simple": [
+     43
+    ],
+    "one-step": [
+     44
+    ],
+    "foaming": [
+     45
+    ],
+    "method": [
+     46
+    ],
+    "prepare": [
+     48
+    ],
+    "lignin-based": [
+     49
+    ],
+    "(LPUFs)": [
+     52
+    ],
+    "which": [
+     54
+    ],
+    "fully": [
+     55
+    ],
+    "biobase": [
+     56
+    ]
+   }
+  }
+ ]
+}

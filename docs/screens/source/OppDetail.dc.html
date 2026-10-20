@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lattice Scout — Opportunity</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F3F4F1;font-family:"IBM Plex Sans",system-ui,sans-serif;color:#14171A}
+a{color:#2446C7}a:hover{color:#16308F}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #F3F4F1; font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #14171A">
+
+<header style="background: #FFFFFF; border-bottom: 1px solid #D9DCD6; position: sticky; top: 0; z-index: 10">
+<div style="max-width: 1240px; margin: 0 auto; padding: 8px 24px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap">
+<dc-import name="NavMenu" current="OppDetail" hint-size="44px,44px"></dc-import>
+<a href="Home.dc.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #14171A">
+<svg width="26" height="26" viewBox="0 0 28 28" fill="none" stroke="{{accent}}" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="22" height="22"></rect><path d="M3 14h22M14 3v22"></path><circle cx="14" cy="14" r="3" fill="#5B3FB5" stroke="#5B3FB5"></circle></svg>
+<span style="font-weight: 700; font-size: 18px">Lattice Scout</span>
+</a>
+<nav aria-label="Main" style="display: flex; gap: 2px; flex-wrap: wrap; flex-grow: 1">
+<a href="Home.dc.html" style="color: #3A4047; text-decoration: none; font-size: 15px; padding: 14px 10px">Home</a>
+<a href="Documents.dc.html" style="color: #3A4047; text-decoration: none; font-size: 15px; padding: 14px 10px">Vault</a>
+<a href="Opportunities.dc.html" aria-current="page" style="color: #14171A; font-weight: 600; text-decoration: none; font-size: 15px; padding: 14px 10px; box-shadow: inset 0 -2px 0 {{accent}}">Opportunities</a>
+<a href="Matches.dc.html" style="color: #3A4047; text-decoration: none; font-size: 15px; padding: 14px 10px">Matches</a>
+<a href="Reach.dc.html" style="color: #3A4047; text-decoration: none; font-size: 15px; padding: 14px 10px">Reach</a>
+</nav>
+<a href="Agent.dc.html" style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #0F5E5E; background: #E3F1EF; border-radius: 999px; padding: 8px 12px; text-decoration: none"><span style="width: 8px; height: 8px; border-radius: 50%; background: #0F6E6E"></span>Run #7 complete</a>
+<a href="Profile.dc.html" aria-label="Your profile" style="width: 40px; height: 40px; border-radius: 50%; background: {{accent}}; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; text-decoration: none">JF</a>
+</div>
+</header>
+
+<div style="max-width: 1240px; margin: 0 auto; padding: 28px 24px 120px; display: flex; flex-direction: column; gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<span style="font-size: 13px; color: #555C63"><a href="Opportunities.dc.html" style="color: #555C63">Opportunities</a> / #1</span>
+<span style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap"><span style="font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; background: #FBF0E4; color: #7A3A06">Resubmission</span><span style="font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; background: #E3F1EF; color: #0F5E5E">Verified · 12 sources</span><span style="font-size: 13px; color: #555C63">Found 19 Oct by run #7</span></span>
+<h1 style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: 36px; line-height: 1.2; letter-spacing: -0.01em; max-width: 920px">Resubmit the declined lignin-polyurethane foam proposal with the new evidence</h1>
+<div style="display: flex; gap: 10px; flex-wrap: wrap">
+<a href="OppDetail.dc.html#draft" style="display: flex; gap: 8px; align-items: center; font-size: 15px; font-weight: 600; color: #FFFFFF; background: {{accent}}; border-radius: 8px; padding: 12px 16px; text-decoration: none">Open Scout's draft in Lattice Press</a>
+<a href="Matches.dc.html" style="font-size: 15px; font-weight: 600; color: #3A4047; background: #FFFFFF; border: 1px solid #C4C8C1; border-radius: 8px; padding: 12px 16px; text-decoration: none">Find a co-applicant</a>
+<button type="button" style="font: inherit; font-size: 15px; font-weight: 600; color: #3A4047; background: #FFFFFF; border: 1px solid #C4C8C1; border-radius: 8px; padding: 12px 16px; min-height: 46px; cursor: pointer">Share with my lab</button>
+<button type="button" style="font: inherit; font-size: 15px; color: #555C63; background: transparent; border: 0; padding: 12px 10px; min-height: 46px; cursor: pointer">Dismiss</button>
+</div>
+</div>
+
+<div style="display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start">
+<main style="flex: 999 1 640px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+
+<section style="background: #FFFFFF; border: 1px solid #D9CFF0; border-radius: 12px; padding: 22px; display: flex; gap: 16px; align-items: flex-start">
+<span style="flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; background: #5B3FB5; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path></svg></span>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<b style="font-size: 15px; color: #4A2F9A">Why I think this works</b>
+<p style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; line-height: 1.55">Reviewers liked replacing petro-polyols with lignin but doubted the foams could meet seating specs, and worried about lignin batch variability. Your 2026 ACS Applied Polymer Materials paper shows how lignin type and content control foaming, and your unpublished compression-set series covers 48 foams. Very few lignin-foam papers report full mechanical and flammability data, so the space is still open.</p>
+</div>
+</section>
+
+<section style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 22px; display: flex; flex-direction: column; gap: 4px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; padding-bottom: 8px"><h2 style="margin: 0; font-size: 18px; font-weight: 600">Reviewer objections, re-checked</h2><span style="font-size: 13px; color: #555C63">From the panel report in your vault</span></div>
+<sc-for list="{{objections}}" as="o" hint-placeholder-count="5">
+<div style="display: flex; gap: 16px; align-items: flex-start; padding: 14px 0; border-top: 1px solid #ECEEE9; flex-wrap: wrap">
+<span style="{{o.chip}}">{{o.status}}</span>
+<span style="flex: 1 1 360px; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 15px; font-style: italic; color: #14171A">“{{o.q}}”</span><span style="font-size: 13px; color: #3A4047; line-height: 1.5">{{o.ans}}</span><a href="{{o.href}}" style="align-self: flex-start; display: inline-flex; gap: 6px; align-items: center; font-size: 13px; font-weight: 600; text-decoration: none; padding: 6px 10px; margin-top: 2px; border-radius: 6px; background: #F7F8F5; border: 1px solid #E1E3DE"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"></path></svg>Evidence: {{o.ev}}</a></span>
+</div>
+</sc-for>
+</section>
+
+<section style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; overflow: hidden">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 22px 0; flex-wrap: wrap"><h2 style="margin: 0; font-size: 18px; font-weight: 600">Evidence</h2><span style="font-size: 13px; color: #555C63">Click any item to open the exact passage</span></div>
+<div role="tablist" aria-label="Evidence source" style="display: flex; gap: 4px; padding: 8px 14px 0; border-bottom: 1px solid #D9DCD6; flex-wrap: wrap">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="3">
+<button type="button" role="tab" aria-selected="{{t.on}}" onClick="{{t.pick}}" style="{{t.style}}">{{t.label}}</button>
+</sc-for>
+</div>
+<div style="display: flex; flex-direction: column; padding: 6px 22px 16px">
+<sc-for list="{{evidence}}" as="e" hint-placeholder-count="3">
+<a href="Documents.dc.html" style="display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px solid #F1F2EF; text-decoration: none; color: #14171A; align-items: flex-start">
+<span style="{{e.ext}}">{{e.fmt}}</span>
+<span style="display: flex; flex-direction: column; gap: 4px"><b style="font-size: 14px">{{e.src}}</b><span style="font-size: 14px; color: #3A4047; line-height: 1.5">{{e.quote}}</span></span>
+</a>
+</sc-for>
+</div>
+</section>
+
+<section aria-label="Literature trend" style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 22px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap"><h2 style="margin: 0; font-size: 18px; font-weight: 600">How crowded is it?</h2><span style="font-size: 13px; color: #555C63">Papers per year · lignin-based flexible PU foams (sample counts)</span></div>
+<div style="display: flex; gap: 18px; font-size: 12px; color: #3A4047"><span style="display: flex; gap: 6px; align-items: center"><span style="width: 12px; height: 12px; border-radius: 2px; background: #C9D3F2"></span>Lignin-PU foam papers</span><span style="display: flex; gap: 6px; align-items: center"><span style="width: 12px; height: 12px; border-radius: 2px; background: #5B3FB5"></span>With compression set + flammability data</span></div>
+<div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; align-items: end; height: 170px; border-bottom: 1px solid #C4C8C1; padding: 0 6px">
+<sc-for list="{{bars}}" as="b" hint-placeholder-count="6">
+<div style="display: flex; gap: 4px; align-items: flex-end; justify-content: center; height: 100%">
+<span style="{{b.a}}" title="{{b.at}}"></span><span style="{{b.b}}" title="{{b.bt}}"></span>
+</div>
+</sc-for>
+</div>
+<div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; padding: 0 6px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #555C63; text-align: center">
+<span>2021</span><span>2022</span><span>2023</span><span>2024</span><span>2025</span><span>2026</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; padding: 0 6px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; text-align: center">
+<sc-for list="{{bars}}" as="b" hint-placeholder-count="6"><span style="display: flex; flex-direction: column; gap: 2px"><span style="color: #16308F">{{b.av}}</span><span style="color: #4A2F9A; font-weight: 600">{{b.bv}}</span></span></sc-for>
+</div>
+<span style="font-size: 13px; color: #3A4047">Totals 2021–2026: <b>141</b> lignin-PU foam papers, only <b>3</b> with both datasets (2%).</span>
+</section>
+
+<section id="draft" style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 22px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap"><h2 style="margin: 0; font-size: 18px; font-weight: 600">Next steps</h2><span style="font-size: 13px; color: #555C63">Tick as you go — Scout updates the plan</span></div>
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="4">
+<label style="display: flex; gap: 14px; align-items: flex-start; padding: 12px 14px; border: 1px solid #ECEEE9; border-radius: 10px; cursor: pointer">
+<input type="checkbox" defaultChecked="{{s.done}}" style="width: 20px; height: 20px; margin: 1px 0 0; accent-color: {{accent}}; flex-shrink: 0">
+<span style="display: flex; flex-direction: column; gap: 3px; flex-grow: 1"><b style="font-size: 15px">{{s.t}}</b><span style="font-size: 13px; color: #3A4047; line-height: 1.45">{{s.d}}</span></span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #555C63; white-space: nowrap">{{s.eff}}</span>
+</label>
+</sc-for>
+<div style="background: #FAFBF8; border: 1px solid #E1E3DE; border-radius: 10px; padding: 20px 22px; display: flex; flex-direction: column; gap: 10px">
+<span style="display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap"><b style="font-size: 14px">Draft · Revised aims, page 1</b><span style="font-size: 12px; color: #4A2F9A">Drafted by Scout · 640 words · cites 9 sources</span></span>
+<p style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 16px; line-height: 1.6; color: #3A4047">Flexible polyurethane foams are made almost entirely from petroleum polyols. We recently showed that lignin type and content set foaming dynamics and final properties (Zou et al., 2026), and new data on 48 foams show that selected lignins keep compression set within seating specifications (unpublished, Fig. 1). This project asks whether these foams can also pass flammability standards without halogenated additives…</p>
+<a href="OppDetail.dc.html" style="align-self: flex-start; font-size: 14px; font-weight: 600; color: {{accent}}; text-decoration: none; padding: 6px 0">Continue in the Lattice Press editor →</a>
+</div>
+</section>
+</main>
+
+<aside style="flex: 1 1 320px; display: flex; flex-direction: column; gap: 16px">
+<section style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-size: 16px; font-weight: 600">Scout's assessment</h2>
+<sc-for list="{{scores}}" as="s" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="display: flex; justify-content: space-between; font-size: 14px"><span>{{s.label}}</span><b style="font-family: 'IBM Plex Mono', monospace">{{s.v}}</b></span>
+<span role="meter" aria-label="{{s.label}}" aria-valuenow="{{s.p}}" aria-valuemin="0" aria-valuemax="100" style="height: 6px; background: #ECEEE9; border-radius: 999px; overflow: hidden"><span style="{{s.bar}}"></span></span>
+<span style="font-size: 12px; color: #555C63">{{s.note}}</span>
+</div>
+</sc-for>
+</section>
+
+<section style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 10px">
+<h2 style="margin: 0; font-size: 16px; font-weight: 600">Matching calls</h2>
+<div style="display: flex; flex-direction: column; gap: 3px; padding: 10px 0; border-top: 1px solid #ECEEE9"><b style="font-size: 14px">[FUNDER] pathfinder-style open call</b><span style="font-size: 13px; color: #555C63">Deadline [DATE] · up to [AMOUNT] · consortium of 3+</span></div>
+<div style="display: flex; flex-direction: column; gap: 3px; padding: 10px 0; border-top: 1px solid #ECEEE9"><b style="font-size: 14px">[NATIONAL AGENCY] young investigator call</b><span style="font-size: 13px; color: #555C63">Deadline [DATE] · single PI</span></div>
+</section>
+
+<section style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-size: 16px; font-weight: 600">Would strengthen it</h2>
+<a href="Matches.dc.html" style="display: flex; gap: 12px; align-items: center; text-decoration: none; color: #14171A; padding: 12px; border-radius: 10px; background: #E3F1EF">
+<span style="width: 40px; height: 40px; border-radius: 50%; background: #FFFFFF; border: 2px dashed #0F6E6E; color: #0F5E5E; display: flex; align-items: center; justify-content: center; font-weight: 700; box-sizing: border-box">?</span>
+<span style="display: flex; flex-direction: column; gap: 2px"><b style="font-size: 14px">Life-cycle assessment of bio-based materials</b><span style="font-size: 12px; color: #3A4047">Anonymous match · answers objection 3 · waiting on you</span></span>
+</a>
+<a href="Matches.dc.html" style="display: flex; gap: 12px; align-items: center; text-decoration: none; color: #14171A; padding: 12px; border-radius: 10px; border: 1px solid #ECEEE9">
+<span style="width: 40px; height: 40px; border-radius: 50%; background: #FFFFFF; border: 2px dashed #0F6E6E; color: #0F5E5E; display: flex; align-items: center; justify-content: center; font-weight: 700; box-sizing: border-box">?</span>
+<span style="display: flex; flex-direction: column; gap: 2px"><b style="font-size: 14px">Fire science of bio-based polymers</b><span style="font-size: 12px; color: #3A4047">Anonymous match · answers objection 5</span></span>
+</a>
+</section>
+
+<section style="background: #F4F1FB; border: 1px solid #D9CFF0; border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 10px">
+<b style="font-size: 15px; color: #4A2F9A">Ask Scout about this idea</b>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<a href="Assistant.dc.html" style="font-size: 14px; color: #14171A; background: #FFFFFF; border: 1px solid #D9CFF0; border-radius: 8px; padding: 10px 12px; text-decoration: none">What would a sceptical reviewer say now?</a>
+<a href="Assistant.dc.html" style="font-size: 14px; color: #14171A; background: #FFFFFF; border: 1px solid #D9CFF0; border-radius: 8px; padding: 10px 12px; text-decoration: none">Estimate the budget for the extra experiments</a>
+</div>
+<div style="display: flex; gap: 6px; align-items: center; background: #FFFFFF; border: 1px solid #C9BCE8; border-radius: 10px; padding: 4px 4px 4px 12px">
+<label style="flex-grow: 1; display: flex"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Message Scout</span><input type="text" placeholder="Type, talk or snap…" style="font: inherit; font-size: 14px; border: 0; outline: none; width: 100%; padding: 8px 0; background: transparent"></label>
+<a href="Assistant.dc.html" aria-label="Voice" style="width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #4A2F9A"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"></path><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg></a>
+<a href="Assistant.dc.html" aria-label="Send" style="width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #FFFFFF; background: #5B3FB5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+</div>
+</section>
+
+<section style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 10px">
+<b style="font-size: 15px">Was this a good find?</b>
+<div style="display: flex; gap: 6px; flex-wrap: wrap">
+<sc-for list="{{fb}}" as="f" hint-placeholder-count="5">
+<button type="button" onClick="{{f.pick}}" aria-pressed="{{f.on}}" style="{{f.style}}">{{f.label}}</button>
+</sc-for>
+</div>
+<span style="font-size: 12px; color: #555C63">Your feedback tunes what Scout looks for next time.</span>
+</section>
+</aside>
+</div>
+</div>
+
+<div style="position: fixed; right: 24px; bottom: 24px; display: flex; align-items: center; gap: 6px; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 999px; padding: 6px; box-shadow: 0 8px 28px rgba(20,23,26,0.16); z-index: 20">
+<a href="Assistant.dc.html" aria-label="Talk to Scout" style="width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #4A2F9A; background: #F4F1FB"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"></path><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg></a>
+<a href="Assistant.dc.html" aria-label="Show Scout a photo" style="width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #4A2F9A; background: #F4F1FB"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg></a>
+<a href="Assistant.dc.html" style="display: flex; align-items: center; gap: 8px; background: #5B3FB5; color: #FFFFFF; text-decoration: none; border-radius: 999px; padding: 0 18px; height: 44px; font-weight: 600; font-size: 15px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path></svg>Ask Scout</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#2446C7","options":["#2446C7","#0F6E6E","#5B3FB5","#14171A"]},"$preview":{"width":1440,"height":1900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'vault', fb: null };
+  }
+  renderVals() {
+    const accent = this.props.accent ?? '#2446C7';
+    const chip = (bg, fg) => 'flex-shrink: 0; width: 120px; text-align: center; font-size: 12px; font-weight: 600; padding: 4px 8px; border-radius: 4px; background: ' + bg + '; color: ' + fg + ';';
+    const ext = 'flex-shrink: 0; width: 44px; text-align: center; font-family: "IBM Plex Mono", monospace; font-size: 11px; font-weight: 500; padding: 4px 0; border-radius: 4px; background: #F1F2EF; color: #3A4047;';
+    const ok = chip('#E3F1EF', '#0F5E5E'), part = chip('#FBF0E4', '#7A3A06'), open = chip('#F1F2EF', '#3A4047');
+    const ev = {
+      vault: [
+        { fmt: 'XLSX', src: 'Lignin foam compression set 2026.xlsx · sheet “summary”', quote: 'Compression set stays below the seating threshold for 2 of 4 lignin types up to 20 wt% (n = 48 foams).' },
+        { fmt: 'PDF', src: 'Lignin-PU foams 2025 — reviewer report 1, p. 2', quote: '“It is not shown that lignin-containing foams meet mechanical specifications for seating.”' },
+        { fmt: 'XLSX', src: 'Lignin foams — flammability screen Oct 2026.xlsx', quote: 'Limiting oxygen index for 12 foams — first data toward objection 5, not yet in any paper.' }
+      ],
+      pub: [
+        { fmt: 'DOI', src: 'Lignin Type and Content Influence the Foaming Dynamics and Properties of Flexible Polyurethane Foams · ACS Appl. Polym. Mater. 2026', quote: 'Answers the batch-variability objection: shows how lignin type and content control foaming.' },
+        { fmt: 'DOI', src: 'Bioinspired Mechanically Adaptive Polymer Nanocomposites with Water-Activated Shape-Memory Effect · Macromolecules 2011 · 318 citations', quote: 'Your track record on tuning mechanics of bio-based nanocomposites.' }
+      ],
+      lit: [
+        { fmt: 'DOI', src: '[Author et al.], 2024 · [Journal]', quote: 'Lignin-PU foams with good compression data but no flammability testing.' },
+        { fmt: 'DOI', src: '[Author et al.], 2025 · [Journal]', quote: 'LCA of bio-polyols in foams; calls for primary data from lab-scale lignin foams.' },
+        { fmt: 'DOI', src: '[Author et al.], 2026 · [Journal]', quote: 'Review lists batch variability of technical lignins as the main barrier to adoption.' }
+      ]
+    };
+    const tabs = [['vault', 'Your private vault · 3'], ['pub', 'Your published work · 2'], ['lit', 'Literature · 7']];
+    const fbOpts = ['Spot on', 'Already knew', 'Not feasible', 'Wrong field', 'Too vague'];
+    const yr = [[14, 0], [18, 1], [22, 0], [27, 0], [31, 1], [29, 1]];
+    return {
+      accent,
+      objections: [
+        { status: 'Answered', chip: ok, q: 'Not shown that lignin foams meet seating specifications.', ans: 'Compression-set series: 2 of 4 lignin types stay within spec up to 20 wt% (48 foams).', ev: 'Lignin foam compression set 2026.xlsx', href: 'Documents.dc.html' },
+        { status: 'Answered', chip: ok, q: 'Batch-to-batch variability of technical lignin not addressed.', ans: 'Your 2026 paper shows how lignin type and content control foaming dynamics and properties.', ev: 'ACS Appl. Polym. Mater. 2026 (OpenAlex)', href: 'https://openalex.org/A5059588273' },
+        { status: 'Partly', chip: part, q: 'End-of-life and environmental benefit not quantified.', ans: 'An LCA partner would close this — anonymous match proposal waiting.', ev: '[Author et al.], 2025 · LCA of bio-polyols (DOI)', href: 'https://doi.org/10.[PREFIX]' },
+        { status: 'Partly', chip: part, q: 'Scale-up pathway unclear.', ans: 'The call favours an industry partner for pilot foaming trials.', ev: '[FUNDER] call text · eligibility section', href: 'https://[FUNDER-CALL-URL]' },
+        { status: 'Still open', chip: open, q: 'No flammability data.', ans: 'First oxygen-index screen exists (12 foams); full cone calorimetry still needed.', ev: 'Reviewer report 2, p. 3', href: 'Documents.dc.html' }
+      ],
+      tabs: tabs.map(([id, label]) => ({
+        label, on: this.state.tab === id,
+        pick: () => this.setState({ tab: id }),
+        style: 'font: inherit; font-size: 14px; background: transparent; border: 0; padding: 12px 10px; min-height: 44px; cursor: pointer; ' + (this.state.tab === id ? 'color: #14171A; font-weight: 600; box-shadow: inset 0 -2px 0 ' + accent + ';' : 'color: #3A4047;')
+      })),
+      evidence: ev[this.state.tab].map((e) => ({ ...e, ext })),
+      bars: yr.map(([a, b]) => ({
+        a: 'width: 22px; height: ' + Math.round(a / 31 * 150) + 'px; background: #C9D3F2; border-radius: 3px 3px 0 0;',
+        b: 'width: 22px; height: ' + Math.max(3, Math.round(b / 31 * 150)) + 'px; background: #5B3FB5; border-radius: 3px 3px 0 0;',
+        at: a + ' lignin-PU foam papers', bt: b + ' with both datasets', av: String(a), bv: String(b)
+      })),
+      steps: [
+        { done: true, t: 'Confirm the compression dataset is complete', d: 'Scout found 48 foams across 4 lignin types and 0–30 wt%; no gaps.', eff: 'done' },
+        { done: false, t: 'Run cone calorimetry on the best two formulations', d: 'Closes objection 5. Builds on the 12-foam oxygen-index screen.', eff: '~6 wk' },
+        { done: false, t: 'Bring in an LCA partner', d: 'Accept the anonymous LCA match to add an end-of-life work package.', eff: '1 wk' },
+        { done: false, t: 'Rewrite aims and impact with Scout’s draft', d: 'Draft addresses every objection and cites the new data.', eff: '3 days' }
+      ],
+      scores: [
+        { label: 'Fit with your work', v: '0.86 / 1', p: 86, note: '3 of your 12 vault files and 2 of your 159 papers are directly reused' },
+        { label: 'Novelty', v: '3 papers', p: 85, note: '3 of 141 lignin-PU foam papers since 2021 report both datasets (2%)' },
+        { label: 'Readiness', v: '70%', p: 70, note: '2 of 5 objections answered, 2 partly, 1 open · 48 of 48 foams tested' },
+        { label: 'New effort', v: '~8 weeks', p: 30, note: '6 wk fire testing + 1 wk partner + 3 days writing' }
+      ].map((s) => ({ ...s, bar: 'display: block; height: 100%; width: ' + s.p + '%; background: #5B3FB5;' })),
+      fb: fbOpts.map((label) => ({
+        label, on: this.state.fb === label,
+        pick: () => this.setState({ fb: label }),
+        style: 'font: inherit; font-size: 13px; padding: 8px 12px; min-height: 36px; border-radius: 999px; cursor: pointer; ' + (this.state.fb === label ? 'background: #14171A; color: #FFFFFF; border: 1px solid #14171A;' : 'background: #FFFFFF; color: #3A4047; border: 1px solid #C4C8C1;')
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

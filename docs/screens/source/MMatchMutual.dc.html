@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lattice Scout mobile — Mutual match</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F3F4F1}
+a{color:#2446C7}a:hover{color:#16308F}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; overflow: hidden; display: flex; flex-direction: column; background: #F3F4F1; font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #14171A">
+<div style="flex-shrink: 0; background: #FFFFFF; border-bottom: 1px solid #D9DCD6; padding: 10px 12px; display: flex; align-items: center; gap: 6px">
+<a href="MMatch.dc.html" aria-label="Back" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #14171A"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+<span style="flex-grow: 1; font-size: 15px; font-weight: 600">Mutual match</span>
+</div>
+
+<div style="flex-grow: 1; overflow-y: auto; padding: 18px 16px 24px; display: flex; flex-direction: column; gap: 14px">
+<div style="background: #0F6E6E; color: #FFFFFF; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center">
+<span style="display: flex; align-items: center">
+<span style="width: 56px; height: 56px; border-radius: 50%; background: {{accent}}; border: 3px solid #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 18px">JF</span>
+<span style="width: 56px; height: 56px; border-radius: 50%; background: #FFFFFF; color: #0F5E5E; border: 3px solid #FFFFFF; margin-left: -12px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px">RM</span>
+</span>
+<b style="font-family: 'Source Serif 4', Georgia, serif; font-size: 24px">You both said yes</b>
+<span style="font-size: 14px; color: #D3ECE9; line-height: 1.45">Contacts shared. A familiar name: you co-authored 5 papers in 2024–25.</span>
+</div>
+
+<div style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 10px">
+<b style="font-size: 18px">Dr. Raphaell Moreira</b>
+<span style="font-size: 14px; color: #3A4047">Photocatalysis &amp; water treatment · University of Bremen (previously UBC)</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #555C63">ORCID 0000-0001-6636-725X · 30 works · 1,044 citations</span>
+<a href="mailto:r.moreira@example.edu" style="font-size: 15px; font-weight: 600">r.moreira@example.edu</a>
+<div style="display: flex; gap: 8px; padding-top: 4px">
+<a href="MChat.dc.html" style="flex: 1.3; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; background: #0F6E6E; color: #FFFFFF; text-decoration: none; border-radius: 10px; min-height: 48px">Scout drafts an intro</a>
+<button type="button" style="flex: 1; font: inherit; font-size: 15px; font-weight: 600; background: #FFFFFF; color: #3A4047; border: 1px solid #C4C8C1; border-radius: 10px; min-height: 48px; cursor: pointer">Propose call</button>
+</div>
+</div>
+
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #555C63">Joint opportunities · now visible</span>
+<a href="MOppDetail.dc.html" style="display: flex; flex-direction: column; gap: 4px; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 14px; text-decoration: none; color: #14171A"><span style="font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #0F5E5E">Joint paper</span><span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 16px; font-weight: 600; line-height: 1.3">Capture-and-destroy: light-regenerable fungal membranes for PFAS</span></a>
+<a href="MOppDetail.dc.html" style="display: flex; flex-direction: column; gap: 4px; background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 14px; text-decoration: none; color: #14171A"><span style="font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #7A3A06">Grant co-application</span><span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 16px; font-weight: 600; line-height: 1.3">Canada–Germany call: [CALL NAME] · [DEADLINE]</span></a>
+
+<div style="background: #FFFFFF; border: 1px solid #D9DCD6; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<b style="font-size: 16px">Rate this match</b>
+<div role="radiogroup" aria-label="Match quality" style="display: flex; gap: 4px; align-items: center">
+<sc-for list="{{stars}}" as="s" hint-placeholder-count="5">
+<button type="button" role="radio" aria-checked="{{s.on}}" aria-label="{{s.label}}" onClick="{{s.pick}}" style="width: 48px; height: 48px; border: 0; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="30" height="30" viewBox="0 0 24 24" fill="{{s.fill}}" stroke="#B4570F" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"></path></svg></button>
+</sc-for>
+<span style="font-size: 14px; color: #3A4047; padding-left: 4px">{{label}}</span>
+</div>
+<div style="display: flex; gap: 6px; flex-wrap: wrap">
+<sc-for list="{{reasons}}" as="r" hint-placeholder-count="5">
+<button type="button" onClick="{{r.pick}}" aria-pressed="{{r.on}}" style="{{r.style}}">{{r.label}}</button>
+</sc-for>
+</div>
+<span style="font-size: 12px; color: #555C63">Private — helps Scout find better matches. You can rate again after you've talked.</span>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#2446C7","options":["#2446C7","#0F6E6E","#5B3FB5","#14171A"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { stars: 0, reasons: {} };
+  }
+  renderVals() {
+    const s = this.state;
+    return {
+      accent: this.props.accent ?? '#2446C7',
+      stars: [1, 2, 3, 4, 5].map((n) => ({ on: n === s.stars, label: n + ' of 5', fill: n <= s.stars ? '#E8A15C' : 'none', pick: () => this.setState({ stars: n }) })),
+      label: ['Tap to rate', 'Poor', 'Weak', 'OK', 'Good', 'Excellent'][s.stars],
+      reasons: ['Methods fit', 'Right seniority', 'Shared timeline', 'Too similar', 'Wrong field'].map((label) => ({
+        label, on: !!s.reasons[label],
+        pick: () => this.setState({ reasons: { ...s.reasons, [label]: !s.reasons[label] } }),
+        style: 'font: inherit; font-size: 13px; padding: 8px 12px; min-height: 38px; border-radius: 999px; cursor: pointer; ' + (s.reasons[label] ? 'background: #0F6E6E; color: #FFFFFF; border: 1px solid #0F6E6E;' : 'background: #FFFFFF; color: #3A4047; border: 1px solid #C4C8C1;')
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>
