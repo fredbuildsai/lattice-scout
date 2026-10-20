@@ -45,6 +45,24 @@ Settings are read by `backend/src/scout/settings.py` (`Settings`, pydantic-setti
 | `SUPABASE_SERVICE_ROLE_KEY` | unset | Server-side secret. Never expose it to the frontend or commit it. |
 | `SUPABASE_JWKS_URL` | derived from `SUPABASE_URL` | Explicit JWKS endpoint. The expected issuer still comes from `SUPABASE_URL`, which must therefore be set (known gap: with only this variable, startup fails). |
 
+## Private vault and insights
+
+Read by the API (upload limits, `RETENTION_POLICY`) and by the worker (extraction and insight limits). Restart both after a change. The retention and limit rules are in [private vault](vault.md).
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `RETENTION_POLICY` | `user_choice` | Deployment default for document retention: `keep` (keep the original and text), `discard` (delete the original after reading and keep only quotes and summaries) or `user_choice` (the upload form decides; unticked means discard). Read when the API starts. Provisional until ADR-009 is confirmed. |
+| `VAULT_MAX_BYTES` | `26214400` | Largest accepted upload, in bytes (25 MiB). Larger files get 413. |
+| `VAULT_MAX_PAGES` | `300` | Largest accepted page count. More pages give `too_many_pages`. |
+| `VAULT_MAX_TEXT_CHARS` | `720000` | Largest extracted text, in characters. More gives `text_too_long`. |
+| `VAULT_EXTRACT_TIMEOUT_S` | `60` | CPU seconds for the extraction child process. The parent kills it after this value plus 5 seconds (`extraction_timeout`). |
+| `VAULT_EXTRACT_MEMORY_MB` | `1024` | Address-space limit of the extraction child process, in MB. |
+| `VAULT_MAX_DOCUMENTS` | `50` | Documents per owner, counting failed and rejected ones until deleted. |
+| `INSIGHT_FULL_MAX_CHARS` | `120000` | Documents up to this many characters are analysed in one call. Longer ones are split into slices (map-reduce). |
+| `INSIGHT_SLICE_CHARS` | `60000` | Size of each slice for the map calls. |
+| `INSIGHT_MAP_CONCURRENCY` | `3` | Map calls that run at the same time. |
+| `SUPABASE_STORAGE_BUCKET` | `vault` | Bucket for the documents when `STORAGE_BACKEND=supabase`. Keep it private. |
+
 ## LLM
 
 | Variable | Default | Purpose |
@@ -97,7 +115,6 @@ names stay stable. Each is defined by the milestone in brackets.
 | `RUN_MAX_OPENALEX_CALLS` | `400` | M3 | OpenAlex call limit per run. |
 | `RUN_MAX_CORPUS` | `2500` | M3 | Maximum literature corpus size per run. |
 | `ANALYTICS_RETENTION_DAYS` | `395` | not scheduled | Retention for analytics rows. |
-| `RETENTION_POLICY` | `user_choice` | M2 | Document retention: `keep`, `discard` or `user_choice` (provisional default D6). |
 | `MATCH_MAX_OPEN_PER_WEEK` | `3` | M5 | Matching: open proposals per researcher per week. |
 | `MATCH_EXPIRY_DAYS` | `21` | M5 | Matching: days before a proposal expires. |
 | `MATCH_EXCLUDE_COAUTHORS` | `true` | M5 | Matching: exclude past co-authors. |

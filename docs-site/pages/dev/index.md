@@ -3,9 +3,9 @@
 This guide covers how the code is organised, how to run it, and how to test it. The full specification is in
 [`docs/ARCHITECTURE.md`](https://github.com/fredbuildsai/lattice-scout/blob/main/docs/ARCHITECTURE.md) and the
 build plan is in [`docs/IMPLEMENTATION_PLAN.md`](https://github.com/fredbuildsai/lattice-scout/blob/main/docs/IMPLEMENTATION_PLAN.md).
-Milestones M0 (foundations) and M1 (authentication and profile claim) are in place. Milestones M2 to M7 add the other bounded contexts.
+Milestones M0 (foundations), M1 (authentication and profile claim) and M2 (private vault and ingestion) are in place. Milestones M3 to M7 add the other bounded contexts.
 
-Feature pages: [authentication](auth.md) (dev and Supabase modes), [profile and claim](profile.md) (search, grouping, import), [configuration](configuration.md).
+Feature pages: [authentication](auth.md) (dev and Supabase modes), [profile and claim](profile.md) (search, grouping, import), [private vault](vault.md) (upload, ingestion, retention, storage), [configuration](configuration.md).
 
 ## Architecture overview
 

@@ -10,10 +10,12 @@ nav:
       - dev/index.md
       - Authentication: dev/auth.md
       - Profile and claim: dev/profile.md
+      - Private vault: dev/vault.md
       - Configuration: dev/configuration.md
   - User guide:
       - user/index.md
       - Getting started: user/getting-started.md
+      - Private vault: user/vault.md
 validation:
   links:
     not_found: warn
