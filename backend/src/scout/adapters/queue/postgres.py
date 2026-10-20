@@ -79,6 +79,7 @@ class PostgresJobQueue:
         """Lock the next due job (or a job whose lease expired)."""
         now = self._clock.now()
         async with self._db.engine.begin() as conn:
+            await self._bury_exhausted(conn, now)
             row = (
                 (
                     await conn.execute(

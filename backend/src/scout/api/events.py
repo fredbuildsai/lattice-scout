@@ -53,6 +53,8 @@ async def post_events(request: Request) -> EventsAccepted:
     ctx = get_context()
     now = c.clock.now()
     rejected: list[Rejection] = []
+    if validate_page(batch.session.entry_page):
+        batch.session.entry_page = None
     accepted = 0
     for i, e in enumerate(batch.events):
         reason = validate_event(e.name, e.properties) or validate_page(e.page) or validate_page(e.prev_page)

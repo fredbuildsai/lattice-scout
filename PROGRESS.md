@@ -23,7 +23,8 @@ Last session: 2026-10-20 s01 — M0 tasks 1-12 done, make check green; reviewer 
 - [x] 11 LLM port + FakeLLM + llm-router or direct adapter [architect]
 - [x] 12 Observability foundations [architect]
 - [x] doc-writer pass
-- [ ] reviewer approve, PR
+- [x] reviewer approve (docs/reviews/M0.md round 2)
+- [ ] PR opened
 
 ## M1 — Auth + profile claim
 ## M2 — Vault + ingestion
