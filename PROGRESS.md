@@ -1,7 +1,7 @@
 # Progress
 
 Merge policy: stack
-Current milestone: M0 — Foundations
+Current milestone: M0 — Foundations (done, PR open). Next: M1 on a branch stacked on this one
 Current branch: claude/zealous-curie-7m18vd (harness-designated; used instead of m0-foundations)
 Last session: 2026-10-20 s01 — M0 tasks 1-12 done, make check green; reviewer + PR pending
 
@@ -24,7 +24,7 @@ Last session: 2026-10-20 s01 — M0 tasks 1-12 done, make check green; reviewer 
 - [x] 12 Observability foundations [architect]
 - [x] doc-writer pass
 - [x] reviewer approve (docs/reviews/M0.md round 2)
-- [ ] PR opened
+- [x] PR opened: https://github.com/fredbuildsai/lattice-scout/pull/1 (stack policy: left open)
 
 ## M1 — Auth + profile claim
 ## M2 — Vault + ingestion
