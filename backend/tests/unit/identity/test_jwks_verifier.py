@@ -14,6 +14,7 @@ from tests.fakes.jwt import ISSUER, SUB, FakeJwks, TestKey, claims, forge
 
 from scout.identity.adapters.jwks import SupabaseJwksVerifier
 from scout.identity.ports.auth import InvalidToken
+from scout.shared import InfrastructureError
 from scout.shared.clock import FixedClock
 
 NOW = datetime(2026, 1, 1, 12, 0, tzinfo=UTC)
@@ -118,22 +119,28 @@ async def test_token_signed_by_other_key_same_kid_rejected(verifier: SupabaseJwk
         await verifier.verify(other.sign(claims(NOW)))
 
 
-async def test_unknown_kid_refetches_once_then_rejects(
-    verifier: SupabaseJwksVerifier, jwks: FakeJwks
+async def test_unknown_kid_refetch_is_throttled(
+    verifier: SupabaseJwksVerifier, jwks: FakeJwks, clock: FixedClock
 ) -> None:
     stranger = TestKey("unknown")
+    for _ in range(5):
+        with pytest.raises(InvalidToken):
+            await verifier.verify(stranger.sign(claims(NOW)))
+    assert jwks.calls == 1  # initial load only: garbage tokens cannot hammer the JWKS endpoint
+    clock.advance(timedelta(seconds=31))
     with pytest.raises(InvalidToken):
-        await verifier.verify(stranger.sign(claims(NOW)))
-    assert jwks.calls == 2  # initial load + exactly one refetch
+        await verifier.verify(stranger.sign(claims(clock.now())))
+    assert jwks.calls == 2
 
 
 async def test_unknown_kid_accepted_after_key_rotation(
-    verifier: SupabaseJwksVerifier, jwks: FakeJwks, key: TestKey
+    verifier: SupabaseJwksVerifier, jwks: FakeJwks, key: TestKey, clock: FixedClock
 ) -> None:
     await verifier.verify(key.sign(claims(NOW)))
     new = TestKey("k2")
     jwks.keys.append(new)
-    assert (await verifier.verify(new.sign(claims(NOW)))).sub == UUID(SUB)
+    clock.advance(timedelta(seconds=31))  # past the unknown-kid cooldown
+    assert (await verifier.verify(new.sign(claims(clock.now())))).sub == UUID(SUB)
     assert jwks.calls == 2
 
 
@@ -168,10 +175,29 @@ async def test_cache_seconds_is_configurable(jwks: FakeJwks, key: TestKey, clock
     assert jwks.calls == 2
 
 
-async def test_jwks_fetch_failure_is_invalid_token_not_500(clock: FixedClock, key: TestKey) -> None:
+async def test_jwks_outage_without_keys_is_503_not_401(clock: FixedClock, key: TestKey) -> None:
     async def boom() -> dict[str, object]:
         raise ConnectionError("down")
 
     v = SupabaseJwksVerifier(boom, ISSUER, clock)
-    with pytest.raises(InvalidToken):
+    with pytest.raises(InfrastructureError):
         await v.verify(key.sign(claims(NOW)))
+
+
+async def test_jwks_outage_serves_stale_keys_within_grace(clock: FixedClock, key: TestKey) -> None:
+    ok = FakeJwks(key)
+    state = {"down": False}
+
+    async def fetch() -> dict[str, object]:
+        if state["down"]:
+            raise ConnectionError("down")
+        return await ok()
+
+    v = SupabaseJwksVerifier(fetch, ISSUER, clock)
+    await v.verify(key.sign(claims(NOW, ttl=86400)))
+    state["down"] = True
+    clock.advance(timedelta(minutes=11))  # cache expired, refetch fails, stale keys still serve
+    assert (await v.verify(key.sign(claims(clock.now(), ttl=3600)))).sub == UUID(SUB)
+    clock.advance(timedelta(hours=2))  # beyond the grace period
+    with pytest.raises(InfrastructureError):
+        await v.verify(key.sign(claims(clock.now(), ttl=3600)))

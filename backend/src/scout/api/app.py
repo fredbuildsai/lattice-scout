@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
+import structlog
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -53,4 +54,7 @@ def create_app(container: Container | None = None) -> FastAPI:
     app.include_router(profile.router)
     if (container.settings if container else get_settings()).auth_mode == "dev":
         app.include_router(dev_auth.router)
+        structlog.get_logger().warning(
+            "dev_login_enabled", note="POST /api/v1/dev/login signs in anyone; never expose"
+        )
     return app

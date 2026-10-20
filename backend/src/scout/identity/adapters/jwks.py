@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from collections.abc import Awaitable, Callable
 from datetime import UTC, datetime, timedelta
 from typing import Any
@@ -11,8 +12,10 @@ import httpx
 import jwt
 
 from scout.identity.ports.auth import AuthPrincipal, InvalidToken
-from scout.shared import Clock
+from scout.shared import Clock, InfrastructureError
 
+STALE_GRACE = timedelta(hours=1)
+UNKNOWN_KID_COOLDOWN = timedelta(seconds=30)
 ALLOWED_ALGS = frozenset({"ES256", "RS256", "EdDSA"})
 JwksFetcher = Callable[[], Awaitable[dict[str, Any]]]
 
@@ -43,26 +46,38 @@ class SupabaseJwksVerifier:
         self._ttl = timedelta(seconds=min(cache_seconds, 600))
         self._keys: dict[str, dict[str, Any]] = {}
         self._fetched_at: datetime | None = None
+        self._last_attempt: datetime | None = None
+        self._lock = asyncio.Lock()
 
     async def _refresh(self) -> None:
+        """Fetch the key set. On failure keep serving stale keys for a grace period; with none, answer 503."""
         try:
             doc = await self._fetch()
         except Exception as exc:
-            raise InvalidToken("Unable to load signing keys") from exc
+            self._last_attempt = self._clock.now()
+            stale_ok = self._fetched_at is not None and self._clock.now() - self._fetched_at < STALE_GRACE
+            if stale_ok:
+                return
+            raise InfrastructureError("Signing keys are temporarily unavailable") from exc
         self._keys = {k["kid"]: k for k in doc.get("keys", []) if "kid" in k}
-        self._fetched_at = self._clock.now()
+        self._fetched_at = self._last_attempt = self._clock.now()
 
-    async def _key_for(self, kid: str) -> Any:
-        now = self._clock.now()
-        if self._fetched_at is None or now - self._fetched_at > self._ttl:
-            await self._refresh()
-        if kid not in self._keys:
-            await self._refresh()  # unknown kid: key rotation, refetch once
+    async def _key_for(self, kid: str) -> tuple[Any, str | None]:
+        async with self._lock:
+            now = self._clock.now()
+            if self._fetched_at is None or now - self._fetched_at > self._ttl:
+                await self._refresh()
+            elif kid not in self._keys and (
+                self._last_attempt is None or now - self._last_attempt >= UNKNOWN_KID_COOLDOWN
+            ):
+                await (
+                    self._refresh()
+                )  # unknown kid: key rotation; throttled so garbage tokens cannot hammer the JWKS
         jwk = self._keys.get(kid)
         if jwk is None:
             raise InvalidToken("Unknown signing key")
         try:
-            return jwt.PyJWK(jwk).key
+            return jwt.PyJWK(jwk).key, jwk.get("alg")
         except Exception as exc:
             raise InvalidToken("Unusable signing key") from exc
 
@@ -75,7 +90,9 @@ class SupabaseJwksVerifier:
         alg, kid = header.get("alg"), header.get("kid")
         if alg not in ALLOWED_ALGS or not isinstance(kid, str):
             raise InvalidToken()
-        key = await self._key_for(kid)
+        key, jwk_alg = await self._key_for(kid)
+        if jwk_alg is not None and jwk_alg != alg:
+            raise InvalidToken()
         try:
             claims = jwt.decode(
                 bearer_token,
@@ -87,7 +104,13 @@ class SupabaseJwksVerifier:
             )  # fmt: skip
         except jwt.PyJWTError as exc:
             raise InvalidToken() from exc
-        exp = datetime.fromtimestamp(int(claims["exp"]), tz=UTC)
+        try:
+            exp = datetime.fromtimestamp(int(claims["exp"]), tz=UTC)
+        except (ValueError, TypeError, OverflowError, OSError) as exc:
+            raise InvalidToken() from exc
+        aud = claims.get("aud")
+        if aud is not None and "authenticated" not in ([aud] if isinstance(aud, str) else list(aud)):
+            raise InvalidToken()
         if exp <= self._clock.now():
             raise InvalidToken("Token expired")
         if claims.get("role") != "authenticated":

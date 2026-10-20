@@ -62,7 +62,11 @@ class SqlAccountRepo:
         vals = _values(account)
         vals.pop("id")
         vals.pop("created_at")
-        await self._s.execute(update(t).where(t.c.id == account.id).values(**vals))
+        try:
+            async with self._s.begin_nested():
+                await self._s.execute(update(t).where(t.c.id == account.id).values(**vals))
+        except IntegrityError as exc:
+            raise EmailInUse("This e-mail address belongs to another account") from exc
 
 
 class SqlIdentityUnitOfWork(SqlUnitOfWork):

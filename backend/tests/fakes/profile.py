@@ -34,6 +34,12 @@ class InMemoryResearcherRepo:
     async def get(self, researcher_id: UUID) -> Researcher | None:
         return copy.deepcopy(self.data.get(researcher_id))
 
+    async def get_for_update(self, researcher_id: UUID) -> Researcher | None:
+        return await self.get(researcher_id)
+
+    async def lock_authors(self, author_ids: Collection[str]) -> None:
+        return None
+
     async def find_by_author_ids(self, author_ids: Collection[str]) -> list[Researcher]:
         return [copy.deepcopy(r) for r in self.data.values() if set(r.author_ids) & set(author_ids)]
 

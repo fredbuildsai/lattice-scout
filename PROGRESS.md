@@ -1,7 +1,7 @@
 # Progress
 
 Merge policy: stack
-Current milestone: M0 — Foundations (done, PR open). Next: M1 on a branch stacked on this one
+Current milestone: M1 — Auth + profile claim (backend done, review fixes in progress). M0 done, PR #1 open (M1 added to the same branch)
 Current branch: claude/zealous-curie-7m18vd (harness-designated; used instead of m0-foundations)
 Last session: 2026-10-20 s01 — M0 tasks 1-12 done, make check green; reviewer + PR pending
 
@@ -32,8 +32,9 @@ Last session: 2026-10-20 s01 — M0 tasks 1-12 done, make check green; reviewer 
 - [x] B3 `LiteraturePort`, `OpenAlexClient`, `FixtureLiterature`, contract tests
 - [x] B4 profile: grouping, claim, import job, toggle [architect: docs/design/M1-identity-profile-claim.md]
 - [x] B5 endpoints `/profile/*`
-- [ ] F1–F3 auth clients, sign-in, claim flow [frontend] (in progress)
-- [ ] doc-writer pass, reviewer approve, PR update
+- [x] F1–F3 auth clients, sign-in, claim flow [frontend] (works-confirmation list + retry pending after review)
+- [x] doc-writer pass
+- [ ] reviewer approve (round 1: changes requested; fixes in progress), PR description update
 ## M2 — Vault + ingestion
 ## M3 — Gap analysis engine
 ## M4 — Opportunities UX + feedback

@@ -97,3 +97,13 @@ async def test_update_consent_audits_each_change() -> None:
         await svc.update_consent(AccountId(UUID(int=1)), None, None)
     with pytest.raises(NotFound):
         await svc.update_consent(AccountId(UUID(int=99)), True, None)
+
+
+async def test_email_collision_on_sync_is_conflict_and_audit_has_domains_only() -> None:
+    from scout.identity.domain.account import EmailInUse  # noqa: F401
+
+    svc, store, _ = _svc()
+    await svc.ensure_account(UUID(int=1), "x@example.edu")
+    await svc.ensure_account(UUID(int=1), "y@example.org")
+    entry = next(e for e in store.audit.entries if e.action == "account.email_changed")
+    assert entry.meta == {"from_domain": "example.edu", "to_domain": "example.org"}

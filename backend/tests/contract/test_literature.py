@@ -205,3 +205,14 @@ async def test_live_openalex_search() -> None:
         )
         hits = await c.search_authors("Johan Foster")
     assert any(h.orcid == ORCID for h in hits)
+
+
+def test_retry_after_parsing_is_defensive_and_capped() -> None:
+    from scout.adapters.literature.openalex import MAX_BACKOFF, _retry_after
+
+    assert _retry_after("3", 1) == 3
+    assert _retry_after("999", 1) == MAX_BACKOFF
+    assert _retry_after("Wed, 21 Oct 2099 07:28:00 GMT", 1) == MAX_BACKOFF
+    assert _retry_after("Wed, 21 Oct 2015 07:28:00 GMT", 1) == 0
+    assert _retry_after("garbage", 2) == 2
+    assert _retry_after(None, 4) == 4

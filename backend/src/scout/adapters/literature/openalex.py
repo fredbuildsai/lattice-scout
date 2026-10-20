@@ -7,7 +7,8 @@ import hashlib
 import json
 import time
 from collections.abc import Awaitable, Callable
-from datetime import timedelta
+from datetime import UTC, datetime, timedelta
+from email.utils import parsedate_to_datetime
 from typing import Any, Protocol
 
 import httpx
@@ -100,7 +101,7 @@ class OpenAlexClient:
                 raise InfrastructureError("OpenAlex unreachable") from exc
             if r.status_code in RETRY_STATUS and attempt < self._max_retries:
                 self._record(endpoint, "error", r.status_code, _ms(started))
-                await self._sleep(float(r.headers.get("retry-after", 2**attempt)))
+                await self._sleep(_retry_after(r.headers.get("retry-after"), 2**attempt))
                 continue
             if r.status_code == 404:
                 self._record(endpoint, "ok", 404, _ms(started))
@@ -201,3 +202,20 @@ class OpenAlexClient:
 
 def _ms(started: float) -> int:
     return int((time.perf_counter() - started) * 1000)
+
+
+MAX_BACKOFF = 10.0
+
+
+def _retry_after(value: str | None, default: float) -> float:
+    """Seconds to wait: ``Retry-After`` as seconds or HTTP date, capped (request-path friendly)."""
+    delay = default
+    if value:
+        try:
+            delay = float(value)
+        except ValueError:
+            try:
+                delay = (parsedate_to_datetime(value) - datetime.now(UTC)).total_seconds()
+            except (TypeError, ValueError):
+                delay = default
+    return max(0.0, min(delay, MAX_BACKOFF))

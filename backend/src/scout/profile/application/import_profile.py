@@ -36,7 +36,7 @@ class ImportProfile:
         """Run the import for ``payload['researcher_id']`` / ``generation``."""
         rid, gen = UUID(str(payload["researcher_id"])), int(str(payload["generation"]))
         async with self._uow() as uow:
-            r = await uow.researchers.get(rid)
+            r = await uow.researchers.get_for_update(rid)
             if r is None or r.import_generation != gen or r.import_status == ImportStatus.DONE:
                 return {"skipped": "stale" if r else "missing"}
             r.start_import(gen, self._clock.now())
@@ -56,7 +56,7 @@ class ImportProfile:
                     log.warning("import_author_missing", author_id=author_id)
                     records = []
                 async with self._uow() as uow:
-                    r = await uow.researchers.get(rid)
+                    r = await uow.researchers.get_for_update(rid)
                     if r is None or r.import_generation != gen:
                         return {"skipped": "stale"}
                     existing = {w.openalex_work_id: w for w in await uow.works.list_for(rid)}
@@ -72,24 +72,31 @@ class ImportProfile:
                     next(x for x in r.openalex_ids if x.author_id == author_id).imported_generation = gen
                     await uow.researchers.save(r)
                     await uow.commit()
+            async with self._uow() as uow:  # read-only peek to learn the primary id
+                peek = await uow.researchers.get(rid)
+            if peek is None or peek.import_generation != gen:
+                return {"skipped": "stale"}
+            try:
+                snapshot = await self._lit.get_author(peek.primary_author_id)  # no transaction open
+                institution = snapshot.institutions[0] if snapshot.institutions else None
+                country = snapshot.country
+            except NotFound:
+                institution = country = None
             async with self._uow() as uow:
-                r = await uow.researchers.get(rid)
+                r = await uow.researchers.get_for_update(rid)
                 if r is None or r.import_generation != gen:
                     return {"skipped": "stale"}
                 await uow.works.delete_unsourced(rid, r.author_ids)
                 works = await uow.works.list_for(rid)
-                primary = next(x for x in r.openalex_ids if not x.merged)
-                snapshot = await self._lit.get_author(primary.author_id)
                 r.finish_import(
-                    gen, compute_topics(works, self._cfg.max_topics),
-                    snapshot.institutions[0] if snapshot.institutions else None, snapshot.country, self._clock.now(),
-                )  # fmt: skip
+                    gen, compute_topics(works, self._cfg.max_topics), institution, country, self._clock.now()
+                )
                 await uow.researchers.save(r)
                 await uow.commit()
         except Exception:
             if last_attempt:
                 async with self._uow() as uow:
-                    r = await uow.researchers.get(rid)
+                    r = await uow.researchers.get_for_update(rid)
                     if r is not None and r.fail_import(gen, "import_failed", self._clock.now()):
                         await uow.researchers.save(r)
                         await uow.commit()

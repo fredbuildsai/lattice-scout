@@ -173,16 +173,17 @@ class Researcher(AggregateRoot):
             )
         )  # fmt: skip
 
-    def recompute_verification(self, *, contested: bool) -> None:
-        """Contested wins; else ORCID-matched when the primary has an ORCID and all records share it."""
-        if contested:
-            self.verified_level = VerifiedLevel.CONTESTED
-            return
+    def level_without_conflict(self) -> VerifiedLevel:
+        """ORCID-matched when the primary has an ORCID and all records share it, else self-claimed."""
         primary = next(r for r in self.openalex_ids if not r.merged)
         ok = primary.orcid is not None and all(
             r.basis in (RecordBasis.PRIMARY, RecordBasis.ORCID) for r in self.openalex_ids
         )
-        self.verified_level = VerifiedLevel.ORCID_MATCHED if ok else VerifiedLevel.SELF_CLAIMED
+        return VerifiedLevel.ORCID_MATCHED if ok else VerifiedLevel.SELF_CLAIMED
+
+    def recompute_verification(self, *, contested: bool) -> None:
+        """Contested wins; otherwise the level without conflict."""
+        self.verified_level = VerifiedLevel.CONTESTED if contested else self.level_without_conflict()
 
     def start_import(self, generation: int, now: datetime) -> bool:
         """Mark importing; False for a stale generation."""

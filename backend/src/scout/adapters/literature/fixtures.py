@@ -42,7 +42,7 @@ class FixtureLiterature:
         want = _tokens(text)
         best = max(entries, key=lambda e: len(want & _tokens(e["params"][key])))
         if best["params"][key] != text:
-            log.warning("fixture_query_fallback", method=method, wanted=text, used=best["params"][key])
+            log.warning("fixture_query_fallback", method=method)
         return best
 
     async def search_authors(self, name: str, affiliation_hint: str | None = None) -> list[AuthorCandidate]:

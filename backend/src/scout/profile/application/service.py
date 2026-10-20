@@ -106,7 +106,7 @@ class ProfileService:
                 g = CandidateGroup(
                     primary=g.primary,
                     records=tuple(
-                        r.model_copy(update={"snapshot": r.snapshot.model_copy(update={"topics": full.topics})})
+                        r.model_copy(update={"snapshot": r.snapshot.model_copy(update={"topics": full.topics, "cited_by_count": full.cited_by_count})})
                         if r.snapshot.id == g.primary.id else r
                         for r in g.records
                     ),
@@ -158,7 +158,11 @@ class ProfileService:
         now = self._clock.now()
         enqueue = False
         async with self._uow() as uow:
+            await uow.researchers.lock_authors(ids)
             current = await uow.researchers.get_by_account(account_id)
+            if current is not None:
+                await uow.researchers.lock_authors(current.author_ids)
+                current = await uow.researchers.get_for_update(current.id)
             old_ids: set[str] = set(current.author_ids) if current else set()
             if (
                 current is not None
@@ -249,6 +253,9 @@ class ProfileService:
         """Include/exclude a work; topics are recomputed. Another user's work is a 404."""
         async with self._uow() as uow:
             r = await uow.researchers.get_by_account(account_id)
+            if r is None:
+                raise ProfileNotFound()
+            r = await uow.researchers.get_for_update(r.id)
             if r is None:
                 raise ProfileNotFound()
             work = await uow.works.get(work_id, r.id)

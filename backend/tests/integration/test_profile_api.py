@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import asyncio
 from collections.abc import Iterator
+from uuid import NAMESPACE_URL, UUID, uuid5
 
 import pytest
 from fastapi.testclient import TestClient
@@ -132,13 +133,81 @@ def test_unknown_author_and_conflicting_orcids(client: TestClient) -> None:
     assert r.status_code == 422 and r.json()["code"] == "conflicting_orcids"
 
 
-def test_two_accounts_same_author_are_contested(client: TestClient) -> None:
+def test_two_accounts_same_author_do_not_reveal_each_other(client: TestClient) -> None:
     a, b = _login(client, "ada@example.edu"), _login(client, "bob@example.edu")
+    before = client.get("/api/v1/me", headers=a).json()
     client.post("/api/v1/profile/claim", json={"author_ids": [MOREIRA]}, headers=a)
-    client.post("/api/v1/profile/claim", json={"author_ids": [MOREIRA]}, headers=b)
-    me_a = client.get("/api/v1/me", headers=a).json()["researcher"]
-    assert me_a["verified_level"] == "contested"
-    assert "bob" not in str(client.get("/api/v1/me", headers=a).json())
+    alone = client.get("/api/v1/me", headers=a).json()
+    rb = client.post("/api/v1/profile/claim", json={"author_ids": [MOREIRA]}, headers=b)
+    after = client.get("/api/v1/me", headers=a).json()
+    assert before["researcher"] is None
+    # nothing the claimants can see changes when the other one claims the same id
+    assert alone == after and rb.json()["verified_level"] == "orcid_matched"
+    for payload in (str(after), str(rb.json()), str(client.get("/api/v1/profile", headers=a).json())):
+        assert "bob" not in payload and "ada" not in payload.replace("ada@example.edu", "")
+    # internally both are contested (matching must skip them); only the audit log records the conflict
+    from sqlalchemy import create_engine, text
+
+    eng = create_engine(TEST_URL)
+    with eng.connect() as conn:
+        assert (
+            conn.execute(
+                text("SELECT count(*) FROM researcher WHERE verified_level = 'contested'")
+            ).scalar_one()
+            == 2
+        )
+        assert (
+            conn.execute(
+                text("SELECT count(*) FROM audit_log WHERE action = 'profile.claim_conflict'")
+            ).scalar_one()
+            == 1
+        )
+    eng.dispose()
+
+
+def test_concurrent_claims_of_same_author_both_become_contested(client: TestClient) -> None:
+    a, b = _login(client, "ada@example.edu"), _login(client, "bob@example.edu")
+    client.get("/api/v1/me", headers=a)
+    client.get("/api/v1/me", headers=b)
+
+    async def race() -> None:
+        c = build_container(_settings())
+
+        def sub(e: str) -> UUID:
+            return uuid5(NAMESPACE_URL, f"scout-dev:{e}")
+
+        from scout.shared import AccountId
+
+        await asyncio.gather(
+            c.profile.claim(AccountId(sub("ada@example.edu")), [MOREIRA], None, None),
+            c.profile.claim(AccountId(sub("bob@example.edu")), [MOREIRA], None, None),
+        )
+        await c.db.dispose()
+
+    asyncio.run(race())
+    from sqlalchemy import create_engine, text
+
+    eng = create_engine(TEST_URL)
+    with eng.connect() as conn:
+        assert (
+            conn.execute(
+                text("SELECT count(*) FROM researcher WHERE verified_level = 'contested'")
+            ).scalar_one()
+            == 2
+        )
+    eng.dispose()
+
+
+def test_toggle_during_import_is_not_overwritten(client: TestClient) -> None:
+    h = _login(client, "ada@example.edu")
+    client.post("/api/v1/profile/claim", json={"author_ids": [FOSTER]}, headers=h)
+    assert _run_worker() == 1
+    work = next(w for w in client.get("/api/v1/profile", headers=h).json()["works"] if w["included"])
+    client.patch(f"/api/v1/profile/works/{work['id']}", json={"included": False}, headers=h)
+    client.post("/api/v1/profile/claim", json={"author_ids": [FOSTER, SPLIT]}, headers=h)  # new generation
+    assert _run_worker() == 1
+    again = next(w for w in client.get("/api/v1/profile", headers=h).json()["works"] if w["id"] == work["id"])
+    assert again["included"] is False and again["included_by_user"] is True
 
 
 def test_ensure_account_is_race_safe(client: TestClient) -> None:
@@ -162,3 +231,20 @@ def test_ensure_account_is_race_safe(client: TestClient) -> None:
             == 1
         )
     eng.dispose()
+
+
+def test_email_change_colliding_with_other_account_is_409_not_500(client: TestClient) -> None:
+    from scout.identity.adapters.dev_auth import DevTokenIssuer
+
+    h1, _ = _login(client, "ada@example.edu"), _login(client, "bob@example.edu")
+    client.get("/api/v1/me", headers=h1)
+    client.get("/api/v1/me", headers=_login(client, "bob@example.edu"))
+    c = client.app.state.container  # type: ignore[attr-defined]
+    issuer: DevTokenIssuer = c.dev_tokens
+    import jwt
+
+    claims = jwt.decode(issuer.issue("ada@example.edu"), options={"verify_signature": False})
+    claims["email"] = "bob@example.edu"  # ada's token now carries bob's address
+    tok = jwt.encode(claims, c.dev_tokens._keys.private, algorithm="ES256", headers={"kid": "dev-1"})
+    r = client.get("/api/v1/me", headers={"Authorization": f"Bearer {tok}"})
+    assert r.status_code == 409 and r.json()["code"] == "email_in_use"

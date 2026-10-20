@@ -75,8 +75,13 @@ class IdentityService:
                 account = await uow.accounts.get(account_id)  # lost the race
                 if account is None:  # pragma: no cover - defensive
                     raise NotFound("Account not found")
+            old_domain = account.email.rsplit("@", 1)[-1]
             if account.sync_email(email, now):
                 await uow.accounts.save(account)
+                await self._audit(
+                    uow, sub, "account.email_changed", str(sub),
+                    {"from_domain": old_domain, "to_domain": account.email.rsplit("@", 1)[-1]},
+                )  # fmt: skip
                 await uow.commit()
             account.ensure_active()
             return account

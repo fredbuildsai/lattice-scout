@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Collection
 from uuid import UUID, uuid4
 
-from sqlalchemy import delete, insert, select, text, update
+from sqlalchemy import case, delete, func, insert, select, text, update
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -99,6 +99,21 @@ class SqlResearcherRepo:
         rows = (await self._s.execute(select(m.researcher).where(m.researcher.c.id == researcher_id))).all()
         found = await self._load(list(rows))
         return found[0] if found else None
+
+    async def get_for_update(self, researcher_id: UUID) -> Researcher | None:
+        """Row-locking read."""
+        rows = (
+            await self._s.execute(
+                select(m.researcher).where(m.researcher.c.id == researcher_id).with_for_update()
+            )
+        ).all()
+        found = await self._load(list(rows))
+        return found[0] if found else None
+
+    async def lock_authors(self, author_ids: Collection[str]) -> None:
+        """``pg_advisory_xact_lock`` per author id, in sorted order (no deadlocks between claimants)."""
+        for aid in sorted(set(author_ids)):
+            await self._s.execute(text("SELECT pg_advisory_xact_lock(hashtext(:k))"), {"k": f"author:{aid}"})
 
     async def find_by_author_ids(self, author_ids: Collection[str]) -> list[Researcher]:
         """Every researcher that claimed one of the ids."""
@@ -229,13 +244,26 @@ class SqlWorkRepo:
         if not works:
             return
         stmt = pg_insert(m.claimed_work).values([_work_values(w) for w in works])
-        update_cols = {
+        update_cols: dict[str, object] = {
             c: stmt.excluded[c]
             for c in (
-                "doi", "title", "year", "cited_by", "type", "abstract", "topics", "source_author_ids", "included",
-                "included_by_user", "uncertain_reason",
+                "doi",
+                "title",
+                "year",
+                "cited_by",
+                "type",
+                "abstract",
+                "topics",
+                "source_author_ids",
+                "uncertain_reason",
             )
-        }  # fmt: skip
+        }
+        # A concurrent user toggle always wins over the importer's (possibly stale) copy.
+        update_cols["included"] = case(
+            (m.claimed_work.c.included_by_user.is_(True), m.claimed_work.c.included),
+            else_=stmt.excluded["included"],
+        )
+        update_cols["updated_at"] = func.now()
         await self._s.execute(
             stmt.on_conflict_do_update(
                 constraint="claimed_work_researcher_id_openalex_work_id_key", set_=update_cols
@@ -247,6 +275,7 @@ class SqlWorkRepo:
         vals = _work_values(work)
         vals.pop("id")
         vals.pop("researcher_id")
+        vals["updated_at"] = func.now()
         await self._s.execute(update(m.claimed_work).where(m.claimed_work.c.id == work.id).values(**vals))
 
     async def delete_unsourced(self, researcher_id: UUID, keep_author_ids: Collection[str]) -> int:

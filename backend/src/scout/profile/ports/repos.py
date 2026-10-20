@@ -23,6 +23,14 @@ class ResearcherRepo(Protocol):
         """A researcher by id."""
         ...
 
+    async def get_for_update(self, researcher_id: UUID) -> Researcher | None:
+        """Like ``get`` but locks the row until the transaction ends (serialises writers per researcher)."""
+        ...
+
+    async def lock_authors(self, author_ids: Collection[str]) -> None:
+        """Take transaction-scoped locks on OpenAlex author ids so concurrent claims of the same id serialise."""
+        ...
+
     async def find_by_author_ids(self, author_ids: Collection[str]) -> list[Researcher]:
         """Every researcher (any account) that claimed one of the ids."""
         ...
