@@ -38,7 +38,14 @@ async def main() -> None:
         loop.add_signal_handler(sig, stop.set)
     worker_id = f"{socket.gethostname()}-{os.getpid()}"
     try:
-        await run_forever(queue, handlers, worker_id, s.worker_poll_interval_ms / 1000, stop)
+        await run_forever(
+            queue,
+            handlers,
+            worker_id,
+            s.worker_poll_interval_ms / 1000,
+            stop,
+            max(s.job_lease_seconds / 3, 1.0),
+        )
     finally:
         await close_container(c)
 

@@ -72,6 +72,13 @@ class InMemoryJobQueue:
         )
         self.results[job_id] = result
 
+    async def heartbeat(self, job_id: UUID, worker_id: str) -> bool:
+        job = self.jobs.get(job_id)
+        if job is None or job.status != JobStatus.RUNNING or job.locked_by != worker_id:
+            return False
+        self.jobs[job_id] = job.model_copy(update={"locked_at": self.clock.now()})
+        return True
+
     async def fail(self, job_id: UUID, error: str, retry_in: int | None) -> None:
         job = self.jobs[job_id]
         if retry_in is None or job.attempts >= job.max_attempts:

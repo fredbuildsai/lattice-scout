@@ -113,3 +113,33 @@ async def test_concurrent_same_dedupe_key_returns_one_id(make: Callable[[FixedCl
     q = make(FixedClock(T0))
     ids = await asyncio.gather(*(q.enqueue(JobSpec(kind="k", dedupe_key="same")) for _ in range(8)))
     assert len(set(ids)) == 1
+
+
+async def test_heartbeat_keeps_a_long_job_from_being_reclaimed(
+    make: Callable[[FixedClock], JobQueuePort],
+) -> None:
+    clock = FixedClock(T0)
+    q = make(clock)
+    await q.enqueue(JobSpec(kind="k", max_attempts=3))
+    job = await q.claim("w1", ["k"])
+    assert job
+    for _ in range(4):  # 4 x 200 s: far beyond the 300 s lease, but beating every 200 s
+        clock.advance(timedelta(seconds=200))
+        assert await q.heartbeat(job.id, "w1") is True
+        assert await q.claim("w2", ["k"]) is None
+    clock.advance(timedelta(seconds=301))  # the worker died: the lease expires and another worker takes over
+    taken = await q.claim("w2", ["k"])
+    assert taken is not None and taken.attempts == 2
+
+
+async def test_heartbeat_from_a_stranger_or_after_completion_is_refused(
+    make: Callable[[FixedClock], JobQueuePort],
+) -> None:
+    clock = FixedClock(T0)
+    q = make(clock)
+    await q.enqueue(JobSpec(kind="k"))
+    job = await q.claim("w1", ["k"])
+    assert job
+    assert await q.heartbeat(job.id, "w2") is False
+    await q.complete(job.id, {})
+    assert await q.heartbeat(job.id, "w1") is False

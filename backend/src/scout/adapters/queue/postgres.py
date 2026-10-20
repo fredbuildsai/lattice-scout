@@ -103,6 +103,18 @@ class PostgresJobQueue:
                 {"r": json.dumps(result), "now": self._clock.now(), "id": job_id},
             )
 
+    async def heartbeat(self, job_id: UUID, worker_id: str) -> bool:
+        """Push ``locked_at`` forward so a long handler keeps its lease."""
+        async with self._db.engine.begin() as conn:
+            res = await conn.execute(
+                text(
+                    "UPDATE job SET locked_at=:now, updated_at=:now "
+                    "WHERE id=:id AND status='running' AND locked_by=:w"
+                ),
+                {"now": self._clock.now(), "id": job_id, "w": worker_id},
+            )
+        return bool(res.rowcount)
+
     async def fail(self, job_id: UUID, error: str, retry_in: int | None) -> None:
         """Requeue in ``retry_in`` seconds, or mark dead when out of attempts / no retry requested."""
         now = self._clock.now()

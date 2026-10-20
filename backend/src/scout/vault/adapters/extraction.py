@@ -44,8 +44,10 @@ class PdfDocxExtractor:
                 proc.kill()
             await proc.wait()
             raise ExtractionRejected("extraction_timeout") from None
-        if proc.returncode == -signal.SIGXCPU:
-            raise ExtractionRejected("extraction_timeout")
+        if proc.returncode in (-signal.SIGXCPU, -signal.SIGKILL):  # CPU limit, or the kernel's memory killer
+            raise ExtractionRejected(
+                "extraction_timeout" if proc.returncode == -signal.SIGXCPU else "too_complex"
+            )
         if proc.returncode != 0:
             raise ExtractionRejected("corrupt_file")
         try:

@@ -1595,15 +1595,20 @@
             },
             "description": "Successful Response"
           },
+          "401": {
+            "description": "Missing or invalid token (checked before the body is read)."
+          },
+          "409": {
+            "description": "`vault_limit_reached`: delete a document first."
+          },
+          "413": {
+            "description": "`file_too_large` (the limit is 25 MB)."
+          },
+          "415": {
+            "description": "`unsupported_file_type`: only PDF and DOCX."
+          },
           "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
+            "description": "`file_rejected` (empty, damaged or an unsafe archive) or `validation_failed`."
           }
         },
         "summary": "Upload a PDF or DOCX to your private vault",

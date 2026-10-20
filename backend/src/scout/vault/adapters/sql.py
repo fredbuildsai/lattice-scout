@@ -125,6 +125,11 @@ class SqlDocumentRepo:
             async with self._s.begin_nested():
                 await self._s.execute(insert(m.document).values(id=document.id, **_values(document)))
         except IntegrityError as exc:
+            if (
+                getattr(getattr(exc.orig, "diag", None), "constraint_name", None)
+                != "document_owner_sha_active_idx"
+            ):
+                raise  # e.g. the account was deleted meanwhile: not a duplicate
             raise DuplicateDocument("Document already in the vault") from exc
 
     async def save(self, document: Document) -> None:

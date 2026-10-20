@@ -42,11 +42,28 @@ class UnsupportedFileType(ScoutError):
     title = "Unsupported file type"
 
 
+def _declared_entries(data: bytes) -> int | None:
+    """Entry count from the end-of-central-directory record, read without parsing the directory."""
+    tail = data[-(22 + 65535) :]
+    pos = tail.rfind(b"PK\x05\x06")
+    if pos < 0 or len(tail) < pos + 12:
+        return None
+    return int.from_bytes(tail[pos + 10 : pos + 12], "little")
+
+
 def sniff_mime(data: bytes) -> DocumentMime | None:
-    """Detect PDF or DOCX from the bytes. The declared Content-Type and the extension are ignored."""
+    """Detect PDF or DOCX from the bytes. The declared Content-Type and the extension are ignored.
+
+    Raises:
+        FileRejected: ``zip_bomb`` for an archive that declares more than ``MAX_ZIP_ENTRIES`` entries (refused
+            before the directory is parsed, so a hostile file cannot stall the caller).
+    """
     if b"%PDF-" in data[:1024]:
         return DocumentMime.PDF
     if data[:4] == b"PK\x03\x04":
+        declared = _declared_entries(data)
+        if declared is not None and declared > MAX_ZIP_ENTRIES:
+            raise FileRejected("zip_bomb")
         try:
             with zipfile.ZipFile(io.BytesIO(data)) as z:
                 names = set(z.namelist())
@@ -63,6 +80,9 @@ def check_zip(data: bytes) -> None:
     Raises:
         FileRejected: ``zip_bomb`` or ``corrupt_file``.
     """
+    declared = _declared_entries(data)
+    if declared is not None and declared > MAX_ZIP_ENTRIES:
+        raise FileRejected("zip_bomb")
     try:
         with zipfile.ZipFile(io.BytesIO(data)) as z:
             infos = z.infolist()

@@ -14,6 +14,7 @@ from scout.api import dev_auth, events, health, identity, profile, vault
 from scout.api.errors import install_error_handlers
 from scout.api.logging import configure_logging
 from scout.api.middleware import RequestContextMiddleware
+from scout.api.upload_guard import UploadGuard
 from scout.bootstrap import Container, build_container, close_container, start_container
 from scout.settings import get_settings
 
@@ -40,6 +41,11 @@ def create_app(container: Container | None = None) -> FastAPI:
 
     app = FastAPI(title="Lattice Scout API", version="0.1.0", lifespan=lifespan)
     app.add_middleware(RequestContextMiddleware)
+    app.add_middleware(
+        UploadGuard,
+        path="/api/v1/documents",
+        max_file_bytes=(container.settings if container else get_settings()).vault_max_bytes,
+    )
     app.add_middleware(
         CORSMiddleware,
         allow_origins=(container.settings if container else get_settings()).cors_origins,

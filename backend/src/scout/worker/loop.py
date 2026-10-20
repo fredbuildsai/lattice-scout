@@ -42,24 +42,48 @@ def _context_from(job: Job) -> RequestContext:
     )
 
 
-async def run_once(queue: JobQueuePort, handlers: Mapping[str, Handler], worker_id: str) -> bool:
-    """Process at most one job. Returns True if a job was claimed."""
+async def _beat(queue: JobQueuePort, job_id: UUID, worker_id: str, every: float) -> None:
+    """Keep the lease of a long-running job alive until cancelled."""
+    while True:
+        await asyncio.sleep(every)
+        try:
+            await queue.heartbeat(job_id, worker_id)
+        except Exception:
+            log.warning("job_heartbeat_failed", job_id=str(job_id))
+
+
+async def run_once(
+    queue: JobQueuePort, handlers: Mapping[str, Handler], worker_id: str, heartbeat_s: float = 60.0
+) -> bool:
+    """Process at most one job. Returns True if a job was claimed.
+
+    The lease is extended every ``heartbeat_s`` seconds while the handler runs, so a long job (many LLM calls) is
+    not claimed by a second worker.
+    """
     job = await queue.claim(worker_id, list(handlers))
     if job is None:
         return False
     set_context(_context_from(job))
-    try:
-        with trace.get_tracer("scout.worker").start_as_current_span(f"job.{job.kind}") as span:
-            span.set_attribute("job.id", str(job.id))
-            span.set_attribute("job.attempts", job.attempts)
+    with trace.get_tracer("scout.worker").start_as_current_span(
+        f"job.{job.kind}", record_exception=False, set_status_on_exception=False
+    ) as span:
+        span.set_attribute("job.id", str(job.id))
+        span.set_attribute("job.attempts", job.attempts)
+        beat = asyncio.create_task(_beat(queue, job.id, worker_id, heartbeat_s))
+        try:
             result = await handlers[job.kind](job)
-    except Exception as exc:
-        safe = describe_exception(exc)
-        log.warning("job_failed", job_id=str(job.id), kind=job.kind, attempt=job.attempts, error=safe)
-        await queue.fail(job.id, safe, retry_delay(job.attempts))
-    else:
-        await queue.complete(job.id, result)
-        log.info("job_done", job_id=str(job.id), kind=job.kind)
+        except Exception as exc:
+            safe = describe_exception(exc)
+            span.set_status(
+                trace.Status(trace.StatusCode.ERROR, safe)
+            )  # never the raw message (may quote vault text)
+            log.warning("job_failed", job_id=str(job.id), kind=job.kind, attempt=job.attempts, error=safe)
+            await queue.fail(job.id, safe, retry_delay(job.attempts))
+        else:
+            await queue.complete(job.id, result)
+            log.info("job_done", job_id=str(job.id), kind=job.kind)
+        finally:
+            beat.cancel()
     return True
 
 
@@ -69,10 +93,11 @@ async def run_forever(
     worker_id: str,
     poll_interval: float,
     stop: asyncio.Event,
+    heartbeat_s: float = 60.0,
 ) -> None:
     """Poll until ``stop`` is set."""
     while not stop.is_set():
-        if not await run_once(queue, handlers, worker_id):
+        if not await run_once(queue, handlers, worker_id, heartbeat_s):
             try:
                 await asyncio.wait_for(stop.wait(), timeout=poll_interval)
             except TimeoutError:

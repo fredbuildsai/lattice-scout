@@ -26,10 +26,8 @@ from scout.vault.domain.document import Document
 from scout.vault.domain.enums import DocKind
 from scout.vault.domain.ids import ChunkId
 from scout.vault.domain.insights import InsightItem, Section
-from scout.vault.domain.upload import FileTooLarge
 
 router = APIRouter(prefix="/api/v1/documents", tags=["vault"])
-_ENVELOPE = 64 * 1024  # multipart framing allowed on top of the file limit
 
 
 def _doc_out(d: Document) -> DocumentOut:
@@ -79,7 +77,14 @@ def _insights_out(detail: DocumentDetail) -> InsightsOut | None:
     summary="Upload a PDF or DOCX to your private vault",
     status_code=201,
     response_model=DocumentOut,
-    responses={200: {"description": "The same file is already in your vault; nothing was created."}},
+    responses={
+        200: {"description": "The same file is already in your vault; nothing was created."},
+        401: {"description": "Missing or invalid token (checked before the body is read)."},
+        409: {"description": "`vault_limit_reached`: delete a document first."},
+        413: {"description": "`file_too_large` (the limit is 25 MB)."},
+        415: {"description": "`unsupported_file_type`: only PDF and DOCX."},
+        422: {"description": "`file_rejected` (empty, damaged or an unsafe archive) or `validation_failed`."},
+    },
 )
 async def upload_document(
     request: Request,
@@ -94,9 +99,6 @@ async def upload_document(
     """The type is detected from the content. Re-uploading the same bytes returns the existing document (200)."""
     c = get_container(request)
     limit = c.settings.vault_max_bytes
-    declared = request.headers.get("content-length")
-    if declared and declared.isdigit() and int(declared) > limit + _ENVELOPE:
-        raise FileTooLarge("The file is larger than the limit")
     data = await file.read(limit + 1)
     session = get_context().session_id
     result = await c.upload_document.upload(

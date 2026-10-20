@@ -117,6 +117,18 @@ def describe_exception(exc: BaseException, limit: int = 200) -> str:
     Pydantic validation errors embed the offending input (possibly vault text), so only their locations and
     error types are kept.
     """
+    orig = getattr(
+        exc, "orig", None
+    )  # SQLAlchemy DBAPIError: the driver message quotes row values and JSON text
+    if orig is not None:
+        state = getattr(orig, "sqlstate", None) or getattr(orig, "pgcode", None)
+        constraint = getattr(getattr(orig, "diag", None), "constraint_name", None)
+        parts = [
+            type(orig).__name__,
+            f"sqlstate={state}" if state else "",
+            f"constraint={constraint}" if constraint else "",
+        ]
+        return f"{type(exc).__name__}: {' '.join(p for p in parts if p)}"[:limit]
     errors = getattr(exc, "errors", None)
     if callable(errors):
         try:

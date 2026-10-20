@@ -15,6 +15,15 @@ from scout.shared.context import get_context
 RETRIES = 3
 
 
+def _body_status(r: httpx.Response) -> str | None:
+    """Supabase Storage answers 400 with ``statusCode: "404"`` for a missing object (and 400 for other errors)."""
+    try:
+        body = r.json()
+    except ValueError:
+        return None
+    return str(body.get("statusCode")) if isinstance(body, dict) else None
+
+
 class SupabaseStorage:
     """``FileStoragePort`` over the Storage REST API. Keys never contain filenames; no endpoint metric holds a key."""
 
@@ -96,7 +105,7 @@ class SupabaseStorage:
         """Download via the authenticated route."""
         url = f"{self._base}/object/authenticated/{self._bucket}/{quote(validate_key(key), safe='/')}"
         r = await self._request("get", "GET", url)
-        if r.status_code in (400, 404):
+        if r.status_code == 404 or (r.status_code == 400 and _body_status(r) == "404"):
             raise StorageObjectMissing("Stored file not found")
         if r.status_code >= 400:
             raise InfrastructureError(f"Storage refused the download ({r.status_code})")

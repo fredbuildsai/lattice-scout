@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import hashlib
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -35,6 +36,16 @@ class VaultLimitReached(Conflict):
 
     code = "vault_limit_reached"
     title = "Your vault is full"
+
+
+def _inspect(data: bytes) -> tuple[DocumentMime, str]:
+    """Detect the type, run the archive checks and hash the bytes."""
+    mime = sniff_mime(data)
+    if mime is None:
+        raise UnsupportedFileType("Only PDF and DOCX files are accepted")
+    if mime is DocumentMime.DOCX:
+        check_zip(data)
+    return mime, hashlib.sha256(data).hexdigest()
 
 
 @dataclass(frozen=True)
@@ -83,12 +94,7 @@ class UploadDocument:
             raise FileRejected("empty_file")
         if len(data) > self._max_bytes:
             raise FileTooLarge("The file is larger than the limit")
-        mime = sniff_mime(data)
-        if mime is None:
-            raise UnsupportedFileType("Only PDF and DOCX files are accepted")
-        if mime is DocumentMime.DOCX:
-            check_zip(data)
-        sha = hashlib.sha256(data).hexdigest()
+        mime, sha = await asyncio.to_thread(_inspect, data)  # CPU work off the event loop
 
         async with self._uow() as uow:
             existing = await uow.documents.find_active_by_sha(owner_id, sha)

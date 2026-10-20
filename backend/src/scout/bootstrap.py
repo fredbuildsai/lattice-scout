@@ -201,7 +201,7 @@ def build_container(
     storage = _select_storage(settings, usage, clock, ids)
     agents = AgentFactory(
         llm, resolve_path(settings.prompts_dir),
-        {"field_name": settings.launch_field, "today": clock.now().date().isoformat()},
+        {"field_name": settings.launch_field},
     )  # fmt: skip
     vault_uow = lambda: SqlVaultUnitOfWork(db)  # noqa: E731
     extract_insights = ExtractInsights(

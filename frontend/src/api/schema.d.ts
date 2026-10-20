@@ -1130,14 +1130,40 @@ export interface operations {
                     "application/json": components["schemas"]["DocumentOut"];
                 };
             };
-            /** @description Validation Error */
+            /** @description Missing or invalid token (checked before the body is read). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description `vault_limit_reached`: delete a document first. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description `file_too_large` (the limit is 25 MB). */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description `unsupported_file_type`: only PDF and DOCX. */
+            415: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description `file_rejected` (empty, damaged or an unsafe archive) or `validation_failed`. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
+                content?: never;
             };
         };
     };

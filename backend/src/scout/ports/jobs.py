@@ -66,6 +66,10 @@ class JobQueuePort(Protocol):
         """Requeue after ``retry_in`` seconds, or mark dead when None or attempts are exhausted."""
         ...
 
+    async def heartbeat(self, job_id: UUID, worker_id: str) -> bool:
+        """Extend the lease of a running job held by ``worker_id``; False when the job is no longer ours."""
+        ...
+
 
 def retry_delay(attempt: int) -> int:
     """Exponential back-off in seconds: 5, 10, 20, ... capped at 600."""

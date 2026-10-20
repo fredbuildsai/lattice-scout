@@ -217,7 +217,9 @@ class IngestDocument:
         await self._storage.delete(doc.storage_key)
         async with self._uow() as uow:
             cur = await uow.documents.get_for_update(doc.id)
-            if cur is not None:
+            if (
+                cur is not None and cur.status is not DocStatus.DELETING
+            ):  # a delete that won the race handles the file
                 now = self._clock.now()
                 if cur.mark_original_deleted(now):
                     await uow.documents.save(cur)

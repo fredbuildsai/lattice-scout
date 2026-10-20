@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
+import traceback
+
 import structlog
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from scout.shared import ScoutError
+from scout.shared import ScoutError, describe_exception
 from scout.shared.context import get_context
 
 PROBLEM_JSON = "application/problem+json"
@@ -54,7 +56,12 @@ def install_error_handlers(app: FastAPI) -> None:
 
     @app.exception_handler(Exception)
     async def _unhandled(request: Request, exc: Exception) -> JSONResponse:
-        log.error("unhandled_exception", exc_info=exc)
+        # frames only: exception messages can quote user content (vault text) and must not reach the logs
+        log.error(
+            "unhandled_exception",
+            error=describe_exception(exc),
+            frames="".join(traceback.format_tb(exc.__traceback__)),
+        )
         return _problem(
             request,
             500,
