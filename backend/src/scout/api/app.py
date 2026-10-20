@@ -7,7 +7,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from scout.api import health
+from scout.api import events, health
 from scout.api.errors import install_error_handlers
 from scout.api.logging import configure_logging
 from scout.api.middleware import RequestContextMiddleware
@@ -33,4 +33,5 @@ def create_app(container: Container | None = None) -> FastAPI:
     app.add_middleware(RequestContextMiddleware)
     install_error_handlers(app)
     app.include_router(health.router)
+    app.include_router(events.router)
     return app

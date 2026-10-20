@@ -64,6 +64,15 @@ class Settings(BaseSettings):
     worker_poll_interval_ms: int = 1000
     job_lease_seconds: int = 300
 
+    llm_fixtures_dir: Path = Path("backend/tests/fixtures/llm")
+    prompts_dir: Path = Path("prompts")
+    llm_max_concurrency: int = 8
+    llm_router_allow_paid: bool = True
+    llm_router_max_usd_per_day: float = 5.0
+    analytics_queue_max: int = 20000
+    usage_queue_max: int = 10000
+    otel_service_name: str | None = None
+
     embedding_model: str | None = None
     embedding_dim: int | None = None
 

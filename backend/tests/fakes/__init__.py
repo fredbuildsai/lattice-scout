@@ -1,7 +1,17 @@
-"""In-memory test doubles. Runtime-selectable offline adapters are re-exported here as they are added."""
+"""In-memory test doubles. Runtime-selectable offline adapters are re-exported here."""
 
+from scout.adapters.llm.fake_llm import FakeLLM
 from scout.shared import FixedClock, SequentialIdGenerator
 from tests.fakes.jobs import InMemoryJobQueue
+from tests.fakes.recorders import InMemoryAnalytics, InMemoryUsageMeter
 from tests.fakes.uow import InMemoryUnitOfWork
 
-__all__ = ["FixedClock", "InMemoryJobQueue", "InMemoryUnitOfWork", "SequentialIdGenerator"]
+__all__ = [
+    "FakeLLM",
+    "FixedClock",
+    "InMemoryAnalytics",
+    "InMemoryJobQueue",
+    "InMemoryUnitOfWork",
+    "InMemoryUsageMeter",
+    "SequentialIdGenerator",
+]
