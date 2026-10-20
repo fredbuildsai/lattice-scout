@@ -7,6 +7,8 @@ from typing import Any
 import pytest
 from tests.fakes import InMemoryJobQueue
 
+from scout.adapters.persistence.db import Database
+from scout.adapters.queue.postgres import PostgresJobQueue
 from scout.ports.jobs import JobQueuePort, JobSpec, JobStatus
 from scout.shared import FixedClock, SequentialIdGenerator
 
@@ -18,11 +20,23 @@ def _memory(clock: FixedClock) -> JobQueuePort:
     return InMemoryJobQueue(clock, SequentialIdGenerator(), lease_seconds=300)
 
 
-FACTORIES = [pytest.param(_memory, id="memory")]
+def _postgres(clock: FixedClock) -> JobQueuePort:
+    db = _DB["db"]
+    return PostgresJobQueue(db, clock, SequentialIdGenerator(), lease_seconds=300)
+
+
+_DB: dict[str, Database] = {}
+
+FACTORIES = [
+    pytest.param(_memory, id="memory"),
+    pytest.param(_postgres, id="postgres", marks=pytest.mark.integration),
+]
 
 
 @pytest.fixture(params=FACTORIES)
 def make(request: pytest.FixtureRequest) -> Callable[[FixedClock], JobQueuePort]:
+    if request.node.get_closest_marker("integration"):
+        _DB["db"] = request.getfixturevalue("db")
     return request.param  # type: ignore[no-any-return]
 
 
@@ -70,3 +84,13 @@ async def test_lease_expiry_and_dedupe(make: Callable[[FixedClock], JobQueuePort
     clock.advance(timedelta(seconds=301))
     again = await q.claim("w2", ["k"])
     assert again and again.attempts == 2 and again.locked_by == "w2"
+
+
+async def test_concurrent_claims_never_double_claim(make: Callable[[FixedClock], JobQueuePort]) -> None:
+    import asyncio
+
+    q = make(FixedClock(T0))
+    ids = {await q.enqueue(JobSpec(kind="k")) for _ in range(5)}
+    got = await asyncio.gather(*(q.claim(f"w{i}", ["k"]) for i in range(12)))
+    claimed = [j.id for j in got if j]
+    assert len(claimed) == 5 and set(claimed) == ids
