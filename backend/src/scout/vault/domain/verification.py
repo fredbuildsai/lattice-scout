@@ -18,7 +18,8 @@ from scout.vault.domain.insights import (
 )
 
 MIN_QUOTE_CHARS = 15
-_EMAIL = re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]+")
+MAX_QUOTE_CHARS = 300
+EMAIL = re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]+")
 _DASHES = dict.fromkeys([*range(0x2010, 0x2016), 0x2212], "-")
 _QUOTES = dict.fromkeys([0x2018, 0x2019, 0x201A, 0x201B], "'") | dict.fromkeys(
     [0x201C, 0x201D, 0x201E, 0x201F], '"'
@@ -30,6 +31,18 @@ def norm(text: str) -> str:
     t = unicodedata.normalize("NFKC", text).translate(_DASHES).translate(_QUOTES).replace("­", "")
     t = re.sub(r"-\s+", "-", t)
     return re.sub(r"\s+", " ", t).strip()
+
+
+def _haystacks(cited: list[Chunk]) -> list[str]:
+    """Texts a quote may come from: each run of consecutive chunks joined, so a passage cannot be stitched from
+    the end of one chunk and the start of a distant one."""
+    runs: list[list[Chunk]] = []
+    for c in sorted(cited, key=lambda c: c.ord):
+        if runs and runs[-1][-1].ord + 1 == c.ord:
+            runs[-1].append(c)
+        else:
+            runs.append([c])
+    return [norm(" ".join(c.text for c in run)) for run in runs]
 
 
 def _strings(data: Mapping[str, Any]) -> list[str]:
@@ -45,14 +58,15 @@ def _item(
         reason = UnverifiedReason.NO_CHUNK_REF
     elif len(cited) != len(labels):
         reason = UnverifiedReason.UNKNOWN_CHUNK
-    elif any(_EMAIL.search(s) for s in _strings(data)):
+    elif any(EMAIL.search(s) for s in _strings(data)):
         reason = UnverifiedReason.PERSONAL_DATA
     elif section is Section.REVIEWER_OBJECTIONS:
         quote = norm(str(data.get("quote", "")))
-        haystack = norm(" ".join(c.text for c in sorted(cited, key=lambda c: c.ord)))
         if len(quote) < MIN_QUOTE_CHARS:
             reason = UnverifiedReason.QUOTE_TOO_SHORT
-        elif quote not in haystack:
+        elif len(quote) > MAX_QUOTE_CHARS:
+            reason = UnverifiedReason.QUOTE_TOO_LONG
+        elif not any(quote in h for h in _haystacks(cited)):
             reason = UnverifiedReason.QUOTE_NOT_FOUND
     return InsightItem(
         section=section, data=data, chunk_labels=tuple(labels), chunk_ids=tuple(c.id for c in cited),

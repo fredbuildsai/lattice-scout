@@ -3,14 +3,14 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from scout.vault.domain.chunking import Chunk
 from scout.vault.domain.ids import ChunkId
 from scout.vault.domain.insights import InsightItem, ItemStatus, Section
-from scout.vault.domain.verification import norm
+from scout.vault.domain.verification import MAX_QUOTE_CHARS, norm
 
-MAX_QUOTE = 300
+MAX_QUOTE = MAX_QUOTE_CHARS
 SUMMARY_SEP = " · "
 
 
@@ -62,4 +62,14 @@ def retained_content(chunks: Sequence[Chunk], items: Sequence[InsightItem]) -> d
         joined = SUMMARY_SEP.join(summaries.get(cid, []))
         summary = _cut(joined, MAX_QUOTE)[0] if joined else None
         out[cid] = Retained(tuple(quotes.get(cid, [])), summary)
+    return out
+
+
+def bounded_for_discard(items: Sequence[InsightItem]) -> list[InsightItem]:
+    """Items as stored under ``discard``: no string longer than ``MAX_QUOTE``, so the insights record never holds
+    more verbatim document text than the quotes kept on chunks. Unverified items stay persisted, but bounded."""
+    out: list[InsightItem] = []
+    for it in items:
+        data = {k: (_cut(v, MAX_QUOTE)[0] if isinstance(v, str) else v) for k, v in it.data.items()}
+        out.append(replace(it, data=data))
     return out

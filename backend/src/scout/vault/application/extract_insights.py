@@ -10,7 +10,7 @@ from scout.vault.domain.chunking import Chunk
 from scout.vault.domain.document import Document
 from scout.vault.domain.insights import DocumentInsights, InsightItem, ItemStatus, Stage, StoredInsights
 from scout.vault.domain.slicing import plan_slices
-from scout.vault.domain.verification import verify
+from scout.vault.domain.verification import EMAIL, verify
 from scout.vault.ports.insights import ChunkInput, InsightExtractorPort, InsightOutcome, InsightRequest
 
 _SECTIONS = ("aims", "findings", "open_questions", "methods", "datasets", "reviewer_objections")
@@ -86,8 +86,10 @@ class ExtractInsights:
         doc: Document, out: InsightOutcome, items: list[InsightItem], mode: str, slices: int, cost: float
     ) -> StoredInsights:
         raw = out.insights
+        title = None if raw.title and EMAIL.search(raw.title) else raw.title
+        keywords = [k for k in raw.keywords if not EMAIL.search(k)]
         return StoredInsights(
-            document_id=doc.id, items=items, keywords=list(raw.keywords), title=raw.title, kind_suggested=raw.kind,
+            document_id=doc.id, items=items, keywords=keywords, title=title, kind_suggested=raw.kind,
             kind_reason=raw.kind_reason, prompt_version=out.prompt_version, model=out.model,
             mode="map_reduce" if mode == "map_reduce" else "full", slices=slices, cost_usd=cost,
         )  # fmt: skip

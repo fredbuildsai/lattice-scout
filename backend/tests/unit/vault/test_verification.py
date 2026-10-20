@@ -112,10 +112,44 @@ def test_retained_content_quotes_and_summaries() -> None:
     assert kept[chunk_id(DOC, 0)].quotes == ()
 
 
-def test_quote_truncated_at_word_boundary() -> None:
+def test_quote_over_300_characters_is_unverified_and_nothing_is_retained() -> None:
     text = ("lorem ipsum " * 60).strip()
     c = chunk(7, text)
     obj = Objection(quote=text, summary="s", chunk_ids=["c7"])
-    items = verify(DocumentInsights(reviewer_objections=[obj]), {"c7": c}, Stage.FULL)
-    [q] = retained_content([c], items)[c.id].quotes
-    assert q.truncated and len(q.text) <= 300 and text.startswith(q.text) and not q.text.endswith(" ")
+    [item] = verify(DocumentInsights(reviewer_objections=[obj]), {"c7": c}, Stage.FULL)
+    assert item.status is ItemStatus.UNVERIFIED and item.reason is UnverifiedReason.QUOTE_TOO_LONG
+    assert retained_content([c], [item]) == {}
+
+
+def test_quote_cannot_be_stitched_across_distant_chunks() -> None:
+    near = chunk(
+        1, "Reviewer 2: the budget is padded and the timeline is not credible for the proposed work."
+    )
+    far = chunk(
+        9, "Reviewer 3: the data management plan is missing entirely and must be provided before funding."
+    )
+    cited = ["c1", "c9"]
+    stitched = (
+        "the timeline is not credible for the proposed work. Reviewer 3: the data management plan is missing"
+    )
+    [item] = verify(
+        DocumentInsights(reviewer_objections=[Objection(quote=stitched, summary="s", chunk_ids=cited)]),
+        {"c1": near, "c9": far}, Stage.FULL,
+    )  # fmt: skip
+    assert item.reason is UnverifiedReason.QUOTE_NOT_FOUND
+    adjacent = chunk(
+        2, "Reviewer 3: the data management plan is missing entirely and must be provided before funding."
+    )
+    [ok] = verify(
+        DocumentInsights(reviewer_objections=[Objection(quote=stitched, summary="s", chunk_ids=["c1", "c2"])]),
+        {"c1": near, "c2": adjacent}, Stage.FULL,
+    )  # fmt: skip
+    assert ok.status is ItemStatus.VERIFIED
+
+
+def test_model_output_is_sanitised_and_bounded() -> None:
+    raw = DocumentInsights.model_validate(
+        {"aims": [{"summary": "a\x00b" + "x" * 2000, "chunk_ids": ["c0"]}], "keywords": ["k\x00ey"]}
+    )
+    assert "\x00" not in raw.aims[0].summary and len(raw.aims[0].summary) <= 600
+    assert raw.keywords == ["key"]

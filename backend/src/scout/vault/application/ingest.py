@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from uuid import UUID
 
 import structlog
@@ -16,8 +16,8 @@ from scout.shared import Clock, UuidGenerator
 from scout.vault.application.extract_insights import ExtractInsights
 from scout.vault.domain.chunking import chunk_pages
 from scout.vault.domain.document import Document
-from scout.vault.domain.enums import DocStatus
-from scout.vault.domain.retention import retained_content
+from scout.vault.domain.enums import DocStatus, Retention
+from scout.vault.domain.retention import bounded_for_discard, retained_content
 from scout.vault.ports.extraction import ExtractionRejected, TextExtractionPort
 from scout.vault.ports.repos import VaultUnitOfWork
 
@@ -192,6 +192,8 @@ class IngestDocument:
             if cur is None or cur.status is not DocStatus.ANALYSING:
                 return {"skipped": "gone"}
             now = self._clock.now()
+            if cur.retention is Retention.DISCARD:
+                stored = replace(stored, items=bounded_for_discard(stored.items))
             await uow.insights.upsert(stored)
             cur.finish_analysis(stored.kind_suggested, stored.kind_reason, now)
             await uow.documents.save(cur)

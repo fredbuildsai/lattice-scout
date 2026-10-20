@@ -25,7 +25,7 @@ from tests.unit.vault._env import (
 from scout.shared import InfrastructureError
 from scout.vault.domain.chunking import chunk_pages
 from scout.vault.domain.enums import DocStatus, Retention, RetentionPolicy
-from scout.vault.domain.insights import Section
+from scout.vault.domain.insights import ItemStatus, Section, UnverifiedReason
 from scout.vault.domain.retention import MAX_QUOTE
 from scout.vault.domain.verification import norm
 
@@ -116,23 +116,41 @@ async def test_discard_retains_only_verified_quotes_and_summaries() -> None:
     assert all(len(r.retained.summary or "") <= 300 for r in rows if r.retained)
 
 
-async def test_discard_truncates_a_long_verbatim_quote_at_300_characters() -> None:
+async def test_discard_never_keeps_more_than_300_characters_of_verbatim_text_anywhere() -> None:
+    """A quote over 300 characters is not verified (so never shown or retained), and under discard no string in
+    the stored insights, verified or not, exceeds 300 characters."""
     env = VaultEnv()
 
-    def long_quote(req: Any) -> dict[str, Any]:
+    def long_text(req: Any) -> dict[str, Any]:
         c = req.chunks[0]
         return {
             "kind": "declined_grant",
+            "aims": [{"summary": c.text[:500], "chunk_ids": [c.chunk_id]}],
             "reviewer_objections": [{"quote": c.text[:600], "summary": "long", "chunk_ids": [c.chunk_id]}],
         }
 
-    env.llm.script("InsightExtractor", long_quote)
+    env.llm.script("InsightExtractor", long_text)
     doc = await env.upload(DATA, keep=False)
     await env.ingest(doc)
-    (obj,) = env.store.insights[doc.id].visible()
-    (q,) = env.store.chunks[doc.id][0].retained.quotes  # type: ignore[union-attr]
-    assert len(q.text) <= MAX_QUOTE and q.truncated is True
-    assert norm(str(obj.data["quote"])).startswith(q.text)
+    stored = env.store.insights[doc.id]
+    objection = next(i for i in stored.items if i.section is Section.REVIEWER_OBJECTIONS)
+    assert objection.status is ItemStatus.UNVERIFIED and objection.reason is UnverifiedReason.QUOTE_TOO_LONG
+    assert all(len(v) <= MAX_QUOTE for i in stored.items for v in i.data.values() if isinstance(v, str))
+    assert all(not r.retained or not r.retained.quotes for r in env.store.chunks[doc.id])
+
+
+async def test_keep_policy_keeps_the_long_unverified_text_it_was_given() -> None:
+    """Only ``discard`` bounds stored text; the document itself is kept under ``keep``."""
+    env = VaultEnv()
+
+    def long_text(req: Any) -> dict[str, Any]:
+        c = req.chunks[0]
+        return {"kind": "other", "aims": [{"summary": c.text[:500], "chunk_ids": [c.chunk_id]}]}
+
+    env.llm.script("InsightExtractor", long_text)
+    doc = await env.upload(DATA, keep=True)
+    await env.ingest(doc)
+    assert any(len(str(i.data.get("summary", ""))) > MAX_QUOTE for i in env.store.insights[doc.id].items)
 
 
 async def test_discard_with_nothing_verified_retains_no_quotes_or_summaries() -> None:
