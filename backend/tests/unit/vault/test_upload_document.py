@@ -90,13 +90,14 @@ async def test_zip_bomb_is_rejected_without_side_effects() -> None:
     assert not env.storage.objects and not env.store.documents and not env.jobs.jobs
 
 
-async def test_too_large_and_empty_are_413_class_errors() -> None:
+async def test_too_large_is_413_and_empty_is_a_rejected_file() -> None:
     env = VaultEnv()
     uc = env.upload_uc(max_bytes=len(PDF))
     with pytest.raises(FileTooLarge):
         await uc.upload(OWNER, "a.pdf", PDF + b"x", True, None)
-    with pytest.raises(FileTooLarge):
+    with pytest.raises(FileRejected) as empty:
         await uc.upload(OWNER, "a.pdf", b"", True, None)
+    assert empty.value.reason == "empty_file"
     assert FileTooLarge.http_status == 413 and UnsupportedFileType.http_status == 415
     assert not env.storage.objects and not env.jobs.jobs
     assert (await uc.upload(OWNER, "a.pdf", PDF, True, None)).created is True  # exactly max_bytes is fine

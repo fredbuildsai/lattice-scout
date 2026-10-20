@@ -5,6 +5,18 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 ## [Unreleased]
 
 ### Added
+- M2 private vault and ingestion (backend):
+  - `POST`, `GET`, `PATCH` and `DELETE /api/v1/documents`. Uploads are PDF or DOCX, up to 25 MB; the type is read from the content, and DOCX archives pass zip-bomb limits. The same bytes uploaded again return the existing document (200).
+  - Document lifecycle as a state machine (`uploaded`, `extracting`, `extracted`, `analysing`, `ready`, `failed`, `rejected`, `deleting`), with a resumable `vault.ingest` job, `vault.delete` and the `vault.sweep` recovery job (every 10 minutes).
+  - Text extraction (`PdfDocxExtractor`): pypdf for PDF with a pdfplumber fallback, python-docx for DOCX. Parsing runs in a child process with memory, CPU and wall-clock limits. Scanned PDFs are refused (`no_text_layer`); there is no OCR.
+  - Chunks with page offsets and stable ids. Insights from the `InsightExtractor` agent, map-reduce for long documents, and a check of every item against the text: reviewer quotes must be verbatim. Unverified items are stored and never returned.
+  - Retention policies `keep`, `discard` and `user_choice` (D6, ADR-009). With `discard` the original is deleted right after reading, and only verified quotes and summaries are kept.
+  - Deletion removes chunks and insights at once. The stored object and the row are removed by `vault.delete`.
+  - `FileStoragePort` with `LocalFileStorage` and `SupabaseStorage` adapters (`STORAGE_BACKEND`).
+  - `AgentFactory` on the LLM port: prompt loading with placeholders, an `agent.run` span, and error mapping that keeps document text out of exceptions.
+  - `InsightExtractor` prompt 1.1.0, `FakeLLM` fixtures for the fictional sample documents, and `scripts/make_sample_docs.py` and `scripts/make_insight_fixtures.py`.
+- M2 private vault (frontend): `/vault` page with upload (including the "Keep the original file" choice), status chips, insights with page references, the kind selector and delete with a confirmation.
+- M2 documentation: vault module README, developer page on the private vault, user page on the private vault, and the configuration reference for the vault and insight variables.
 - M1 review fixes: works confirmation step in onboarding (tick/untick, uncertain works first), Retry import and Search again, neutral `verified_level` (conflicts never shown), per-researcher row locks and advisory locks for claims, non-overwriting works upsert, JWKS throttle with stale-key grace and 503 during outages, Retry-After parsing, 409 on e-mail collisions, 503 when the import cannot be scheduled.
 - Hand-off bundle: architecture, implementation plan, screens, runtime prompts, OpenAlex fixtures, Claude Code agents.
 - M0 foundations (backend):
@@ -59,4 +71,10 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 - M1 documentation: module READMEs for `identity` and `profile`; developer pages on authentication and on the profile claim; user page "Getting started".
 
 ### Changed
+- Configuration: `RETENTION_POLICY`, `VAULT_*`, `INSIGHT_*` and `SUPABASE_STORAGE_BUCKET` are read from M2 on. `RETENTION_POLICY` is no longer listed as reserved. The default `user_choice` is provisional (ADR-009).
 - Configuration: `OPENALEX_API_KEY`, `OPENALEX_MAILTO`, `LITERATURE_FIXTURES_DIR`, `DEV_KEYS_DIR` and `DEV_ISSUER` are read by the application from M1 on; they are no longer listed as reserved. `.env.example` lists `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`. The configuration reference documents them and the frontend variables.
+
+### Notes
+- M2 runs offline by default. On 2026-10-20 the vault unit and storage contract tests passed without a database, and `make test-integration` passed (39 tests, including the 30-page acceptance flow with the fake LLM). Not run for this entry: live LLM calls (`needs_network`), live Supabase storage (`needs_supabase`), and the frontend end-to-end test against a running stack.
+- Not in M2 (see `docs/BACKLOG.md`): retry for failed documents, switching a kept document to `discard`, OCR and docling, citing vault evidence from opportunities (M3 and M4), and matching on vault content (M5).
+- Known issues, tracked as F-11 to F-15 in `docs/BACKLOG.md`: a full vault shows a generic upload error; an empty file is reported as too large; the page wording for Word files without page breaks; a delete-dialog sentence about opportunities that cannot be checked yet; and the zip-bomb message wording.

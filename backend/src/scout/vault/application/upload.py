@@ -17,6 +17,7 @@ from scout.vault.domain.document import Document
 from scout.vault.domain.enums import DocKind, DocumentMime, RetentionPolicy
 from scout.vault.domain.ids import storage_key
 from scout.vault.domain.upload import (
+    FileRejected,
     FileTooLarge,
     UnsupportedFileType,
     check_zip,
@@ -27,6 +28,13 @@ from scout.vault.domain.upload import (
 from scout.vault.ports.repos import DuplicateDocument, VaultUnitOfWork
 
 log = structlog.get_logger()
+
+
+class VaultLimitReached(Conflict):
+    """The vault already holds the maximum number of documents."""
+
+    code = "vault_limit_reached"
+    title = "Your vault is full"
 
 
 @dataclass(frozen=True)
@@ -71,8 +79,10 @@ class UploadDocument:
             FileRejected: a DOCX that is a zip bomb or corrupt.
             Conflict: the vault already holds the maximum number of documents (``vault_limit_reached``).
         """
-        if not 0 < len(data) <= self._max_bytes:
-            raise FileTooLarge("The file is empty or larger than the limit")
+        if not data:
+            raise FileRejected("empty_file")
+        if len(data) > self._max_bytes:
+            raise FileTooLarge("The file is larger than the limit")
         mime = sniff_mime(data)
         if mime is None:
             raise UnsupportedFileType("Only PDF and DOCX files are accepted")
@@ -85,7 +95,7 @@ class UploadDocument:
             if existing is not None:
                 return UploadResult(existing, False)
             if await uow.documents.count_active(owner_id) >= self._max_documents:
-                raise Conflict("vault_limit_reached", extra={"limit": self._max_documents})
+                raise VaultLimitReached("vault_limit_reached", extra={"limit": self._max_documents})
 
         document_id = self._ids.new()
         key = storage_key(owner_id, document_id)
