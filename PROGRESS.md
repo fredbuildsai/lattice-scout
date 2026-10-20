@@ -3,7 +3,7 @@
 Merge policy: stack
 Current milestone: M0 — Foundations
 Current branch: claude/zealous-curie-7m18vd (harness-designated; used instead of m0-foundations)
-Last session: 2026-10-20 s01 — M0 tasks 1-8, 10, 10b done; 11, 12 (architect design in progress), 9 (frontend) pending
+Last session: 2026-10-20 s01 — M0 tasks 1-12 done, make check green; reviewer + PR pending
 
 <!-- Merge policy: "stack" (default) = leave each milestone PR open for the human and branch the next milestone from the previous one.
      "self-merge" = squash-merge your own PR when checks are green. The human may change this line at any time. See plan §0.4. -->
@@ -17,12 +17,13 @@ Last session: 2026-10-20 s01 — M0 tasks 1-8, 10, 10b done; 11, 12 (architect d
 - [x] 6 Worker + PostgresJobQueue + ping job
 - [x] 7 Local dev: dev_db.sh, SessionStart hook (extend scripts/session_start.sh), docker-compose, Makefile, docs stubs
 - [x] 8 Alembic + first migration
-- [ ] 9 Frontend shell, burger menu, tokens [frontend]
+- [x] 9 Frontend shell, burger menu, tokens [frontend]
 - [x] 10 CI workflow
 - [x] 10b Documentation scaffolding (journal, ADRs 001–012, PR template, docs-site skeleton)
-- [ ] 11 LLM port + FakeLLM + llm-router or direct adapter [architect]
-- [ ] 12 Observability foundations [architect]
-- [ ] doc-writer pass, reviewer approve, PR
+- [x] 11 LLM port + FakeLLM + llm-router or direct adapter [architect]
+- [x] 12 Observability foundations [architect]
+- [x] doc-writer pass
+- [ ] reviewer approve, PR
 
 ## M1 — Auth + profile claim
 ## M2 — Vault + ingestion

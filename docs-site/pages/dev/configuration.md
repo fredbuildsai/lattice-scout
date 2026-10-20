@@ -2,27 +2,101 @@
 
 Every variable is listed with its safe default in [`.env.example`](https://github.com/fredbuildsai/lattice-scout/blob/main/.env.example). Defaults need no network: fake LLM, fixture literature, local storage, console email, dev auth.
 
+Settings are read by `backend/src/scout/settings.py` (`Settings`, pydantic-settings). Values come from the environment or from `.env` (looked up in `backend/` and then in the repository root). Names are case-insensitive. Copy `.env.example` to `.env` to start; `.env` is git-ignored.
+
+## Core
+
 | Variable | Default | Purpose |
 |---|---|---|
-| `APP_ENV` | `dev` | `test`, `dev` or `prod`. `prod` refuses `AUTH_MODE=dev`. |
+| `APP_ENV` | `dev` | `test`, `dev` or `prod`. `prod` refuses the offline backends (see below). |
 | `DATABASE_URL` | `postgresql+psycopg://scout:scout@localhost:5432/scout` | Application database. |
-| `LLM_BACKEND` | `fake` | `fake`, `llm_router` or `openai_direct`. |
+| `TEST_DATABASE_URL` | unset | Database used by integration tests. `scripts/dev_db.sh` creates `scout_test`. |
+| `CORS_ORIGINS` | `["http://localhost:5173","http://127.0.0.1:5173"]` | Allowed browser origins (JSON list). |
+| `WORKER_POLL_INTERVAL_MS` | `1000` | Worker delay between polls when no job is due. |
+| `JOB_LEASE_SECONDS` | `300` | Lock time for a claimed job before another worker may take it. |
+
+`APP_ENV=prod` fails at start-up if any of these is set: `AUTH_MODE=dev`, `LLM_BACKEND=fake`,
+`LITERATURE_BACKEND=fixtures`, `EMAIL_PROVIDER=console`.
+
+## Backends
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `AUTH_MODE` | `dev` | `dev` (local ES256 keys) or `supabase` (verify Supabase JWTs; needs `SUPABASE_JWKS_URL` or `SUPABASE_URL`). |
+| `LLM_BACKEND` | `fake` | `fake` (fixtures), `llm_router` (llm-router package) or `openai_direct` (needs `OPENAI_API_KEY`). |
 | `LITERATURE_BACKEND` | `fixtures` | `fixtures` or `openalex`. |
-| `STORAGE_BACKEND` | `local` | `local` or `supabase`. |
-| `EMAIL_PROVIDER` | `console` | `console` or `resend`. |
-| `AUTH_MODE` | `dev` | `dev` (local keys) or `supabase`. |
-| `ANALYTICS_ENABLED` | `true` | Product analytics on/off. |
-| `ANALYTICS_FLUSH_MS` | `2000` | Bulk-insert interval for the buffered analytics writer. |
-| `USAGE_FLUSH_MS` | `2000` | Bulk-insert interval for the LLM/external usage meter. |
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | empty | OTLP endpoint; tracing export is off when empty. |
+| `STORAGE_BACKEND` | `local` | `local` (folder in `LOCAL_STORAGE_DIR`) or `supabase` (needs `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`). |
+| `LOCAL_STORAGE_DIR` | `var/storage` | Where `STORAGE_BACKEND=local` keeps files. Git-ignored. |
+| `EMAIL_PROVIDER` | `console` | `console` (log only) or `resend` (needs `EMAIL_API_KEY` and `EMAIL_FROM`). |
+| `EMAIL_API_KEY` | unset | Secret for the email provider. Never commit it. |
+| `EMAIL_FROM` | unset | Sender address for outbound email. |
+
+## Supabase (deployed environments)
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `SUPABASE_URL` | unset | Project URL. Also used to derive the JWKS URL. |
+| `SUPABASE_PUBLISHABLE_KEY` | unset | Publishable (anon) key for the frontend. |
+| `SUPABASE_SERVICE_ROLE_KEY` | unset | Server-side secret. Never expose it to the frontend or commit it. |
+| `SUPABASE_JWKS_URL` | derived from `SUPABASE_URL` | Explicit JWKS endpoint. |
+
+## LLM
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `OPENAI_API_KEY` | unset | Secret for `LLM_BACKEND=openai_direct`. Never commit it. |
+| `LLM_ROUTER_CONFIG` | `config/llm_router.yaml` | llm-router deployments and routes. |
+| `LLM_ROUTER_SOURCE` | unset | Install source for llm-router, for example `git+https://github.com/fredbuildsai/llmrouter-free@v0.1.0`. Used by the install commands below. |
+| `LLM_ROUTER_ALLOW_PAID` | `true` | Whether llm-router may use paid deployments. |
+| `LLM_ROUTER_MAX_USD_PER_DAY` | `5.0` | Daily spend limit (USD) passed to the llm-router client. |
+| `LLM_MODEL_FAST` / `LLM_MODEL_REASONING` | `fast` / `reasoning` | llm-router route names (or model ids for `openai_direct`). |
+| `LLM_PRICE_TABLE` | `config/llm_prices.yaml` | Price per million tokens, used to compute `llm_call` cost. |
 | `LLM_FIXTURES_DIR` | `backend/tests/fixtures/llm` | Fixtures used by `LLM_BACKEND=fake`. |
 | `PROMPTS_DIR` | `prompts` | Versioned agent prompts. |
-| `LLM_MODEL_FAST` / `LLM_MODEL_REASONING` | `fast` / `reasoning` | llm-router route names (or model ids for `openai_direct`). |
-| `LLM_ROUTER_CONFIG` | `config/llm_router.yaml` | llm-router deployments and routes. |
 | `LLM_MAX_CONCURRENCY` | `8` | Threads used for the synchronous router. |
-| `ANALYTICS_QUEUE_MAX` / `USAGE_QUEUE_MAX` | `20000` / `10000` | Buffer capacity; items are dropped (never blocked) when full. |
-| `WORKER_POLL_INTERVAL_MS` / `JOB_LEASE_SECONDS` | `1000` / `300` | Worker polling and job lease. |
-| `CORS_ORIGINS` | `["http://localhost:5173"]` | Allowed browser origins. |
+
+## Observability
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `ANALYTICS_ENABLED` | `true` | Product analytics on or off. |
+| `ANALYTICS_FLUSH_MS` | `2000` | Bulk-insert interval for the buffered analytics writer. |
+| `ANALYTICS_QUEUE_MAX` | `20000` | Analytics buffer capacity. Events are dropped (never blocked) when full. |
+| `USAGE_FLUSH_MS` | `2000` | Bulk-insert interval for the LLM and external-call usage meter. |
+| `USAGE_QUEUE_MAX` | `10000` | Usage buffer capacity. Records are dropped (never blocked) when full. |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | unset | OTLP endpoint. Trace export is off when empty; trace ids still appear in logs. |
+| `OTEL_SERVICE_NAME` | `scout-api` / `scout-worker` | Service name in traces. |
+| `OTEL_TRACES_SAMPLER_ARG` | `0.2` | Sampling ratio for new root traces (parent-based). |
+
+## Frontend (Vite)
+
+These are read by Vite from `frontend/` (or the environment) and are not part of `Settings`.
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `VITE_AUTH_MODE` | `dev` | `dev` or `supabase`. Read by the sign-in code, which arrives in M1. |
+| `VITE_API_URL` | `http://localhost:8000` | Base URL of the API. |
+
+## Reserved for later milestones
+
+These fields exist in `Settings` and in `.env.example`, but no code reads them yet. They are documented so that the
+names stay stable. Each is defined by the milestone in brackets.
+
+| Variable | Default | Milestone | Purpose |
+|---|---|---|---|
+| `OPENALEX_API_KEY` | unset | M1 | OpenAlex API key (optional). |
+| `OPENALEX_MAILTO` | unset | M1 | Contact address sent to OpenAlex. |
+| `LAUNCH_FIELD` | `bio-based-materials` | not scheduled (ADR-008) | Launch field for the pilot. |
+| `RUN_BUDGET_USD` | `1.50` | M3 | Spend limit per analysis run. |
+| `RUN_MAX_OPENALEX_CALLS` | `400` | M3 | OpenAlex call limit per run. |
+| `RUN_MAX_CORPUS` | `2500` | M3 | Maximum literature corpus size per run. |
+| `ANALYTICS_RETENTION_DAYS` | `395` | not scheduled | Retention for analytics rows. |
+| `RETENTION_POLICY` | `user_choice` | M2 | Document retention: `keep`, `discard` or `user_choice` (provisional default D6). |
+| `MATCH_MAX_OPEN_PER_WEEK` | `3` | M5 | Matching: open proposals per researcher per week. |
+| `MATCH_EXPIRY_DAYS` | `21` | M5 | Matching: days before a proposal expires. |
+| `MATCH_EXCLUDE_COAUTHORS` | `true` | M5 | Matching: exclude past co-authors. |
+| `MATCH_NON_MEMBERS` | `false` | M5 | Matching: allow matches with non-members (Phase 2). |
+| `EMBEDDING_MODEL` / `EMBEDDING_DIM` | unset | none | Present in `Settings` but unused: ADR-005 keeps embeddings out of the MVP. Do not set them. |
 
 ## Using the real LLM router
 
@@ -32,3 +106,5 @@ uv sync --extra llm                      # OpenAI Agents SDK (openai_direct)
 uv pip install -e ../../llmrouter-free   # or: uv pip install "$LLM_ROUTER_SOURCE"
 LLM_BACKEND=llm_router OPENAI_API_KEY=... uv run uvicorn scout.api.app:create_app --factory
 ```
+
+The live LLM tests (`backend/tests/live/`, marker `needs_network`) call the real adapters. They are skipped by default.
