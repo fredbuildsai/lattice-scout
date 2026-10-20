@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from collections.abc import Mapping
 from typing import Any
 
@@ -29,23 +30,22 @@ class BufferedUsageMeter:
             self._write_ext, name="external_call", capacity=capacity, flush_ms=flush_ms
         )
 
-    async def _table(self, name: str) -> Table:
+    def _table(self, name: str) -> Table:
         if name not in self._tables:
-            async with self._db.engine.connect() as conn:
-                self._tables[name] = await conn.run_sync(
-                    lambda sync_conn: Table(name, MetaData(), autoload_with=sync_conn)
-                )
+            self._tables[name] = Table(name, MetaData(), autoload_with=self._db.sync_engine)
         return self._tables[name]
 
+    def _insert(self, name: str, batch: list[Any]) -> None:
+        table = self._table(name)
+        rows = _rows(batch)
+        with self._db.sync_engine.begin() as conn:
+            conn.execute(insert(table), rows)
+
     async def _write_llm(self, batch: list[LlmCallRecord]) -> None:
-        table = await self._table("llm_call")
-        async with self._db.engine.begin() as conn:
-            await conn.execute(insert(table), _rows(batch))
+        await asyncio.to_thread(self._insert, "llm_call", batch)
 
     async def _write_ext(self, batch: list[ExternalCallRecord]) -> None:
-        table = await self._table("external_call")
-        async with self._db.engine.begin() as conn:
-            await conn.execute(insert(table), _rows(batch))
+        await asyncio.to_thread(self._insert, "external_call", batch)
 
     def record_llm_call(self, rec: LlmCallRecord) -> None:
         """Buffer one LLM call (never raises)."""

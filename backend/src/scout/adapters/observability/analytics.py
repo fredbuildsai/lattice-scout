@@ -2,15 +2,20 @@
 
 from __future__ import annotations
 
+import asyncio
+import json
 from typing import Any
 
-from sqlalchemy import MetaData, Table, insert
+import psycopg
+from sqlalchemy import MetaData, Table
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.sql import func
 
 from scout.adapters.observability.buffer import BufferedWriter
 from scout.adapters.persistence.db import Database
 from scout.ports.analytics import AnalyticsEvent, SessionTouch
+
+_EVENT_COLUMNS = "id, ts, account_id, session_id, name, page, prev_page, dwell_ms, properties, client_ts, seq"
 
 
 def _keep_under_pressure(evt: AnalyticsEvent) -> bool:
@@ -32,21 +37,38 @@ class BufferedAnalytics:
             self._write_sessions, name="app_session", capacity=max(capacity // 10, 100), flush_ms=flush_ms
         )
 
-    async def _table(self, name: str) -> Table:
+    def _table(self, name: str) -> Table:
         if name not in self._tables:
-            async with self._db.engine.connect() as conn:
-                self._tables[name] = await conn.run_sync(
-                    lambda sync_conn: Table(name, MetaData(), autoload_with=sync_conn)
-                )
+            self._tables[name] = Table(name, MetaData(), autoload_with=self._db.sync_engine)
         return self._tables[name]
 
-    async def _write_events(self, batch: list[AnalyticsEvent]) -> None:
-        table = await self._table("analytics_event")
-        async with self._db.engine.begin() as conn:
-            await conn.execute(insert(table), [e.model_dump(mode="python") for e in batch])
+    def _insert_events(self, batch: list[AnalyticsEvent]) -> None:
+        """Bulk load with COPY (mostly C, so the event loop is hardly disturbed by the GIL)."""
+        rows = [
+            (
+                e.id, e.ts, e.account_id, e.session_id, e.name, e.page, e.prev_page, e.dwell_ms,
+                json.dumps(e.properties), e.client_ts, e.seq,
+            )
+            for e in batch
+        ]  # fmt: skip
+        pooled = self._db.sync_engine.raw_connection()
+        conn: psycopg.Connection[Any] = pooled.driver_connection  # type: ignore[assignment]
+        try:
+            with (
+                conn.cursor() as cur,
+                cur.copy(f"COPY analytics_event ({_EVENT_COLUMNS}) FROM STDIN") as copy,
+            ):
+                for row in rows:
+                    copy.write_row(row)
+            conn.commit()
+        except Exception:
+            conn.rollback()
+            raise
+        finally:
+            pooled.close()
 
-    async def _write_sessions(self, batch: list[SessionTouch]) -> None:
-        table = await self._table("app_session")
+    def _upsert_sessions(self, batch: list[SessionTouch]) -> None:
+        table = self._table("app_session")
         merged: dict[Any, SessionTouch] = {}
         for s in batch:
             merged[s.session_id] = s  # last touch of a session within the batch wins
@@ -67,8 +89,14 @@ class BufferedAnalytics:
                 "updated_at": func.now(),
             },
         )
-        async with self._db.engine.begin() as conn:
-            await conn.execute(stmt)
+        with self._db.sync_engine.begin() as conn:
+            conn.execute(stmt)
+
+    async def _write_events(self, batch: list[AnalyticsEvent]) -> None:
+        await asyncio.to_thread(self._insert_events, batch)
+
+    async def _write_sessions(self, batch: list[SessionTouch]) -> None:
+        await asyncio.to_thread(self._upsert_sessions, batch)
 
     def track(self, evt: AnalyticsEvent) -> None:
         """Buffer one event (never raises)."""

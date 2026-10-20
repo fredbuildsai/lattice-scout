@@ -8,7 +8,7 @@ import signal
 import socket
 
 from scout.adapters.observability.partitions import schedule_today
-from scout.adapters.observability.telemetry import configure_telemetry
+from scout.adapters.observability.telemetry import configure_telemetry, tune_gc
 from scout.adapters.queue.postgres import PostgresJobQueue
 from scout.api.logging import configure_logging
 from scout.bootstrap import build_container, close_container, start_container
@@ -25,6 +25,7 @@ async def main() -> None:
         s.otel_service_name or "scout-worker", s.otel_exporter_otlp_endpoint, s.otel_traces_sampler_arg
     )
     await start_container(c)
+    tune_gc()
     queue = PostgresJobQueue(c.db, c.clock, c.ids, lease_seconds=s.job_lease_seconds)
     await schedule_today(queue, c.clock)
     handlers = build_handlers(c.db, c.clock, queue)

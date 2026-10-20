@@ -3,6 +3,8 @@ OTLP export happens only when an endpoint is configured."""
 
 from __future__ import annotations
 
+import gc
+
 from fastapi import FastAPI
 from opentelemetry import trace
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
@@ -42,3 +44,14 @@ def instrument_app(app: FastAPI, db: Database) -> None:
     """Instrument FastAPI (health probes excluded) and the SQLAlchemy engine."""
     FastAPIInstrumentor.instrument_app(app, excluded_urls="health,ready")
     SQLAlchemyInstrumentor().instrument(engine=db.engine.sync_engine)
+
+
+def tune_gc() -> None:
+    """Freeze start-up objects and raise the young-generation threshold.
+
+    Buffered analytics keeps thousands of small objects alive between flushes; with default thresholds the cyclic
+    GC then pauses the event loop for 100+ ms (measured in docs/perf/M0-events-loadtest.md).
+    """
+    gc.collect()
+    gc.freeze()
+    gc.set_threshold(20_000, 20, 50)

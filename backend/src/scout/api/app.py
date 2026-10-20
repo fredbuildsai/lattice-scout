@@ -7,7 +7,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from scout.adapters.observability.telemetry import configure_telemetry, instrument_app
+from scout.adapters.observability.telemetry import configure_telemetry, instrument_app, tune_gc
 from scout.api import events, health
 from scout.api.errors import install_error_handlers
 from scout.api.logging import configure_logging
@@ -29,6 +29,7 @@ def create_app(container: Container | None = None) -> FastAPI:
             c.settings.otel_traces_sampler_arg,
         )  # fmt: skip
         instrument_app(app, c.db)
+        tune_gc()
         await start_container(c)
         try:
             yield

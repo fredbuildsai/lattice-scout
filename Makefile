@@ -1,4 +1,4 @@
-.PHONY: dev api worker check test test-integration migrate gen-client eval e2e docs docs-check lint typecheck contracts fe-check db
+.PHONY: loadtest dev api worker check test test-integration migrate gen-client eval e2e docs docs-check lint typecheck contracts fe-check db
 
 BACKEND = cd backend && uv run
 DB_URL ?= postgresql+psycopg://scout:scout@localhost:5432/scout
@@ -56,3 +56,6 @@ e2e:           ## Playwright smoke test
 	cd frontend && pnpm e2e
 
 check: lint typecheck contracts docs-check test-integration test fe-check  ## everything CI runs
+
+loadtest:      ## start the API (one worker) in another shell, then: make loadtest
+	cd backend && uv run python ../scripts/loadtest_events.py --base http://localhost:8000
