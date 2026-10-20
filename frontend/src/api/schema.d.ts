@@ -73,9 +73,15 @@ export interface components {
          * @description Result of ingestion. Writing happens asynchronously.
          */
         EventsAccepted: {
-            /** Accepted */
+            /**
+             * Accepted
+             * @description Number of events queued for storage.
+             */
             accepted: number;
-            /** Rejected */
+            /**
+             * Rejected
+             * @description Events that failed catalogue validation.
+             */
             rejected: components["schemas"]["Rejection"][];
         };
         /**
@@ -83,9 +89,15 @@ export interface components {
          * @description Why an event was not accepted.
          */
         Rejection: {
-            /** Index */
+            /**
+             * Index
+             * @description Position of the rejected event in the submitted batch.
+             */
             index: number;
-            /** Reason */
+            /**
+             * Reason
+             * @description Why the event was refused (unknown name or property, too long, not scalar).
+             */
             reason: string;
         };
         /**

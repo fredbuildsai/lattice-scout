@@ -44,7 +44,12 @@ class InMemoryJobQueue:
             j for j in self.jobs.values()
             if j.kind in kinds and j.run_at <= now and (
                 j.status == JobStatus.QUEUED
-                or (j.status == JobStatus.RUNNING and j.locked_at and now - j.locked_at > self.lease)
+                or (
+                    j.status == JobStatus.RUNNING
+                    and j.locked_at
+                    and now - j.locked_at > self.lease
+                    and j.attempts < j.max_attempts
+                )
             )
         ]  # fmt: skip
         if not due:

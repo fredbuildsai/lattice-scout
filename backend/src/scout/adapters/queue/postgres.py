@@ -3,11 +3,12 @@
 from __future__ import annotations
 
 import json
-from datetime import timedelta
+from datetime import datetime, timedelta
 from uuid import UUID
 
 from pydantic import JsonValue
 from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncConnection
 
 from scout.adapters.persistence.db import Database
 from scout.ports.jobs import Job, JobSpec
@@ -20,7 +21,7 @@ _CLAIM = text(
     WHERE id = (
         SELECT id FROM job
         WHERE kind = ANY(:kinds) AND run_at <= :now
-          AND (status = 'queued' OR (status = 'running' AND locked_at < :expired))
+          AND (status = 'queued' OR (status = 'running' AND locked_at < :expired AND attempts < max_attempts))
         ORDER BY run_at, created_at
         FOR UPDATE SKIP LOCKED
         LIMIT 1)
@@ -41,28 +42,38 @@ class PostgresJobQueue:
         now = self._clock.now()
         jid = self._ids.new()
         async with self._db.engine.begin() as conn:
-            if job.dedupe_key is not None:
-                row = (
-                    await conn.execute(
-                        text(
-                            "SELECT id FROM job WHERE kind = :k AND dedupe_key = :d "
-                            "AND status IN ('queued','running') FOR UPDATE"
-                        ),
-                        {"k": job.kind, "d": job.dedupe_key},
-                    )
-                ).first()
-                if row:
-                    return UUID(str(row[0]))
-            await conn.execute(
+            result = await conn.execute(
                 text(
-                    "INSERT INTO job (id, kind, payload, max_attempts, run_at, dedupe_key, "
-                    "created_at, updated_at) "
-                    "VALUES (:id, :kind, CAST(:payload AS jsonb), :max, :run_at, :dedupe, :now, :now)"
+                    "INSERT INTO job (id, kind, payload, max_attempts, run_at, dedupe_key, created_at, updated_at) "
+                    "VALUES (:id, :kind, CAST(:payload AS jsonb), :max, :run_at, :dedupe, :now, :now) "
+                    "ON CONFLICT (kind, dedupe_key) WHERE dedupe_key IS NOT NULL AND status IN ('queued','running') "
+                    "DO NOTHING RETURNING id"
                 ),
                 {"id": jid, "kind": job.kind, "payload": json.dumps(job.payload), "max": job.max_attempts,
                  "run_at": job.run_at or now, "dedupe": job.dedupe_key, "now": now},
             )  # fmt: skip
+            if result.first() is None:
+                existing = (
+                    await conn.execute(
+                        text(
+                            "SELECT id FROM job WHERE kind = :k AND dedupe_key = :d AND status IN ('queued','running')"
+                        ),
+                        {"k": job.kind, "d": job.dedupe_key},
+                    )
+                ).first()
+                if existing:
+                    return UUID(str(existing[0]))
         return jid
+
+    async def _bury_exhausted(self, conn: AsyncConnection, now: datetime) -> None:
+        """Jobs whose lease expired with no attempts left are dead (a crashing job must not loop forever)."""
+        await conn.execute(
+            text(
+                "UPDATE job SET status='dead', last_error=coalesce(last_error, 'lease expired'), locked_by=NULL, "
+                "updated_at=:now WHERE status='running' AND locked_at < :expired AND attempts >= max_attempts"
+            ),
+            {"now": now, "expired": now - self._lease},
+        )
 
     async def claim(self, worker_id: str, kinds: list[str]) -> Job | None:
         """Lock the next due job (or a job whose lease expired)."""
@@ -86,7 +97,7 @@ class PostgresJobQueue:
             await conn.execute(
                 text(
                     "UPDATE job SET status='succeeded', result=CAST(:r AS jsonb), locked_by=NULL, "
-                    "updated_at=:now WHERE id=:id"
+                    "updated_at=:now WHERE id=:id AND status='running'"
                 ),
                 {"r": json.dumps(result), "now": self._clock.now(), "id": job_id},
             )
@@ -103,7 +114,7 @@ class PostgresJobQueue:
                       status = CASE WHEN :retry AND attempts < max_attempts THEN 'queued' ELSE 'dead' END,
                       run_at = CASE WHEN :retry AND attempts < max_attempts THEN :run_at ELSE run_at END,
                       last_error = :err, locked_by = NULL, locked_at = NULL, updated_at = :now
-                    WHERE id = :id
+                    WHERE id = :id AND status = 'running'
                     """
                 ),
                 {"retry": retry_in is not None, "run_at": run_at, "err": error, "now": now, "id": job_id},

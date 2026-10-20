@@ -11,7 +11,7 @@ from scout.adapters.observability.user_agent import parse_user_agent
 from scout.api.schemas.events import EventBatch, EventsAccepted, Rejection
 from scout.bootstrap import Container
 from scout.ports.analytics import AnalyticsEvent, SessionTouch
-from scout.ports.analytics_catalogue import validate_event
+from scout.ports.analytics_catalogue import validate_event, validate_page
 from scout.shared import ValidationFailed
 from scout.shared.context import get_context
 
@@ -33,9 +33,17 @@ MAX_BODY_BYTES = 64 * 1024
 )
 async def post_events(request: Request) -> EventsAccepted:
     """Validate, enrich and buffer events."""
-    body = await request.body()
-    if len(body) > MAX_BODY_BYTES:
+    declared = request.headers.get("content-length")
+    if declared and declared.isdigit() and int(declared) > MAX_BODY_BYTES:
         raise ValidationFailed("Event batch too large", extra={"max_bytes": MAX_BODY_BYTES})
+    chunks: list[bytes] = []
+    size = 0
+    async for chunk in request.stream():
+        size += len(chunk)
+        if size > MAX_BODY_BYTES:
+            raise ValidationFailed("Event batch too large", extra={"max_bytes": MAX_BODY_BYTES})
+        chunks.append(chunk)
+    body = b"".join(chunks)
     try:
         batch = EventBatch.model_validate_json(body)
     except ValidationError as exc:
@@ -47,7 +55,7 @@ async def post_events(request: Request) -> EventsAccepted:
     rejected: list[Rejection] = []
     accepted = 0
     for i, e in enumerate(batch.events):
-        reason = validate_event(e.name, e.properties)
+        reason = validate_event(e.name, e.properties) or validate_page(e.page) or validate_page(e.prev_page)
         if reason:
             rejected.append(Rejection(index=i, reason=reason))
             continue

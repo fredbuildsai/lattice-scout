@@ -2,9 +2,14 @@
 
 from __future__ import annotations
 
+import re
 from collections.abc import Mapping
 
 MAX_STRING = 64
+PAGE_PATTERN = re.compile(
+    r"^[A-Za-z0-9_\-./:*]{1,128}$"
+)  # route patterns only, no query strings or free text
+EMAIL_LIKE = re.compile(r"[^\s@]+@[^\s@]+")
 
 EVENT_CATALOGUE: Mapping[str, frozenset[str]] = {
     "page_view": frozenset(),
@@ -40,6 +45,15 @@ def validate_event(name: str, properties: Mapping[str, object]) -> str | None:
     for key, value in properties.items():
         if isinstance(value, str) and len(value) > MAX_STRING:
             return f"property too long: {key}"
+        if isinstance(value, str) and EMAIL_LIKE.search(value):
+            return f"property looks like an email address: {key}"
         if isinstance(value, (dict, list)):
             return f"property not scalar: {key}"
+    return None
+
+
+def validate_page(page: str | None) -> str | None:
+    """Return a rejection reason if ``page`` is not a route pattern (analytics must not carry free text)."""
+    if page is not None and not PAGE_PATTERN.match(page):
+        return "page is not a route pattern"
     return None

@@ -94,3 +94,22 @@ async def test_concurrent_claims_never_double_claim(make: Callable[[FixedClock],
     got = await asyncio.gather(*(q.claim(f"w{i}", ["k"]) for i in range(12)))
     claimed = [j.id for j in got if j]
     assert len(claimed) == 5 and set(claimed) == ids
+
+
+async def test_expired_lease_with_no_attempts_left_is_dead(
+    make: Callable[[FixedClock], JobQueuePort],
+) -> None:
+    clock = FixedClock(T0)
+    q = make(clock)
+    await q.enqueue(JobSpec(kind="k", max_attempts=1))
+    assert await q.claim("w1", ["k"])
+    clock.advance(timedelta(seconds=301))
+    assert await q.claim("w2", ["k"]) is None  # crashed job is not retried past max_attempts
+
+
+async def test_concurrent_same_dedupe_key_returns_one_id(make: Callable[[FixedClock], JobQueuePort]) -> None:
+    import asyncio
+
+    q = make(FixedClock(T0))
+    ids = await asyncio.gather(*(q.enqueue(JobSpec(kind="k", dedupe_key="same")) for _ in range(8)))
+    assert len(set(ids)) == 1

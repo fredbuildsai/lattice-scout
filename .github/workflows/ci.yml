@@ -22,6 +22,8 @@ jobs:
       - uses: astral-sh/setup-uv@v5
         with: { python-version: "3.12" }
       - run: uv sync --frozen
+      - name: llmrouter-free (optional; adapter tests skip if unavailable)
+        run: uv pip install "git+https://github.com/fredbuildsai/llmrouter-free.git" || true
       - run: uv run ruff check src tests
       - run: uv run ruff format --check src tests
       - run: uv run mypy src tests
@@ -57,4 +59,3 @@ jobs:
         working-directory: docs-site
       - uses: DavidAnson/markdownlint-cli2-action@v16
         with: { globs: "docs/**/*.md\ndocs-site/pages/**/*.md\n!docs/screens/**" }
-        continue-on-error: true

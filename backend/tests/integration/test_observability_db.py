@@ -80,8 +80,20 @@ def test_five_page_views_end_to_end(db: Database) -> None:
             ).scalar_one()
             path = (await conn.execute(text("SELECT pages FROM analytics.v_session_paths"))).scalar_one()
             sess = (await conn.execute(text("SELECT count(*) FROM app_session"))).scalar_one()
+            rows = (
+                await conn.execute(text("SELECT page, prev_page, dwell_ms FROM analytics_event ORDER BY seq"))
+            ).all()
+            med = (
+                await conn.execute(
+                    text("SELECT median_dwell_ms FROM analytics.v_page_transitions WHERE to_page = '/vault'")
+                )
+            ).scalar_one()
         await d.dispose()
         assert tuple(n) == (1, 5) and trans == 4 and path == pages and sess == 1
+        assert [tuple(r) for r in rows] == [
+            (p, pages[i - 1] if i else None, 100 * i) for i, p in enumerate(pages)
+        ]
+        assert med == 100
 
     asyncio.run(check())
 
@@ -110,3 +122,24 @@ async def test_partition_function_moves_rows_from_default(db: Database) -> None:
         ).scalar_one()
         total = (await conn.execute(text("SELECT count(*) FROM external_call"))).scalar_one()
     assert in_default == 0 and total == 1
+
+
+async def test_llm_usage_view_sums(db: Database) -> None:
+    async with db.engine.begin() as conn:
+        for i in range(3):
+            await conn.execute(
+                text(
+                    "INSERT INTO llm_call (id, ts, feature, agent, route, provider, model, input_tokens, output_tokens, "
+                    "latency_ms, cost_usd, status, prompt_version) VALUES (gen_random_uuid(), now(), 'f', 'A', 'fast', "
+                    "'openai', 'm', 10, 5, 1, 0.5, :st, '1')"
+                ),
+                {"st": "ok" if i < 2 else "error"},
+            )
+        row = (
+            await conn.execute(
+                text(
+                    "SELECT calls, input_tokens, output_tokens, cost_usd, errors FROM analytics.v_llm_usage_daily"
+                )
+            )
+        ).one()
+    assert tuple(row) == (3, 30, 15, 1.5, 1)

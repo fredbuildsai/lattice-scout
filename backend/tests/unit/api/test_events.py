@@ -64,15 +64,52 @@ def test_disabled_analytics_still_202() -> None:
 
 
 def test_slow_sink_does_not_slow_response() -> None:
-    class Slow:
-        def track(self, evt: object) -> None:
+    """A BufferedWriter whose sink sleeps 1 s must not delay the 202."""
+    import asyncio
+
+    from scout.adapters.observability.buffer import BufferedWriter
+    from scout.ports.analytics import AnalyticsEvent, SessionTouch
+
+    class SlowAnalytics:
+        def __init__(self) -> None:
+            async def sink(batch: list[AnalyticsEvent]) -> None:
+                await asyncio.sleep(1)
+
+            self.w = BufferedWriter[AnalyticsEvent](
+                sink, name="slow", capacity=1000, flush_ms=10, batch_size=5
+            )
+
+        def track(self, evt: AnalyticsEvent) -> None:
+            self.w.offer(evt)
+
+        def touch_session(self, s: SessionTouch) -> None:
             pass
 
-        def touch_session(self, s: object) -> None:
-            pass
-
-    c = replace(build_container(Settings(_env_file=None, app_env="test")), analytics=Slow())
+    slow = SlowAnalytics()
+    c = replace(build_container(Settings(_env_file=None, app_env="test")), analytics=slow)
     with TestClient(create_app(c)) as client:
+        client.post("/api/v1/events", json=_batch(20))  # first batch may start the slow flush
         t0 = time.perf_counter()
-        client.post("/api/v1/events", json=_batch(20))
-        assert time.perf_counter() - t0 < 0.2
+        r = client.post("/api/v1/events", json=_batch(20))
+        assert r.status_code == 202 and time.perf_counter() - t0 < 0.05
+
+
+def test_email_and_free_text_pages_are_rejected(env: tuple[TestClient, InMemoryAnalytics]) -> None:
+    client, rec = env
+    b = _batch(3)
+    b["events"][0]["page"] = "/profile?name=jane"  # type: ignore[index]
+    b["events"][1]["name"] = "menu_item_clicked"  # type: ignore[index]
+    b["events"][1]["properties"] = {"item": "jane@example.edu"}  # type: ignore[index]
+    r = client.post("/api/v1/events", json=b)
+    assert r.json()["accepted"] == 1 and {x["index"] for x in r.json()["rejected"]} == {0, 1}
+    assert len(rec.events) == 1
+
+
+def test_oversize_body_is_rejected(env: tuple[TestClient, InMemoryAnalytics]) -> None:
+    r = env[0].post("/api/v1/events", content=b"x" * 70_000, headers={"Content-Type": "text/plain"})
+    assert r.status_code == 422
+
+
+def test_untrusted_headers_are_sanitised(env: tuple[TestClient, InMemoryAnalytics]) -> None:
+    r = env[0].get("/health", headers={"X-Request-Id": "bad id\twith spaces"})
+    assert r.headers["x-request-id"] != "bad id\twith spaces" and len(r.headers["x-request-id"]) == 32

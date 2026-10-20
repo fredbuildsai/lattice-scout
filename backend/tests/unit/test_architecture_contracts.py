@@ -81,6 +81,11 @@ def test_violations_are_detected_and_each_contract_reported_broken(tmp_path: Pat
     (root / "discovery/domain/bad.py").write_text("import fastapi\n")
     (root / "discovery/application/bad.py").write_text("import scout.adapters\n")
     (root / "adapters/bad.py").write_text("import scout.discovery.application\n")
+    # per-context violations (review finding M0-1)
+    (root / "vault/application/bad.py").write_text("import scout.vault.adapters\n")
+    (root / "vault/adapters/bad.py").write_text("import scout.vault.application\n")
+    (root / "vault/domain/bad.py").write_text("import scout.vault.application\n")
+    (root / "matching/domain/bad.py").write_text("import scout.vault.domain\n")
 
     config = tmp_path / "pyproject.toml"
     _write_config(config, cfg)
@@ -88,6 +93,12 @@ def test_violations_are_detected_and_each_contract_reported_broken(tmp_path: Pat
     result = _lint_imports(tmp_path, config)
     out = result.stdout + result.stderr
     assert result.returncode != 0, out
-    for contract in cfg["contracts"]:
-        assert f"{contract['name']} BROKEN" in out, out
-    assert "KEPT" not in out, out
+    broken = {
+        c["name"]
+        for c in cfg["contracts"]
+        if not c["name"].endswith("domains") and "independent" not in c["name"]
+    }
+    broken.add("matching domain is independent of other contexts' domains")
+    for name in broken:
+        assert f"{name} BROKEN" in out, out
+    assert "vault domain is independent of other contexts' domains KEPT" in out, out

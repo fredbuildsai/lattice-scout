@@ -10,3 +10,6 @@ Ideas and out-of-scope items noticed during the build. Do not implement them in 
 - Analytics writer in its own process / thread-free COPY pipeline if `/health` p95 overhead (+1 ms) matters (docs/perf/M0-events-loadtest.md)
 - llm-router: upstream `store_text=False` option so its SQLite ledger does not keep vault-derived response text
 - Tail sampling of errors in an OTel collector (SDK samples at the head only)
+- Menu search field "Jump to a page, idea or person…" (W11) and "Analysis runs" entry once `/runs` lists exist (M4)
+- Job fencing token (worker id on complete/fail) if long-running jobs appear
+- Move event enrichment out of `api/events.py` into an `IngestEvents` service; neutral module for logging config (review M0 #13)

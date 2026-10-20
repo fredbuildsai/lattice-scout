@@ -9,11 +9,21 @@ plus `/health` and `/ready` at 50 rps each). Warm-up excluded. Three alternating
 | analytics ON (3 runs) | 3.4–3.5 / **5.8–6.5** / 21–26 | 4.0–4.2 / 6.2–7.3 / 23–34 | 12.3–13.6 |
 | analytics OFF (3 runs) | 3.2–3.4 / 5.1–5.3 / 6.6–8.3 | 3.9–4.1 / 5.3–5.5 / 7.1–9.1 | 8.8–9.6 |
 
+### Pilot-representative load (20 batches/s = 400 events/s, 1 500 batches, 2 runs each)
+
+| Setting | events p95 | /health p95 | /ready p95 |
+|---|---|---|---|
+| analytics ON | 5.09 / 5.17 | 5.27 / 5.38 | 8.82 / 9.14 |
+| analytics OFF | 5.15 / 4.83 | 5.56 / 4.91 | 9.36 / 8.26 |
+
+Within run-to-run noise (about ±10 %); no systematic difference.
+
 **Acceptance**
 - `POST /events` p95 < 20 ms: **met** (about 6 ms at 2 000 events/s).
-- API p95 within ±5 % with analytics on vs off: **partly met**. p50 is within 3 %; `/health` p95 is about
-  1 ms (≈ 17 %) higher and p99 about 15 ms higher while a batch is being written. The residual cost is the
-  background flush competing for the GIL. Tracked in `docs/BACKLOG.md` (move the writer to its own process
+- API p95 within ±5 % with analytics on vs off: **met at pilot-representative load, not at stress load**. At
+  2 000 events/s p50 is within 3 %, but `/health` p95 is +17–33 % (about 1 ms), `/ready` p95 about +40 % and
+  p99 about 15 ms higher while a batch is written; the residual cost is the background flush competing for the
+  GIL. Accepted deviation, DECISIONS 24. Tracked in `docs/BACKLOG.md` (move the writer to its own process
   or use a pipe-based COPY worker if the pilot shows it matters).
 
 **What it took to get here** (first attempt: events p95 24–30 ms, /health p95 27–35 ms, loop stalls of 140 ms):

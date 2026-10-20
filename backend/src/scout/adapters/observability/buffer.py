@@ -9,6 +9,8 @@ from collections.abc import Awaitable, Callable
 
 import structlog
 
+from scout.shared import describe_exception
+
 log = structlog.get_logger()
 
 MAX_CONSECUTIVE_FAILURES = 3
@@ -91,11 +93,15 @@ class BufferedWriter[T]:
         except Exception as exc:
             self._failures += 1
             self.failure_count += 1
-            log.warning("buffer_flush_failed", buffer=self.name, size=len(batch), error=repr(exc)[:300])
+            log.warning(
+                "buffer_flush_failed", buffer=self.name, size=len(batch), error=describe_exception(exc)
+            )
             if self._failures >= MAX_CONSECUTIVE_FAILURES or len(self._queue) + len(batch) > self._capacity:
                 self.dropped += len(batch)
                 self._failures = 0
-                log.error("buffer_batch_dropped", buffer=self.name, size=len(batch), error=str(exc))
+                log.error(
+                    "buffer_batch_dropped", buffer=self.name, size=len(batch), error=describe_exception(exc)
+                )
             else:
                 self._queue.extendleft(reversed(batch))
         else:

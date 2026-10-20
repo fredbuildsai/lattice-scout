@@ -13,7 +13,7 @@ from pydantic import JsonValue
 from scout.adapters.observability import partitions
 from scout.adapters.persistence.db import Database
 from scout.ports.jobs import Job, JobQueuePort, retry_delay
-from scout.shared import Clock
+from scout.shared import Clock, describe_exception
 from scout.shared.context import RequestContext, set_context
 
 log = structlog.get_logger()
@@ -54,8 +54,9 @@ async def run_once(queue: JobQueuePort, handlers: Mapping[str, Handler], worker_
             span.set_attribute("job.attempts", job.attempts)
             result = await handlers[job.kind](job)
     except Exception as exc:
-        log.warning("job_failed", job_id=str(job.id), kind=job.kind, attempt=job.attempts, error=str(exc))
-        await queue.fail(job.id, f"{type(exc).__name__}: {exc}", retry_delay(job.attempts))
+        safe = describe_exception(exc)
+        log.warning("job_failed", job_id=str(job.id), kind=job.kind, attempt=job.attempts, error=safe)
+        await queue.fail(job.id, safe, retry_delay(job.attempts))
     else:
         await queue.complete(job.id, result)
         log.info("job_done", job_id=str(job.id), kind=job.kind)

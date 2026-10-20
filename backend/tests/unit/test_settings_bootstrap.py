@@ -22,10 +22,41 @@ def test_offline_defaults() -> None:
     )  # fmt: skip
 
 
-@pytest.mark.parametrize("bad", [{}, {"auth_mode": "supabase", "supabase_url": "https://x.supabase.co"}])
-def test_prod_refuses_offline_backends(bad: dict[str, str]) -> None:
-    with pytest.raises(ValidationError):
-        _s(app_env="prod", **bad)
+REAL = {
+    "llm_backend": "openai_direct", "openai_api_key": "k", "literature_backend": "openalex",
+    "email_provider": "resend", "email_api_key": "k", "email_from": "a@b.c",
+}  # fmt: skip
+
+
+def test_prod_refuses_dev_auth_even_with_real_backends() -> None:
+    with pytest.raises(ValidationError, match="AUTH_MODE"):
+        _s(app_env="prod", auth_mode="dev", **REAL)
+
+
+@pytest.mark.parametrize(
+    ("key", "value", "needle"),
+    [("llm_backend", "fake", "LLM_BACKEND"), ("literature_backend", "fixtures", "LITERATURE_BACKEND"),
+     ("email_provider", "console", "EMAIL_PROVIDER")],
+)  # fmt: skip
+def test_prod_refuses_each_offline_backend(key: str, value: str, needle: str) -> None:
+    kw = {**REAL, "auth_mode": "supabase", "supabase_url": "https://x.supabase.co", key: value}
+    with pytest.raises(ValidationError, match=needle):
+        _s(app_env="prod", **kw)
+
+
+def test_prod_accepts_real_backends() -> None:
+    assert (
+        _s(app_env="prod", auth_mode="supabase", supabase_url="https://x.supabase.co", **REAL).app_env
+        == "prod"
+    )
+
+
+def test_every_settings_field_is_in_env_example() -> None:
+    keys = {
+        k.lower()
+        for k in re.findall(r"^#?\s*([A-Z][A-Z0-9_]*)=", (ROOT / ".env.example").read_text(), flags=re.M)
+    }
+    assert [f for f in Settings.model_fields if f not in keys] == []
 
 
 def test_every_env_example_key_has_a_field() -> None:

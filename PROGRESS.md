@@ -38,7 +38,9 @@ Last session: 2026-10-20 s01 — M0 tasks 1-12 done, make check green; reviewer 
 - [2026-10-20 s01](docs/journal/2026-10-20-s01.md)
 
 ## Notes for next session
-- First session: follow the kickoff prompt in docs/claude-code-prompts.md.
+- llmrouter-free is installed out of band: `cd backend && uv pip install -e ../../llmrouter-free` (`uv sync` removes it; router adapter tests skip without it). `uv sync --extra llm` for the OpenAI Agents SDK.
+- Run `make check` (needs network for markdownlint via npx and Playwright is separate: `make e2e` with API + `pnpm dev` running).
+- Review `docs/reviews/M0.md` round 1 fixed; known gap: API p95 at stress load (DECISIONS 24).
 
 ## Open blockers
-- none yet (see docs/BLOCKERS.md)
+- B2 live services, B3 llm-router response-text ledger (both have fallbacks; see docs/BLOCKERS.md)

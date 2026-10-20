@@ -7,6 +7,8 @@ import os
 import signal
 import socket
 
+from opentelemetry.instrumentation.sqlalchemy import SQLAlchemyInstrumentor
+
 from scout.adapters.observability.partitions import schedule_today
 from scout.adapters.observability.telemetry import configure_telemetry, tune_gc
 from scout.adapters.queue.postgres import PostgresJobQueue
@@ -26,6 +28,7 @@ async def main() -> None:
     )
     await start_container(c)
     tune_gc()
+    SQLAlchemyInstrumentor().instrument(engine=c.db.engine.sync_engine)
     queue = PostgresJobQueue(c.db, c.clock, c.ids, lease_seconds=s.job_lease_seconds)
     await schedule_today(queue, c.clock)
     handlers = build_handlers(c.db, c.clock, queue)

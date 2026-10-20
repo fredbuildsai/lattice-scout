@@ -57,11 +57,19 @@ def _select_llm(
             return FakeLLM(resolve_path(s.llm_fixtures_dir), usage, prices, clock, ids)
         case "llm_router":
             from llmrouter_free import LLMRouter, load_routes
+            from sqlalchemy import create_engine
+            from sqlalchemy.pool import StaticPool
 
             from scout.adapters.llm.llm_router import LlmRouterAdapter, MeteringCompletion
 
+            # The router's ledger stores response text. Keep it in process memory only: nothing vault-derived
+            # reaches disk outside our database (DECISIONS 23).
+            ledger = create_engine(
+                "sqlite://", poolclass=StaticPool, connect_args={"check_same_thread": False}
+            )
             router = LLMRouter(
                 load_routes(resolve_path(s.llm_router_config)),
+                engine=ledger,
                 completion_fn=MeteringCompletion(),
                 allow_paid=s.llm_router_allow_paid,
                 max_usd_per_day=s.llm_router_max_usd_per_day,

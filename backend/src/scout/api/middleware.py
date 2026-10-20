@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 import time
 from uuid import uuid4
 
@@ -12,6 +13,10 @@ from starlette.types import ASGIApp, Message, Receive, Scope, Send
 from scout.shared.context import RequestContext, set_context
 
 log = structlog.get_logger()
+_SAFE_ID = re.compile(r"^[A-Za-z0-9_\-]{1,64}$")
+_UUID = re.compile(r"^[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}$")
+_SAFE_ID = re.compile(r"^[A-Za-z0-9_\-]{1,64}$")
+_UUID = re.compile(r"^[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}$")
 
 
 class RequestContextMiddleware:
@@ -25,12 +30,12 @@ class RequestContextMiddleware:
             await self.app(scope, receive, send)
             return
         headers = Headers(scope=scope)
-        request_id = headers.get("x-request-id") or uuid4().hex
-        set_context(
-            RequestContext(
-                request_id=request_id, session_id=headers.get("x-session-id"), page=headers.get("x-page")
-            )
-        )
+        raw_id = headers.get("x-request-id", "")
+        request_id = raw_id if _SAFE_ID.match(raw_id) else uuid4().hex
+        raw_session = headers.get("x-session-id", "")
+        session_id = raw_session if _UUID.match(raw_session) else None
+        page = headers.get("x-page", "")[:128] or None
+        set_context(RequestContext(request_id=request_id, session_id=session_id, page=page))
         started = time.perf_counter()
         status = 500
 

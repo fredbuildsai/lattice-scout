@@ -109,3 +109,19 @@ class InfrastructureError(ScoutError):
     code = "upstream_unavailable"
     http_status = 503
     title = "Service unavailable"
+
+
+def describe_exception(exc: BaseException, limit: int = 200) -> str:
+    """Log-safe description: class name plus a truncated message, never user-supplied input values.
+
+    Pydantic validation errors embed the offending input (possibly vault text), so only their locations and
+    error types are kept.
+    """
+    errors = getattr(exc, "errors", None)
+    if callable(errors):
+        try:
+            parts = [f"{'.'.join(str(x) for x in e.get('loc', ()))}:{e.get('type', '?')}" for e in errors()]
+            return f"{type(exc).__name__}: {'; '.join(parts)}"[:limit]
+        except Exception:  # noqa: S110
+            pass
+    return f"{type(exc).__name__}: {exc}"[:limit]

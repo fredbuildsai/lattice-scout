@@ -5,10 +5,12 @@
         "description": "Result of ingestion. Writing happens asynchronously.",
         "properties": {
           "accepted": {
+            "description": "Number of events queued for storage.",
             "title": "Accepted",
             "type": "integer"
           },
           "rejected": {
+            "description": "Events that failed catalogue validation.",
             "items": {
               "$ref": "#/components/schemas/Rejection"
             },
@@ -27,10 +29,12 @@
         "description": "Why an event was not accepted.",
         "properties": {
           "index": {
+            "description": "Position of the rejected event in the submitted batch.",
             "title": "Index",
             "type": "integer"
           },
           "reason": {
+            "description": "Why the event was refused (unknown name or property, too long, not scalar).",
             "title": "Reason",
             "type": "string"
           }

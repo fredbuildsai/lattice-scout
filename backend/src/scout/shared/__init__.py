@@ -13,6 +13,7 @@ from scout.shared.errors import (
     ScoutError,
     Unauthenticated,
     ValidationFailed,
+    describe_exception,
 )
 from scout.shared.events import AggregateRoot, DomainEvent
 from scout.shared.ids import EntityId, IdGenerator, SequentialIdGenerator, UuidGenerator, parse_id
@@ -41,5 +42,6 @@ __all__ = [
     "UnitOfWorkFactory",
     "UuidGenerator",
     "ValidationFailed",
+    "describe_exception",
     "parse_id",
 ]
