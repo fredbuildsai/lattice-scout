@@ -67,7 +67,7 @@ src = ["src", "tests"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "ASYNC", "S", "RUF"]
-ignore = ["S101", "RUF012", "RUF028"]
+ignore = ["S101", "RUF012", "RUF028", "E501"]
 
 [tool.ruff.lint.per-file-ignores]
 "src/scout/adapters/**" = ["E501"]

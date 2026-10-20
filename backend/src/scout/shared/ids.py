@@ -2,13 +2,17 @@
 
 from __future__ import annotations
 
-from typing import Protocol
+from typing import NewType, Protocol
 from uuid import UUID, uuid4
 
 from scout.shared.errors import ValidationFailed
 
 EntityId = UUID
 """Identifier of any entity. Contexts define ``NewType`` wrappers (``AccountId``...) for type safety."""
+
+
+AccountId = NewType("AccountId", UUID)
+"""Identifier of an account (= the auth user id); shared because every context refers to owners."""
 
 
 class IdGenerator(Protocol):

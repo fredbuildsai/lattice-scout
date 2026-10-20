@@ -16,10 +16,11 @@ from scout.shared.errors import (
     describe_exception,
 )
 from scout.shared.events import AggregateRoot, DomainEvent
-from scout.shared.ids import EntityId, IdGenerator, SequentialIdGenerator, UuidGenerator, parse_id
+from scout.shared.ids import AccountId, EntityId, IdGenerator, SequentialIdGenerator, UuidGenerator, parse_id
 from scout.shared.uow import UnitOfWork, UnitOfWorkFactory
 
 __all__ = [
+    "AccountId",
     "AggregateRoot",
     "Clock",
     "Conflict",
