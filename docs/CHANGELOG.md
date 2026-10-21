@@ -4,6 +4,13 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 
 ## [Unreleased]
 
+### Fixed
+- Matches opt-in copy no longer says others see only field, region and career stage: it now names the shared topics and the short method descriptions too (F-37). User page "Matching" gets the same sentence.
+
+### Added
+- Matches (F-36): two-pane layout (list and detail), "Load more" following `next_cursor`, "You both said yes" hero, and "Write an intro" / "Propose call" `mailto:` links. Venn, workspace and call buttons stay open in the backlog.
+- Opportunity card thumbs prefill from `GET /feedback`; Home shows the profile summary and "Review my publications" (F-35).
+
 ### Changed
 - LLM routing now targets free providers: `config/llm_router.yaml` lists OpenRouter, Groq and Mistral deployments (no OpenAI), `LLM_ROUTER_ALLOW_PAID` defaults to `false`, schema hints are sent with `strict=False`, and `OPENROUTER_API_KEY`, `GROQ_API_KEY`, `MISTRAL_API_KEY` are settings. Development and CI still run on the fake LLM (DECISIONS 105).
 

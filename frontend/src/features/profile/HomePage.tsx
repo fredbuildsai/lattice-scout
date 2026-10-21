@@ -1,56 +1,50 @@
-import { Link } from "react-router-dom";
-import { Icon } from "../../ui/icons";
-import { OpportunityCard } from "../opportunities/OpportunityCard";
-import { Claim } from "../opportunities/Claim";
-import { useOpportunities } from "../opportunities/api";
-import { kindInfo } from "../opportunities/kinds";
-import { latestDone, useRuns, type Run } from "../runs/api";
-import { useDocuments } from "../vault/api";
-import { KIND_LABELS, type DocKind } from "../vault/status";
-import { useMatches } from "../matches/api";
-import { useProfile } from "./api";
+import { Link } from 'react-router-dom'
+import { Icon } from '../../ui/icons'
+import { OpportunityCard } from '../opportunities/OpportunityCard'
+import { Claim } from '../opportunities/Claim'
+import { useOpportunities } from '../opportunities/api'
+import { kindInfo } from '../opportunities/kinds'
+import { latestDone, useRuns, type Run } from '../runs/api'
+import { useDocuments } from '../vault/api'
+import { KIND_LABELS, type DocKind } from '../vault/status'
+import { useMatches } from '../matches/api'
+import { useProfile } from './api'
 
 function Card({
   title,
   link,
   children,
 }: {
-  title: string;
-  link?: { to: string; label: string };
-  children: React.ReactNode;
+  title: string
+  link?: { to: string; label: string }
+  children: React.ReactNode
 }) {
   return (
-    <section
-      aria-label={title}
-      className="rounded-card border border-line bg-surface p-4"
-    >
+    <section aria-label={title} className="rounded-card border border-line bg-surface p-4">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">{title}</h2>
         {link && (
-          <Link
-            to={link.to}
-            className="text-sm font-semibold text-accent hover:underline"
-          >
+          <Link to={link.to} className="text-sm font-semibold text-accent hover:underline">
             {link.label}
           </Link>
         )}
       </div>
       <div className="mt-2">{children}</div>
     </section>
-  );
+  )
 }
 
 function briefing(run: Run | undefined): string {
   if (!run)
-    return "I have not analysed anything yet. Add a few documents to your vault and ask me to analyse them; I will look for white spots, synergies and proposals worth resubmitting.";
-  if (run.status === "queued" || run.status === "running")
-    return `I am analysing your documents now (${run.percent}% done). The first ideas appear here as soon as every citation is checked.`;
-  if (run.status === "failed")
-    return "My last analysis did not finish. Nothing is lost; you can start it again from your vault.";
-  if (run.status === "cancelled")
-    return "You stopped the last analysis. Start a new one from your vault whenever you like.";
-  const n = run.counts.shown;
-  return `I checked ${run.counts.corpus} papers against your ${run.document_ids.length} ${run.document_ids.length === 1 ? "document" : "documents"} and found ${n} ${n === 1 ? "opportunity" : "opportunities"} with verified sources.`;
+    return 'I have not analysed anything yet. Add a few documents to your vault and ask me to analyse them; I will look for white spots, synergies and proposals worth resubmitting.'
+  if (run.status === 'queued' || run.status === 'running')
+    return `I am analysing your documents now (${run.percent}% done). The first ideas appear here as soon as every citation is checked.`
+  if (run.status === 'failed')
+    return 'My last analysis did not finish. Nothing is lost; you can start it again from your vault.'
+  if (run.status === 'cancelled')
+    return 'You stopped the last analysis. Start a new one from your vault whenever you like.'
+  const n = run.counts.shown
+  return `I checked ${run.counts.corpus} papers against your ${run.document_ids.length} ${run.document_ids.length === 1 ? 'document' : 'documents'} and found ${n} ${n === 1 ? 'opportunity' : 'opportunities'} with verified sources.`
 }
 
 /**
@@ -58,41 +52,36 @@ function briefing(run: Run | undefined): string {
  * (empty until matching exists) and a vault summary by document kind.
  */
 export function HomePage() {
-  const profile = useProfile();
-  const runs = useRuns();
-  const docs = useDocuments();
-  const run = latestDone(runs.data?.items);
-  const latest = runs.data?.items[0];
-  const matches = useMatches();
-  const awaiting = (matches.data?.items ?? []).filter(
-    (m) => m.status === "awaiting_you",
-  ).length;
-  const top = useOpportunities({ runId: run?.id, limit: 3, enabled: !!run });
-  const cards = (top.data?.items ?? []).slice(0, 3);
-  const p = profile.data;
-  const first = p?.display_name.split(" ")[0];
-  const items = docs.data?.items ?? [];
+  const profile = useProfile()
+  const runs = useRuns()
+  const docs = useDocuments()
+  const run = latestDone(runs.data?.items)
+  const latest = runs.data?.items[0]
+  const matches = useMatches()
+  const awaiting = (matches.data?.items ?? []).filter((m) => m.status === 'awaiting_you').length
+  const top = useOpportunities({ runId: run?.id, limit: 3, enabled: !!run })
+  const cards = (top.data?.items ?? []).slice(0, 3)
+  const p = profile.data
+  const first = p?.display_name.split(' ')[0]
+  const items = docs.data?.items ?? []
   const byKind = items.reduce<Record<string, number>>(
     (acc, d) => ({
       ...acc,
-      [d.kind ?? "other"]: (acc[d.kind ?? "other"] ?? 0) + 1,
+      [d.kind ?? 'other']: (acc[d.kind ?? 'other'] ?? 0) + 1,
     }),
     {},
-  );
-  const date = new Date().toLocaleDateString("en-GB", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-  });
+  )
+  const date = new Date().toLocaleDateString('en-GB', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  })
   return (
     <section aria-labelledby="page-title">
       <p className="text-sm text-ink-3">{date}</p>
       <div className="mt-1 flex flex-wrap items-center justify-between gap-3">
-        <h1
-          id="page-title"
-          className="font-serif text-3xl font-semibold md:text-4xl"
-        >
-          {first ? `Hello, ${first}` : "Home"}
+        <h1 id="page-title" className="font-serif text-3xl font-semibold md:text-4xl">
+          {first ? `Hello, ${first}` : 'Home'}
         </h1>
         <Link
           to="/vault"
@@ -103,30 +92,23 @@ export function HomePage() {
       </div>
       {profile.isError && (
         <p role="alert" className="mt-3 text-warm">
-          We could not load your profile.{" "}
-          <button
-            type="button"
-            className="underline"
-            onClick={() => void profile.refetch()}
-          >
+          We could not load your profile.{' '}
+          <button type="button" className="underline" onClick={() => void profile.refetch()}>
             Try again
           </button>
         </p>
       )}
-      {p && p.import.status !== "done" && (
+      {p && p.import.status !== 'done' && (
         <p role="status" className="mt-3 text-sm text-ink-3">
-          {p.import.status === "failed" ? (
+          {p.import.status === 'failed' ? (
             <>
-              The last import failed.{" "}
-              <Link
-                to="/onboarding?step=works"
-                className="font-semibold text-accent underline"
-              >
+              The last import failed.{' '}
+              <Link to="/onboarding?step=works" className="font-semibold text-accent underline">
                 Retry it
               </Link>
             </>
           ) : (
-            "Still importing your works…"
+            'Still importing your works…'
           )}
         </p>
       )}
@@ -140,17 +122,13 @@ export function HomePage() {
             <Icon name="sparkle" size={18} />
           </span>
           <div className="min-w-0">
-            <p className="font-mono text-[11px] uppercase tracking-wide text-scout-ink">
-              Scout’s briefing
-            </p>
+            <p className="font-mono text-[11px] uppercase tracking-wide text-scout-ink">Scout’s briefing</p>
             {runs.isPending ? (
               <p role="status" className="mt-1 text-ink-3">
                 Loading…
               </p>
             ) : (
-              <p className="mt-1 font-serif text-lg leading-relaxed">
-                {briefing(latest)}
-              </p>
+              <p className="mt-1 font-serif text-lg leading-relaxed">{briefing(latest)}</p>
             )}
             {runs.isError && (
               <p role="alert" className="text-warm">
@@ -159,8 +137,7 @@ export function HomePage() {
             )}
             {cards[0]?.why && (
               <p className="mt-2 text-sm text-ink-2">
-                Top idea:{" "}
-                <Claim claim={cards[0].why} opportunityId={cards[0].id} />
+                Top idea: <Claim claim={cards[0].why} opportunityId={cards[0].id} />
               </p>
             )}
           </div>
@@ -174,15 +151,14 @@ export function HomePage() {
               See the top {kindInfo(cards[0].kind).label.toLowerCase()}
             </Link>
           )}
-          {latest &&
-            (latest.status === "queued" || latest.status === "running") && (
-              <Link
-                to={`/runs/${latest.id}`}
-                className="inline-flex min-h-11 items-center rounded-btn border border-line-strong bg-surface px-4 text-sm font-semibold"
-              >
-                Watch progress
-              </Link>
-            )}
+          {latest && (latest.status === 'queued' || latest.status === 'running') && (
+            <Link
+              to={`/runs/${latest.id}`}
+              className="inline-flex min-h-11 items-center rounded-btn border border-line-strong bg-surface px-4 text-sm font-semibold"
+            >
+              Watch progress
+            </Link>
+          )}
           {!latest && (
             <Link
               to="/vault"
@@ -199,10 +175,7 @@ export function HomePage() {
           <div className="flex items-baseline justify-between">
             <h2 className="text-lg font-semibold">New opportunities</h2>
             {cards.length > 0 && (
-              <Link
-                to="/opportunities"
-                className="text-sm font-semibold text-accent hover:underline"
-              >
+              <Link to="/opportunities" className="text-sm font-semibold text-accent hover:underline">
                 See all
               </Link>
             )}
@@ -218,9 +191,7 @@ export function HomePage() {
             </p>
           )}
           {cards.length === 0 && !top.isPending && (
-            <p className="mt-3 text-ink-2">
-              No opportunities yet. They appear here after an analysis.
-            </p>
+            <p className="mt-3 text-ink-2">No opportunities yet. They appear here after an analysis.</p>
           )}
           {cards.length > 0 && (
             <ul aria-label="Top opportunities" className="mt-3 space-y-4">
@@ -231,31 +202,51 @@ export function HomePage() {
           )}
         </div>
         <div className="space-y-5">
-          <Card
-            title="Matches"
-            link={
-              matches.data?.matching_enabled
-                ? { to: "/matches", label: "Open" }
-                : undefined
-            }
-          >
+          {p && (
+            <Card
+              title="Your profile"
+              link={{
+                to: '/onboarding?step=works',
+                label: 'Review my publications',
+              }}
+            >
+              <p className="font-semibold">{p.display_name}</p>
+              {(p.institution || p.country) && (
+                <p className="text-sm text-ink-3">{[p.institution, p.country].filter(Boolean).join(' · ')}</p>
+              )}
+              <p className="mt-1 text-sm text-ink-2">
+                {p.works_summary.included} of {p.works_summary.total} {p.works_summary.total === 1 ? 'work' : 'works'}{' '}
+                included
+              </p>
+              {p.topics.length > 0 && (
+                <ul aria-label="Top topics" className="mt-2 flex flex-wrap gap-2">
+                  {p.topics.slice(0, 4).map((t) => (
+                    <li key={t.topic_id} className="rounded-full bg-subtle px-2.5 py-1 text-xs text-ink-2">
+                      {t.name ?? t.topic_id}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </Card>
+          )}
+          <Card title="Matches" link={matches.data?.matching_enabled ? { to: '/matches', label: 'Open' } : undefined}>
             <p className="text-sm text-ink-2">
               {matches.isPending
-                ? "Loading…"
+                ? 'Loading…'
                 : matches.isError
-                  ? "Open Matches to see your proposals."
+                  ? 'Open Matches to see your proposals.'
                   : !matches.data?.matching_enabled
-                    ? "Turn on matching to meet complementary researchers."
+                    ? 'Turn on matching to meet complementary researchers.'
                     : awaiting > 0
-                      ? `${awaiting} ${awaiting === 1 ? "match is" : "matches are"} waiting for your answer.`
-                      : "No matches waiting for you."}
+                      ? `${awaiting} ${awaiting === 1 ? 'match is' : 'matches are'} waiting for your answer.`
+                      : 'No matches waiting for you.'}
             </p>
           </Card>
           <Card
             title="Private vault"
             link={{
-              to: "/vault",
-              label: `${items.length} ${items.length === 1 ? "file" : "files"}`,
+              to: '/vault',
+              label: `${items.length} ${items.length === 1 ? 'file' : 'files'}`,
             }}
           >
             {docs.isPending && (
@@ -268,9 +259,7 @@ export function HomePage() {
                 We could not load your vault.
               </p>
             )}
-            {docs.data && items.length === 0 && (
-              <p className="text-sm text-ink-2">Nothing here yet.</p>
-            )}
+            {docs.data && items.length === 0 && <p className="text-sm text-ink-2">Nothing here yet.</p>}
             <ul className="divide-y divide-line text-sm">
               {Object.entries(byKind).map(([k, n]) => (
                 <li key={k} className="flex justify-between py-2">
@@ -284,5 +273,5 @@ export function HomePage() {
         </div>
       </div>
     </section>
-  );
+  )
 }

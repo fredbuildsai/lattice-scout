@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { track } from '../../analytics/client'
 import { Claim } from './Claim'
@@ -18,7 +17,6 @@ export function KindBadge({ kind }: { kind: string }) {
  */
 export function OpportunityCard({ card, position, compact = false }: { card: Card; position: number; compact?: boolean }) {
   const set = useSetStatus()
-  const [rating, setRating] = useState<'up' | 'down' | null>(null)
   const k = kindInfo(card.kind)
   const saved = card.status === 'saved'
   const dismissed = card.status === 'dismissed'
@@ -76,7 +74,7 @@ export function OpportunityCard({ card, position, compact = false }: { card: Car
         )}
         {!compact && (
           <div className="ml-auto">
-            <Thumbs opportunityId={card.id} rating={rating} onRated={setRating} />
+            <Thumbs opportunityId={card.id} />
           </div>
         )}
       </div>

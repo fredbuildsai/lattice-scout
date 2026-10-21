@@ -2,7 +2,7 @@
 
 Scout can suggest a researcher whose work fits with yours. Your work and theirs may not overlap much. One of you may bring a method the other lacks, for example.
 
-You each see a short card that does not show your name. Names and contact details are shared only when **both** of you say yes.
+You each see a short card that does not show your name. The other researcher does see your field, region, career stage, the topics you share and short descriptions of the methods you bring. Names and contact details are shared only when **both** of you say yes.
 
 Matching is optional. It is off until you turn it on.
 
@@ -31,7 +31,7 @@ When Scout suggests someone, the card shows:
 - a short **why** text;
 - the date the proposal is **open until**. A proposal stays open for 14 days.
 
-Choose **Accept** or **Decline**.
+Choose **Accept** or **Decline**. On a wide screen the list of matches is on the left and the selected match on the right. Choose **Load more** under the list if there are more proposals.
 
 ## After you accept
 
@@ -49,8 +49,9 @@ Declining is final for this proposal. You can tick **Never suggest this person a
 
 ## When you both say yes
 
-The card shows:
+The card opens with **You both said yes** and shows:
 
+- **Write an intro** and **Propose call**, which open an e-mail to the other researcher in your mail program (Scout writes nothing for you);
 - **Contact details**: the other researcher's name, institution, e-mail address, ORCID and OpenAlex ids, region and career stage.
 - **Joint ideas**: one to three ideas for working together. Each has a title, a question, what each of you brings, a first step and a possible output. Ideas can take a short time to appear. If Scout cannot make them, the contact details still show.
 - **Rating**: rate the match from 1 to 5 stars. You can add reasons (for example "Methods fit" or "Too similar to me") and a comment. A new rating replaces the old one. Ratings help the team tune matching.
