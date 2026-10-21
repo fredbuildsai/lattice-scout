@@ -160,6 +160,86 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/matches": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Your match proposals
+         * @description Newest first. Identity is shown only for mutual matches; a decline is never shown to the other side.
+         */
+        get: operations["list_matches_api_v1_matches_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/matches/{match_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * One match
+         * @description Anonymous card, or the revealed view with contact and joint ideas once both accepted.
+         */
+        get: operations["get_match_api_v1_matches__match_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/matches/{match_id}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Accept, decline or withdraw
+         * @description Both sides must accept before names and contact details appear; withdraw takes an acceptance back.
+         */
+        post: operations["decide_api_v1_matches__match_id__decision_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/matches/{match_id}/rating": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Rate a mutual match
+         * @description 1 to 5 stars with optional reason chips; rating again replaces the earlier rating.
+         */
+        post: operations["rate_match_api_v1_matches__match_id__rating_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/me": {
         parameters: {
             query?: never;
@@ -505,6 +585,48 @@ export interface components {
             /** Verified */
             verified: boolean | null;
         };
+        /**
+         * AnonymousMatchView
+         * @description A proposal before the reveal: no name, no institution, no year.
+         */
+        AnonymousMatchView: {
+            career_band: components["schemas"]["CareerBand"];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /** Field Label */
+            field_label: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "anonymous";
+            my_decision: components["schemas"]["Decision"] | null;
+            region: components["schemas"]["Region"];
+            /** Score */
+            score: number;
+            /** Shared Topics */
+            shared_topics: string[];
+            status: components["schemas"]["ViewerStatus"];
+            /** They Bring */
+            they_bring: components["schemas"]["BringText"][];
+            /** Why */
+            why: string;
+            /** You Bring */
+            you_bring: components["schemas"]["BringItem"][];
+        };
         /** Body_upload_document_api_v1_documents_post */
         Body_upload_document_api_v1_documents_post: {
             /**
@@ -520,6 +642,24 @@ export interface components {
             keep_original: boolean;
             /** @description Optional classification hint. */
             kind?: components["schemas"]["DocKind"] | null;
+        };
+        /**
+         * BringItem
+         * @description One thing a side brings.
+         */
+        BringItem: {
+            /** Source Refs */
+            source_refs?: string[];
+            /** Text */
+            text: string;
+        };
+        /**
+         * BringText
+         * @description What the other side brings, without references (they would point at that person's papers).
+         */
+        BringText: {
+            /** Text */
+            text: string;
         };
         /**
          * CandidateGroupOut
@@ -591,6 +731,12 @@ export interface components {
             groups: components["schemas"]["CandidateGroupOut"][];
         };
         /**
+         * CareerBand
+         * @description Coarse career stage shown on the anonymous card.
+         * @enum {string}
+         */
+        CareerBand: "early" | "mid" | "senior" | "unknown";
+        /**
          * ChecklistItemOut
          * @description A readiness item.
          */
@@ -654,6 +800,24 @@ export interface components {
             consent_vault_signals?: boolean | null;
         };
         /**
+         * Contact
+         * @description Identity and contact of the other side. Only built for a mutual match.
+         */
+        Contact: {
+            career_band: components["schemas"]["CareerBand"];
+            /** Display Name */
+            display_name: string;
+            /** Email */
+            email: string;
+            /** Institution */
+            institution: string | null;
+            /** Openalex Ids */
+            openalex_ids: string[];
+            /** Orcid */
+            orcid: string | null;
+            region: components["schemas"]["Region"];
+        };
+        /**
          * DatasetOut
          * @description A dataset the document mentions.
          */
@@ -667,6 +831,28 @@ export interface components {
              * @enum {string}
              */
             status: "available" | "planned" | "partial";
+        };
+        /**
+         * Decision
+         * @description A stored decision.
+         * @enum {string}
+         */
+        Decision: "accept" | "decline";
+        /**
+         * DecisionIn
+         * @description Accept, decline or withdraw.
+         */
+        DecisionIn: {
+            /**
+             * Action
+             * @enum {string}
+             */
+            action: "accept" | "decline" | "withdraw";
+            /**
+             * Never Similar
+             * @default false
+             */
+            never_similar: boolean;
         };
         /**
          * DegradedOut
@@ -965,13 +1151,12 @@ export interface components {
         FeedbackIn: {
             /** Comment */
             comment?: string | null;
-            /**
-             * Rating
-             * @enum {string}
-             */
-            rating: "up" | "down";
+            /** Rating */
+            rating?: ("up" | "down") | null;
             /** Reasons */
-            reasons?: ("spot_on" | "already_knew" | "not_feasible" | "wrong_field" | "too_vague")[];
+            reasons?: ("spot_on" | "already_knew" | "not_feasible" | "wrong_field" | "too_vague" | "methods_fit" | "right_seniority" | "shared_timeline" | "too_similar" | "already_knew_them")[];
+            /** Stars */
+            stars?: number | null;
             /**
              * Target Id
              * Format: uuid
@@ -990,13 +1175,12 @@ export interface components {
         FeedbackOut: {
             /** Comment */
             comment: string | null;
-            /**
-             * Rating
-             * @enum {string}
-             */
-            rating: "up" | "down";
+            /** Rating */
+            rating: ("up" | "down") | null;
             /** Reasons */
-            reasons: ("spot_on" | "already_knew" | "not_feasible" | "wrong_field" | "too_vague")[];
+            reasons: ("spot_on" | "already_knew" | "not_feasible" | "wrong_field" | "too_vague" | "methods_fit" | "right_seniority" | "shared_timeline" | "too_similar" | "already_knew_them")[];
+            /** Stars */
+            stars: number | null;
             /**
              * Target Id
              * Format: uuid
@@ -1018,6 +1202,12 @@ export interface components {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
+        /**
+         * IdeasStatus
+         * @description Joint idea generation after the reveal.
+         * @enum {string}
+         */
+        IdeasStatus: "none" | "pending" | "ready" | "failed";
         /**
          * ImportOut
          * @description State of the works import.
@@ -1082,6 +1272,48 @@ export interface components {
             refs: components["schemas"]["RefOut"][];
             /** Summary */
             summary: string;
+        };
+        /**
+         * JointIdeaView
+         * @description One collaboration idea, from the viewer's point of view.
+         */
+        JointIdeaView: {
+            /** First Step */
+            first_step: string;
+            /** Possible Output */
+            possible_output: string;
+            /** Question */
+            question: string;
+            /** Title */
+            title: string;
+            /** Uses From Them */
+            uses_from_them: components["schemas"]["BringItem"][];
+            /** Uses From You */
+            uses_from_you: components["schemas"]["BringItem"][];
+        };
+        /**
+         * MatchListOut
+         * @description A page of matches. ``matching_enabled`` is false until the account consents.
+         */
+        MatchListOut: {
+            /** Items */
+            items: (components["schemas"]["AnonymousMatchView"] | components["schemas"]["RevealedMatchView"])[];
+            /** Matching Enabled */
+            matching_enabled: boolean;
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /**
+         * MatchRatingIn
+         * @description Rate a mutual match from 1 to 5 stars.
+         */
+        MatchRatingIn: {
+            /** Comment */
+            comment?: string | null;
+            /** Reasons */
+            reasons?: ("spot_on" | "already_knew" | "not_feasible" | "wrong_field" | "too_vague" | "methods_fit" | "right_seniority" | "shared_timeline" | "too_similar" | "already_knew_them")[];
+            /** Stars */
+            stars: number;
         };
         /**
          * MeOut
@@ -1419,6 +1651,12 @@ export interface components {
             page_to: number;
         };
         /**
+         * Region
+         * @description Coarse region shown on the anonymous card.
+         * @enum {string}
+         */
+        Region: "africa" | "asia" | "europe" | "north_america" | "south_america" | "oceania" | "unknown";
+        /**
          * Rejection
          * @description Why an event was not accepted.
          */
@@ -1467,6 +1705,49 @@ export interface components {
          * @enum {string}
          */
         Retention: "keep" | "discard";
+        /**
+         * RevealedMatchView
+         * @description A mutual match: identity, contact and joint ideas.
+         */
+        RevealedMatchView: {
+            contact: components["schemas"]["Contact"];
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            ideas_status: components["schemas"]["IdeasStatus"];
+            /** Joint Ideas */
+            joint_ideas: components["schemas"]["JointIdeaView"][];
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "revealed";
+            /** My Rating */
+            my_rating?: number | null;
+            /**
+             * Revealed At
+             * Format: date-time
+             */
+            revealed_at: string;
+            /** Score */
+            score: number;
+            /** Shared Topics */
+            shared_topics: string[];
+            /**
+             * Status
+             * @default mutual
+             * @constant
+             */
+            status: "mutual";
+            /** They Bring */
+            they_bring: components["schemas"]["BringItem"][];
+            /** Why */
+            why: string;
+            /** You Bring */
+            you_bring: components["schemas"]["BringItem"][];
+        };
         /**
          * RunCountsOut
          * @description What the run found so far.
@@ -1628,6 +1909,12 @@ export interface components {
             /** Error Type */
             type: string;
         };
+        /**
+         * ViewerStatus
+         * @description What one participant is told. Never derived from the other side's decision (except ``mutual``).
+         * @enum {string}
+         */
+        ViewerStatus: "awaiting_you" | "waiting_on_them" | "mutual" | "declined_by_you" | "expired";
         /**
          * WorkOut
          * @description A work attributed to the researcher.
@@ -2105,6 +2392,167 @@ export interface operations {
                 };
             };
             /** @description Not yours, not visible, or not rateable yet. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_matches_api_v1_matches_get: {
+        parameters: {
+            query?: {
+                cursor?: string | null;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MatchListOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_match_api_v1_matches__match_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                match_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnonymousMatchView"] | components["schemas"]["RevealedMatchView"];
+                };
+            };
+            /** @description Not yours, unknown or hidden. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    decide_api_v1_matches__match_id__decision_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                match_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DecisionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnonymousMatchView"] | components["schemas"]["RevealedMatchView"];
+                };
+            };
+            /** @description Not yours or unknown. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Expired, closed, nothing to withdraw, or consent required. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    rate_match_api_v1_matches__match_id__rating_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                match_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MatchRatingIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeedbackOut"];
+                };
+            };
+            /** @description Not a mutual match of yours. */
             404: {
                 headers: {
                     [name: string]: unknown;
