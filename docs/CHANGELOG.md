@@ -4,6 +4,9 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 
 ## [Unreleased]
 
+### Removed (F-3)
+- The floating "Ask Scout" button: the feature does not exist, so nothing for it is shown. The `scout_fab_clicked` event name stays in the analytics catalogue (shared with the backend) and is no longer emitted.
+
 ### Added (vault upload warning, DECISIONS 130, F-60)
 - `VAULT_UPLOAD_WARNING` (default true), exposed as `vault_upload_warning` in `GET /api/v1/system/status`. While true, the vault page shows a `role=note` warning not to upload confidential material and a required "I am not uploading confidential material" checkbox before the upload zone is enabled. False hides both.
 

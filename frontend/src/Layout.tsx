@@ -2,7 +2,6 @@ import { Outlet } from 'react-router-dom'
 import { useAuth } from './auth/AuthProvider'
 import { useNotificationPrefs } from './features/profile/api'
 import { Header } from './features/nav/Header'
-import { ScoutFab } from './ui/ScoutFab'
 
 /** Loads the stored analytics opt-out once signed in so the client honours it on every page. */
 function AnalyticsOptOutSync() {
@@ -23,7 +22,6 @@ export function Layout() {
       <main id="main" className="mx-auto max-w-[1240px] px-4 py-8 md:px-0">
         <Outlet />
       </main>
-      <ScoutFab />
     </div>
   )
 }

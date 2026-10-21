@@ -26,8 +26,8 @@ Things that are wrong or unfinished in what already exists, as opposed to the id
 | ID | Area | Item | Prio | Status |
 |---|---|---|---|---|
 | F-1 | frontend | Plurals: "1 works" and "1 citations" (`OnboardingPage.tsx` lines ~91 and ~113, `WorksStep.tsx` citations). Add one `plural()` helper and a test. | low | open |
-| F-2 | frontend | Nav shows Private vault, Opportunities and Matches although the features do not exist until M2+. Check what each page shows; hide, or show an explicit "coming soon" state. | med | open, *unverified* what the pages render |
-| F-3 | frontend | "Ask Scout" floating button is visible on every page but the chat is a backlog item (W9). Check what it does; hide it until it works. | med | open, *unverified* |
+| F-2 | frontend | Nav shows Private vault, Opportunities and Matches although the features do not exist until M2+. Check what each page shows; hide, or show an explicit "coming soon" state. | med | done (checked: every menu entry is a built page; roadmap entries hidden) |
+| F-3 | frontend | "Ask Scout" floating button is visible on every page but the chat is a backlog item (W9). Check what it does; hide it until it works. | med | done (button removed; return with the Ask Scout feature, F-35) |
 | F-4 | frontend | Sticky header appears mid-page in the full-page works screenshot. Probably a capture artefact; confirm in a normal scrolling browser. | low | open, *unverified* |
 | F-5 | frontend | Home is a single profile card with an empty right side and no next step. Needs a call to action once M2 exists (upload to the vault). | low | open (M2) |
 | F-6 | frontend | Search results list three unaffiliated "Johan Foster" cards whose only difference is the work count. Show a sample work title or a topic so users can tell them apart. | med | open |
