@@ -7,6 +7,7 @@ import { kindInfo } from '../opportunities/kinds'
 import { latestDone, useRuns, type Run } from '../runs/api'
 import { useDocuments } from '../vault/api'
 import { KIND_LABELS, type DocKind } from '../vault/status'
+import { useMatches } from '../matches/api'
 import { useProfile } from './api'
 
 function Card({ title, link, children }: { title: string; link?: { to: string; label: string }; children: React.ReactNode }) {
@@ -44,6 +45,8 @@ export function HomePage() {
   const docs = useDocuments()
   const run = latestDone(runs.data?.items)
   const latest = runs.data?.items[0]
+  const matches = useMatches()
+  const awaiting = (matches.data?.items ?? []).filter((m) => m.status === 'awaiting_you').length
   const top = useOpportunities({ runId: run?.id, limit: 3, enabled: !!run })
   const cards = (top.data?.items ?? []).slice(0, 3)
   const p = profile.data
@@ -142,8 +145,18 @@ export function HomePage() {
           )}
         </div>
         <div className="space-y-5">
-          <Card title="Matches">
-            <p className="text-sm text-ink-2">Matches arrive soon</p>
+          <Card title="Matches" link={matches.data?.matching_enabled ? { to: '/matches', label: 'Open' } : undefined}>
+            <p className="text-sm text-ink-2">
+              {matches.isPending
+                ? 'Loading…'
+                : matches.isError
+                  ? 'Open Matches to see your proposals.'
+                  : !matches.data?.matching_enabled
+                  ? 'Turn on matching to meet complementary researchers.'
+                : awaiting > 0
+                  ? `${awaiting} ${awaiting === 1 ? 'match is' : 'matches are'} waiting for your answer.`
+                  : 'No matches waiting for you.'}
+            </p>
           </Card>
           <Card title="Private vault" link={{ to: '/vault', label: `${items.length} ${items.length === 1 ? 'file' : 'files'}` }}>
             {docs.isPending && <p role="status" className="text-sm text-ink-3">Loading…</p>}

@@ -100,7 +100,7 @@ describe('app routing and token injection', () => {
   })
 
   it('shows Home with the greeting and briefing for a claimed researcher', async () => {
-    mockApi({ '/api/v1/me': ME_WITH_RESEARCHER, '/api/v1/profile': PROFILE })
+    mockApi({ '/api/v1/me': ME_WITH_RESEARCHER, '/api/v1/profile': PROFILE, '/api/v1/matches': { matching_enabled: true, items: [{ id: 'm1', kind: 'anonymous', status: 'awaiting_you' }, { id: 'm2', kind: 'anonymous', status: 'expired' }], next_cursor: null } })
     render(
       <MemoryRouter initialEntries={['/signin']}>
         <App authClient={fakeAuthClient()} client={new QueryClient()} />
@@ -108,7 +108,7 @@ describe('app routing and token injection', () => {
     )
     expect(await screen.findByRole('heading', { name: 'Hello, Ada' })).toBeInTheDocument()
     expect(screen.getByRole('region', { name: 'Scout’s briefing' })).toBeInTheDocument()
-    expect(screen.getByText('Matches arrive soon')).toBeInTheDocument()
+    expect(await screen.findByText('1 match is waiting for your answer.')).toBeInTheDocument()
   })
 
   it('dev sign-in form submits the e-mail', async () => {

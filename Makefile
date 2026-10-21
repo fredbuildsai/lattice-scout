@@ -1,4 +1,4 @@
-.PHONY: docs-lint loadtest dev api worker check test test-integration migrate gen-client eval e2e docs docs-check lint typecheck contracts fe-check db
+.PHONY: seed docs-lint loadtest dev api worker check test test-integration migrate gen-client eval e2e docs docs-check lint typecheck contracts fe-check db
 
 BACKEND = cd backend && uv run
 DB_URL ?= postgresql+psycopg://scout:scout@localhost:5432/scout
@@ -35,6 +35,9 @@ test-integration: db  ## tests that need PostgreSQL
 
 migrate:       ## apply Alembic migrations to the dev database
 	$(BACKEND) alembic upgrade head
+
+seed:          ## seed the dev database for the matching demo (refuses APP_ENV=prod)
+	cd backend && uv run python ../scripts/seed_dev.py
 
 gen-client:    ## regenerate the TypeScript API client from the OpenAPI schema
 	$(BACKEND) python -m scout.api.export_openapi ../frontend/openapi.json

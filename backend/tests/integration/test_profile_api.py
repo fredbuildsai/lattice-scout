@@ -79,7 +79,7 @@ def test_acceptance_find_merge_import_and_land(client: TestClient) -> None:
         == 1
     )
 
-    assert _run_worker() == 1  # exactly one import job
+    assert _run_worker() == 2  # one import job and the matching profile job it triggers
     p = client.get("/api/v1/profile", headers=h).json()
     assert p["import"]["status"] == "done" and p["verified_level"] == "orcid_matched"
     assert (
@@ -201,11 +201,11 @@ def test_concurrent_claims_of_same_author_both_become_contested(client: TestClie
 def test_toggle_during_import_is_not_overwritten(client: TestClient) -> None:
     h = _login(client, "ada@example.edu")
     client.post("/api/v1/profile/claim", json={"author_ids": [FOSTER]}, headers=h)
-    assert _run_worker() == 1
+    assert _run_worker() == 2
     work = next(w for w in client.get("/api/v1/profile", headers=h).json()["works"] if w["included"])
     client.patch(f"/api/v1/profile/works/{work['id']}", json={"included": False}, headers=h)
     client.post("/api/v1/profile/claim", json={"author_ids": [FOSTER, SPLIT]}, headers=h)  # new generation
-    assert _run_worker() == 1
+    assert _run_worker() == 2
     again = next(w for w in client.get("/api/v1/profile", headers=h).json()["works"] if w["id"] == work["id"])
     assert again["included"] is False and again["included_by_user"] is True
 

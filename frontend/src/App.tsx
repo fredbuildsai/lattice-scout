@@ -11,6 +11,7 @@ import { OnboardingPage } from './features/profile/OnboardingPage'
 import { PrivacyPage } from './features/profile/PrivacyPage'
 import { OpportunitiesPage } from './features/opportunities/OpportunitiesPage'
 import { OpportunityDetailPage } from './features/opportunities/OpportunityDetailPage'
+import { MatchesPage } from './features/matches/MatchesPage'
 import { RunPage } from './features/runs/RunPage'
 import { VaultPage } from './features/vault/VaultPage'
 import { Layout } from './Layout'
@@ -24,6 +25,7 @@ const IMPLEMENTED: Record<string, JSX.Element> = {
   '/runs/:id': <RunPage />,
   '/opportunities': <OpportunitiesPage />,
   '/opportunities/:id': <OpportunityDetailPage />,
+  '/matches': <MatchesPage />,
   '/signin': <SignInPage />,
   '/onboarding': <OnboardingPage />,
   '/settings/privacy': <PrivacyPage />,
