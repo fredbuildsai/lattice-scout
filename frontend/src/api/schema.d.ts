@@ -136,6 +136,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/feedback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Your rating of a target
+         * @description What you rated earlier, so the thumbs show their state.
+         */
+        get: operations["my_feedback_api_v1_feedback_get"];
+        put?: never;
+        /**
+         * Rate an opportunity
+         * @description Thumbs up or down with optional reason chips and a short comment; the latest rating replaces the earlier one.
+         */
+        post: operations["give_feedback_api_v1_feedback_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/me": {
         parameters: {
             query?: never;
@@ -933,6 +957,61 @@ export interface components {
             work_id?: string | null;
             /** Year */
             year?: number | null;
+        };
+        /**
+         * FeedbackIn
+         * @description A rating. Rating the same target again replaces the earlier one.
+         */
+        FeedbackIn: {
+            /** Comment */
+            comment?: string | null;
+            /**
+             * Rating
+             * @enum {string}
+             */
+            rating: "up" | "down";
+            /** Reasons */
+            reasons?: ("spot_on" | "already_knew" | "not_feasible" | "wrong_field" | "too_vague")[];
+            /**
+             * Target Id
+             * Format: uuid
+             */
+            target_id: string;
+            /**
+             * Target Type
+             * @enum {string}
+             */
+            target_type: "opportunity" | "match";
+        };
+        /**
+         * FeedbackOut
+         * @description The stored rating.
+         */
+        FeedbackOut: {
+            /** Comment */
+            comment: string | null;
+            /**
+             * Rating
+             * @enum {string}
+             */
+            rating: "up" | "down";
+            /** Reasons */
+            reasons: ("spot_on" | "already_knew" | "not_feasible" | "wrong_field" | "too_vague")[];
+            /**
+             * Target Id
+             * Format: uuid
+             */
+            target_id: string;
+            /**
+             * Target Type
+             * @enum {string}
+             */
+            target_type: "opportunity" | "match";
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -1947,6 +2026,85 @@ export interface operations {
                 };
             };
             /** @description Not yours, not visible, or the source is gone. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    my_feedback_api_v1_feedback_get: {
+        parameters: {
+            query: {
+                target_type: "opportunity" | "match";
+                target_id: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeedbackOut"];
+                };
+            };
+            /** @description No rating yet. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    give_feedback_api_v1_feedback_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FeedbackIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeedbackOut"];
+                };
+            };
+            /** @description Not yours, not visible, or not rateable yet. */
             404: {
                 headers: {
                     [name: string]: unknown;

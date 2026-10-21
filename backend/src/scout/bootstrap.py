@@ -30,6 +30,8 @@ from scout.discovery.application.sources import ProfileSourceAdapter, VaultSourc
 from scout.discovery.application.start import StartAnalysisRun, StartConfig
 from scout.discovery.ports.repos import DiscoveryUnitOfWork
 from scout.discovery.ports.sources import VaultSource
+from scout.feedback.adapters.sql import SqlFeedbackUnitOfWork
+from scout.feedback.application.give_feedback import GiveFeedback
 from scout.identity.adapters.dev_auth import DevKeyPair, DevTokenIssuer, DevVerifier
 from scout.identity.adapters.jwks import HttpJwksFetcher, SupabaseJwksVerifier
 from scout.identity.adapters.sql import SqlIdentityUnitOfWork
@@ -102,6 +104,7 @@ class Container:
     discovery: DiscoveryService
     discovery_uow: Callable[[], DiscoveryUnitOfWork]
     vault_source: VaultSource
+    give_feedback: GiveFeedback
     dev_tokens: DevTokenIssuer | None = None
 
 
@@ -269,6 +272,7 @@ def build_container(
             admin_show_vault_quotes=settings.admin_claims_show_vault_quotes,
         ),
         discovery_uow=discovery_uow, vault_source=vault_source,
+        give_feedback=GiveFeedback(lambda: SqlFeedbackUnitOfWork(db), clock),
 
         auth_verifier=verifier, dev_tokens=dev_tokens,
         literature=literature,

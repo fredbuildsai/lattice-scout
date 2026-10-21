@@ -233,3 +233,12 @@ evidence = Table(
     Column("document_id", UUID(as_uuid=True)), Column("probe_id", UUID(as_uuid=True), ForeignKey("novelty_probe.id")),
     Column("insight_ref", Text),
 )  # fmt: skip
+
+feedback = Table(
+    "feedback", metadata,
+    Column("id", UUID(as_uuid=True), primary_key=True),
+    Column("author_id", UUID(as_uuid=True), ForeignKey("account.id"), nullable=False),
+    Column("target_type", Text, nullable=False), Column("target_id", UUID(as_uuid=True), nullable=False),
+    Column("rating", Text, nullable=False), Column("reasons", ARRAY(Text), nullable=False),
+    Column("comment", Text), ts("created_at", nullable=False), ts("updated_at", nullable=False),
+)  # fmt: skip
