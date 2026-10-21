@@ -1,7 +1,7 @@
 # Progress
 
 Merge policy: stack
-Current milestone: M2 — Vault + ingestion (done, reviewer approved after round 2; awaiting human sign-off). M0 and M1 done and awaiting human sign-off; PR #1 open (M1 and M2 added to the same branch)
+Current milestone: M3 — Gap analysis engine (backend pipeline built, tests and prompts in progress). M2 done and approved after round 2, awaiting human sign-off. M0 and M1 done and awaiting human sign-off; PR #1 open (M1 and M2 added to the same branch)
 Current branch: claude/zealous-curie-7m18vd (harness-designated; used instead of m0-foundations)
 Last session: 2026-10-20 s01 — M0, M1 and M2 built; M2 done and approved by the reviewer
 
@@ -49,6 +49,15 @@ Last session: 2026-10-20 s01 — M0, M1 and M2 built; M2 done and approved by th
 - [x] reviewer round 2: approved (docs/reviews/M2.md); N2 and N4 fixed, N1, N3, N7 in BACKLOG F-17 to F-20
 - [x] PR #1 updated (M0 + M1 + M2)
 ## M3 — Gap analysis engine
+- [x] architect design note (docs/design/M3-gap-analysis-engine.md, DECISIONS 56-70)
+- [x] domain (run, opportunity, show rule, verification, grouping, coverage, novelty, scoring) with test-engineer tests
+- [x] pipeline: start, runner, sweeper, 8 steps, guard and ledger, SQL layer, migrations 0005 and 0006
+- [x] endpoints /runs, /opportunities, /evidence, /admin/claims; client regenerated
+- [ ] test-engineer call 2 (resume, fencing, budgets, hostile drafts, canary)
+- [ ] prompt-engineer: five prompts, fixtures, eval cases
+- [ ] acceptance A1, A2, A3 and canary tests on PostgreSQL
+- [ ] eval harness (`make eval`)
+- [ ] doc-writer, reviewer (max 2 rounds), PR update
 ## M4 — Opportunities UX + feedback
 ## M5 — Matching
 ## M6 — Notifications, privacy, hardening
