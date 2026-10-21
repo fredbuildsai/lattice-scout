@@ -4,6 +4,9 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 
 ## [Unreleased]
 
+### Changed
+- LLM routing now targets free providers: `config/llm_router.yaml` lists OpenRouter, Groq and Mistral deployments (no OpenAI), `LLM_ROUTER_ALLOW_PAID` defaults to `false`, schema hints are sent with `strict=False`, and `OPENROUTER_API_KEY`, `GROQ_API_KEY`, `MISTRAL_API_KEY` are settings. Development and CI still run on the fake LLM (DECISIONS 105).
+
 ### Added
 - M6 slice E, security and observability:
   - Row level security on every table (migration 0013), enforced by a test for new tables and monthly partitions. Security headers, narrower CORS, API docs off in production, production refusal of wildcard or http origins. A test checks that every route requires an account unless listed public, and that agent traces never include prompt text.

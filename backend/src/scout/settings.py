@@ -37,6 +37,9 @@ class Settings(BaseSettings):
     supabase_jwks_url: str | None = None
 
     openai_api_key: SecretStr | None = None
+    openrouter_api_key: SecretStr | None = None  # read by llm-router (config/llm_router.yaml)
+    groq_api_key: SecretStr | None = None
+    mistral_api_key: SecretStr | None = None
     llm_router_config: Path = Path("config/llm_router.yaml")
     llm_router_source: str | None = None
     llm_model_reasoning: str = "reasoning"
@@ -108,7 +111,7 @@ class Settings(BaseSettings):
     llm_fixtures_dir: Path = Path("backend/tests/fixtures/llm")
     prompts_dir: Path = Path("prompts")
     llm_max_concurrency: int = 8
-    llm_router_allow_paid: bool = True
+    llm_router_allow_paid: bool = False  # free providers only
     llm_router_max_usd_per_day: float = 5.0
     analytics_queue_max: int = 20000
     usage_queue_max: int = 10000
@@ -154,6 +157,12 @@ class Settings(BaseSettings):
             problems.append("STORAGE_BACKEND=supabase needs SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY")
         if self.auth_mode == "supabase" and not (self.jwks_url and self.supabase_url):
             problems.append("AUTH_MODE=supabase needs SUPABASE_URL (token issuer) and a JWKS URL")
+        if self.llm_backend == "llm_router" and not (
+            self.openrouter_api_key or self.groq_api_key or self.mistral_api_key or self.openai_api_key
+        ):
+            problems.append(
+                "LLM_BACKEND=llm_router needs at least one provider key (OPENROUTER, GROQ, MISTRAL)"
+            )
         if self.llm_backend == "openai_direct" and not self.openai_api_key:
             problems.append("LLM_BACKEND=openai_direct needs OPENAI_API_KEY")
         if self.email_provider == "resend" and not (self.email_api_key and self.email_from):

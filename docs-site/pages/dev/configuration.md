@@ -70,7 +70,8 @@ Read by the API (upload limits, `RETENTION_POLICY`) and by the worker (extractio
 | `OPENAI_API_KEY` | unset | Secret for `LLM_BACKEND=openai_direct`. Never commit it. |
 | `LLM_ROUTER_CONFIG` | `config/llm_router.yaml` | llm-router deployments and routes. |
 | `LLM_ROUTER_SOURCE` | unset | Install source for llm-router, for example `git+https://github.com/fredbuildsai/llmrouter-free@v0.1.0`. Used by the install commands below. |
-| `LLM_ROUTER_ALLOW_PAID` | `true` | Whether llm-router may use paid deployments. |
+| `LLM_ROUTER_ALLOW_PAID` | `false` | Whether llm-router may use paid deployments. |
+| `OPENROUTER_API_KEY`, `GROQ_API_KEY`, `MISTRAL_API_KEY` | unset | Provider keys for `LLM_BACKEND=llm_router`. `config/llm_router.yaml` skips a deployment whose key is unset, so one key is enough. Needed for live tests, the live eval and deployment, not for development. |
 | `LLM_ROUTER_MAX_USD_PER_DAY` | `5.0` | Daily spend limit (USD) passed to the llm-router client. |
 | `LLM_MODEL_FAST` / `LLM_MODEL_REASONING` | `fast` / `reasoning` | llm-router route names (or model ids for `openai_direct`). |
 | `LLM_PRICE_TABLE` | `config/llm_prices.yaml` | Price per million tokens, used to compute `llm_call` cost. |

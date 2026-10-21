@@ -152,12 +152,21 @@ def _select_llm(
         case "fake":
             return FakeLLM(resolve_path(s.llm_fixtures_dir), usage, prices, clock, ids)
         case "llm_router":
+            import os
+
             from llmrouter_free import LLMRouter, load_routes
             from sqlalchemy import create_engine
             from sqlalchemy.pool import StaticPool
 
             from scout.adapters.llm.llm_router import LlmRouterAdapter, MeteringCompletion
 
+            # llm-router reads provider keys from the process environment; .env is only read by Settings.
+            for name, key in (
+                ("OPENROUTER_API_KEY", s.openrouter_api_key), ("GROQ_API_KEY", s.groq_api_key),
+                ("MISTRAL_API_KEY", s.mistral_api_key), ("OPENAI_API_KEY", s.openai_api_key),
+            ):  # fmt: skip
+                if key is not None:
+                    os.environ.setdefault(name, key.get_secret_value())
             # The router's ledger stores response text. Keep it in process memory only: nothing vault-derived
             # reaches disk outside our database (DECISIONS 23).
             ledger = create_engine(

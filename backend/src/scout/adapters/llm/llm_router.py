@@ -129,7 +129,8 @@ class LlmRouterAdapter:
                 "use_cache": False,
             }
             if agent.strict_schema:
-                kwargs["response_format"] = json_schema_response_format(agent.output_type)
+                # strict=False: Groq rejects strict schemas; the schema is still sent as a hint and validated by us
+                kwargs["response_format"] = json_schema_response_format(agent.output_type, strict=False)
             else:
                 kwargs["json_mode"] = True
             result = self._router.complete(route, messages, **kwargs)
