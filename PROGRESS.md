@@ -93,3 +93,8 @@ Last session: 2026-10-20 s01 — M0, M1 and M2 built; M2 done and approved by th
 - [ ] Slice B: methods vocabulary, prompts and fixtures, profiles, ComputeMatches, DecideOnMatch, endpoints, fakes for the ports
 - [ ] Slice C: seed_dev.py, frontend W7/M7/M8, docs
 - [ ] reviewer: skipped by user decision (review pending)
+
+### Notes for next session (M5 slice B, not started; budget ran out)
+- Start from docs/design/M5-matching.md §9 slice B. Existing prompts to bump: prompts/{MethodExtractor,MatchExplainer,JointIdeas}.md (inputs without names/region/band, DECISIONS 77-86).
+- Still to build: `config/methods.yaml` + loader, `matching/domain/agent_io.py`, `MatchAgentsPort` + `AgentsMatching`, ACL sources, `ComputeResearcherProfile`, `ComputeMatches`, nightly job, `DecideOnMatch`, `RevealMatch`, `MatchingService`, in-memory fakes (tests/fakes/matching.py), feedback `stars`, `api/matches.py`, migration 0009 (profile tables, candidate views), worker handlers, bootstrap, settings, `make gen-client`.
+- Slice C: `seed_dev.py`, W7/M7/M8 frontend, docs. Reviewer skipped by user decision (M4 and M5 review pending).
