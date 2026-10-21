@@ -152,10 +152,13 @@ class ComputeMatches:
         template = template_rationale(a, b, s, self._vocab)
         if not allow_llm:
             return template, False
+        names = {t.id: t.name for t in (*a.topics, *b.topics)}
         data = MatchExplainerInput(
             a=_summary(a, s.basis.a_only, self._vocab), b=_summary(b, s.basis.b_only, self._vocab),
             score_breakdown=ScoreBreakdown(
-                shared_topics=s.basis.shared_topics, a_only_methods=s.basis.a_only, b_only_methods=s.basis.b_only, score=s.score
+                shared_topics=[names.get(i, i) for i in s.basis.shared_topics],
+                a_only_methods=[self._vocab.label(i) or i for i in s.basis.a_only],
+                b_only_methods=[self._vocab.label(i) or i for i in s.basis.b_only], score=s.score,
             ),
         )  # fmt: skip
         try:

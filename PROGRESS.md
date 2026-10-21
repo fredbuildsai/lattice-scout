@@ -1,7 +1,7 @@
 # Progress
 
 Merge policy: stack
-Current milestone: M5 — Matching (slice A done; slice B next). M4 built (Opportunities UX + feedback), review pending (skipped for cost). M3 done and approved. M2 done and approved after round 2, awaiting human sign-off. M0 and M1 done and awaiting human sign-off; PR #1 open (M1 and M2 added to the same branch)
+Current milestone: M5 — Matching (slices A and B done; slice C next). M4 built (Opportunities UX + feedback), review pending (skipped for cost). M3 done and approved. M2 done and approved after round 2, awaiting human sign-off. M0 and M1 done and awaiting human sign-off; PR #1 open (M1 and M2 added to the same branch)
 Current branch: claude/zealous-curie-7m18vd (harness-designated; used instead of m0-foundations)
 Last session: 2026-10-20 s01 — M0, M1 and M2 built; M2 done and approved by the reviewer
 
@@ -90,7 +90,7 @@ Last session: 2026-10-20 s01 — M0, M1 and M2 built; M2 done and approved by th
 ## M5 — Matching
 - [x] architect design note (docs/design/M5-matching.md, DECISIONS 77-86)
 - [x] Slice A: domain (proposal state machine, reveal rule, scoring, ids), Hypothesis tests, migration 0008, SQL adapters, reveal integration tests
-- [ ] Slice B: methods vocabulary, prompts and fixtures, profiles, ComputeMatches, DecideOnMatch, endpoints, fakes for the ports
+- [x] Slice B: vocabulary, prompts 1.0.1/1.1.0 and fixtures, profiles, ComputeMatches, DecideOnMatch, RevealMatch, nightly, endpoints, fakes, feedback stars (migrations 0009-0010)
 - [ ] Slice C: seed_dev.py, frontend W7/M7/M8, docs
 - [ ] reviewer: skipped by user decision (review pending)
 

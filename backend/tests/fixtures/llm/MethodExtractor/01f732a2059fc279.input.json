@@ -1,0 +1,440 @@
+{
+  "sources": [
+    {
+      "source_ref": "work:W7163127579",
+      "text": "Fe3O4/GO, ZnO, and TiO2 thin films for efficient photocatalytic removal of tetracycline from aqueous media under UV LED, blue LED and solar radiation"
+    },
+    {
+      "source_ref": "work:W7164855134",
+      "text": "Sustainable Mizoroki–Heck Cross-Coupling Using a Pd(II)-Polymer as Precatalyst in 1-Butanol"
+    },
+    {
+      "source_ref": "work:W7164938406",
+      "text": "Copper Containing Covalent Triazine Frameworks as Highly Stable and Efficient Catalysts for the Guerbet Reaction"
+    },
+    {
+      "source_ref": "work:W7167644942",
+      "text": "pH-Dependent charge regulation and ion-specific supramolecular organization in surfactin–iturin-rich bioamphiphile mixtures"
+    },
+    {
+      "source_ref": "work:W7169494011",
+      "text": "Impact of Synthesis Temperature on the Drug Loading Capacity of Linde Type A Zeolite"
+    },
+    {
+      "source_ref": "work:W7170056032",
+      "text": "Harnessing tri-s-triazine polyimide–P25 hybrids for boosted photocatalytic activity under low-power visible LEDs illumination"
+    },
+    {
+      "source_ref": "work:W4407708295",
+      "text": "Sustainable Heck–Mizoroki and Suzuki–Miyaura reactions mediated by aqueous palladium nanoparticles and imidazolium–sulfonate additives"
+    },
+    {
+      "source_ref": "work:W4408343920",
+      "text": "Polyphosphatases have a polyphosphate-independent influence on the virulence of Cryptococcus neoformans"
+    },
+    {
+      "source_ref": "work:W4411023486",
+      "text": "Tailormade PMMA Spheres: Synthesis and Growth Mechanism"
+    },
+    {
+      "source_ref": "work:W4414832469",
+      "text": "Mullite-type Bi2(M1-Fe )4O9 (M = Al, Ga) with tailored crystallite size and band gap: Toward next-generation visible-light functional oxides"
+    },
+    {
+      "source_ref": "work:W4416235139",
+      "text": "On-chip catalytic combustion of hydrogen using Pt and Ru quantum-crystallites on functionalized SiO2 aerogels"
+    },
+    {
+      "source_ref": "work:W4416808046",
+      "text": "Highly Active and Robust Nanoporous Gold for CO Oxidation: Widening Temperature Window with an Au‐Cu‐Ag Ternary System"
+    },
+    {
+      "source_ref": "work:W4390531961",
+      "text": "Structural dependence of PFAS oxidation in a boron doped diamond-electrochemical system"
+    },
+    {
+      "source_ref": "work:W4394732631",
+      "text": "Fungal-derived adsorption membrane to capture potentially toxic elements"
+    },
+    {
+      "source_ref": "work:W4401793377",
+      "text": "Hybrid graphenic and iron oxide photocatalysts for the decomposition of synthetic chemicals"
+    },
+    {
+      "source_ref": "work:W4293579491",
+      "text": "EQUIDADE NA EDUCAÇÃO STEM PARA TODOS OS GÊNEROS"
+    },
+    {
+      "source_ref": "work:W4296558799",
+      "text": "Automated monitoring the kinetics of homogeneous and heterogeneous chemical processes using a smartphone"
+    },
+    {
+      "source_ref": "work:W3199488916",
+      "text": "Methanol oxidation on Au(332): an isothermal pulsed molecular beam study"
+    },
+    {
+      "source_ref": "work:W2950629258",
+      "text": "Self-driving laboratory for accelerated discovery of thin-film materials"
+    },
+    {
+      "source_ref": "work:W2905157929",
+      "text": "CO Adsorption on Au(332): Combined Infrared Spectroscopy and Density Functional Theory Study"
+    }
+  ],
+  "vocabulary": [
+    {
+      "label": "Life-cycle assessment",
+      "method_id": "lca",
+      "synonyms": [
+        "LCA",
+        "life cycle analysis"
+      ]
+    },
+    {
+      "label": "Techno-economic analysis",
+      "method_id": "tea",
+      "synonyms": [
+        "TEA",
+        "techno-economic assessment"
+      ]
+    },
+    {
+      "label": "FTIR spectroscopy",
+      "method_id": "ftir",
+      "synonyms": [
+        "infrared spectroscopy",
+        "FT-IR"
+      ]
+    },
+    {
+      "label": "Raman spectroscopy",
+      "method_id": "raman",
+      "synonyms": [
+        "Raman"
+      ]
+    },
+    {
+      "label": "NMR spectroscopy",
+      "method_id": "nmr",
+      "synonyms": [
+        "nuclear magnetic resonance",
+        "NMR"
+      ]
+    },
+    {
+      "label": "X-ray diffraction",
+      "method_id": "xrd",
+      "synonyms": [
+        "XRD"
+      ]
+    },
+    {
+      "label": "Small-angle scattering",
+      "method_id": "saxs_sans",
+      "synonyms": [
+        "SAXS",
+        "SANS",
+        "small angle x-ray scattering"
+      ]
+    },
+    {
+      "label": "Scanning electron microscopy",
+      "method_id": "sem",
+      "synonyms": [
+        "SEM"
+      ]
+    },
+    {
+      "label": "Transmission electron microscopy",
+      "method_id": "tem",
+      "synonyms": [
+        "TEM"
+      ]
+    },
+    {
+      "label": "Atomic force microscopy",
+      "method_id": "afm",
+      "synonyms": [
+        "AFM"
+      ]
+    },
+    {
+      "label": "Thermogravimetric analysis",
+      "method_id": "tga",
+      "synonyms": [
+        "TGA"
+      ]
+    },
+    {
+      "label": "Differential scanning calorimetry",
+      "method_id": "dsc",
+      "synonyms": [
+        "DSC"
+      ]
+    },
+    {
+      "label": "Dynamic mechanical analysis",
+      "method_id": "dma",
+      "synonyms": [
+        "DMA"
+      ]
+    },
+    {
+      "label": "Rheology",
+      "method_id": "rheology",
+      "synonyms": [
+        "rheometry",
+        "rheological measurements"
+      ]
+    },
+    {
+      "label": "Mechanical testing",
+      "method_id": "mechanical_testing",
+      "synonyms": [
+        "tensile testing",
+        "compression testing",
+        "flexural testing"
+      ]
+    },
+    {
+      "label": "Size-exclusion chromatography",
+      "method_id": "gpc_sec",
+      "synonyms": [
+        "GPC",
+        "SEC",
+        "gel permeation chromatography"
+      ]
+    },
+    {
+      "label": "Gas chromatography-mass spectrometry",
+      "method_id": "gc_ms",
+      "synonyms": [
+        "GC-MS",
+        "GC/MS"
+      ]
+    },
+    {
+      "label": "Liquid chromatography",
+      "method_id": "hplc_lcms",
+      "synonyms": [
+        "HPLC",
+        "LC-MS"
+      ]
+    },
+    {
+      "label": "Porosimetry and BET surface area",
+      "method_id": "bet_porosimetry",
+      "synonyms": [
+        "BET",
+        "nitrogen adsorption",
+        "mercury porosimetry"
+      ]
+    },
+    {
+      "label": "Contact angle measurement",
+      "method_id": "contact_angle",
+      "synonyms": [
+        "wettability",
+        "goniometry"
+      ]
+    },
+    {
+      "label": "Cone calorimetry",
+      "method_id": "cone_calorimetry",
+      "synonyms": [
+        "flammability testing",
+        "heat release rate",
+        "limiting oxygen index"
+      ]
+    },
+    {
+      "label": "Reactive extrusion",
+      "method_id": "reactive_extrusion",
+      "synonyms": [
+        "twin-screw extrusion"
+      ]
+    },
+    {
+      "label": "Moulding and hot pressing",
+      "method_id": "moulding",
+      "synonyms": [
+        "hot pressing",
+        "compression moulding",
+        "injection moulding"
+      ]
+    },
+    {
+      "label": "Electrospinning",
+      "method_id": "electrospinning",
+      "synonyms": [
+        "electrospun fibres"
+      ]
+    },
+    {
+      "label": "Freeze casting",
+      "method_id": "freeze_casting",
+      "synonyms": [
+        "ice templating",
+        "freeze drying"
+      ]
+    },
+    {
+      "label": "Foaming",
+      "method_id": "foaming",
+      "synonyms": [
+        "foam preparation",
+        "polyurethane foaming"
+      ]
+    },
+    {
+      "label": "Additive manufacturing",
+      "method_id": "additive_manufacturing",
+      "synonyms": [
+        "3D printing",
+        "direct ink writing"
+      ]
+    },
+    {
+      "label": "Nanocellulose isolation",
+      "method_id": "nanocellulose_isolation",
+      "synonyms": [
+        "cellulose nanofibril production",
+        "TEMPO oxidation"
+      ]
+    },
+    {
+      "label": "Lignin fractionation",
+      "method_id": "lignin_fractionation",
+      "synonyms": [
+        "organosolv",
+        "lignin extraction",
+        "lignin depolymerisation"
+      ]
+    },
+    {
+      "label": "Enzymatic hydrolysis",
+      "method_id": "enzymatic_hydrolysis",
+      "synonyms": [
+        "saccharification"
+      ]
+    },
+    {
+      "label": "Fermentation",
+      "method_id": "fermentation",
+      "synonyms": [
+        "bioreactor cultivation",
+        "microbial production"
+      ]
+    },
+    {
+      "label": "Pyrolysis and hydrothermal liquefaction",
+      "method_id": "pyrolysis_htl",
+      "synonyms": [
+        "pyrolysis",
+        "HTL",
+        "torrefaction"
+      ]
+    },
+    {
+      "label": "Chemical modification",
+      "method_id": "chemical_modification",
+      "synonyms": [
+        "functionalisation",
+        "grafting",
+        "esterification"
+      ]
+    },
+    {
+      "label": "Polymer synthesis",
+      "method_id": "polymer_synthesis",
+      "synonyms": [
+        "polymerisation",
+        "polycondensation"
+      ]
+    },
+    {
+      "label": "Membrane fabrication",
+      "method_id": "membrane_fabrication",
+      "synonyms": [
+        "phase inversion",
+        "membrane casting"
+      ]
+    },
+    {
+      "label": "Adsorption testing",
+      "method_id": "adsorption_testing",
+      "synonyms": [
+        "batch adsorption",
+        "isotherm",
+        "breakthrough curves"
+      ]
+    },
+    {
+      "label": "Photocatalysis",
+      "method_id": "photocatalysis",
+      "synonyms": [
+        "photocatalytic degradation"
+      ]
+    },
+    {
+      "label": "Electrochemistry",
+      "method_id": "electrochemistry",
+      "synonyms": [
+        "cyclic voltammetry",
+        "impedance spectroscopy",
+        "electrochemical oxidation"
+      ]
+    },
+    {
+      "label": "Biodegradation testing",
+      "method_id": "biodegradation_testing",
+      "synonyms": [
+        "composting test",
+        "soil burial"
+      ]
+    },
+    {
+      "label": "Toxicity testing",
+      "method_id": "toxicity_testing",
+      "synonyms": [
+        "ecotoxicity",
+        "cytotoxicity"
+      ]
+    },
+    {
+      "label": "Molecular simulation",
+      "method_id": "molecular_simulation",
+      "synonyms": [
+        "molecular dynamics",
+        "DFT",
+        "density functional theory"
+      ]
+    },
+    {
+      "label": "Process modelling",
+      "method_id": "process_modelling",
+      "synonyms": [
+        "process simulation",
+        "Aspen",
+        "kinetic modelling"
+      ]
+    },
+    {
+      "label": "Machine learning",
+      "method_id": "machine_learning",
+      "synonyms": [
+        "neural network",
+        "regression model",
+        "data-driven modelling"
+      ]
+    },
+    {
+      "label": "Design of experiments",
+      "method_id": "design_of_experiments",
+      "synonyms": [
+        "DoE",
+        "response surface methodology"
+      ]
+    }
+  ]
+}

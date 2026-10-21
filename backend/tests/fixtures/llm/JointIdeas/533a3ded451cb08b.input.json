@@ -1,0 +1,263 @@
+{
+  "a": {
+    "methods": [
+      {
+        "id": "chemical_modification",
+        "label": "Chemical modification"
+      },
+      {
+        "id": "membrane_fabrication",
+        "label": "Membrane fabrication"
+      },
+      {
+        "id": "nanocellulose_isolation",
+        "label": "Nanocellulose isolation"
+      },
+      {
+        "id": "adsorption_testing",
+        "label": "Adsorption testing"
+      },
+      {
+        "id": "electrochemistry",
+        "label": "Electrochemistry"
+      },
+      {
+        "id": "foaming",
+        "label": "Foaming"
+      },
+      {
+        "id": "raman",
+        "label": "Raman spectroscopy"
+      },
+      {
+        "id": "lca",
+        "label": "Life-cycle assessment"
+      },
+      {
+        "id": "lignin_fractionation",
+        "label": "Lignin fractionation"
+      }
+    ],
+    "topics": [
+      {
+        "id": "T10610",
+        "name": "Advanced Cellulose Research Studies",
+        "weight": 1.0
+      },
+      {
+        "id": "T11208",
+        "name": "Lignin and Wood Chemistry",
+        "weight": 0.5931
+      },
+      {
+        "id": "T10513",
+        "name": "Natural Fiber Reinforced Composites",
+        "weight": 0.449
+      },
+      {
+        "id": "T10484",
+        "name": "Wood Treatment and Properties",
+        "weight": 0.3159
+      },
+      {
+        "id": "T10033",
+        "name": "Concrete and Cement Materials Research",
+        "weight": 0.3032
+      },
+      {
+        "id": "T10687",
+        "name": "Innovative concrete reinforcement materials",
+        "weight": 0.2918
+      },
+      {
+        "id": "T11511",
+        "name": "Dyeing and Modifying Textile Fibers",
+        "weight": 0.27
+      },
+      {
+        "id": "T10488",
+        "name": "Nanocomposite Films for Food Packaging",
+        "weight": 0.2468
+      },
+      {
+        "id": "T10409",
+        "name": "Fuel Cells and Related Materials",
+        "weight": 0.2212
+      },
+      {
+        "id": "T10501",
+        "name": "Polymer Nanocomposites and Properties",
+        "weight": 0.1969
+      }
+    ],
+    "works": [
+      {
+        "ref": "work:W7119086364",
+        "title": "Sustainable Synthesis of Bio‐Based Magnetic and Conductive Wood for Electromagnetic Interference Shielding Applications"
+      },
+      {
+        "ref": "work:W7164334760",
+        "title": "Lignin Type and Content Influence the Foaming Dynamics and Properties of Flexible Polyurethane Foams"
+      },
+      {
+        "ref": "work:W7172407009",
+        "title": "The AP-1 adaptor complex is required for cell surface modifications and the survival of Cryptococcus neoformans in phagocytic cells"
+      },
+      {
+        "ref": "work:W7214346167",
+        "title": "Disruption of Lignin-Emissive Domains: Deciphering Fiber–Cement Interfacial Reactions by EEM Fluorescence and DUV Raman Spectroscopy"
+      },
+      {
+        "ref": "work:W4407110752",
+        "title": "Advanced chitosan hybrid dye labels for dynamic monitoring of shrimp and milk freshness"
+      },
+      {
+        "ref": "work:W4408038562",
+        "title": "Droplet-templating soft materials into structured bead-based aerogels with compartmentalized or welded configurations"
+      },
+      {
+        "ref": "work:W4408343920",
+        "title": "Polyphosphatases have a polyphosphate-independent influence on the virulence of Cryptococcus neoformans"
+      },
+      {
+        "ref": "work:W4411654219",
+        "title": "Improving yield and colloidal stability of cellulose nanocrystals isolated via assisted subcritical water hydrolysis: influence of mechanical pretreatments and esterifying agents on cellulose hydrolys"
+      }
+    ]
+  },
+  "a_only_methods": [
+    "Chemical modification",
+    "Foaming",
+    "Life-cycle assessment",
+    "Lignin fractionation",
+    "Nanocellulose isolation"
+  ],
+  "a_signals": [],
+  "b": {
+    "methods": [
+      {
+        "id": "photocatalysis",
+        "label": "Photocatalysis"
+      },
+      {
+        "id": "polymer_synthesis",
+        "label": "Polymer synthesis"
+      },
+      {
+        "id": "adsorption_testing",
+        "label": "Adsorption testing"
+      },
+      {
+        "id": "electrochemistry",
+        "label": "Electrochemistry"
+      },
+      {
+        "id": "machine_learning",
+        "label": "Machine learning"
+      },
+      {
+        "id": "membrane_fabrication",
+        "label": "Membrane fabrication"
+      }
+    ],
+    "topics": [
+      {
+        "id": "T10210",
+        "name": "Advanced oxidation water treatment",
+        "weight": 1.0
+      },
+      {
+        "id": "T10078",
+        "name": "Advanced Photocatalysis Techniques",
+        "weight": 0.8695
+      },
+      {
+        "id": "T11869",
+        "name": "Per- and polyfluoroalkyl substances research",
+        "weight": 0.6091
+      },
+      {
+        "id": "T10024",
+        "name": "TiO2 Photocatalysis and Solar Cells",
+        "weight": 0.569
+      },
+      {
+        "id": "T10030",
+        "name": "Electrocatalysts for Energy Conversion",
+        "weight": 0.4822
+      },
+      {
+        "id": "T10354",
+        "name": "Catalytic C–H Functionalization Methods",
+        "weight": 0.3802
+      },
+      {
+        "id": "T10548",
+        "name": "Catalytic Cross-Coupling Reactions",
+        "weight": 0.3802
+      },
+      {
+        "id": "T10192",
+        "name": "Catalytic Processes in Materials Science",
+        "weight": 0.3518
+      },
+      {
+        "id": "T10016",
+        "name": "Adsorption and biosorption for pollutant removal",
+        "weight": 0.2437
+      },
+      {
+        "id": "T10197",
+        "name": "Membrane Separation Technologies",
+        "weight": 0.2437
+      }
+    ],
+    "works": [
+      {
+        "ref": "work:W7163127579",
+        "title": "Fe3O4/GO, ZnO, and TiO2 thin films for efficient photocatalytic removal of tetracycline from aqueous media under UV LED, blue LED and solar radiation"
+      },
+      {
+        "ref": "work:W7164855134",
+        "title": "Sustainable Mizoroki–Heck Cross-Coupling Using a Pd(II)-Polymer as Precatalyst in 1-Butanol"
+      },
+      {
+        "ref": "work:W7164938406",
+        "title": "Copper Containing Covalent Triazine Frameworks as Highly Stable and Efficient Catalysts for the Guerbet Reaction"
+      },
+      {
+        "ref": "work:W7167644942",
+        "title": "pH-Dependent charge regulation and ion-specific supramolecular organization in surfactin–iturin-rich bioamphiphile mixtures"
+      },
+      {
+        "ref": "work:W7169494011",
+        "title": "Impact of Synthesis Temperature on the Drug Loading Capacity of Linde Type A Zeolite"
+      },
+      {
+        "ref": "work:W7170056032",
+        "title": "Harnessing tri-s-triazine polyimide–P25 hybrids for boosted photocatalytic activity under low-power visible LEDs illumination"
+      },
+      {
+        "ref": "work:W4407708295",
+        "title": "Sustainable Heck–Mizoroki and Suzuki–Miyaura reactions mediated by aqueous palladium nanoparticles and imidazolium–sulfonate additives"
+      },
+      {
+        "ref": "work:W4408343920",
+        "title": "Polyphosphatases have a polyphosphate-independent influence on the virulence of Cryptococcus neoformans"
+      }
+    ]
+  },
+  "b_only_methods": [
+    "Machine learning",
+    "Photocatalysis",
+    "Polymer synthesis"
+  ],
+  "b_signals": [],
+  "shared_topics": [
+    "Adsorption and biosorption for pollutant removal",
+    "Advanced oxidation water treatment",
+    "Fungal and yeast genetics research",
+    "Fungal Infections and Studies",
+    "Per- and polyfluoroalkyl substances research"
+  ]
+}

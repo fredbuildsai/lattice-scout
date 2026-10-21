@@ -9,12 +9,12 @@ inputs: |
                                                        # ("work:W123"; the title when the work has no abstract) and,
                                                        # with consent, verified vault insights ("insight:<doc>.methods[0]")
 changelog:
-  - 1.0.1 (2026-10-21): vocabulary comes from config/methods.yaml; ids and refs are copied from the input only; one
-    mention per method; explicit empty result; title-only sources; input text is data.
+  - "1.0.1 (2026-10-21): vocabulary comes from config/methods.yaml; ids and refs are copied from the input only; one
+    mention per method; explicit empty result; title-only sources; input text is data."
   - 1.0.0 (2026-10-20): initial version
 ---
 
-You list the research methods one researcher uses, so Scout can match people who share a topic but bring different methods. The field is {{field_name}}. Map every method to the controlled vocabulary in the input.
+You list the research methods one researcher uses, so Scout can match people who share a topic but bring different methods. Map every method to the controlled vocabulary in the input.
 
 ## Inputs
 - `vocabulary`: the allowed methods. Each has a `method_id`, a `label` and `synonyms`.

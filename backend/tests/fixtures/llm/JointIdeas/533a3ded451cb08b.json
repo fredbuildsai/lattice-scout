@@ -1,0 +1,73 @@
+{
+  "ideas": [
+    {
+      "title": "Photocatalysts on nanocellulose supports",
+      "question": "Can isolated nanocellulose act as a support that keeps photocatalysts active under visible light and easy to recover after water treatment?",
+      "uses_from_a": [
+        {
+          "text": "Nanocellulose isolation with surface esterification",
+          "source_refs": [
+            "work:W4411654219"
+          ]
+        }
+      ],
+      "uses_from_b": [
+        {
+          "text": "Photocatalytic films and hybrids active under LED and solar light",
+          "source_refs": [
+            "work:W7163127579",
+            "work:W7170056032"
+          ]
+        }
+      ],
+      "first_step": "Coat a nanocellulose film with one existing photocatalyst and compare activity and recovery with the bare powder; worth checking the literature first.",
+      "possible_output": "Pilot dataset and a short joint paper"
+    },
+    {
+      "title": "Tracking photocatalyst surfaces with deep-UV Raman",
+      "question": "Can deep-UV Raman and fluorescence mapping show how hybrid photocatalyst surfaces change during repeated use?",
+      "uses_from_a": [
+        {
+          "text": "Deep-UV Raman and fluorescence mapping of interfaces",
+          "source_refs": [
+            "work:W7214346167"
+          ]
+        }
+      ],
+      "uses_from_b": [
+        {
+          "text": "Hybrid photocatalysts tested under low-power light",
+          "source_refs": [
+            "work:W7163127579",
+            "work:W7170056032"
+          ]
+        }
+      ],
+      "first_step": "Measure fresh and used samples of one hybrid photocatalyst on the existing Raman set-up.",
+      "possible_output": "Method note and a shared dataset"
+    },
+    {
+      "title": "Lignin foams as catalyst carriers",
+      "question": "Can flexible lignin-based polyurethane foams carry palladium catalysts for coupling reactions in green solvents and be reused?",
+      "uses_from_a": [
+        {
+          "text": "Formulation of flexible lignin polyurethane foams",
+          "source_refs": [
+            "work:W7164334760"
+          ]
+        }
+      ],
+      "uses_from_b": [
+        {
+          "text": "Palladium and copper catalysis in sustainable solvents",
+          "source_refs": [
+            "work:W7164855134",
+            "work:W7164938406"
+          ]
+        }
+      ],
+      "first_step": "Load one palladium precatalyst into two foam formulations and run a benchmark coupling reaction.",
+      "possible_output": "Feasibility data for a joint proposal"
+    }
+  ]
+}

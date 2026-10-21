@@ -62,7 +62,7 @@ class ComputeResearcherProfile:
             return {"status": "removed"}
         topics = compute_topics(data.works, now)
         works = method_works(data.works)
-        sources = [(w.ref, (w.abstract or "")[:1500]) for w in works]
+        sources = [(w.ref, (w.abstract or w.title)[:1500]) for w in works]
         refs = {ref: "abstract" for ref, _ in sources}
         use_vault = consent.vault_signals
         if use_vault:

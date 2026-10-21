@@ -58,10 +58,12 @@ def test_topics_fall_back_to_all_works_when_the_window_is_thin() -> None:
     assert compute_topics([], NOW) == []
 
 
-def test_method_works_takes_newest_with_abstract() -> None:
+def test_method_works_takes_newest_and_falls_back_to_the_title() -> None:
     ws = [work(f"work:W{i}", 2000 + i, abstract=None if i == 29 else "a") for i in range(30)]
     got = method_works(ws)
-    assert len(got) == 20 and got[0].ref == "work:W28" and all(w.abstract for w in got)
+    assert len(got) == 20 and got[0].ref == "work:W29"
+    untitled = [WorkIn("work:X", "", None, 2030, 0), WorkIn("work:Y", "Only a title", None, 2029, 0)]
+    assert [w.ref for w in method_works(untitled)] == ["work:Y"]
 
 
 def test_weigh_methods_drops_unknown_ids_and_refs_and_splits_sources() -> None:

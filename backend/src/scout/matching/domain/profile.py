@@ -84,8 +84,8 @@ def compute_topics(works: Sequence[WorkIn], now: datetime) -> list[TopicWeight]:
 
 
 def method_works(works: Sequence[WorkIn]) -> list[WorkIn]:
-    """The newest works with an abstract, at most 20 (the MethodExtractor input)."""
-    dated = sorted((w for w in works if w.abstract), key=lambda w: (-(w.year or 0), w.ref))
+    """The newest works with an abstract (or at least a title), at most 20 (the MethodExtractor input)."""
+    dated = sorted((w for w in works if w.abstract or w.title), key=lambda w: (-(w.year or 0), w.ref))
     return dated[:MAX_METHOD_WORKS]
 
 

@@ -1,0 +1,98 @@
+{
+  "methods": [
+    {
+      "method_id": "lca",
+      "new_label": null,
+      "source_refs": [
+        "work:W4412034040"
+      ],
+      "confidence": "medium"
+    },
+    {
+      "method_id": "raman",
+      "new_label": null,
+      "source_refs": [
+        "work:W7214346167"
+      ],
+      "confidence": "high"
+    },
+    {
+      "method_id": "foaming",
+      "new_label": null,
+      "source_refs": [
+        "work:W7164334760"
+      ],
+      "confidence": "high"
+    },
+    {
+      "method_id": "nanocellulose_isolation",
+      "new_label": null,
+      "source_refs": [
+        "work:W4411654219",
+        "work:W4412978443"
+      ],
+      "confidence": "high"
+    },
+    {
+      "method_id": "lignin_fractionation",
+      "new_label": null,
+      "source_refs": [
+        "work:W4390548217"
+      ],
+      "confidence": "medium"
+    },
+    {
+      "method_id": "chemical_modification",
+      "new_label": null,
+      "source_refs": [
+        "work:W4411654219",
+        "work:W4412978443",
+        "work:W4393116980",
+        "work:W4393238145"
+      ],
+      "confidence": "high"
+    },
+    {
+      "method_id": "membrane_fabrication",
+      "new_label": null,
+      "source_refs": [
+        "work:W4412978443",
+        "work:W4393116980",
+        "work:W4394732631"
+      ],
+      "confidence": "high"
+    },
+    {
+      "method_id": "adsorption_testing",
+      "new_label": null,
+      "source_refs": [
+        "work:W4394732631"
+      ],
+      "confidence": "high"
+    },
+    {
+      "method_id": "electrochemistry",
+      "new_label": null,
+      "source_refs": [
+        "work:W4390531961"
+      ],
+      "confidence": "high"
+    },
+    {
+      "method_id": null,
+      "new_label": "EEM fluorescence spectroscopy",
+      "source_refs": [
+        "work:W7214346167"
+      ],
+      "confidence": "high"
+    },
+    {
+      "method_id": null,
+      "new_label": "droplet templating",
+      "source_refs": [
+        "work:W4408038562"
+      ],
+      "confidence": "medium"
+    }
+  ]
+}
