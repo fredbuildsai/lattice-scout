@@ -41,6 +41,10 @@ Scout does not tell you whether they have answered. Contact details appear only 
 
 If they decline, you are not told. The card keeps saying "Waiting for the other researcher" until the open-until date. Then it says **Expired**. No contact details were shared.
 
+## The diagram on every card
+
+Each card draws two circles: the methods you bring and the methods they bring, with the topics you share in the overlap. Screen readers get the same content as text. The diagram uses only what the card already shows. It has no scores per topic.
+
 ## After you decline
 
 The card says **You passed on this proposal**. It leaves your list. The other researcher is not told.
@@ -51,7 +55,9 @@ Declining is final for this proposal. You can tick **Never suggest this person a
 
 The card opens with **You both said yes** and shows:
 
-- **Write an intro** and **Propose call**, which open an e-mail to the other researcher in your mail program (Scout writes nothing for you);
+- **Write an intro** and **Propose call**, which open an e-mail to the other researcher in your mail program. Scout sends nothing itself;
+- **Draft an intro**: a ready-made text built from the topics you share and the methods each of you brings. It is a template, not written by AI. You can edit it in the box, copy it, reset it, or open it in your mail program. It is also the body of **Write an intro**. Read it before you send it;
+- **Career and joint papers**: a line such as "Mid career since 2013" (the year of the other researcher's first publication in your imported works) and "3 joint papers" (papers that both of you kept in your profile). Each line appears only when Scout has the data;
 - **Contact details**: the other researcher's name, institution, e-mail address, ORCID and OpenAlex ids, region and career stage.
 - **Joint ideas**: one to three ideas for working together. Each has a title, a question, what each of you brings, a first step and a possible output. Ideas can take a short time to appear. If Scout cannot make them, the contact details still show.
 - **Rating**: rate the match from 1 to 5 stars. You can add reasons (for example "Methods fit" or "Too similar to me") and a comment. A new rating replaces the old one. Ratings help the team tune matching.

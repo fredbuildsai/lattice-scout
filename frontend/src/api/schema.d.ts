@@ -1905,8 +1905,13 @@ export interface components {
         /**
          * RevealedMatchView
          * @description A mutual match: identity, contact and joint ideas.
+         *
+         *     ``career_since`` is the year of the other side's first included work; ``joint_works_count`` the works both
+         *     included (None when none). Neither exists on ``AnonymousMatchView``.
          */
         RevealedMatchView: {
+            /** Career Since */
+            career_since?: number | null;
             contact: components["schemas"]["Contact"];
             /**
              * Id
@@ -1916,6 +1921,8 @@ export interface components {
             ideas_status: components["schemas"]["IdeasStatus"];
             /** Joint Ideas */
             joint_ideas: components["schemas"]["JointIdeaView"][];
+            /** Joint Works Count */
+            joint_works_count?: number | null;
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}

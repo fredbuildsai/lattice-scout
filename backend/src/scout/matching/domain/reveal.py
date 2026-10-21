@@ -7,7 +7,7 @@ from datetime import datetime
 from typing import Literal
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from scout.matching.domain.enums import CareerBand, Decision, IdeasStatus, MatchState, Region, ViewerStatus
 from scout.matching.domain.proposal import BringItem, MatchProposal
@@ -34,6 +34,9 @@ class Contact(_Frozen):
     openalex_ids: list[str]
     region: Region
     career_band: CareerBand
+    # Read together with the contact, shown on ``RevealedMatchView``; not part of the contact payload.
+    career_since: int | None = Field(default=None, exclude=True)
+    joint_works_count: int = Field(default=0, exclude=True)
 
 
 class JointIdeaView(_Frozen):
@@ -67,7 +70,11 @@ class AnonymousMatchView(_Frozen):
 
 
 class RevealedMatchView(_Frozen):
-    """A mutual match: identity, contact and joint ideas."""
+    """A mutual match: identity, contact and joint ideas.
+
+    ``career_since`` is the year of the other side's first included work; ``joint_works_count`` the works both
+    included (None when none). Neither exists on ``AnonymousMatchView``.
+    """
 
     kind: Literal["revealed"] = "revealed"
     id: UUID
@@ -82,6 +89,8 @@ class RevealedMatchView(_Frozen):
     joint_ideas: list[JointIdeaView]
     revealed_at: datetime
     my_rating: int | None = None
+    career_since: int | None = None
+    joint_works_count: int | None = None
 
 
 def reveal_allowed(state: MatchState) -> bool:
@@ -128,5 +137,6 @@ def build_revealed(
     return RevealedMatchView(
         id=p.id, score=p.score, shared_topics=list(p.score_basis.shared_topics), you_bring=mine, they_bring=theirs,
         why=p.rationale.why_for(side), contact=contact, ideas_status=p.ideas_status, joint_ideas=list(ideas),
-        revealed_at=p.revealed_at, my_rating=my_rating,
+        revealed_at=p.revealed_at, my_rating=my_rating, career_since=contact.career_since,
+        joint_works_count=contact.joint_works_count or None,
     )  # fmt: skip

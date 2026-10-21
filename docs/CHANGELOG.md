@@ -4,6 +4,12 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 
 ## [Unreleased]
 
+### Added (matches and Home, F-35 / F-36)
+- Home, "Your profile" card: bar chart of your included publications per year (from the profile; text alternative and empty state).
+- Matches: Venn diagram of the two method sets around the shared topics, on anonymous and revealed cards (only fields the card already shows, no weights).
+- Revealed matches only: `career_since` (year of the other researcher's first included work) and `joint_works_count` (works both of you included; omitted when 0) on `RevealedMatchView`, read through `match_reveal_v` (migration 0018). The UI shows "Mid career since 2013" and "N joint papers". The anonymous view has neither field (tested).
+- "Draft an intro": a deterministic template (no LLM) from shared topics and the you/they-bring texts, in an editable text area with Copy, Reset and "Open in email app". It is also the body of the "Write an intro" `mailto:` link. Nothing is sent by Scout.
+
 ### Changed (matching score, ADR 017, F-39)
 - Formula `c2`: topic similarity is the overlap coefficient instead of the weighted Jaccard. Default `MATCH_MIN_SCORE` is 0.11 (was 0.08). The demo pair Foster/Moreira scores 0.119 and no longer needs a lowered threshold in the seed. Stored `c1` proposals stay readable. Final tuning on pilot feedback is still expected in M7.
 - `scripts/calibrate_matching.py` (new) reproduces the calibration; `scripts/fetch_fixtures.py` gained `--find` and `--add-author --openalex-id` to record a further public author (blocker B7).

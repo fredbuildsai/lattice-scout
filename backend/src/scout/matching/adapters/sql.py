@@ -394,7 +394,7 @@ class SqlRevealRepo:
         row = (
             await self._s.execute(
                 text(
-                    "SELECT v.display_name, v.institution, v.orcid, v.email, v.openalex_ids, "
+                    "SELECT v.display_name, v.institution, v.orcid, v.email, v.openalex_ids, v.career_since, v.joint_works_count, "
                     "CASE WHEN p.a_id = v.other_id THEN p.a_public ELSE p.b_public END AS facet "
                     "FROM match_reveal_v v JOIN match_proposal p ON p.id = v.match_id "
                     "WHERE v.match_id = :m AND v.viewer_id = :v"
@@ -408,6 +408,7 @@ class SqlRevealRepo:
         return Contact(
             display_name=row.display_name, institution=row.institution, email=row.email, orcid=row.orcid,
             openalex_ids=list(row.openalex_ids), region=facet.region, career_band=facet.career_band,
+            career_since=row.career_since, joint_works_count=int(row.joint_works_count or 0),
         )  # fmt: skip
 
 

@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { track } from '../../analytics/client'
 import { useProfile } from '../profile/api'
 import { RatingForm } from './RatingForm'
+import { MethodsVenn } from './MethodsVenn'
+import { introDraft } from './intro'
 import {
   errorText,
   mailtoUrl,
@@ -62,7 +64,7 @@ function Score({ score }: { score: number }) {
   )
 }
 
-function Body({ m }: { m: MatchCard }) {
+function Body({ m, theyLabel = 'Them' }: { m: MatchCard; theyLabel?: string }) {
   return (
     <>
       {m.shared_topics.length > 0 && (
@@ -74,7 +76,16 @@ function Body({ m }: { m: MatchCard }) {
           ))}
         </ul>
       )}
-      <div className="mt-4 grid gap-4 sm:grid-cols-2">
+      <div className="mt-4 grid items-center gap-4 sm:grid-cols-[auto_1fr_1fr]">
+        {(m.you_bring.length > 0 || m.they_bring.length > 0) && (
+          <MethodsVenn
+            youLabel="You"
+            theyLabel={theyLabel}
+            sharedTopics={m.shared_topics}
+            youBring={m.you_bring}
+            theyBring={m.they_bring}
+          />
+        )}
         <Bring title="You bring" items={m.you_bring} />
         <Bring title="They bring" items={m.they_bring} />
       </div>
@@ -269,6 +280,66 @@ function initialsOf(name: string) {
     .toUpperCase()
 }
 
+function IntroDraft({
+  draft,
+  onChange,
+  onReset,
+  email,
+}: {
+  draft: string
+  onChange: (v: string) => void
+  onReset: () => void
+  email: string
+}) {
+  const [copied, setCopied] = useState<'ok' | 'failed' | null>(null)
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(draft)
+      setCopied('ok')
+    } catch {
+      setCopied('failed')
+    }
+  }
+  return (
+    <section aria-labelledby="intro-title" className="mt-4 rounded-btn border border-line p-3">
+      <h4 id="intro-title" className="font-semibold">
+        Draft an intro
+      </h4>
+      <p className="mt-1 text-sm text-ink-2">
+        A template built from your shared topics and what each of you brings, not written by AI. Edit it freely.
+        Nothing is sent from Lattice Scout.
+      </p>
+      <label htmlFor="intro-text" className="sr-only">
+        Intro message (editable)
+      </label>
+      <textarea
+        id="intro-text"
+        rows={10}
+        className="mt-2 w-full rounded-btn border border-line-strong bg-surface p-2 text-sm"
+        value={draft}
+        onChange={(e) => {
+          setCopied(null)
+          onChange(e.target.value)
+        }}
+      />
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        <button type="button" className={`${BTN} border border-line-strong bg-surface`} onClick={() => void copy()}>
+          Copy
+        </button>
+        <a className={`${BTN} border border-line-strong bg-surface`} href={mailtoUrl(email, 'Lattice Scout: introduction', draft)}>
+          Open in email app
+        </a>
+        <button type="button" className={`${BTN} text-accent underline`} onClick={onReset}>
+          Reset to template
+        </button>
+        <span role="status" className="text-sm text-ink-3">
+          {copied === 'ok' ? 'Copied.' : copied === 'failed' ? 'Could not copy; select the text and copy it.' : ''}
+        </span>
+      </div>
+    </section>
+  )
+}
+
 function Revealed({ m }: { m: RevealedMatch }) {
   useEffect(() => {
     track('match_viewed', { match_id: m.id })
@@ -276,6 +347,18 @@ function Revealed({ m }: { m: RevealedMatch }) {
   const profile = useProfile()
   const c = m.contact
   const mine = profile.data ? initialsOf(profile.data.display_name) : null
+  const template = introDraft({
+    contactName: c.display_name,
+    myName: profile.data?.display_name,
+    sharedTopics: m.shared_topics,
+    youBring: m.you_bring,
+    theyBring: m.they_bring,
+  })
+  // `null` until the user edits: the draft then follows the template (e.g. when the profile name arrives).
+  const [edited, setEdited] = useState<string | null>(null)
+  const draft = edited ?? template
+  const bandLabel = BANDS[c.career_band] && c.career_band !== 'unknown' ? BANDS[c.career_band] : 'Publishing'
+  const joint = m.joint_works_count ?? 0
   return (
     <article
       aria-label={`Mutual match ${c.display_name}`}
@@ -298,6 +381,20 @@ function Revealed({ m }: { m: RevealedMatch }) {
           <div>
             <h4 className="font-serif text-xl font-semibold">{c.display_name}</h4>
             <p className="text-sm text-ink-3">{c.institution ?? 'Institution not shared'}</p>
+            {(m.career_since != null || joint > 0) && (
+              <ul aria-label="Career and joint work" className="mt-2 flex flex-wrap gap-2">
+                {m.career_since != null && (
+                  <li className={CHIP}>
+                    {bandLabel} since {m.career_since}
+                  </li>
+                )}
+                {joint > 0 && (
+                  <li className={CHIP}>
+                    {joint} joint {joint === 1 ? 'paper' : 'papers'}
+                  </li>
+                )}
+              </ul>
+            )}
           </div>
           <Score score={m.score} />
         </div>
@@ -338,7 +435,7 @@ function Revealed({ m }: { m: RevealedMatch }) {
         <div className="mt-3 flex flex-wrap gap-2">
           <a
             className={`${BTN} bg-scout text-white hover:bg-scout-ink`}
-            href={mailtoUrl(c.email, 'Lattice Scout: introduction')}
+            href={mailtoUrl(c.email, 'Lattice Scout: introduction', draft)}
           >
             Write an intro
           </a>
@@ -349,7 +446,8 @@ function Revealed({ m }: { m: RevealedMatch }) {
             Propose call
           </a>
         </div>
-        <Body m={m} />
+        <IntroDraft draft={draft} onChange={setEdited} onReset={() => setEdited(null)} email={c.email} />
+        <Body m={m} theyLabel={c.display_name.split(/\s+/)[0]} />
         <Ideas m={m} />
         <RatingForm matchId={m.id} initialStars={m.my_rating} />
       </div>

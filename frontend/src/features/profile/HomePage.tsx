@@ -9,6 +9,7 @@ import { useDocuments } from '../vault/api'
 import { KIND_LABELS, type DocKind } from '../vault/status'
 import { useMatches } from '../matches/api'
 import { useProfile } from './api'
+import { YearHistogram } from './YearHistogram'
 
 function Card({
   title,
@@ -218,6 +219,7 @@ export function HomePage() {
                 {p.works_summary.included} of {p.works_summary.total} {p.works_summary.total === 1 ? 'work' : 'works'}{' '}
                 included
               </p>
+              <YearHistogram works={p.works} />
               {p.topics.length > 0 && (
                 <ul aria-label="Top topics" className="mt-2 flex flex-wrap gap-2">
                   {p.topics.slice(0, 4).map((t) => (

@@ -149,6 +149,7 @@ def _assert_anonymous(body: Any) -> None:
     for needle in FORBIDDEN:
         assert needle not in blob, needle
     assert "contact" not in blob and "display_name" not in blob and '"email"' not in blob
+    assert "career_since" not in blob and "joint_works_count" not in blob
 
 
 def test_default_filters_give_none_reconnect_gives_one_and_pre_mutual_bodies_are_anonymous(
@@ -185,6 +186,10 @@ def test_mutual_path_both_sides_get_contact_and_ideas_after_the_reveal_job(world
     for v in views.values():
         assert v["kind"] == "revealed" and v["ideas_status"] == "ready"
         assert v["contact"]["email"].endswith("@example.edu")
+        assert isinstance(v["career_since"], int) and (
+            v["joint_works_count"] is None or v["joint_works_count"] > 0
+        )
+        assert "career_since" not in v["contact"] and "joint_works_count" not in v["contact"]
         assert 1 <= len(v["joint_ideas"]) <= 3
         for idea in v["joint_ideas"]:
             assert idea["title"] and idea["first_step"] and idea["uses_from_you"] and idea["uses_from_them"]

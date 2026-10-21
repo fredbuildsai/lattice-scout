@@ -277,3 +277,39 @@ async def test_account_delete_cascades_to_matches_and_ideas(db: Database) -> Non
     assert await run(db, "SELECT 1 FROM match_proposal WHERE id = :m", m=gone) == []
     assert await run(db, "SELECT 1 FROM joint_idea WHERE match_id = :m", m=gone) == []
     assert len(await run(db, "SELECT 1 FROM joint_idea WHERE match_id = :m", m=kept)) == 1
+
+
+# ------------------------------------------------------------------ career_since and joint_works_count
+
+
+async def _work(db: Database, person: int, work_id: str, year: int | None, included: bool = True) -> None:
+    await run(
+        db,
+        "INSERT INTO claimed_work (id, researcher_id, openalex_work_id, title, year, included)"
+        " SELECT gen_random_uuid(), r.id, :w, 'Sample work', :y, :i FROM researcher r WHERE r.account_id = :a",
+        w=work_id, y=year, i=included, a=acc(person),
+    )  # fmt: skip
+
+
+async def test_reveal_view_carries_first_year_and_joint_works_of_the_other_side(db: Database) -> None:
+    await seed_people(db, 2)
+    await seed_match(db, 1, 2, "mutual")
+    await _work(db, 1, "W1", 2020)
+    await _work(db, 1, "W2", 2021)
+    await _work(db, 1, "W3", 2022, included=False)  # the viewer dropped it: not a joint work
+    await _work(db, 2, "W1", 2013)
+    await _work(db, 2, "W2", 2019)
+    await _work(db, 2, "W3", 2012)
+    await _work(db, 2, "W9", None)
+    await _work(db, 2, "W8", 2011, included=False)  # excluded work never sets the career start
+    rows = await run(db, "SELECT viewer_id, career_since, joint_works_count FROM match_reveal_v")
+    by_viewer = {r[0]: (r[1], r[2]) for r in rows}
+    assert by_viewer[acc(1)] == (2012, 2)  # about person 2: W1 and W2 are shared
+    assert by_viewer[acc(2)] == (2020, 2)
+
+
+async def test_reveal_view_without_works_has_no_year_and_zero_joint(db: Database) -> None:
+    await seed_people(db, 2)
+    await seed_match(db, 1, 2, "mutual")
+    rows = await run(db, "SELECT career_since, joint_works_count FROM match_reveal_v")
+    assert [tuple(r) for r in rows] == [(None, 0), (None, 0)]

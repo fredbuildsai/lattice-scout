@@ -59,6 +59,7 @@ describe('HomePage', () => {
       'href',
       '/onboarding?step=works',
     )
+    expect(screen.getByText('No publication years to chart yet.')).toBeInTheDocument()
   })
 
   describe('Scout’s briefing', () => {

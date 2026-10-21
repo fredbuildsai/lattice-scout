@@ -3036,8 +3036,19 @@
         "type": "string"
       },
       "RevealedMatchView": {
-        "description": "A mutual match: identity, contact and joint ideas.",
+        "description": "A mutual match: identity, contact and joint ideas.\n\n``career_since`` is the year of the other side's first included work; ``joint_works_count`` the works both\nincluded (None when none). Neither exists on ``AnonymousMatchView``.",
         "properties": {
+          "career_since": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Career Since"
+          },
           "contact": {
             "$ref": "#/components/schemas/Contact"
           },
@@ -3055,6 +3066,17 @@
             },
             "title": "Joint Ideas",
             "type": "array"
+          },
+          "joint_works_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Joint Works Count"
           },
           "kind": {
             "const": "revealed",

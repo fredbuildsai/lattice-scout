@@ -53,8 +53,9 @@ export function useMatches(limit = 50) {
   })
 }
 
-/** `mailto:` link for the revealed contact with a fixed subject and no body (Scout writes nothing on the user's behalf). */
-export const mailtoUrl = (email: string, subject: string) => `mailto:${email}?subject=${encodeURIComponent(subject)}`
+/** `mailto:` link for the revealed contact: fixed subject, optional body (the user-editable template draft). Opens the user's own mail app; nothing is sent by Scout. */
+export const mailtoUrl = (email: string, subject: string, body?: string) =>
+  `mailto:${email}?subject=${encodeURIComponent(subject)}${body ? `&body=${encodeURIComponent(body)}` : ''}`
 
 /** POST /matches/{id}/decision; tracks match_decision and match_revealed on a mutual result, then refreshes the list. */
 export function useDecision() {

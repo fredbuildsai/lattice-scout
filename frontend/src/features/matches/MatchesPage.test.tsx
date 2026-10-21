@@ -223,7 +223,7 @@ describe('MatchesPage', () => {
     expect(await screen.findByText('You both said yes')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Write an intro' })).toHaveAttribute(
       'href',
-      'mailto:ada@example.edu?subject=Lattice%20Scout%3A%20introduction',
+      expect.stringMatching(/^mailto:ada@example\.edu\?subject=Lattice%20Scout%3A%20introduction&body=Dear%20Ada%20Example/),
     )
     expect(screen.getByRole('link', { name: 'Propose call' })).toHaveAttribute(
       'href',
@@ -266,5 +266,64 @@ describe('MatchesPage', () => {
   it('shows the invite message when enabled but empty', async () => {
     setup({ items: [] })
     expect(await screen.findByText(/Matching opens when more researchers in your field join/)).toBeInTheDocument()
+  })
+
+  it('shows career start and joint papers on a revealed match only when present', async () => {
+    setup({ items: [revealed({ career_since: 2013, joint_works_count: 5 })] })
+    expect(await screen.findByText('Mid career since 2013')).toBeInTheDocument()
+    expect(screen.getByText('5 joint papers')).toBeInTheDocument()
+  })
+
+  it('omits the career line and the joint count when the backend sends none', async () => {
+    setup({ items: [revealed({ career_since: null, joint_works_count: null })] })
+    await screen.findByText('You both said yes')
+    expect(screen.queryByText(/since 20/)).toBeNull()
+    expect(screen.queryByText(/joint paper/)).toBeNull()
+  })
+
+  it('uses the singular for one joint paper', async () => {
+    setup({ items: [revealed({ joint_works_count: 1 })] })
+    expect(await screen.findByText('1 joint paper')).toBeInTheDocument()
+  })
+
+  it('never shows career or joint lines on the anonymous card, even if the payload carried them', async () => {
+    const leaky = { ...anon(), career_since: 2013, joint_works_count: 5 } as unknown as MatchCard
+    setup({ items: [leaky] })
+    await screen.findByRole('article', { name: /Anonymous match/ })
+    expect(screen.queryByText(/since 2013/)).toBeNull()
+    expect(screen.queryByText(/joint paper/)).toBeNull()
+  })
+
+  it('draws the Venn diagram with a text alternative on anonymous and revealed cards', async () => {
+    setup({ items: [anon({ shared_topics: ['PFAS', 'Membranes'] })] })
+    const venn = await screen.findByRole('img', { name: /Venn diagram/ })
+    const label = venn.getAttribute('aria-label') ?? ''
+    expect(label).toContain('You bring: Fungal membrane')
+    expect(label).toContain('They bring: Iron-oxide catalysts')
+    expect(label).toContain('Shared topics: PFAS, Membranes')
+  })
+
+  it('states that no topics are shared in the Venn text alternative', async () => {
+    setup({ items: [revealed({ shared_topics: [] })] })
+    expect(await screen.findByRole('img', { name: /Shared topics: none/ })).toBeInTheDocument()
+  })
+
+  it('offers an editable intro draft that feeds the mailto body, with copy and reset', async () => {
+    const writeText = vi.fn(async () => undefined)
+    setup({ items: [revealed({ shared_topics: ['PFAS'] })] })
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true })
+    const user = userEvent.setup()
+    const box = await screen.findByRole('textbox', { name: /Intro message/ })
+    expect((box as HTMLTextAreaElement).value).toContain('Dear Ada Example,')
+    await user.clear(box)
+    await user.type(box, 'Hi Ada')
+    expect(screen.getByRole('link', { name: 'Open in email app' })).toHaveAttribute(
+      'href',
+      'mailto:ada@example.edu?subject=Lattice%20Scout%3A%20introduction&body=Hi%20Ada',
+    )
+    await user.click(screen.getByRole('button', { name: 'Copy' }))
+    expect(await screen.findByText('Copied.')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Reset to template' }))
+    expect((box as HTMLTextAreaElement).value).toContain('Dear Ada Example,')
   })
 })
