@@ -10,7 +10,7 @@ from typing import Protocol
 from uuid import UUID
 
 from scout.discovery.domain.corpus import Cluster, CorpusWork, NoveltyProbe
-from scout.discovery.domain.enums import CorpusOrigin
+from scout.discovery.domain.enums import CorpusOrigin, OppKind, OppStatus
 from scout.discovery.domain.opportunity import Opportunity
 from scout.discovery.domain.run import AnalysisRun
 from scout.ports.audit import AuditLog
@@ -140,6 +140,24 @@ class OpportunityRepo(Protocol):
 
     async def previous_titles(self, owner_id: AccountId, exclude_run: UUID) -> list[tuple[UUID, str]]:
         """Titles of the owner's earlier ``shown``, ``saved`` and ``dismissed`` opportunities (newest first)."""
+        ...
+
+    async def list_for_owner(
+        self,
+        owner_id: AccountId,
+        statuses: Sequence[OppStatus],
+        run_id: UUID | None = None,
+        kind: OppKind | None = None,
+    ) -> list[Opportunity]:
+        """The owner's opportunities in the given statuses, best rank first (ties newest first)."""
+        ...
+
+    async def find_by_evidence(self, evidence_id: UUID) -> Opportunity | None:
+        """The aggregate that holds an evidence item (any owner: the caller checks ownership)."""
+        ...
+
+    async def list_recent(self, limit: int, offset: int = 0, run_id: UUID | None = None) -> list[Opportunity]:
+        """Newest first, any owner and status (admin quality review)."""
         ...
 
 

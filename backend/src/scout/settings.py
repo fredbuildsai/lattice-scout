@@ -58,6 +58,7 @@ class Settings(BaseSettings):
     run_stall_minutes: int = 20
     run_max_executions: int = 8
     fields_config: Path = Path("config/fields.yaml")
+    admin_claims_show_vault_quotes: bool = False
     match_max_open_per_week: int = 3
     match_expiry_days: int = 21
     match_exclude_coauthors: bool = True

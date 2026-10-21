@@ -25,7 +25,7 @@ from scout.discovery.domain.agent_io import (
 )
 from scout.discovery.domain.budget import RunSpend
 from scout.discovery.domain.corpus import Cluster, CorpusWork, NoveltyProbe
-from scout.discovery.domain.enums import CorpusOrigin, RunStatus
+from scout.discovery.domain.enums import CorpusOrigin, OppKind, OppStatus, RunStatus
 from scout.discovery.domain.opportunity import Opportunity
 from scout.discovery.domain.run import AnalysisRun
 from scout.discovery.ports.agents import AgentOutcome
@@ -48,6 +48,10 @@ class DiscoveryStore:
     opportunities: dict[UUID, Opportunity] = field(default_factory=dict)
     audit: InMemoryAuditLog = field(default_factory=InMemoryAuditLog)
     commits: int = 0
+    # Test hooks. ``before_commit`` gets the staged runs and may raise (a crash that loses the commit);
+    # ``after_commit`` runs once the commit is published (another worker acting between two commits).
+    before_commit: Callable[[dict[UUID, AnalysisRun]], None] | None = None
+    after_commit: Callable[[], None] | None = None
 
 
 class InMemoryRunRepo:
@@ -194,6 +198,34 @@ class InMemoryOpportunityRepo:
         )  # fmt: skip
         return [(o.id, o.title) for o in opps]
 
+    async def list_for_owner(
+        self,
+        owner_id: AccountId,
+        statuses: Sequence[OppStatus],
+        run_id: UUID | None = None,
+        kind: OppKind | None = None,
+    ) -> list[Opportunity]:
+        opps = [
+            o for o in self.data.values()
+            if o.owner_id == owner_id and o.status in statuses and (run_id is None or o.run_id == run_id)
+            and (kind is None or o.kind is kind)
+        ]  # fmt: skip
+        opps.sort(key=lambda o: (-(o.scores.rank if o.scores else -1.0), o.created_at, str(o.id)))
+        return [copy.deepcopy(o) for o in opps]
+
+    async def find_by_evidence(self, evidence_id: UUID) -> Opportunity | None:
+        for o in self.data.values():
+            if any(e.id == evidence_id for c in o.claims for e in c.evidence):
+                return copy.deepcopy(o)
+        return None
+
+    async def list_recent(self, limit: int, offset: int = 0, run_id: UUID | None = None) -> list[Opportunity]:
+        opps = sorted(
+            (o for o in self.data.values() if run_id is None or o.run_id == run_id),
+            key=lambda o: (o.created_at, str(o.id)), reverse=True,
+        )  # fmt: skip
+        return [copy.deepcopy(o) for o in opps[offset : offset + limit]]
+
 
 class InMemoryDiscoveryUoW:
     def __init__(self, store: DiscoveryStore) -> None:
@@ -243,6 +275,8 @@ class InMemoryDiscoveryUoW:
 
     async def commit(self) -> None:
         s = self._store
+        if s.before_commit is not None:
+            s.before_commit(self._r)
         for rid, staged_run in self._r.items():  # the ledger charged the committed rows while this unit ran
             live = s.runs.get(rid)
             if live is not None:
@@ -254,6 +288,8 @@ class InMemoryDiscoveryUoW:
             target.update(staged)  # type: ignore[arg-type]
         s.audit.entries.extend(self._audit.entries)
         s.commits += 1
+        if s.after_commit is not None:
+            s.after_commit()
 
     async def rollback(self) -> None:
         return None

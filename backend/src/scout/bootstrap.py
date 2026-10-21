@@ -25,6 +25,7 @@ from scout.discovery.adapters.fields import load_field
 from scout.discovery.adapters.sql import SqlDiscoveryUnitOfWork, SqlRunLedger
 from scout.discovery.application.pipeline import PipelineConfig
 from scout.discovery.application.run_analysis import RunAnalysis, SweepRuns
+from scout.discovery.application.service import DiscoveryService
 from scout.discovery.application.sources import ProfileSourceAdapter, VaultSourceAdapter
 from scout.discovery.application.start import StartAnalysisRun, StartConfig
 from scout.discovery.ports.repos import DiscoveryUnitOfWork
@@ -98,6 +99,7 @@ class Container:
     start_run: StartAnalysisRun
     run_analysis: RunAnalysis
     sweep_runs: SweepRuns
+    discovery: DiscoveryService
     discovery_uow: Callable[[], DiscoveryUnitOfWork]
     vault_source: VaultSource
     dev_tokens: DevTokenIssuer | None = None
@@ -231,6 +233,13 @@ def build_container(
     vault_service = VaultService(vault_uow, queue, clock, ids)
     profile_service = ProfileService(lambda: SqlProfileUnitOfWork(db), literature, queue, clock, ids, cfg)
     profile_source, vault_source = ProfileSourceAdapter(profile_service), VaultSourceAdapter(vault_service)
+    start_run = StartAnalysisRun(
+        discovery_uow, queue, profile_source, vault_source, clock, ids,
+        StartConfig(
+            settings.run_budget_usd, settings.account_daily_budget_usd, settings.run_max_per_day,
+            settings.run_max_openalex_calls, settings.run_max_corpus,
+        ),
+    )  # fmt: skip
     return Container(
         storage=storage, agents=agents,
         vault=vault_service,
@@ -241,13 +250,7 @@ def build_container(
         ingest_document=IngestDocument(vault_uow, storage, extractor, extract_insights, clock),
         delete_document_job=DeleteDocumentJob(vault_uow, storage, clock),
         sweep_vault=SweepVault(vault_uow, queue, clock),
-        start_run=StartAnalysisRun(
-            discovery_uow, queue, profile_source, vault_source, clock, ids,
-            StartConfig(
-                settings.run_budget_usd, settings.account_daily_budget_usd, settings.run_max_per_day,
-                settings.run_max_openalex_calls, settings.run_max_corpus,
-            ),
-        ),
+        start_run=start_run,
         run_analysis=RunAnalysis(
             discovery_uow, SqlRunLedger(db, clock), literature, AgentsDiscovery(agents), profile_source,
             vault_source, load_field(resolve_path(settings.fields_config), settings.launch_field),
@@ -260,6 +263,10 @@ def build_container(
         sweep_runs=SweepRuns(
             discovery_uow, queue, clock, stall_minutes=settings.run_stall_minutes,
             max_executions=settings.run_max_executions,
+        ),
+        discovery=DiscoveryService(
+            discovery_uow, start_run, vault_source, clock, ids,
+            admin_show_vault_quotes=settings.admin_claims_show_vault_quotes,
         ),
         discovery_uow=discovery_uow, vault_source=vault_source,
 

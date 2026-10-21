@@ -20,7 +20,7 @@ from scout.adapters.persistence.uow import SqlUnitOfWork
 from scout.discovery.adapters import serde
 from scout.discovery.domain.budget import RunSpend
 from scout.discovery.domain.corpus import Cluster, CorpusWork, NoveltyProbe
-from scout.discovery.domain.enums import CorpusOrigin
+from scout.discovery.domain.enums import CorpusOrigin, OppKind, OppStatus
 from scout.discovery.domain.opportunity import Opportunity
 from scout.discovery.domain.run import AnalysisRun, RunDocument
 from scout.discovery.ports.ledger import LedgerState
@@ -393,6 +393,49 @@ class SqlOpportunityRepo:
             .order_by(t.c.created_at.desc())
         )
         return [(r.id, r.title) for r in rows]
+
+    async def list_for_owner(
+        self,
+        owner_id: AccountId,
+        statuses: Sequence[OppStatus],
+        run_id: UUID | None = None,
+        kind: OppKind | None = None,
+    ) -> list[Opportunity]:
+        """The owner's opportunities in ``statuses``, best rank first."""
+        t = m.opportunity
+        q = select(t).where(t.c.owner_id == owner_id, t.c.status.in_([x.value for x in statuses]))
+        if run_id is not None:
+            q = q.where(t.c.run_id == run_id)
+        if kind is not None:
+            q = q.where(t.c.kind == kind.value)
+        rows = list(
+            await self._s.execute(
+                q.order_by(t.c.rank_score.desc().nulls_last(), t.c.created_at.desc(), t.c.id)
+            )
+        )
+        return await self._aggregates(rows)
+
+    async def find_by_evidence(self, evidence_id: UUID) -> Opportunity | None:
+        """The aggregate holding an evidence item."""
+        row = (
+            await self._s.execute(
+                select(m.claim.c.opportunity_id)
+                .select_from(m.evidence.join(m.claim, m.evidence.c.claim_id == m.claim.c.id))
+                .where(m.evidence.c.id == evidence_id)
+            )
+        ).first()
+        return await self.get(row.opportunity_id) if row else None
+
+    async def list_recent(self, limit: int, offset: int = 0, run_id: UUID | None = None) -> list[Opportunity]:
+        """Newest first, any owner and status."""
+        t = m.opportunity
+        q = select(t)
+        if run_id is not None:
+            q = q.where(t.c.run_id == run_id)
+        rows = list(
+            await self._s.execute(q.order_by(t.c.created_at.desc(), t.c.id).limit(limit).offset(offset))
+        )
+        return await self._aggregates(rows)
 
 
 class SqlRunLedger:

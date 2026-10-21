@@ -124,3 +124,17 @@ async def test_saving_the_run_never_loses_ledger_spend(db: Database) -> None:
         and back.spend.cost_usd == __import__("decimal").Decimal("0.5")
     )
     assert UUID(int=0) != run.id
+
+
+async def test_analytics_views_have_rows_after_a_run(db: Database) -> None:
+    await _account(db)
+    w = PgWorld(db)
+    run = await w.start()
+    await w.run(run)
+    async with db.engine.connect() as conn:
+        quality = (await conn.execute(text("SELECT sum(n), max(share) FROM analytics.v_claim_quality"))).one()
+        cost = (
+            await conn.execute(text("SELECT shown, cost_usd, cost_per_shown FROM analytics.v_run_cost"))
+        ).one()
+    assert quality[0] >= 3 and 0 < quality[1] <= 1
+    assert cost[0] == 1 and cost[1] > 0 and cost[2] > 0
