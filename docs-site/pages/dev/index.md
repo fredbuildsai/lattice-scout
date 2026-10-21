@@ -5,7 +5,7 @@ This guide covers how the code is organised, how to run it, and how to test it. 
 build plan is in [`docs/IMPLEMENTATION_PLAN.md`](https://github.com/fredbuildsai/lattice-scout/blob/main/docs/IMPLEMENTATION_PLAN.md).
 Milestones M0 (foundations), M1 (authentication and profile claim), M2 (private vault and ingestion) and M3 (gap analysis engine, backend) are in place. Milestones M4 to M7 add the other parts of the product.
 
-Feature pages: [authentication](auth.md) (dev and Supabase modes), [profile and claim](profile.md) (search, grouping, import), [private vault](vault.md) (upload, ingestion, retention, storage), [gap analysis](discovery.md) (runs, fixtures, eval, endpoints), [configuration](configuration.md).
+Feature pages: [authentication](auth.md) (dev and Supabase modes), [profile and claim](profile.md) (search, grouping, import), [private vault](vault.md) (upload, ingestion, retention, storage), [gap analysis](discovery.md) (runs, fixtures, eval, endpoints), [matching](matching.md) (scoring, filters, reveal, fixtures, seed), [configuration](configuration.md).
 
 ## Architecture overview
 

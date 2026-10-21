@@ -5,6 +5,17 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 ## [Unreleased]
 
 ### Added
+- M5 matching (backend, Matches screen, documentation):
+  - Matching profiles from the imported works and, with consent, the verified methods signals of the vault. Topics are weighted by recency and citations. Methods are mapped to a 44-entry controlled vocabulary (`config/methods.yaml`). Jobs `matching.profile` and `matching.compute` run after an import and after a consent change.
+  - Complementarity proposals: a pair is scored from topic overlap and method difference. Co-authors and researchers at the same institution are excluded by default, a pair waits 180 days after its last proposal, and each person receives at most three new proposals in seven days. The nightly job `matching.nightly` runs at 02:00 UTC.
+  - Double opt-in. `GET /api/v1/matches`, `GET /api/v1/matches/{id}` and `POST /api/v1/matches/{id}/decision` (accept, decline, withdraw, never suggest again). Contact details and one to three joint ideas appear only after both sides accept. The reveal is enforced in three layers: the `match_reveal_v` view, a static test of the adapters and a domain check. A decline is never shown to the other side.
+  - Agents MethodExtractor 1.0.1, MatchExplainer 1.1.0 and JointIdeas 1.1.0. Each has a template or failure fallback. An anonymity guard drops text that carries years, DOIs, links, e-mail addresses, ORCIDs or OpenAlex ids.
+  - Match ratings: `POST /api/v1/matches/{id}/rating` with 1 to 5 stars, reason chips and a comment. Only a participant of a mutual match can rate.
+  - Web: the Matches screen with the anonymous card, the waiting and expired states, the reveal with contact details and joint ideas, and the star rating.
+  - Migrations `20261022_0008_matching` (proposals, joint ideas, blocks, `match_reveal_v`, `analytics.v_match_funnel`), `20261023_0009_matching_profiles` (profile and method tables, `match_pool_v`, `match_pair_conflict_v`) and `20261023_0010_feedback_stars` (`feedback.stars` with its checks, the widened reason list, and `avg_stars` in `analytics.v_feedback_summary`).
+  - `make seed` loads the demo: two public OpenAlex records (Johan Foster and Raphaell Moreira, reconnect mode) and 24 synthetic researchers (`example.edu`, marked as samples).
+  - `scripts/make_matching_fixtures.py` writes the FakeLLM fixtures for the matching agents. Settings `MATCH_*` and `METHODS_CONFIG`.
+  - Documentation: matching module README, developer page "Matching", user page "Matching", and the configuration reference for the matching variables.
 - M4 opportunities UX and feedback:
   - `POST /api/v1/feedback` and `GET /api/v1/feedback`: thumbs with five reason chips and a comment; rating again replaces the earlier rating. Migration `20261022_0007_feedback` with the admin view `analytics.v_feedback_summary`.
   - Web screens: run progress page, opportunity list with the novelty and readiness chart, opportunity detail with numbered evidence markers and source popovers, Home briefing, and "Analyse with Scout" in the vault.

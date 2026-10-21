@@ -126,6 +126,26 @@ Read by the API (start rules, the run and opportunity endpoints, `ADMIN_CLAIMS_S
 
 Not settings (fixed in code): reserves of USD 0.02 for a fast model call and USD 0.30 for a reasoning call, at most 8 candidate clusters per run, at most 10 documents per run, and the title similarity of 0.6 above which an idea counts as a duplicate.
 
+## Matching
+
+Read by the API (the matches endpoints, `PATCH /api/v1/me/consent`) and by the worker (the matching jobs). Restart both
+after a change. The rules are in the [matching module](https://github.com/fredbuildsai/lattice-scout/blob/main/backend/src/scout/matching/README.md)
+and the [matching developer page](matching.md). The values below are the same as in `.env.example`.
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `MATCH_MAX_OPEN_PER_WEEK` | `3` | Weekly cap: proposals one account may receive in a rolling seven days (counted when created). |
+| `MATCH_EXPIRY_DAYS` | `14` | Days a proposal stays open before it expires. |
+| `MATCH_COOLDOWN_DAYS` | `180` | Days before the same pair may be proposed again after its last proposal. |
+| `MATCH_MIN_SCORE` | `0.08` | Lowest score a pair needs to be proposed. |
+| `MATCH_ALPHA` | `1.0` | Exponent on the topic overlap in the score. |
+| `MATCH_BETA` | `1.5` | Exponent on the method difference in the score. |
+| `MATCH_EXCLUDE_COAUTHORS` | `true` | Do not propose researchers who share a claimed OpenAlex work. |
+| `MATCH_EXCLUDE_SAME_GROUP` | `true` | Do not propose researchers with the same normalised institution. |
+| `MATCH_MAX_EXPLAINS_PER_RUN` | `200` | MatchExplainer calls per compute run. After the limit, the template is used. |
+| `MATCH_NIGHTLY_UTC_HOUR` | `2` | Hour (UTC) of the nightly matching run. |
+| `METHODS_CONFIG` | `config/methods.yaml` | Controlled vocabulary of research methods (version 1, 44 methods). |
+
 ## Reserved for later milestones
 
 These fields exist in `Settings` and in `.env.example`, but no code reads them yet. They are documented so that the
@@ -134,10 +154,7 @@ names stay stable. Each is defined by the milestone in brackets.
 | Variable | Default | Milestone | Purpose |
 |---|---|---|---|
 | `ANALYTICS_RETENTION_DAYS` | `395` | not scheduled | Retention for analytics rows. |
-| `MATCH_MAX_OPEN_PER_WEEK` | `3` | M5 | Matching: open proposals per researcher per week. |
-| `MATCH_EXPIRY_DAYS` | `21` | M5 | Matching: days before a proposal expires. |
-| `MATCH_EXCLUDE_COAUTHORS` | `true` | M5 | Matching: exclude past co-authors. |
-| `MATCH_NON_MEMBERS` | `false` | M5 | Matching: allow matches with non-members (Phase 2). |
+| `MATCH_NON_MEMBERS` | `false` | not scheduled | Matching with non-members (Phase 2). |
 | `EMBEDDING_MODEL` / `EMBEDDING_DIM` | unset | none | Present in `Settings` but unused: ADR-005 keeps embeddings out of the MVP. Do not set them. |
 
 ## Using the real LLM router

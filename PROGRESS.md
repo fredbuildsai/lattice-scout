@@ -1,7 +1,7 @@
 # Progress
 
 Merge policy: stack
-Current milestone: M5 — Matching (slices A and B done; slice C next). M4 built (Opportunities UX + feedback), review pending (skipped for cost). M3 done and approved. M2 done and approved after round 2, awaiting human sign-off. M0 and M1 done and awaiting human sign-off; PR #1 open (M1 and M2 added to the same branch)
+Current milestone: M5 done (review pending, skipped by user decision). Next: M6 Notifications, privacy, hardening. M4 built (Opportunities UX + feedback), review pending (skipped for cost). M3 done and approved. M2 done and approved after round 2, awaiting human sign-off. M0 and M1 done and awaiting human sign-off; PR #1 open (M1 and M2 added to the same branch)
 Current branch: claude/zealous-curie-7m18vd (harness-designated; used instead of m0-foundations)
 Last session: 2026-10-20 s01 — M0, M1 and M2 built; M2 done and approved by the reviewer
 
@@ -91,10 +91,12 @@ Last session: 2026-10-20 s01 — M0, M1 and M2 built; M2 done and approved by th
 - [x] architect design note (docs/design/M5-matching.md, DECISIONS 77-86)
 - [x] Slice A: domain (proposal state machine, reveal rule, scoring, ids), Hypothesis tests, migration 0008, SQL adapters, reveal integration tests
 - [x] Slice B: vocabulary, prompts 1.0.1/1.1.0 and fixtures, profiles, ComputeMatches, DecideOnMatch, RevealMatch, nightly, endpoints, fakes, feedback stars (migrations 0009-0010)
-- [ ] Slice C: seed_dev.py, frontend W7/M7/M8, docs
+- [x] Slice C: seed_dev.py (`make seed`), frontend W7/M7/M8 + Home teaser, docs (README, user and dev pages, CHANGELOG)
 - [ ] reviewer: skipped by user decision (review pending)
 
 ### Notes for next session (M5 slice B, not started; budget ran out)
 - Start from docs/design/M5-matching.md §9 slice B. Existing prompts to bump: prompts/{MethodExtractor,MatchExplainer,JointIdeas}.md (inputs without names/region/band, DECISIONS 77-86).
 - Still to build: `config/methods.yaml` + loader, `matching/domain/agent_io.py`, `MatchAgentsPort` + `AgentsMatching`, ACL sources, `ComputeResearcherProfile`, `ComputeMatches`, nightly job, `DecideOnMatch`, `RevealMatch`, `MatchingService`, in-memory fakes (tests/fakes/matching.py), feedback `stars`, `api/matches.py`, migration 0009 (profile tables, candidate views), worker handlers, bootstrap, settings, `make gen-client`.
 - Slice C: `seed_dev.py`, W7/M7/M8 frontend, docs. Reviewer skipped by user decision (M4 and M5 review pending).
+
+- M5 known issues for the review: the MatchesPage privacy copy says others see only field, region and career stage, but the card also shows shared topics and method texts (fix copy or card); ComputeMatches passes no titles to the anonymity guard and stores only the explainer's `for_a` text; no pagination UI on /matches; no e2e docs screenshots.
