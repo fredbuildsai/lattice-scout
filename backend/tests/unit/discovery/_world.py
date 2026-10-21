@@ -93,8 +93,8 @@ class ScriptedLiterature:
             raise self.fail[kind]
 
     async def search_works(self, query: WorkQuery) -> list[WorkRecord]:
+        self.search_log.append(query.search)  # logged before a kill, like the call itself
         self._enter("search")
-        self.search_log.append(query.search)
         return self.works[: query.per_page]
 
     async def count_works(self, query: WorkQuery) -> int:
