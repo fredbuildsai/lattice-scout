@@ -2,6 +2,7 @@
 name: InsightTopicTagger
 version: 1.0.1
 tier: fast
+data_class: vault
 output_type: InsightTopicTags
 inputs: |
   - clusters: list of {cluster_id, label, description}   # up to 30

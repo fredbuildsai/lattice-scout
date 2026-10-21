@@ -26,6 +26,9 @@ let nextKey = 1
  * documents with status chips (polled every 2 s while any is being processed).
  * `upload` is injectable for tests.
  */
+/** An analysis takes at most this many documents (RunIn on the API). */
+export const MAX_RUN_DOCUMENTS = 10
+
 export function VaultPage({ upload = uploadDocument }: { upload?: Uploader }) {
   const docs = useDocuments()
   const qc = useQueryClient()
@@ -76,10 +79,14 @@ export function VaultPage({ upload = uploadDocument }: { upload?: Uploader }) {
   const pausedMessage = status.data?.message ?? ''
   const [selected, setSelected] = useState<string[]>([])
   const chosen = selected.filter((id) => ready.some((d) => d.id === id))
-  const toggle = (id: string) => setSelected((xs) => (xs.includes(id) ? xs.filter((x) => x !== id) : [...xs, id]))
+  const toggle = (id: string) =>
+    setSelected((xs) => (xs.includes(id) ? xs.filter((x) => x !== id) : xs.length >= MAX_RUN_DOCUMENTS ? xs : [...xs, id]))
+  // With more ready documents than one analysis takes, the user must choose (otherwise the API would answer 422).
+  const mustChoose = ready.length > MAX_RUN_DOCUMENTS && chosen.length === 0
+  const atLimit = chosen.length >= MAX_RUN_DOCUMENTS
   const analyse = () => {
     const ids = chosen.length > 0 ? chosen : ready.map((d) => d.id)
-    if (ids.length === 0) return
+    if (ids.length === 0 || mustChoose) return
     start.mutate(ids, { onSuccess: (run) => navigate(`/runs/${run.id}`) })
   }
   return (
@@ -92,7 +99,7 @@ export function VaultPage({ upload = uploadDocument }: { upload?: Uploader }) {
           <Icon name="lock" size={14} /> Private to you
         </span>
       </div>
-      <p className="mt-2 max-w-[640px] text-ink-2">Everything that never made it into a paper. Scout reads it to find opportunities — nobody else can see it, and it is never used to train models.</p>
+      <p className="mt-2 max-w-[640px] text-ink-2">Everything that never made it into a paper. Scout reads it to find opportunities — nobody else can see it, and Scout does not train models on it. To analyse it, excerpts go only to AI providers the operator approved for private documents.</p>
 
       <PausedBanner />
 
@@ -142,11 +149,15 @@ export function VaultPage({ upload = uploadDocument }: { upload?: Uploader }) {
       {ready.length > 0 && (
         <div className="mt-3 rounded-card border border-scout-50 bg-scout-100 p-3">
           <div className="flex flex-wrap items-center gap-3">
-            <button type="button" disabled={start.isPending || paused} title={paused ? pausedMessage : undefined} onClick={analyse} className="inline-flex min-h-11 items-center gap-2 rounded-btn bg-scout px-4 text-sm font-semibold text-white hover:bg-scout-ink disabled:opacity-60">
+            <button type="button" disabled={start.isPending || paused || mustChoose} title={paused ? pausedMessage : undefined} onClick={analyse} className="inline-flex min-h-11 items-center gap-2 rounded-btn bg-scout px-4 text-sm font-semibold text-white hover:bg-scout-ink disabled:opacity-60">
               <Icon name="sparkle" size={16} /> Analyse with Scout
             </button>
             <p className="text-sm text-ink-2">
-              {chosen.length > 0 ? `${chosen.length} selected` : `Tick documents to choose; otherwise all ${ready.length} ready ${ready.length === 1 ? 'document' : 'documents'} are used.`}
+              {chosen.length > 0
+                ? `${chosen.length} selected${atLimit ? ` (up to ${MAX_RUN_DOCUMENTS} documents per analysis)` : ''}`
+                : mustChoose
+                  ? `Choose up to ${MAX_RUN_DOCUMENTS} documents for this analysis.`
+                  : `Tick documents to choose; otherwise all ${ready.length} ready ${ready.length === 1 ? 'document' : 'documents'} are used.`}
             </p>
           </div>
           {start.isError && (
@@ -159,7 +170,7 @@ export function VaultPage({ upload = uploadDocument }: { upload?: Uploader }) {
       {list.length > 0 && (
         <ul aria-label="Documents" className="mt-3 space-y-3">
           {list.map((d) => (
-            <DocumentRow key={d.id} doc={d} selected={selected.includes(d.id)} onToggle={() => toggle(d.id)} />
+            <DocumentRow key={d.id} doc={d} selected={selected.includes(d.id)} onToggle={() => toggle(d.id)} selectDisabled={atLimit && !selected.includes(d.id)} />
           ))}
         </ul>
       )}

@@ -248,3 +248,27 @@ def test_email_change_colliding_with_other_account_is_409_not_500(client: TestCl
     tok = jwt.encode(claims, c.dev_tokens._keys.private, algorithm="ES256", headers={"kid": "dev-1"})
     r = client.get("/api/v1/me", headers={"Authorization": f"Bearer {tok}"})
     assert r.status_code == 409 and r.json()["code"] == "email_in_use"
+
+
+def test_parallel_first_requests_of_new_users_never_see_email_in_use(client: TestClient) -> None:
+    """F-45: the SPA sends several requests on load; the e-mail index can fire before the id arbiter."""
+    from uuid import NAMESPACE_URL, uuid5
+
+    from scout.identity.domain.account import EmailInUse
+
+    async def bursts() -> list[object]:
+        c = build_container(_settings())
+        try:
+            results: list[object] = []
+            for n in range(6):
+                email, sub = f"fresh{n}@example.edu", uuid5(NAMESPACE_URL, f"scout-dev:fresh{n}@example.edu")
+                results += await asyncio.gather(
+                    *(c.identity.ensure_account(sub, email) for _ in range(12)), return_exceptions=True
+                )
+            return results
+        finally:
+            await c.db.dispose()
+
+    results = asyncio.run(bursts())
+    assert not [r for r in results if isinstance(r, EmailInUse)]
+    assert not [r for r in results if isinstance(r, BaseException)], results

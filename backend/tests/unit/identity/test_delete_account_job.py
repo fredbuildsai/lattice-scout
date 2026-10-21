@@ -385,3 +385,36 @@ async def test_running_the_same_pass_twice_is_idempotent() -> None:
     )
     assert w.state() == first
     assert [e.action for e in w.finalizer.audit_rows] == ["account.deleted"]
+
+
+async def test_pass_two_carries_the_session_ids_so_a_recreated_session_is_found() -> None:
+    w = _World()
+    first = await w.start()
+    await w.queue.complete(first.id, await w.run(first))
+    (second,) = w.pass2_jobs()
+    assert second.payload["sessions"] == [str(i) for i in sorted(SUBJECT.session_ids)]
+    late = UUID(int=0xFEED)  # a session the late writer recreated without an account
+    payload = {**second.payload, "sessions": [*second.payload["sessions"], str(late)]}
+    w.observability.erased.clear()
+    await w.job().handle(second.id, payload)
+    assert (
+        late in w.observability.erased[0].session_ids
+        and SUBJECT.session_ids <= w.observability.erased[0].session_ids
+    )
+
+
+async def test_a_dead_erasure_row_with_the_raw_id_is_removed_when_a_later_pass_finishes() -> None:
+    w = _World()
+    dead = await w.start()
+    w.queue.jobs[dead.id] = dead.model_copy(
+        update={"status": JobStatus.DEAD, "last_error": f"auth failed for {A}"}
+    )
+    w.queue.dedupe.pop(dead.id, None)
+    again = await w.queue.enqueue(
+        JobSpec(kind="account.delete", payload={"subject_id": str(A), "pass": 1}, dedupe_key="erase:retry:1")
+    )
+    assert again is not None
+    job = await w.queue.claim("w", ["account.delete"])
+    assert job is not None and job.id != dead.id
+    await w.run(job)
+    assert dead.id not in w.queue.jobs

@@ -1278,12 +1278,18 @@ export interface components {
          * @description A rating. Rating the same target again replaces the earlier one.
          */
         FeedbackIn: {
-            /** Comment */
+            /**
+             * Comment
+             * @description Omit to keep the earlier comment; null or '' clears it.
+             */
             comment?: string | null;
             /** Rating */
             rating?: ("up" | "down") | null;
-            /** Reasons */
-            reasons?: ("spot_on" | "already_knew" | "not_feasible" | "wrong_field" | "too_vague" | "methods_fit" | "right_seniority" | "shared_timeline" | "too_similar" | "already_knew_them")[];
+            /**
+             * Reasons
+             * @description Omit to keep the earlier chips; [] clears them.
+             */
+            reasons?: ("spot_on" | "already_knew" | "not_feasible" | "wrong_field" | "too_vague" | "methods_fit" | "right_seniority" | "shared_timeline" | "too_similar" | "already_knew_them")[] | null;
             /** Stars */
             stars?: number | null;
             /**
@@ -1437,10 +1443,16 @@ export interface components {
          * @description Rate a mutual match from 1 to 5 stars.
          */
         MatchRatingIn: {
-            /** Comment */
+            /**
+             * Comment
+             * @description Omit to keep the earlier comment.
+             */
             comment?: string | null;
-            /** Reasons */
-            reasons?: ("spot_on" | "already_knew" | "not_feasible" | "wrong_field" | "too_vague" | "methods_fit" | "right_seniority" | "shared_timeline" | "too_similar" | "already_knew_them")[];
+            /**
+             * Reasons
+             * @description Omit to keep the earlier chips.
+             */
+            reasons?: ("spot_on" | "already_knew" | "not_feasible" | "wrong_field" | "too_vague" | "methods_fit" | "right_seniority" | "shared_timeline" | "too_similar" | "already_knew_them")[] | null;
             /** Stars */
             stars: number;
         };

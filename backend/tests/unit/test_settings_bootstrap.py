@@ -24,6 +24,7 @@ def test_offline_defaults() -> None:
 
 REAL = {
     "llm_backend": "openai_direct", "openai_api_key": "k", "literature_backend": "openalex",
+    "llm_vault_sanctioned_providers": "openai",
     "email_provider": "resend", "email_api_key": "k", "email_from": "a@b.c",
     "storage_backend": "supabase", "supabase_url": "https://x.supabase.co", "supabase_service_role_key": "k",
 }  # fmt: skip
@@ -52,6 +53,7 @@ def test_prod_accepts_real_backends() -> None:
             auth_mode="supabase",
             audit_hash_key="k" * 32,
             cors_origins=["https://app.example.edu"],
+            app_base_url="https://app.example.edu",
             **REAL,
         ).app_env
         == "prod"
@@ -99,3 +101,40 @@ def test_supabase_auth_needs_url_for_issuer() -> None:
 def test_prod_refuses_local_storage() -> None:
     with pytest.raises(ValidationError, match="STORAGE_BACKEND=local"):
         _s(app_env="prod", auth_mode="supabase", **{**REAL, "storage_backend": "local"})
+
+
+PROD_OK = {**REAL, "auth_mode": "supabase", "audit_hash_key": "k" * 32, "app_base_url": "https://app.example.edu",
+           "cors_origins": ["https://app.example.edu"]}  # fmt: skip
+
+
+@pytest.mark.parametrize(
+    ("override", "needle"),
+    [({"app_base_url": "http://localhost:5173"}, "APP_BASE_URL"), ({"app_base_url": "http://app.example.edu"}, "APP_BASE_URL"),
+     ({"audit_hash_key": "dev-audit-hash-key-change-me"}, "AUDIT_HASH_KEY")],
+)  # fmt: skip
+def test_prod_refuses_dev_defaults_that_would_leak_or_mislink(override: dict[str, str], needle: str) -> None:
+    assert _s(app_env="prod", **PROD_OK).app_env == "prod"
+    with pytest.raises(ValidationError, match=needle):
+        _s(app_env="prod", **{**PROD_OK, **override})
+
+
+ROUTER = {**PROD_OK, "llm_backend": "llm_router", "mistral_api_key": "k"}
+
+
+def test_prod_refuses_llm_router_without_free_provider_acknowledgement() -> None:
+    kw = {**ROUTER, "llm_vault_sanctioned_providers": "mistral"}
+    with pytest.raises(ValidationError, match="LLM_FREE_PROVIDERS_ACKNOWLEDGED"):
+        _s(app_env="prod", **kw)
+    assert _s(app_env="prod", llm_free_providers_acknowledged=True, **kw).app_env == "prod"
+
+
+def test_prod_refuses_llm_router_with_empty_vault_allowlist_unless_waived() -> None:
+    kw = {**ROUTER, "llm_free_providers_acknowledged": True, "llm_vault_sanctioned_providers": ""}
+    with pytest.raises(ValidationError, match="LLM_VAULT_SANCTIONED_PROVIDERS"):
+        _s(app_env="prod", **kw)
+    assert _s(app_env="prod", llm_vault_allow_any_provider=True, **kw).app_env == "prod"
+
+
+def test_dev_llm_router_needs_neither_flag() -> None:
+    kw = {**ROUTER, "app_env": "dev", "llm_vault_sanctioned_providers": ""}
+    assert _s(**kw).vault_sanctioned_providers == frozenset()

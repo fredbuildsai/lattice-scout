@@ -36,11 +36,16 @@ function renderIt() {
 afterEach(() => vi.unstubAllGlobals())
 
 describe('DataDeletion', () => {
-  it('states that files are never used for training and what stays', async () => {
+  it('states no training, who sees the text, and everything that stays (M6 review 1 and 10)', async () => {
     stub({})
     renderIt()
-    expect(await screen.findByText('Scout never trains models on your files.')).toBeInTheDocument()
+    expect(await screen.findByText('Scout does not train models on your files.')).toBeInTheDocument()
+    expect(screen.getByText(/only to providers the operator has approved/)).toBeInTheDocument()
     expect(screen.getByText(/Cost records without your identity/)).toBeInTheDocument()
+    expect(screen.getByText(/Ratings and comments you gave on a match stay visible/)).toBeInTheDocument()
+    expect(screen.getByText(/Short paraphrases \(up to 300 characters\)/)).toBeInTheDocument()
+    expect(screen.getByText(/Region and career band on a closed match proposal, for 30 days/)).toBeInTheDocument()
+    expect(screen.getByText(/Server logs and the sign-in provider/)).toBeInTheDocument()
   })
 
   it('enables Delete my vault only after typing DELETE, then reports the count', async () => {

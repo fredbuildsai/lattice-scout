@@ -133,9 +133,9 @@ function Claims({ claims, id }: { claims: ClaimData[]; id: string }) {
   return (
     <div className="space-y-3">
       {claims.map((c) => (
-        <p key={c.id} className="leading-relaxed">
+        <div key={c.id} className="leading-relaxed">
           <Claim claim={c} opportunityId={id} />
-        </p>
+        </div>
       ))}
     </div>
   )
@@ -263,9 +263,9 @@ export function OpportunityDetailPage() {
                 {o.score_claims.length > 0 && (
                   <div className="mt-3 space-y-2 border-t border-line pt-3 text-xs text-ink-2">
                     {o.score_claims.map((c) => (
-                      <p key={c.id}>
+                      <div key={c.id}>
                         <Claim claim={c} opportunityId={o.id} />
-                      </p>
+                      </div>
                     ))}
                   </div>
                 )}

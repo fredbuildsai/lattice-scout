@@ -9,6 +9,15 @@ from scout.feedback.domain.feedback import Feedback, TargetType
 from scout.shared import AccountId, UnitOfWork
 
 
+class TargetCheck(Protocol):
+    """Whether a target may be rated by the author, answered by the context that owns it (visible opportunity,
+    mutual match). An unseen target is the same as an unknown one."""
+
+    async def rateable(self, author_id: AccountId, target_type: TargetType, target_id: UUID) -> bool:
+        """True when ``author_id`` may rate the target."""
+        ...
+
+
 class FeedbackRepo(Protocol):
     """Ratings, one per author and target."""
 
@@ -24,23 +33,10 @@ class FeedbackRepo(Protocol):
         ...
 
 
-class TargetCheck(Protocol):
-    """Whether a target exists and belongs to the author (an unseen target is the same as an unknown one)."""
-
-    async def rateable(self, author_id: AccountId, target_type: TargetType, target_id: UUID) -> bool:
-        """True when ``author_id`` may rate the target."""
-        ...
-
-
 class FeedbackUnitOfWork(UnitOfWork, Protocol):
-    """One transaction over the feedback repository and the target check."""
+    """One transaction over the feedback repository."""
 
     @property
     def feedback(self) -> FeedbackRepo:
         """Ratings."""
-        ...
-
-    @property
-    def targets(self) -> TargetCheck:
-        """Target ownership check."""
         ...

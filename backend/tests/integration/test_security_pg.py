@@ -78,3 +78,64 @@ def test_funnel_and_ops_views_run_on_an_empty_database(db: object) -> None:
         ).one()
     eng.dispose()
     assert sig.dead_jobs_24h == 0
+
+
+def test_postgrest_roles_hold_no_privilege_on_any_relation_and_views_are_security_invoker(db: object) -> None:
+    """Tables, views, sequences and functions of `public` and `analytics`; the test DB grants by default like
+    Supabase does (conftest), so this fails when a migration adds an object without closing the door."""
+    eng = create_engine(TEST_URL)
+    with eng.connect() as conn:
+        rels = conn.execute(
+            text(
+                "SELECT c.oid, n.nspname || '.' || c.relname, c.relkind, c.reloptions FROM pg_class c "
+                "JOIN pg_namespace n ON n.oid = c.relnamespace "
+                "WHERE n.nspname IN ('public','analytics') AND c.relkind IN ('r','p','v','m','S')"
+            )
+        ).all()
+        funcs = conn.execute(
+            text(
+                "SELECT p.oid, n.nspname || '.' || p.proname FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace "
+                "WHERE n.nspname IN ('public','analytics')"
+            )
+        ).all()
+        leaks: list[str] = []
+        for role in ("anon", "authenticated"):
+            for oid, name, kind, _ in rels:
+                fn = "has_sequence_privilege" if kind == "S" else "has_table_privilege"
+                priv = "USAGE" if kind == "S" else "SELECT"
+                if conn.execute(text(f"SELECT {fn}(:r, :o, '{priv}')"), {"r": role, "o": oid}).scalar():
+                    leaks.append(f"{role} {name}")
+            for oid, name in funcs:
+                if conn.execute(
+                    text("SELECT has_function_privilege(:r, :o, 'EXECUTE')"), {"r": role, "o": oid}
+                ).scalar():
+                    leaks.append(f"{role} {name}()")
+        # a table created now by the migrating role must not be granted by default either
+        conn.execute(text("CREATE TABLE public._probe_default_grants (id int)"))
+        probe = conn.execute(
+            text("SELECT has_table_privilege('anon', 'public._probe_default_grants', 'SELECT')")
+        ).scalar()
+        conn.rollback()
+    eng.dispose()
+    assert rels and leaks == [], f"PostgREST roles can reach: {leaks}"
+    assert probe is False, "default privileges still grant new tables to anon"
+    views = [(name, opts) for _, name, kind, opts in rels if kind == "v"]
+    assert views, "no views found"
+    assert [n for n, o in views if not o or "security_invoker=true" not in o] == []
+
+
+def test_sql_reader_counts_todays_llm_calls(db: object) -> None:
+    import asyncio
+    from datetime import UTC, datetime
+
+    from scout.adapters.observability.budget import SqlSpendReader
+    from scout.adapters.persistence.db import Database
+
+    async def go() -> int:
+        d = Database(TEST_URL)
+        try:
+            return await SqlSpendReader(d).llm_calls_since(datetime(2999, 1, 1, tzinfo=UTC))
+        finally:
+            await d.dispose()
+
+    assert asyncio.run(go()) == 0

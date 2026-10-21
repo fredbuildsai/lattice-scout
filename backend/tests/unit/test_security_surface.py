@@ -97,6 +97,7 @@ def test_cors_allows_only_listed_origin_methods_and_headers() -> None:
 def test_production_refuses_wildcard_and_plain_http_origins(origins: list[str]) -> None:
     kw = {
         "llm_backend": "openai_direct", "openai_api_key": "k", "literature_backend": "openalex",
+        "llm_vault_sanctioned_providers": "openai",
         "email_provider": "resend", "email_api_key": "k", "email_from": "a@b.c", "storage_backend": "supabase",
         "supabase_url": "https://x.supabase.co", "supabase_service_role_key": "k", "auth_mode": "supabase",
         "audit_hash_key": "k" * 32,

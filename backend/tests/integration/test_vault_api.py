@@ -224,3 +224,33 @@ def test_scanned_pdf_is_rejected_and_never_returned_as_insights(
         and detail["insights"] is None
     )
     assert not [p for p in (tmp_path / "storage").rglob("*") if p.is_file()]  # discard policy: bytes gone
+
+
+def test_delete_all_needs_the_word_and_clears_the_vault_once(
+    make_client: Callable[..., TestClient], tmp_path: Path
+) -> None:
+    """M6 review 9b: ``POST /documents/delete-all`` over PostgreSQL with the real handlers."""
+    client = make_client()
+    h = _login(client, "ada@example.edu")
+    for name, pdf in (("one.pdf", PROPOSAL_PDF), ("two.pdf", LONG_PDF)):  # same bytes would be deduplicated
+        assert _upload(client, h, pdf, name, keep_original="true").status_code == 201
+    _worker(tmp_path)
+    assert len([p for p in (tmp_path / "storage").rglob("*") if p.is_file()]) == 2
+    assert _sql("SELECT count(*) FROM document_chunk")[0][0] > 0
+
+    wrong = client.post("/api/v1/documents/delete-all", json={"confirm": "delete"}, headers=h)
+    assert wrong.status_code == 422 and len(client.get("/api/v1/documents", headers=h).json()["items"]) == 2
+
+    ok = client.post("/api/v1/documents/delete-all", json={"confirm": "DELETE"}, headers=h)
+    assert ok.status_code == 202 and ok.json() == {"deleting": 2}
+    assert client.get("/api/v1/documents", headers=h).json()["items"] == []
+    assert _sql("SELECT count(*) FROM document_chunk") == [(0,)]
+    assert _sql("SELECT count(*) FROM document_insights") == [(0,)]
+    jobs = dict(_sql("SELECT kind, count(*) FROM job WHERE status = 'queued' GROUP BY kind"))
+    assert jobs.get("vault.delete") == 2 and jobs.get("matching.profile", 0) >= 1
+
+    again = client.post("/api/v1/documents/delete-all", json={"confirm": "DELETE"}, headers=h)
+    assert again.json() == {"deleting": 0}
+    _worker(tmp_path)
+    assert _sql("SELECT count(*) FROM document") == [(0,)]
+    assert not [p for p in (tmp_path / "storage").rglob("*") if p.is_file()]

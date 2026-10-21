@@ -68,7 +68,7 @@ The MVP proves two AI capabilities end to end:
 ### 1.2 Quality attributes (in priority order)
 
 1. **Trust.** Every AI claim shown to a user carries a link to its source **at the point where the claim is made**: a DOI or OpenAlex work, or a passage in the user's own file (see §6.5). Claims we cannot verify are **kept but not shown** (status `unverified` / `rejected_by_critic`), so we can analyse how the system behaves and improve it.
-2. **Privacy.** Vault content never leaves the backend except to the LLM provider under a no-training API agreement. It is never shown to other users. Matching is anonymous until both sides agree.
+2. **Privacy.** Vault content never leaves the backend except to the LLM provider under a no-training API agreement (enforced in code by ADR 015: data classes and sanctioned deployments). It is never shown to other users. Matching is anonymous until both sides agree.
 3. **Replaceability.** LLM provider, literature source, storage, queue and email are swappable through ports (hexagonal architecture).
 4. **Observability and cost control.** Every LLM call's input and output tokens, every external API call, every feature used and every page transition is recorded per user ID and per session from day one (§11), without slowing the app.
 5. **Simplicity.** One backend service plus one worker process, Postgres-backed jobs, no embeddings or vector database in the MVP (§6.6), and no extra infrastructure until it is needed.
@@ -198,7 +198,7 @@ stateDiagram-v2
   proposed --> declined: A or B says no
   a_accepted --> declined: B says no
   b_accepted --> declined: A says no
-  proposed --> expired: 21 days
+  proposed --> expired: 14 days
   a_accepted --> expired
   b_accepted --> expired
   mutual --> [*]
@@ -633,7 +633,7 @@ lattice-scout/
 | `OPENALEX_API_KEY`, `OPENALEX_MAILTO` | free key gives $1/day of usage; budget accordingly |
 | `LAUNCH_FIELD` | `bio-based-materials` (maps to OpenAlex topic/concept filters in `config/fields.yaml`) |
 | `RUN_BUDGET_USD`, `RUN_MAX_OPENALEX_CALLS`, `RUN_MAX_CORPUS` | `1.50`, `400`, `2500` |
-| `MATCH_MAX_OPEN_PER_WEEK`, `MATCH_EXPIRY_DAYS`, `MATCH_EXCLUDE_COAUTHORS` | `3`, `21`, `true` |
+| `MATCH_MAX_OPEN_PER_WEEK`, `MATCH_EXPIRY_DAYS`, `MATCH_EXCLUDE_COAUTHORS` | `3`, `14`, `true` |
 | `EMAIL_PROVIDER`, `EMAIL_API_KEY`, `EMAIL_FROM` | — |
 | `MATCH_NON_MEMBERS` | `false` (Phase 2) |
 | `RETENTION_POLICY` | `user_choice` (D6) |

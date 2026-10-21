@@ -10,6 +10,7 @@ from scout.api.deps import current_account, get_container
 from scout.api.feedback import feedback_out
 from scout.api.schemas.feedback import FeedbackOut, MatchRatingIn
 from scout.api.schemas.matching import DecisionIn, MatchCardOut, MatchListOut
+from scout.feedback.application.give_feedback import UNSET
 from scout.feedback.domain.feedback import Reason, TargetType
 from scout.identity.domain.account import Account
 from scout.matching.domain.enums import Action
@@ -85,8 +86,8 @@ async def rate_match(
         TargetType.MATCH,
         match_id,
         None,
-        [Reason(r) for r in body.reasons],
-        body.comment,
+        None if body.reasons is None else [Reason(r) for r in body.reasons],
+        body.comment if "comment" in body.model_fields_set else UNSET,
         body.stars,
     )
     return feedback_out(fb)

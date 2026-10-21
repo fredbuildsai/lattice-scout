@@ -129,6 +129,7 @@ def deleted(world: World, monkeypatch: pytest.MonkeyPatch) -> World:
         "llm": world.sql("SELECT count(*), sum(cost_usd) FROM llm_call")[0],
         "ext": world.sql("SELECT count(*), sum(cost_usd) FROM external_call")[0],
         "b_card": world.cards(world.headers_b)[str(world.s.pending)]["status"],
+        "b_full": world.cards(world.headers_b)[str(world.s.pending)],
         "b_rows": b_snapshot(world),
     }
     r = world.client.post(
@@ -266,7 +267,7 @@ def test_mutual_proposal_and_its_ideas_are_gone_but_the_counterparts_rating_stay
     assert rating == [(5, "Great match")]
 
 
-def test_pending_proposal_is_detached_not_deleted_and_its_perspective_is_empty(deleted: World) -> None:
+def test_pending_proposal_is_detached_not_deleted_and_its_refs_are_cleared(deleted: World) -> None:
     s = deleted.s
     a_id, b_id = pair(s.a, s.b)
     (row,) = deleted.sql(
@@ -279,9 +280,9 @@ def test_pending_proposal_is_detached_not_deleted_and_its_perspective_is_empty(d
     assert row[survivor_index] == survivor and survivor != s.a
     assert row[2] == "declined" and row[3] == "account_deleted" and row[4] == gone_side
     rationale = row[5]
-    assert rationale["why"] == ""
-    assert rationale["you_bring" if gone_side == "a" else "they_bring"] == []
+    # the survivor's card keeps its texts (it must not reveal the departure); every ref is gone
     assert all(item["source_refs"] == [] for k in ("you_bring", "they_bring") for item in rationale[k])
+    assert rationale["why"] and rationale["you_bring"] and rationale["they_bring"]
 
 
 def test_proposal_declined_by_another_user_survives_without_a_block_on_the_deleted_account(
@@ -372,3 +373,77 @@ def test_requesting_deletion_blocks_the_account_immediately(world: World) -> Non
         "SELECT deleted_at, consent_matching, consent_vault_signals FROM account WHERE id = :a", a=world.s.a
     )
     assert row[0][0] is not None and row[0][1:] == (False, False)
+
+
+# ------------------------------------------------------------------ review fixes (M6 findings 3 and 4)
+
+
+def test_late_analytics_session_written_between_the_passes_is_erased(
+    world: World, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The browser kept the session id: after pass 1 an event and a session touch arrive without an account."""
+
+    async def noop(_self: object, user_id: UUID) -> None:
+        return None
+
+    monkeypatch.setattr("scout.identity.adapters.auth_admin.DevAuthAdmin.delete_user", noop)
+    r = world.client.post("/api/v1/me/delete", json={"confirm_email": A_EMAIL}, headers=world.headers_a)
+    assert r.status_code == 202
+    assert world.drain() >= 1  # pass 1 deletes app_session
+    assert world.sql("SELECT count(*) FROM app_session WHERE id = :s", s=world.s.session) == [(0,)]
+    with world.engine.begin() as conn:  # the late writers
+        conn.execute(
+            text(
+                "INSERT INTO app_session (id, account_id, started_at, last_seen_at) VALUES (:s, NULL, now(), now())"
+            ),
+            {"s": world.s.session},
+        )
+        conn.execute(
+            text(
+                "INSERT INTO analytics_event (id, ts, account_id, session_id, name, properties)"
+                " VALUES (:i, now(), NULL, :s, 'page_view', '{}'::jsonb)"
+            ),
+            {"i": uuid4(), "s": world.s.session},
+        )
+    world.clock.advance(SECOND_PASS)
+    assert world.drain() >= 1  # pass 2 finds the session through the carried id
+    with world.engine.connect() as conn:
+        leftovers = {t: n for t, n in scan(conn, world.s.scan_needles).items() if n}
+    assert leftovers == {}, leftovers
+
+
+def test_a_dead_erasure_job_does_not_keep_the_raw_account_id(
+    world: World, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    async def noop(_self: object, user_id: UUID) -> None:
+        return None
+
+    monkeypatch.setattr("scout.identity.adapters.auth_admin.DevAuthAdmin.delete_user", noop)
+    a = world.s.a
+    with world.engine.begin() as conn:  # a pass 1 that ran out of attempts
+        conn.execute(
+            text(
+                "INSERT INTO job (id, kind, payload, status, attempts, max_attempts, run_at, last_error, created_at,"
+                " updated_at) VALUES (:i, 'account.delete', CAST(:p AS jsonb), 'dead', 10, 10, now(), :e, now(), now())"
+            ),
+            {"i": uuid4(), "p": f'{{"subject_id": "{a}", "pass": 1}}', "e": f"auth delete failed for {a}"},
+        )
+    r = world.client.post("/api/v1/me/delete", json={"confirm_email": A_EMAIL}, headers=world.headers_a)
+    assert r.status_code == 202
+    world.drain()
+    world.clock.advance(SECOND_PASS)
+    world.drain()
+    assert world.sql(
+        "SELECT count(*) FROM job WHERE payload::text LIKE :p OR last_error LIKE :p", p=f"%{a}%"
+    ) == [(0,)]
+
+
+def test_the_survivors_whole_card_is_unchanged_by_the_deletion(deleted: World) -> None:
+    """M5 review 4: not only the status, every field (texts, topics, facets, deadlines) stays as it was."""
+
+    def plain(card: dict[str, Any]) -> dict[str, Any]:
+        out = {**card, "you_bring": [{**i, "source_refs": []} for i in card["you_bring"]]}
+        return out  # refs are never rendered
+
+    after = deleted.cards(deleted.headers_b)[str(deleted.s.pending)]
+    assert plain(after) == plain(deleted.before["b_full"])

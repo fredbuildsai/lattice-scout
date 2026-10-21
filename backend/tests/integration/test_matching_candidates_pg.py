@@ -23,7 +23,11 @@ FIELD = "bio-based-materials"
 
 
 async def make_profile(
-    db: Database, account: AccountId, methods: dict[str, float], eligible: bool = True
+    db: Database,
+    account: AccountId,
+    methods: dict[str, float],
+    eligible: bool = True,
+    topics: tuple[TopicWeight, ...] = (TopicWeight("t1", "T1", 1.0), TopicWeight("t2", "T2", 0.5)),
 ) -> None:
     async with db.engine.connect() as conn:
         rid = (
@@ -31,7 +35,7 @@ async def make_profile(
         ).scalar_one()
     p = MatchProfile(
         account_id=account, researcher_id=rid, field=FIELD, region="europe", career_band="mid", activity=1.0,
-        eligible=eligible, topics=(TopicWeight("t1", "T1", 1.0), TopicWeight("t2", "T2", 0.5)), methods=methods,
+        eligible=eligible, topics=topics, methods=methods,
         method_sources={k: "abstract" for k in methods}, topics_hash="th", methods_hash="mh", vocabulary_version="1",
         methods_prompt_version="1.0.1", uses_vault_signals=False, computed_at=NOW,
     )  # fmt: skip
@@ -41,12 +45,17 @@ async def make_profile(
 
 
 async def candidates(
-    db: Database, *, coauthors: bool = False, group: bool = False, account: AccountId | None = None
+    db: Database,
+    *,
+    coauthors: bool = False,
+    group: bool = False,
+    account: AccountId | None = None,
+    per_person: int = 50,
 ):
     async with SqlMatchUnitOfWork(db) as uow:
         return await uow.candidates.candidates(
             field=FIELD, account=account, exclude_coauthors=coauthors, exclude_same_group=group,
-            cooldown_since=NOW - timedelta(days=180), limit=100,
+            cooldown_since=NOW - timedelta(days=180), limit=100, per_person=per_person,
         )  # fmt: skip
 
 
@@ -112,3 +121,16 @@ async def test_ineligible_or_unconsenting_accounts_are_not_in_the_pool(db: Datab
     async with SqlMatchUnitOfWork(db) as uow:
         assert await uow.matches.open_counts([A, B], NOW - timedelta(days=7)) == {A: 0, B: 0}
         assert await uow.matches.pending_outside_pool(10) == []
+
+
+async def test_candidates_are_ranked_per_person_so_a_dominant_cluster_cannot_crowd_others_out(
+    db: Database,
+) -> None:
+    await seed_people(db, 3)
+    heavy, light = (TopicWeight("t1", "T1", 1.0),), (TopicWeight("t1", "T1", 0.2),)
+    await make_profile(db, A, {"lca": 1.0}, topics=heavy)
+    await make_profile(db, B, {"tea": 1.0}, topics=heavy)
+    await make_profile(db, C, {"nmr": 1.0}, topics=light)
+    assert await candidates(db) == [(A, B), (A, C), (B, C)]
+    # each person keeps their single best pair: A-B (best for both) and C's best pair (A-C on the tie order)
+    assert await candidates(db, per_person=1) == [(A, B), (A, C)]

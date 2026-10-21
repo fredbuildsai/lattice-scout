@@ -1,6 +1,6 @@
 name: Live eval (manual)
-# Needs repository secrets that the human adds: OPENAI_API_KEY, OPENALEX_API_KEY.
-# Spends real money and calls real services. Never runs on push; start it by hand.
+# Needs repository secrets that the human adds: OPENROUTER_API_KEY, GROQ_API_KEY, MISTRAL_API_KEY, OPENALEX_API_KEY (DECISIONS 105: free-tier providers, no OpenAI key).
+# Calls real services (free-tier LLM providers; mind their daily quota). Never runs on push; start it by hand.
 on:
   workflow_dispatch:
     inputs:
@@ -13,14 +13,18 @@ jobs:
     if: ${{ inputs.confirm == 'SPEND' }}
     runs-on: ubuntu-latest
     env:
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+      LLM_VAULT_SANCTIONED_PROVIDERS: ${{ vars.LLM_VAULT_SANCTIONED_PROVIDERS }}
       OPENALEX_API_KEY: ${{ secrets.OPENALEX_API_KEY }}
-      LLM_BACKEND: openai_direct
+      LLM_BACKEND: llm_router
       LITERATURE_BACKEND: openalex
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
         with: { python-version: "3.12" }
+      # llmrouter-free must be installable here: see docs/BLOCKERS.md B5
       - run: uv sync --frozen --extra llm
         working-directory: backend
       - run: uv run python ../eval/run_eval.py --live

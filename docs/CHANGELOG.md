@@ -4,6 +4,20 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 
 ## [Unreleased]
 
+### Security and privacy (review follow-up, M4 to M6)
+- Vault text goes only to sanctioned LLM endpoints (ADR 015, DECISIONS 106-107): `data_class` on every agent, `sanctioned: true` deployments plus `LLM_VAULT_SANCTIONED_PROVIDERS`, a refusal that logs no content, production start-up guards (`LLM_VAULT_ALLOW_ANY_PROVIDER`, `LLM_FREE_PROVIDERS_ACKNOWLEDGED`), a minimal environment for the PDF parser process. The privacy tab, vault page, sign-in page and user pages now say who receives the text and list everything a deletion leaves behind.
+- Migration 0015: default privileges, function EXECUTE and views are closed to the PostgREST roles; migration 0016: feedback reasons per target type.
+- Erasure: the analytics session survives pass 1 in the pass-2 payload and the browser forgets it; dead `account.delete` rows no longer keep the raw id; bounded storage purge loop.
+- Matching: withdrawing consent closes pending proposals at once, an accept can no longer make a match mutual with someone who left or is being deleted, the survivor's card is the same after a deletion, each side reads the explanation written for it (F-38), candidates are ranked per person.
+- Free models: `GLOBAL_DAILY_LLM_CALLS` pauses new runs when the day's provider requests reach the cap.
+
+### Fixed
+- First-login race on the e-mail index no longer answers 409 to a legitimate new user (F-45). Dev login now reaches the accounts created by `make seed`. The reveal job's idea input no longer depends on database row order. A match card refreshes while its joint ideas are being written.
+- Card thumbs keep saved reasons and comment; "Analyse with Scout" no longer sends more than 10 documents; hidden opportunities cannot be rated; `POST /events` drops a batch when the opt-out flag cannot be read.
+
+### Added
+- Playwright smoke specs `opportunities`, `matches` and `privacy` (desktop and 390 px), a PostgreSQL API test of the whole matching flow, feedback and card component tests, user notes "Start an analysis", "Rate an idea", a developer page for feedback.
+
 ### Fixed
 - Matches opt-in copy no longer says others see only field, region and career stage: it now names the shared topics and the short method descriptions too (F-37). User page "Matching" gets the same sentence.
 

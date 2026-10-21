@@ -49,7 +49,9 @@ async def _opted_out(c: Container, account_id: UUID) -> bool:
     try:
         flag = (await c.notifications.get_prefs(AccountId(account_id))).analytics_opt_out
     except Exception:
-        return False  # observability never blocks a request
+        return (
+            True  # preference unreadable: drop the batch (still 202); never store an opted-out user's events
+        )
     if len(_opt_out_cache) > 10_000:
         _opt_out_cache.clear()
     _opt_out_cache[account_id] = (now, flag)

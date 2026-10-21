@@ -83,13 +83,14 @@ Last session: 2026-10-20 s01 — M0, M1 and M2 built; M2 done and approved by th
 - M2 not verified live: Supabase storage (`needs_supabase`) and real LLM output. Docling is deferred (BACKLOG).
 
 ## Open blockers
+- B6 confirm the LLM providers' data-use terms (ADR 015): until then vault-tagged calls are refused on `llm_router`, and prod refuses to start with it
 - B2 live services, B3 llm-router response-text ledger (both have fallbacks; see docs/BLOCKERS.md)
 
 ## M4 — Opportunities UX + feedback
 - [x] Backend `feedback` context: `GiveFeedback`, `POST/GET /feedback`, migration 0007, `analytics.v_feedback_summary` (DECISIONS 75-76; F-29 closed)
 - [x] Frontend: run page, W5 list with ideas chart, W6 detail, shared `<Claim>`/`<SourceMarker>`, thumbs and reason chips, Home briefing, "Analyse with Scout" in the vault
 - [x] Docs: CHANGELOG, journal
-- [ ] reviewer: pending (skipped by user decision, to be run later)
+- [x] reviewer: done 2026-10-21 (docs/reviews/M4.md); blocking and should-fix findings fixed 2026-10-24 (Resolution section)
 - Known gaps (frontend): kind counts computed client-side; no year histogram, matching calls, Lattice Press draft or objection status chips (backend has no data for them).
 
 ## M5 — Matching
@@ -97,7 +98,7 @@ Last session: 2026-10-20 s01 — M0, M1 and M2 built; M2 done and approved by th
 - [x] Slice A: domain (proposal state machine, reveal rule, scoring, ids), Hypothesis tests, migration 0008, SQL adapters, reveal integration tests
 - [x] Slice B: vocabulary, prompts 1.0.1/1.1.0 and fixtures, profiles, ComputeMatches, DecideOnMatch, RevealMatch, nightly, endpoints, fakes, feedback stars (migrations 0009-0010)
 - [x] Slice C: seed_dev.py (`make seed`), frontend W7/M7/M8 + Home teaser, docs (README, user and dev pages, CHANGELOG)
-- [ ] reviewer: skipped by user decision (review pending)
+- [x] reviewer: done (docs/reviews/M5.md); findings fixed 2026-10-24 except score calibration (F-39)
 
 ### Notes for next session (M5 slice B, not started; budget ran out)
 - Start from docs/design/M5-matching.md §9 slice B. Existing prompts to bump: prompts/{MethodExtractor,MatchExplainer,JointIdeas}.md (inputs without names/region/band, DECISIONS 77-86).
@@ -105,3 +106,8 @@ Last session: 2026-10-20 s01 — M0, M1 and M2 built; M2 done and approved by th
 - Slice C: `seed_dev.py`, W7/M7/M8 frontend, docs. Reviewer skipped by user decision (M4 and M5 review pending).
 
 - M5 known issues for the review: the MatchesPage privacy copy says others see only field, region and career stage, but the card also shows shared topics and method texts (fix copy or card); ComputeMatches passes no titles to the anonymity guard and stores only the explainer's `for_a` text; no pagination UI on /matches; no e2e docs screenshots.
+
+## Review follow-up (2026-10-24)
+- Fixed the blocking and should-fix findings of the M4, M5 and M6 reviews (docs/reviews/*.md, Resolution sections; docs/journal/2026-10-24-s02.md). New: ADR 015, DECISIONS 106-119, migrations 0015-0016, Playwright specs `opportunities`, `matches`, `privacy`, `test_matching_flow_pg.py`.
+- To run the e2e specs: API and worker on the dev database (`make db migrate seed`, `make api`, `make worker`), then `cd frontend && PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers pnpm e2e`. Privacy spec seeds one expensive `llm_call` row with psql and removes it; the API caches the budget for 30 s.
+- Deferred (BACKLOG): F-49 to F-53, nits in F-50 to F-52, final `reviewer` pass before M7.

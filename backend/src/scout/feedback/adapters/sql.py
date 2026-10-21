@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import select, text
+from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -60,48 +60,15 @@ class SqlFeedbackRepo:
         return _from_row(row) if row else None
 
 
-class SqlTargetCheck:
-    """Implements ``TargetCheck`` over the discovery tables (read-only, one query)."""
-
-    def __init__(self, session: AsyncSession) -> None:
-        self._s = session
-
-    async def rateable(self, author_id: AccountId, target_type: TargetType, target_id: UUID) -> bool:
-        """Opportunities: the author's own, in a user-visible status. Matches: mutual ones the author takes part in."""
-        if target_type is TargetType.MATCH:
-            row = await self._s.execute(
-                text(
-                    "SELECT 1 FROM match_proposal WHERE id = :id AND state = 'mutual' AND (a_id = :a OR b_id = :a)"
-                ),
-                {"id": target_id, "a": author_id},
-            )
-            return row.first() is not None
-        row = await self._s.execute(
-            text(
-                "SELECT 1 FROM opportunity WHERE id = :id AND owner_id = :owner "
-                "AND status IN ('shown','saved','dismissed')"
-            ),
-            {"id": target_id, "owner": author_id},
-        )
-        return row.first() is not None
-
-
 class SqlFeedbackUnitOfWork(SqlUnitOfWork):
     """Unit of work over one session."""
 
     _feedback: SqlFeedbackRepo
-    _targets: SqlTargetCheck
 
     def _bind(self) -> None:
         self._feedback = SqlFeedbackRepo(self.session)
-        self._targets = SqlTargetCheck(self.session)
 
     @property
     def feedback(self) -> SqlFeedbackRepo:
         """Ratings."""
         return self._feedback
-
-    @property
-    def targets(self) -> SqlTargetCheck:
-        """Target ownership check."""
-        return self._targets

@@ -4,13 +4,22 @@ Scout looks at your profile and at the documents you choose from your private va
 
 Each idea is a suggestion, not a fact. Scout checks what it can, and it tells you what backs each claim. You decide what is worth your time.
 
-The screens for this page are still being built. The rules on this page apply to every run.
 
 ## Before you start
 
 - **Claim your profile** first (see [Getting started](getting-started.md)). Scout needs your published works to know your field.
 - **Choose documents** from your [private vault](vault.md), if you want. A document must be **ready** before you can use it. You can choose up to 10 documents. You can also run Scout with no documents. Then Scout uses your published works only.
 - You can start a limited number of runs each day. Scout also has a limit on the spending for each day. The service sets both limits.
+
+## Start an analysis and follow it
+
+1. Open your [private vault](vault.md). When at least one document is **ready**, the button **Analyse with Scout** appears.
+2. Tick the documents you want. If you tick none, Scout uses all your ready documents. An analysis takes **at most 10 documents**: with more than 10 ready documents you must choose, and the boxes stop at 10.
+3. Select **Analyse with Scout**. Scout opens the run page. If the daily limit is used up, the button is switched off and a banner says new analyses open again after midnight (UTC).
+4. The run page shows the stages and a percentage. You can **leave the page**: the run continues, and the results appear under Opportunities. You can **cancel** a run; ideas that were already checked may still appear.
+5. When the run is done, select **See the opportunities**.
+
+Some runs finish with a note such as "limited": Scout skipped a step (for example, it found no neighbouring topic) and says so.
 
 ## What a run does
 
@@ -79,6 +88,23 @@ Each claim has markers. Select a marker to open its source:
 - **A published paper:** a link to the paper (its DOI, or its OpenAlex page).
 - **A count:** a search in OpenAlex for the same words and years.
 
+## The list of ideas
+
+The list shows the ideas from your latest run, best fit first, with a filter by type (resubmission, white spot, synergy) and by status. The chart **Where the ideas sit** plots each idea by novelty (fewer existing papers is better) and readiness (how much you already have); the numbers match the cards. A text list under the chart gives the same values for screen readers.
+
+## Rate an idea
+
+Every card and every detail page has a thumbs up and a thumbs down. Your rating tunes what Scout looks for and nobody else sees it.
+
+- On the detail page you can also choose **reasons** (Spot on, Already knew, Not feasible, Wrong field, Too vague), up to five.
+- You can change your mind at any time: the new rating replaces the old one.
+- A thumb on a card changes only the rating. The reasons you chose earlier stay as they are.
+- An idea that is no longer shown (for example after you delete the document behind it) can no longer be rated.
+
+## Next steps
+
+The detail page lists next steps as a checklist. Your ticks are saved **only in this browser**; another browser or device starts with empty boxes.
+
 ## Save or dismiss an idea
 
 - **Save** an idea to keep it in your list for later.
@@ -90,6 +116,6 @@ Only you can see your ideas.
 ## What happens to your data
 
 - While a run works, Scout reads your chosen documents. It keeps only references to the passages, and quotes of at most 300 characters.
-- Scout sends the text of your documents to the AI model that the Scout service uses. The service operator chooses the model provider. Scout does not send author names to the model. See [Your private vault](vault.md) for how documents are kept.
+- Scout sends excerpts of your documents to an AI model. The service operator chooses the providers, and text from your private documents goes only to providers the operator has approved for it; if none is approved, the run fails instead of falling back to another provider. Scout does not send author names to the model. See [Your private vault](vault.md) for how documents are kept.
 - If you **delete a document**, its quotes are removed straight away. An idea that still meets the rules stays on your list. An idea that no longer meets the rules disappears.
 - The team can review how Scout's checks went, including claims that were not verified. Vault quotes are hidden in that review unless the service is set to show them. Each review is recorded.

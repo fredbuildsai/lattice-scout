@@ -2,6 +2,7 @@
 name: Critic
 version: 1.1.0
 tier: reasoning
+data_class: vault
 output_type: CriticVerdict
 inputs: |
   - draft: {title, kind, claims: [{index, text, check_status, evidence: list[ref_id]}]}

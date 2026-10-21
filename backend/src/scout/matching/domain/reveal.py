@@ -104,7 +104,7 @@ def build_anonymous(
     return AnonymousMatchView(
         id=p.id, status=p.status_for(viewer, now), score=p.score, field_label=field_label,
         region=other.region, career_band=other.career_band, shared_topics=list(p.score_basis.shared_topics),
-        you_bring=mine, they_bring=[BringText(text=i.text) for i in theirs], why=p.rationale.why,
+        you_bring=mine, they_bring=[BringText(text=i.text) for i in theirs], why=p.rationale.why_for(side),
         my_decision=p.decision_of(side), created_at=p.created_at, expires_at=p.expires_at,
     )  # fmt: skip
 
@@ -123,10 +123,10 @@ def build_revealed(
     """
     if not reveal_allowed(p.state) or p.revealed_at is None:
         raise InvariantViolation("reveal_before_mutual")
-    p.side_of(viewer)
+    side = p.side_of(viewer)
     mine, theirs = _perspective(p, viewer)
     return RevealedMatchView(
         id=p.id, score=p.score, shared_topics=list(p.score_basis.shared_topics), you_bring=mine, they_bring=theirs,
-        why=p.rationale.why, contact=contact, ideas_status=p.ideas_status, joint_ideas=list(ideas),
+        why=p.rationale.why_for(side), contact=contact, ideas_status=p.ideas_status, joint_ideas=list(ideas),
         revealed_at=p.revealed_at, my_rating=my_rating,
     )  # fmt: skip

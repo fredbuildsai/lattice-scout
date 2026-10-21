@@ -13,6 +13,7 @@ from scout.shared import Clock, IdGenerator, InfrastructureError
 from scout.shared.context import get_context
 
 RETRIES = 3
+MAX_DELETE_ROUNDS = 50  # a delete that answers 200 but changes nothing must not loop forever
 PAGE = 1000
 
 
@@ -147,11 +148,14 @@ class SupabaseStorage:
     async def delete_prefix(self, prefix: str) -> int:
         """List then delete every object under ``prefix/``, until the listing is empty."""
         total = 0
-        while keys := await self.list_prefix(prefix):
+        for _ in range(MAX_DELETE_ROUNDS):
+            keys = await self.list_prefix(prefix)
+            if not keys:
+                return total
             d = await self._request(
                 "delete", "DELETE", f"{self._base}/object/{self._bucket}", json={"prefixes": keys}
             )
             if d.status_code >= 400:
                 raise InfrastructureError(f"Storage refused the delete ({d.status_code})")
             total += len(keys)
-        return total
+        raise InfrastructureError("Storage still lists objects after repeated deletes")

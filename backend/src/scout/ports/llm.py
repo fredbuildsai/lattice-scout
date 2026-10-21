@@ -22,6 +22,14 @@ class ModelTier(StrEnum):
     REASONING = "reasoning"
 
 
+class DataClass(StrEnum):
+    """What a call's input may contain. ``VAULT`` text (documents, passages, insights, profile text derived
+    from them) may only be sent to a sanctioned endpoint (ADR 015); ``PUBLIC`` is literature data only."""
+
+    PUBLIC = "public"
+    VAULT = "vault"
+
+
 @dataclass(frozen=True)
 class AgentSpec[OutT: BaseModel]:
     """A runtime agent: prompt, version, tier and the Pydantic type of its output."""
@@ -34,6 +42,7 @@ class AgentSpec[OutT: BaseModel]:
     temperature: float = 0.2
     max_output_tokens: int = 4096
     strict_schema: bool = True
+    data_class: DataClass = DataClass.VAULT  # fail closed: an agent must declare itself public
 
 
 class CallContext(BaseModel):
@@ -107,6 +116,14 @@ class LLMUnavailable(InfrastructureError):
 
     code = "llm_unavailable"
     title = "Language model unavailable"
+
+
+class VaultDataRefused(InfrastructureError):
+    """A vault-tagged call has no sanctioned endpoint, so nothing was sent (ADR 015)."""
+
+    code = "vault_data_refused"
+    http_status = 503
+    title = "No sanctioned language model endpoint for private data"
 
 
 class LLMOutputInvalid(InfrastructureError):

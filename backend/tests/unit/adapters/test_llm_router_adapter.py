@@ -16,7 +16,7 @@ from llmrouter_free import LLMRouter
 from tests.fakes import InMemoryUsageMeter
 
 from scout.adapters.llm.llm_router import LlmRouterAdapter, MeteringCompletion
-from scout.ports.llm import AgentSpec, CallContext, LLMUnavailable, ModelTier
+from scout.ports.llm import AgentSpec, CallContext, DataClass, LLMUnavailable, ModelTier
 from scout.ports.usage import LlmCallStatus, ModelPrice, PriceTable
 from scout.shared import FixedClock, SequentialIdGenerator
 
@@ -66,7 +66,14 @@ def _adapter(script: list[Any]) -> tuple[LlmRouterAdapter, InMemoryUsageMeter]:
     return adapter, meter
 
 
-SPEC = AgentSpec(name="T", prompt_version="1", tier=ModelTier.FAST, instructions="i", output_type=Out)
+SPEC = AgentSpec(
+    name="T",
+    prompt_version="1",
+    tier=ModelTier.FAST,
+    instructions="i",
+    output_type=Out,
+    data_class=DataClass.PUBLIC,
+)
 
 
 async def test_success_records_tokens_incl_cached_and_reasoning() -> None:

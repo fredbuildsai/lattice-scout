@@ -21,8 +21,12 @@ class FeedbackIn(BaseModel):
     target_id: UUID
     rating: Literal["up", "down"] | None = None
     stars: int | None = Field(default=None, ge=1, le=5)
-    reasons: list[ReasonName] = Field(default_factory=list, max_length=5)
-    comment: str | None = Field(default=None, max_length=1000)
+    reasons: list[ReasonName] | None = Field(
+        default=None, max_length=5, description="Omit to keep the earlier chips; [] clears them."
+    )
+    comment: str | None = Field(
+        default=None, max_length=1000, description="Omit to keep the earlier comment; null or '' clears it."
+    )
 
 
 class FeedbackOut(BaseModel):
@@ -41,5 +45,9 @@ class MatchRatingIn(BaseModel):
     """Rate a mutual match from 1 to 5 stars."""
 
     stars: int = Field(ge=1, le=5)
-    reasons: list[ReasonName] = Field(default_factory=list, max_length=5)
-    comment: str | None = Field(default=None, max_length=1000)
+    reasons: list[ReasonName] | None = Field(
+        default=None, max_length=5, description="Omit to keep the earlier chips."
+    )
+    comment: str | None = Field(
+        default=None, max_length=1000, description="Omit to keep the earlier comment."
+    )

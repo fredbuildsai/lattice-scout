@@ -314,28 +314,39 @@ class SqlCandidateQuery:
 
     async def candidates(
         self, *, field: str, account: AccountId | None, exclude_coauthors: bool, exclude_same_group: bool,
-        cooldown_since: datetime, limit: int,
+        cooldown_since: datetime, limit: int, per_person: int = 50,
     ) -> list[tuple[AccountId, AccountId]]:  # fmt: skip
-        """Canonical pairs, best overlap first."""
+        """Canonical pairs, best overlap first; each person keeps at most ``per_person`` best pairs (DECISIONS 80)."""
         reasons = [r for r, on in (("coauthor", exclude_coauthors), ("same_group", exclude_same_group)) if on]
         rows = await self._s.execute(
             text(
-                "SELECT c.a, c.b FROM ("
+                "WITH c AS ("
                 " SELECT x.account_id AS a, y.account_id AS b, SUM(LEAST(x.weight, y.weight)) AS inter"
                 " FROM match_profile_topic x"
                 " JOIN match_profile_topic y ON y.topic_id = x.topic_id AND y.account_id > x.account_id"
                 " JOIN match_pool_v px ON px.account_id = x.account_id AND px.field = :field"
                 " JOIN match_pool_v py ON py.account_id = y.account_id AND py.field = :field"
                 " WHERE (CAST(:acct AS uuid) IS NULL OR x.account_id = CAST(:acct AS uuid) OR y.account_id = CAST(:acct AS uuid))"
-                " GROUP BY 1, 2) c "
-                "WHERE NOT EXISTS (SELECT 1 FROM match_pair_conflict_v k WHERE k.x = c.a AND k.y = c.b AND k.reason = ANY(:reasons))"
-                " AND NOT EXISTS (SELECT 1 FROM match_block bl WHERE (bl.account_id = c.a AND bl.blocked_account_id = c.b)"
-                "   OR (bl.account_id = c.b AND bl.blocked_account_id = c.a))"
-                " AND NOT EXISTS (SELECT 1 FROM match_proposal p WHERE p.a_id = c.a AND p.b_id = c.b"
-                "   AND (p.state IN ('proposed','a_accepted','b_accepted','mutual') OR p.created_at > :cooldown))"
-                " ORDER BY c.inter DESC, c.a, c.b LIMIT :limit"
+                " GROUP BY 1, 2),"
+                " ok AS (SELECT c.a, c.b, c.inter FROM c"
+                "  WHERE NOT EXISTS (SELECT 1 FROM match_pair_conflict_v k WHERE k.x = c.a AND k.y = c.b AND k.reason = ANY(:reasons))"
+                "  AND NOT EXISTS (SELECT 1 FROM match_block bl WHERE (bl.account_id = c.a AND bl.blocked_account_id = c.b)"
+                "    OR (bl.account_id = c.b AND bl.blocked_account_id = c.a))"
+                "  AND NOT EXISTS (SELECT 1 FROM match_proposal p WHERE p.a_id = c.a AND p.b_id = c.b"
+                "    AND (p.state IN ('proposed','a_accepted','b_accepted','mutual') OR p.created_at > :cooldown))),"
+                " dir AS (SELECT a AS me, a, b, inter FROM ok UNION ALL SELECT b, a, b, inter FROM ok),"
+                " rk AS (SELECT a, b, inter, ROW_NUMBER() OVER (PARTITION BY me ORDER BY inter DESC, a, b) AS r FROM dir)"
+                " SELECT a, b FROM rk GROUP BY a, b, inter HAVING MIN(r) <= :per"
+                " ORDER BY inter DESC, a, b LIMIT :limit"
             ),
-            {"field": field, "acct": account, "reasons": reasons, "cooldown": cooldown_since, "limit": limit},
+            {
+                "field": field,
+                "acct": account,
+                "reasons": reasons,
+                "cooldown": cooldown_since,
+                "limit": limit,
+                "per": per_person,
+            },
         )
         return [(AccountId(r.a), AccountId(r.b)) for r in rows]
 

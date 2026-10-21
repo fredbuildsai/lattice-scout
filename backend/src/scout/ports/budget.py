@@ -27,11 +27,17 @@ class BudgetStatus(BaseModel):
     llm_cap_usd: Decimal
     openalex_spent_usd: Decimal
     openalex_cap_usd: Decimal
+    llm_calls: int = 0  # provider requests today; free models cost 0 USD, so USD alone can never trip
+    llm_calls_cap: int = 0  # 0 = no call cap
 
     @property
     def paused(self) -> bool:
-        """True when either cap is reached."""
-        return self.llm_spent_usd >= self.llm_cap_usd or self.openalex_spent_usd >= self.openalex_cap_usd
+        """True when a cap is reached."""
+        return (
+            self.llm_spent_usd >= self.llm_cap_usd
+            or self.openalex_spent_usd >= self.openalex_cap_usd
+            or (self.llm_calls_cap > 0 and self.llm_calls >= self.llm_calls_cap)
+        )
 
 
 class GlobalBudgetPort(Protocol):

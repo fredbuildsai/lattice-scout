@@ -25,6 +25,8 @@ All numbers come from the `analytics` schema, which the application role can rea
 | Erasure stuck | log event `identity.auth_delete_failed` | application log |
 | API errors | 5xx rate above 2% over 5 minutes | request log (`status`) |
 
+Budget events: `budget.warning` and `budget.cap_reached` carry `service` = `llm`, `openalex` or `llm_calls`. `llm_calls` counts provider requests per UTC day against `GLOBAL_DAILY_LLM_CALLS` (free models cost 0 USD, so only the counter can trip). Set it below the providers' combined free daily quota. A refused vault call logs `vault_data_refused agent=... route=...` without any content: it means no sanctioned deployment is configured for private data (ADR 015).
+
 ## Dashboards (Metabase or similar)
 
 Connect a read-only database user to the `analytics` schema. Suggested first board: weekly discovery funnel, weekly matching funnel, daily cost against the two global caps, feedback summary, `v_ops_signals` as number tiles. Pilot success metrics (M7): share of opportunities rated useful, share of proposals accepted, share of mutual matches with contact.

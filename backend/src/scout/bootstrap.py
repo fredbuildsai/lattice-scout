@@ -40,6 +40,7 @@ from scout.discovery.ports.repos import DiscoveryUnitOfWork
 from scout.discovery.ports.sources import VaultSource
 from scout.feedback.adapters.sql import SqlFeedbackUnitOfWork
 from scout.feedback.application.give_feedback import GiveFeedback
+from scout.feedback.application.targets import TargetCheckAdapter
 from scout.identity.adapters.auth_admin import DevAuthAdmin, SupabaseAuthAdmin
 from scout.identity.adapters.dev_auth import DevKeyPair, DevTokenIssuer, DevVerifier
 from scout.identity.adapters.jwks import HttpJwksFetcher, SupabaseJwksVerifier
@@ -163,7 +164,7 @@ def _select_llm(
             # llm-router reads provider keys from the process environment; .env is only read by Settings.
             for name, key in (
                 ("OPENROUTER_API_KEY", s.openrouter_api_key), ("GROQ_API_KEY", s.groq_api_key),
-                ("MISTRAL_API_KEY", s.mistral_api_key), ("OPENAI_API_KEY", s.openai_api_key),
+                ("MISTRAL_API_KEY", s.mistral_api_key),
             ):  # fmt: skip
                 if key is not None:
                     os.environ.setdefault(name, key.get_secret_value())
@@ -172,8 +173,15 @@ def _select_llm(
             ledger = create_engine(
                 "sqlite://", poolclass=StaticPool, connect_args={"check_same_thread": False}
             )
-            router = LLMRouter(
+            from scout.adapters.llm.vault_policy import build_router_config
+
+            router_config, vault_policy = build_router_config(
                 load_routes(resolve_path(s.llm_router_config)),
+                s.vault_sanctioned_providers,
+                allow_any=s.llm_vault_allow_any_provider,
+            )
+            router = LLMRouter(
+                router_config,
                 engine=ledger,
                 completion_fn=MeteringCompletion(),
                 allow_paid=s.llm_router_allow_paid,
@@ -183,13 +191,18 @@ def _select_llm(
                 router, prices, usage, clock, ids,
                 {ModelTier.FAST: s.llm_model_fast, ModelTier.REASONING: s.llm_model_reasoning},
                 ThreadPoolExecutor(max_workers=s.llm_max_concurrency, thread_name_prefix="llm"),
+                vault_policy,
             )  # fmt: skip
         case "openai_direct":
             from scout.adapters.llm.openai_direct import OpenAIAgentsDirectAdapter
+            from scout.adapters.llm.vault_policy import VaultPolicy
 
             return OpenAIAgentsDirectAdapter(
                 prices, usage, clock, ids,
                 {ModelTier.FAST: s.llm_model_fast, ModelTier.REASONING: s.llm_model_reasoning},
+                VaultPolicy(
+                    allow_any=s.llm_vault_allow_any_provider, sanctioned_providers=s.vault_sanctioned_providers
+                ),
             )  # fmt: skip
         case _ as unreachable:
             assert_never(unreachable)
@@ -307,6 +320,7 @@ def build_container(
         clock,
         settings.global_daily_llm_budget_usd,
         settings.global_daily_openalex_budget_usd,
+        llm_calls_cap=settings.global_daily_llm_calls,
     )
     start_run = StartAnalysisRun(
         discovery_uow, queue, profile_source, vault_source, clock, ids,
@@ -359,8 +373,14 @@ def build_container(
     async def run_done(owner: UUID, run_id: UUID) -> None:
         await notifications.notify(owner, Template.RUN_FINISHED, str(run_id))
 
+    matching_service = MatchingService(match_uow, consent_source, clock, match_cfg)
+    discovery_service = DiscoveryService(
+        discovery_uow, start_run, vault_source, clock, ids,
+        admin_show_vault_quotes=settings.admin_claims_show_vault_quotes,
+    )  # fmt: skip
+
     return Container(
-        matching=MatchingService(match_uow, consent_source, clock, match_cfg),
+        matching=matching_service,
         decide_match=DecideOnMatch(match_uow, consent_source, queue, match_notifier, clock, match_cfg),
         match_profile=profile_job, compute_matches=compute_matches,
         reveal_match=RevealMatch(match_uow, match_profile_source, consent_source, signal_source, match_agents, vocabulary, clock),
@@ -389,12 +409,11 @@ def build_container(
             discovery_uow, queue, clock, stall_minutes=settings.run_stall_minutes,
             max_executions=settings.run_max_executions,
         ),
-        discovery=DiscoveryService(
-            discovery_uow, start_run, vault_source, clock, ids,
-            admin_show_vault_quotes=settings.admin_claims_show_vault_quotes,
-        ),
+        discovery=discovery_service,
         discovery_uow=discovery_uow, vault_source=vault_source,
-        give_feedback=GiveFeedback(lambda: SqlFeedbackUnitOfWork(db), clock),
+        give_feedback=GiveFeedback(
+            lambda: SqlFeedbackUnitOfWork(db), clock, TargetCheckAdapter(discovery_service, matching_service)
+        ),
 
         auth_verifier=verifier, dev_tokens=dev_tokens,
         literature=literature,

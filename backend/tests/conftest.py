@@ -17,12 +17,40 @@ TEST_URL = os.environ.get("TEST_DATABASE_URL", "postgresql+psycopg://scout:scout
 BACKEND = Path(__file__).resolve().parents[1]
 
 
+def _supabase_like_roles() -> None:
+    """Create ``anon`` and ``authenticated`` and grant them every new object by default, as Supabase does.
+
+    The migrations must undo this, otherwise a table or view added later is readable through PostgREST.
+    """
+    from sqlalchemy import create_engine
+
+    eng = create_engine(TEST_URL, isolation_level="AUTOCOMMIT")
+    with eng.connect() as conn:
+        for role in ("anon", "authenticated"):
+            conn.execute(
+                text(
+                    f"DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '{role}') "  # noqa: S608
+                    f"THEN CREATE ROLE {role} NOLOGIN; END IF; END $$"
+                )
+            )
+        for schema in ("public",):  # `analytics` is created by migration 0002
+            conn.execute(text(f"GRANT USAGE ON SCHEMA {schema} TO anon, authenticated"))
+            for kind in ("TABLES", "SEQUENCES", "FUNCTIONS"):
+                conn.execute(
+                    text(
+                        f"ALTER DEFAULT PRIVILEGES IN SCHEMA {schema} GRANT ALL ON {kind} TO anon, authenticated"
+                    )
+                )
+    eng.dispose()
+
+
 @pytest.fixture(scope="session")
 def migrated_url() -> str:
     """Create the schema once per session by running Alembic from scratch."""
     cfg = Config(str(BACKEND / "alembic.ini"))
     cfg.set_main_option("script_location", str(BACKEND / "migrations"))
     os.environ["ALEMBIC_URL"] = TEST_URL
+    _supabase_like_roles()
     command.downgrade(cfg, "base")
     command.upgrade(cfg, "head")
     return TEST_URL

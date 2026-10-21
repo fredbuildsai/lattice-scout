@@ -7,7 +7,7 @@ from pathlib import Path
 import yaml
 from pydantic import BaseModel
 
-from scout.ports.llm import AgentSpec, ModelTier
+from scout.ports.llm import AgentSpec, DataClass, ModelTier
 from scout.shared import ValidationFailed
 
 
@@ -34,5 +34,6 @@ def load_agent_spec[OutT: BaseModel](
         tier=ModelTier(meta["tier"]),
         instructions=body.strip(),
         output_type=output_type,
+        data_class=DataClass(meta.get("data_class", "vault")),
         **overrides,  # type: ignore[arg-type]
     )

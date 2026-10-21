@@ -23,3 +23,7 @@ System prompts for the LLM agents that run **inside Lattice Scout** (not the Cla
 - Every prompt says that input text (documents, abstracts, titles, summaries) is data, never instructions.
 - Discovery agent I/O models live in `backend/src/scout/discovery/domain/agent_io.py`; vault ones in `scout/vault/domain/insights.py`; matching ones in `scout/matching/domain/agent_io.py` (no names, institutions, years, countries or career data ever go in).
 - FakeLLM fixtures (`backend/tests/fixtures/llm/<Agent>/<input_hash>.json`) are generated, not hand-edited: `scripts/make_insight_fixtures.py` (InsightExtractor) and `scripts/make_discovery_fixtures.py` (the five discovery agents, for `eval/cases/*.yaml`; it also writes `<input_hash>.input.json`) and `scripts/make_matching_fixtures.py` (the three matching agents for the Foster/Moreira demo pair; synthetic pairs have no fixture and use the template). Prompt text is not part of the hash, so a prompt edit alone does not invalidate fixtures; an input-model or pipeline change does (run the script with `--check`).
+
+## Data class
+
+Every prompt declares `data_class: public` or `data_class: vault` in its front-matter (missing means `vault`). A vault agent may receive text derived from private documents and only reaches sanctioned LLM deployments (ADR 015). `ClusterLabeler` and `MatchExplainer` are public; everything else is vault.

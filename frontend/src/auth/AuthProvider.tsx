@@ -1,6 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { setAuthHooks } from '../api/auth-hooks'
+import { clearSession } from '../analytics/session'
 import type { AuthClient, AuthSession } from './AuthClient'
 import { createAuthClient } from './createAuthClient'
 
@@ -23,6 +24,7 @@ export function AuthProvider({ children, client: given }: { children: ReactNode;
   const [deleted, setDeleted] = useState(false)
   const accountDeleted = useCallback(() => {
     setDeleted(true)
+    clearSession() // late events must not reuse the erased account's analytics session
     void client.signOut()
   }, [client])
 
@@ -35,7 +37,10 @@ export function AuthProvider({ children, client: given }: { children: ReactNode;
     let lastToken = client.getSession()?.accessToken ?? null
     const unsub = client.subscribe((s) => {
       setSession(s)
-      if (!s) qc.clear()
+      if (!s) {
+        qc.clear()
+        clearSession()
+      }
       else if (s.accessToken !== lastToken) void qc.invalidateQueries() // renewed token: retry what failed
       lastToken = s?.accessToken ?? null
     })

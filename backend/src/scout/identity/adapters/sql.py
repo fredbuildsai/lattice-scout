@@ -59,7 +59,8 @@ class SqlAccountRepo:
         return (await self._s.execute(q)).scalar()
 
     async def add_if_absent(self, account: Account) -> bool:
-        """INSERT ... ON CONFLICT (id) DO NOTHING; another id with the same e-mail raises ``EmailInUse``."""
+        """INSERT ... ON CONFLICT (id) DO NOTHING; False when the id exists (also when a concurrent insert of the same
+        id hit the e-mail index first); another id with the same e-mail raises ``EmailInUse``."""
         try:
             async with self._s.begin_nested():
                 res = await self._s.execute(
@@ -69,6 +70,10 @@ class SqlAccountRepo:
                     .returning(t.c.id)
                 )
         except IntegrityError as exc:
+            # Two first requests of the same user: the e-mail index can fire before the id arbiter. When the row
+            # for this very id exists now, we only lost the race (F-45); otherwise the e-mail is really taken.
+            if (await self._s.execute(select(t.c.id).where(t.c.id == account.id))).first() is not None:
+                return False
             raise EmailInUse("This e-mail address belongs to another account") from exc
         return res.first() is not None
 

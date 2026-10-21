@@ -43,6 +43,26 @@ class Reason(StrEnum):
     ALREADY_KNEW_THEM = "already_knew_them"
 
 
+OPPORTUNITY_REASONS = frozenset(
+    {Reason.SPOT_ON, Reason.ALREADY_KNEW, Reason.NOT_FEASIBLE, Reason.WRONG_FIELD, Reason.TOO_VAGUE}
+)
+MATCH_REASONS = frozenset(
+    {
+        Reason.METHODS_FIT,
+        Reason.RIGHT_SENIORITY,
+        Reason.SHARED_TIMELINE,
+        Reason.TOO_SIMILAR,
+        Reason.ALREADY_KNEW_THEM,
+    }
+)
+MAX_REASONS = 5
+
+
+def allowed_reasons(target_type: TargetType) -> frozenset[Reason]:
+    """The chips that make sense for a target type."""
+    return OPPORTUNITY_REASONS if target_type is TargetType.OPPORTUNITY else MATCH_REASONS
+
+
 def feedback_id(author: UUID, target_type: TargetType, target_id: UUID) -> UUID:
     """One row per author and target: rating again replaces the earlier rating."""
     return uuid5(FEEDBACK_NS, f"{author}:{target_type.value}:{target_id}")
@@ -79,19 +99,24 @@ class Feedback:
         """Build a valid rating: reasons de-duplicated in input order (at most 5), comment trimmed and bounded.
 
         Raises:
-            ValidationFailed: the comment is too long, an opportunity has no up/down rating, or a match has no
-                1-5 stars.
+            ValidationFailed: the comment is too long, an opportunity has no up/down rating, a match has no
+                1-5 stars, a reason does not belong to the target type, or there are more than 5 reasons.
         """
         if target_type is TargetType.OPPORTUNITY and (rating is None or stars is not None):
             raise ValidationFailed("opportunities_take_a_rating")
         if target_type is TargetType.MATCH and (stars is None or rating is not None or not 1 <= stars <= 5):
             raise ValidationFailed("matches_take_1_to_5_stars")
+        unique = tuple(dict.fromkeys(reasons))
+        if any(r not in allowed_reasons(target_type) for r in unique):
+            raise ValidationFailed("reason_not_for_this_target")
+        if len(unique) > MAX_REASONS:
+            raise ValidationFailed("too_many_reasons", extra={"max": MAX_REASONS})
         text = (comment or "").strip()
         if len(text) > MAX_COMMENT:
             raise ValidationFailed("comment_too_long", extra={"max": MAX_COMMENT})
         return cls(
             id=feedback_id(author_id, target_type, target_id), author_id=author_id, target_type=target_type,
-            target_id=target_id, rating=rating, stars=stars, reasons=tuple(dict.fromkeys(reasons)),
+            target_id=target_id, rating=rating, stars=stars, reasons=unique,
             comment=clean_text(text, MAX_COMMENT) if text else None,
             created_at=created_at or now, updated_at=now,
         )  # fmt: skip

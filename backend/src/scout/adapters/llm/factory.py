@@ -62,6 +62,7 @@ class AgentFactory:
             name=raw.name, prompt_version=raw.prompt_version, tier=raw.tier,
             instructions=_PLACEHOLDER.sub(fill, raw.instructions), output_type=raw.output_type,
             temperature=raw.temperature, max_output_tokens=raw.max_output_tokens, strict_schema=raw.strict_schema,
+            data_class=raw.data_class,
         )  # fmt: skip
         if not overrides:
             self._cache[name] = spec

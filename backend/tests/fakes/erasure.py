@@ -17,7 +17,7 @@ from uuid import UUID
 
 from scout.identity.domain.erasure import ErasureSubject, subject_hash
 from scout.ports.audit import AuditEntry
-from scout.ports.jobs import JobSpec
+from scout.ports.jobs import JobSpec, JobStatus
 from scout.shared import InfrastructureError
 from tests.fakes.jobs import InMemoryJobQueue
 from tests.fakes.storage import InMemoryFileStorage
@@ -127,7 +127,12 @@ class FakeAccountFinalizer(_Scripted):
             needles = subject.needles()
             for jid, job in list(self.queue.jobs.items()):
                 blob = json.dumps(job.payload)
-                if jid != own_job_id and job.kind != "account.delete" and any(n in blob for n in needles):
+                dead_erasure = job.kind == "account.delete" and job.status is JobStatus.DEAD
+                if (
+                    jid != own_job_id
+                    and (job.kind != "account.delete" or dead_erasure)
+                    and any(n in blob for n in needles)
+                ):
                     del self.queue.jobs[jid]
                     jobs_deleted += 1
             own = self.queue.jobs.get(own_job_id)

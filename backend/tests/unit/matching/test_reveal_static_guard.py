@@ -14,6 +14,7 @@ from pathlib import Path
 ADAPTERS = Path(__file__).resolve().parents[3] / "src" / "scout" / "matching" / "adapters"
 RELATION = re.compile(r"\b(?:FROM|JOIN)\s+(?:LATERAL\s+)?([A-Za-z_][\w.]*)(\s*\()?", re.IGNORECASE)
 SQL_HINT = re.compile(r"\b(select|insert|update|delete)\b", re.IGNORECASE)
+CTE = re.compile(r"(?:\bWITH|,)\s*([A-Za-z_]\w*)\s+AS\s*\(", re.IGNORECASE)
 ALLOWED = re.compile(r"^(match_[a-z_]+|joint_idea)$")
 
 
@@ -44,8 +45,9 @@ def test_every_relation_in_adapter_sql_is_a_match_relation_or_joint_idea() -> No
     offenders: list[str] = []
     for path in sorted(ADAPTERS.rglob("*.py")):
         for sql in _sql_strings(path):
+            ctes = {n.lower() for n in CTE.findall(sql)}  # names defined by this very statement
             for name, is_call in RELATION.findall(sql):
-                if is_call:  # set-returning function, e.g. unnest(...)
+                if is_call or name.lower() in ctes:  # set-returning function (unnest(...)) or a local CTE
                     continue
                 if not ALLOWED.match(name.lower()):
                     offenders.append(f"{path.relative_to(ADAPTERS)}: {name}")
@@ -56,3 +58,39 @@ def test_guard_regex_catches_a_leak() -> None:
     leak = "SELECT r.display_name FROM match_proposal mp JOIN researcher r ON r.account_id = mp.b_id"
     assert [m[0] for m in RELATION.findall(leak)] == ["match_proposal", "researcher"]
     assert not ALLOWED.match("researcher") and not ALLOWED.match("account")
+
+
+def _module_aliases(tree: ast.Module) -> set[str]:
+    """Local names bound to the persistence ``models`` module (``from ... import models as m``)."""
+    return {
+        a.asname or a.name
+        for n in ast.walk(tree)
+        if isinstance(n, ast.ImportFrom)
+        for a in n.names
+        if a.name == "models"
+    }
+
+
+def test_adapters_touch_only_match_tables_through_the_models_module() -> None:
+    """Core table access (``m.researcher``, ``m.account``) is as dangerous as raw SQL, so scan attribute access."""
+    offenders: list[str] = []
+    seen = 0
+    for path in sorted(ADAPTERS.rglob("*.py")):
+        tree = ast.parse(path.read_text())
+        aliases = _module_aliases(tree)
+        for n in ast.walk(tree):
+            if isinstance(n, ast.Attribute) and isinstance(n.value, ast.Name) and n.value.id in aliases:
+                seen += 1
+                if not ALLOWED.match(n.attr):
+                    offenders.append(f"{path.relative_to(ADAPTERS)}:{n.lineno} {n.value.id}.{n.attr}")
+    assert seen > 0, "no models access found: the scan would pass vacuously"
+    assert not offenders, f"matching adapters reach non-match tables: {offenders}"
+
+
+def test_attribute_scan_catches_a_leak() -> None:
+    tree = ast.parse("from scout.adapters.persistence import models as m\nq = select(m.researcher)")
+    (alias,) = _module_aliases(tree)
+    hits = [
+        n.attr for n in ast.walk(tree) if isinstance(n, ast.Attribute) and getattr(n.value, "id", "") == alias
+    ]
+    assert hits == ["researcher"] and not ALLOWED.match(hits[0])

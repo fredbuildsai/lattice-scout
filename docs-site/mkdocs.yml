@@ -13,6 +13,7 @@ nav:
       - Private vault: dev/vault.md
       - Gap analysis: dev/discovery.md
       - Matching: dev/matching.md
+      - Feedback: dev/feedback.md
       - Deletion: dev/erasure.md
       - Notifications: dev/notifications.md
       - Configuration: dev/configuration.md

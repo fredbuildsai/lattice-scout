@@ -2,6 +2,7 @@
 name: GapAnalyst
 version: 1.1.0
 tier: reasoning
+data_class: vault
 output_type: GapAnalysis
 inputs: |
   - GapContext:

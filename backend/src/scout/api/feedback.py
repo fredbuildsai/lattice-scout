@@ -9,6 +9,7 @@ from fastapi import APIRouter, Depends, Request
 
 from scout.api.deps import current_account, get_container
 from scout.api.schemas.feedback import FeedbackIn, FeedbackOut
+from scout.feedback.application.give_feedback import UNSET
 from scout.feedback.domain.feedback import Feedback, Rating, Reason, TargetType
 from scout.identity.domain.account import Account
 from scout.shared import NotFound
@@ -37,7 +38,8 @@ async def give_feedback(
     """Thumbs up or down with optional reason chips and a short comment; the latest rating replaces the earlier one."""
     fb = await get_container(request).give_feedback.execute(
         account.id, TargetType(body.target_type), body.target_id, Rating(body.rating) if body.rating else None,
-        [Reason(r) for r in body.reasons], body.comment, body.stars,
+        None if body.reasons is None else [Reason(r) for r in body.reasons],
+        body.comment if "comment" in body.model_fields_set else UNSET, body.stars,
     )  # fmt: skip
     return feedback_out(fb)
 

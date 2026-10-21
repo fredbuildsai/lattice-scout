@@ -70,7 +70,11 @@ def valid_perspective(p: Perspective, titles: Sequence[str]) -> StoredRationale 
     you, they = keep(p.you_bring), keep(p.they_bring)
     if not you or not they or leaks_identity(p.why, titles):
         return None
-    return StoredRationale(source="llm", you_bring=you, they_bring=they, why=p.why)
+    # source_refs are dropped: the explainer gets no works, so any ref it returns is invented (design section 5)
+    return StoredRationale(
+        source="llm", you_bring=[BringItem(text=i.text) for i in you],
+        they_bring=[BringItem(text=i.text) for i in they], why=p.why,
+    )  # fmt: skip
 
 
 class ComputeMatches:
@@ -103,7 +107,7 @@ class ComputeMatches:
             pairs = await uow.candidates.candidates(
                 field=cfg.field, account=account, exclude_coauthors=cfg.exclude_coauthors,
                 exclude_same_group=cfg.exclude_same_group, cooldown_since=now - timedelta(days=cfg.cooldown_days),
-                limit=cfg.candidate_limit,
+                limit=cfg.candidate_limit, per_person=cfg.candidates_per_person,
             )  # fmt: skip
             ids = sorted({x for p in pairs for x in p})
             profiles = await uow.profiles.get_many(ids)
@@ -173,4 +177,8 @@ class ComputeMatches:
         checked = valid_perspective(out.output.for_a, [])
         if checked is None:
             return template, True
-        return checked.model_copy(update={"prompt_version": out.prompt_version}), True
+        # Side B reads text written for B (F-38). If it fails the guard, B gets the neutral template sentence.
+        why_b = out.output.for_b.why
+        if leaks_identity(why_b, []):
+            why_b = template.why
+        return checked.model_copy(update={"prompt_version": out.prompt_version, "why_b": why_b}), True

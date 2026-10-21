@@ -42,9 +42,17 @@ def copies_signal(text: str, signals: Iterable[str]) -> bool:
     return any(mine & shingles(s, 8) for s in signals)
 
 
+_TITLED_NAME = re.compile(
+    r"\b(?:Dr|Prof|Professor|Mr|Mrs|Ms|Mx)\b\.?\s+[A-Z][\w'-]+(?:\s+[A-Z][\w'-]+)?"
+)  # "Dr. Jane Smith", "Prof Lee"
+_ET_AL = re.compile(r"\b[A-Z][\w'-]+\s+et\s+al\.?")
+
+
 def clean_signal(text: str, max_len: int = 300) -> str:
-    """Strip e-mails, URLs and phone numbers from a signal and bound it."""
-    out = re.sub(r"https?://\S+|www\.\S+", "", text)
+    """Strip e-mails, URLs, phone numbers and titled third-party names from a signal and bound it."""
+    out = _TITLED_NAME.sub("a colleague", text)
+    out = _ET_AL.sub("a published study", out)
+    out = re.sub(r"https?://\S+|www\.\S+", "", out)
     out = re.sub(r"[\w.+-]+@[\w-]+\.[\w.-]+", "", out)
     out = re.sub(r"\+?\d[\d\s().-]{7,}\d", "", out)
     return " ".join(out.split())[:max_len]

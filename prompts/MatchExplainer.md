@@ -2,6 +2,7 @@
 name: MatchExplainer
 version: 1.1.0
 tier: fast
+data_class: public
 output_type: MatchRationale
 inputs: |
   - a: ResearcherSummary   # {topics: [{id, name, weight}] <=10, methods: [{id, label}] <=10, works: [{ref: "work:W...", title}] <=8}

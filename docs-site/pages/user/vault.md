@@ -22,7 +22,7 @@ Include reviewer reports if you have them. Scout works out what each file is. Yo
 3. **Finding insights.** Scout asks an AI language model to list the aims, methods, findings, open questions and reviewer objections in your document. Scout then checks each item against the text (see below).
 4. **Ready.** The insights are on the document. You can open them with **Show details**.
 
-Scout sends the text of your document to the AI language model that the Scout service uses. The service operator chooses the model provider. If your document is confidential, check the terms of your service before you upload it.
+Scout sends excerpts of your document text to an AI language model to find the insights. The service operator chooses the providers; this version may use the free tiers of OpenRouter, Groq and Mistral. Scout does not train models on your files, but the providers have their own terms. Scout has a rule for this: text from your private documents is sent **only** to providers the operator has marked as approved for private data, and a call with no approved provider fails instead of falling back to another one. Public literature data, such as paper titles, can go to any configured provider. Ask the operator which providers are approved before you upload a confidential document.
 
 Nothing from your vault is shared with other researchers in this version. Only your account can open your documents.
 
@@ -120,7 +120,15 @@ The privacy tab (Settings, Privacy) offers "Delete my vault". You confirm by typ
 
 ## Delete your account
 
-In the same tab, "Delete my account" asks you to type your e-mail address again. Your files, profile, runs, feedback and matches are then erased in the background and you are signed out. Matches that are still pending simply expire for the other person; they are not told why. Scout keeps only cost records that no longer name you. This cannot be undone.
+In the same tab, "Delete my account" asks you to type your e-mail address again. Your files, profile, runs, feedback and matches are then erased in the background and you are signed out. Matches that are still pending simply expire for the other person; they are not told why. This cannot be undone.
+
+**What is not erased:**
+
+- Cost records, which no longer name you.
+- Ratings and free-text comments you gave on a match that both sides accepted stay visible to the other person. A comment may name you.
+- After you delete only your vault: short paraphrases (up to 300 characters) inside ideas that Scout already showed you.
+- The region and career band on a closed match proposal, for 30 days.
+- Server logs and the sign-in provider's own audit log, which are outside Scout's database.
 
 ## Daily limit
 

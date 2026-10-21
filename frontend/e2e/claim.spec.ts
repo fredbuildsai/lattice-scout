@@ -57,8 +57,8 @@ test('dev login, claim Johan Foster, import, land on Home', async ({ page }) => 
 
   await page.getByRole('link', { name: 'Continue to Home' }).click()
   await expect(page).toHaveURL(/\/$/)
-  await expect(page.getByRole('heading', { level: 1, name: 'Home' })).toBeVisible()
-  await expect(page.getByLabel('Profile summary')).toContainText(/works included/)
+  await expect(page.getByRole('heading', { level: 1, name: /^(Hello, \w+|Home)$/ })).toBeVisible()
+  await expect(page.getByRole('region', { name: 'Your profile' })).toContainText(/works included/)
   await page.screenshot({ path: 'e2e/screenshots/home-claimed-1440.png', fullPage: true })
   await page.setViewportSize({ width: 390, height: 844 })
   await page.screenshot({ path: 'e2e/screenshots/home-claimed-390.png', fullPage: true })

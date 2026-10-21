@@ -79,15 +79,30 @@ class StoredRationale(_Frozen):
     source: Literal["llm", "template"]
     you_bring: list[BringItem] = Field(default_factory=list, max_length=3)  # from side A's point of view
     they_bring: list[BringItem] = Field(default_factory=list, max_length=3)
-    why: str = Field(default="", max_length=300)
+    why: str = Field(default="", max_length=300)  # written for side A
+    why_b: str = Field(
+        default="", max_length=300
+    )  # written for side B; empty = use ``why`` (templates, old rows)
     prompt_version: str | None = None
 
+    def why_for(self, side: Side) -> str:
+        """The explanation written for ``side`` (older rows and templates have a single shared ``why``)."""
+        return self.why_b if side is Side.B and self.why_b else self.why
+
     def without(self, side: Side) -> StoredRationale:
-        """Forget ``side``: its bring-list and the shared ``why`` go, and so does every ``source_refs``."""
-        keep = self.they_bring if side is Side.A else self.you_bring
-        keep = [BringItem(text=i.text) for i in keep]
-        you, they = ([], keep) if side is Side.A else (keep, [])
-        return self.model_copy(update={"you_bring": you, "they_bring": they, "why": ""})
+        """Forget ``side``: drop every ``source_refs`` (they point at works and documents of the people).
+
+        Refs are never rendered and new rationales carry none, so the card is unchanged. The texts stay on purpose: they are vocabulary-level method and topic phrases without ids, names or
+        years (guards.leaks_identity), and the survivor's card must look exactly as it did before and as after a
+        consent close or a decline, or the survivor could tell that the other person left (M5 review 4).
+        """
+
+        def plain(items: list[BringItem]) -> list[BringItem]:
+            return [BringItem(text=i.text) for i in items]
+
+        return self.model_copy(
+            update={"you_bring": plain(self.you_bring), "they_bring": plain(self.they_bring)}
+        )
 
 
 class ScoreBasis(_Frozen):

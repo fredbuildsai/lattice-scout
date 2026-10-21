@@ -2,6 +2,7 @@
 name: JointIdeas
 version: 1.1.0
 tier: reasoning
+data_class: vault
 output_type: JointIdeaList
 inputs: |
   - a: ResearcherSummary   # {topics: [{id, name, weight}] <=10, methods: [{id, label}] <=10, works: [{ref: "work:W...", title}] <=8}

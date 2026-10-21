@@ -40,6 +40,11 @@ export function useMatches(limit = 50) {
       return apiJson<MatchList>(`/api/v1/matches?${qs}`)
     },
     getNextPageParam: (last) => last.next_cursor ?? undefined,
+    // The reveal job writes the joint ideas a little after the match turns mutual: look again while any are pending.
+    refetchInterval: (q) =>
+      q.state.data?.pages.some((p) => p.items.some((m) => m.kind === 'revealed' && (m.ideas_status === 'pending' || m.ideas_status === 'none')))
+        ? 4000
+        : false,
     select: (d): MatchList => ({
       matching_enabled: d.pages[0]?.matching_enabled ?? false,
       items: d.pages.flatMap((p) => p.items),

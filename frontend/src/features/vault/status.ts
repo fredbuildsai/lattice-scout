@@ -63,7 +63,7 @@ const ERRORS: Record<string, string> = {
   vault_limit_reached: 'Your vault is full. Delete a document to add another.',
   file_rejected: 'This file could not be accepted. It may be empty, damaged or protected.',
   upload_limit_reached: 'You have reached today’s upload limit. Please try again tomorrow.',
-  service_paused: 'Scout is paused for today to keep costs in check. Uploads resume after midnight UTC.',
+  service_paused: 'Scout is paused for today to keep costs in check. New analyses resume after midnight UTC.',
   network_error: 'The upload was interrupted. Check your connection and try again.',
 }
 

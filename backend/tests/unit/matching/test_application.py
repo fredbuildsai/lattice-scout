@@ -245,6 +245,91 @@ async def test_decide_needs_consent_a_participant_and_persists_expiry() -> None:
         await w.decide.execute(B, mid, Action.DECLINE)
 
 
+async def test_withdrawn_consent_closes_pending_proposals_at_once_and_nobody_is_revealed() -> None:
+    w = World()
+    mid = await w.proposed()
+    await w.decide.execute(B, mid, Action.ACCEPT)
+    w.sources.consents[B] = Consent(False, False, "bio-based-materials")
+    w.sources.inputs[B] = ProfileInput(UUID(int=9), "DE", True, works())
+    assert await w.profile_job.execute(B) == {"status": "removed"}
+    assert w.store.matches[mid].state is MatchState.DECLINED  # closed straight away, not at 02:00
+    card = await w.decide.execute(A, mid, Action.ACCEPT)  # A learns nothing: it simply never becomes mutual
+    assert isinstance(card, AnonymousMatchView) and card.status is ViewerStatus.WAITING_ON_THEM
+    assert w.jobs.jobs == {} and w.notifier.mutual_to == []
+
+
+async def test_accept_does_not_become_mutual_when_the_counterpart_withdrew_before_the_profile_job_ran() -> (
+    None
+):
+    w = World()
+    mid = await w.proposed()
+    await w.decide.execute(B, mid, Action.ACCEPT)
+    w.sources.consents[B] = Consent(False, False, "bio-based-materials")  # job not run yet
+    card = await w.decide.execute(A, mid, Action.ACCEPT)
+    assert isinstance(card, AnonymousMatchView) and card.status is ViewerStatus.WAITING_ON_THEM
+    assert w.store.matches[mid].state is not MatchState.MUTUAL and w.jobs.jobs == {}
+
+
+async def test_accept_does_not_become_mutual_with_an_account_being_deleted() -> None:
+    w = World()
+    mid = await w.proposed()
+    await w.decide.execute(B, mid, Action.ACCEPT)
+    del w.sources.consents[B]  # ConsentSource answers None for a deleted account
+    card = await w.decide.execute(A, mid, Action.ACCEPT)
+    assert card.status is ViewerStatus.WAITING_ON_THEM and w.store.matches[mid].state is MatchState.DECLINED
+    # the other order: A accepted first, then B (the leaver) is gone and A's own accept is already recorded
+    w2 = World()
+    mid2 = await w2.proposed()
+    await w2.decide.execute(A, mid2, Action.ACCEPT)
+    del w2.sources.consents[B]
+    again = await w2.decide.execute(A, mid2, Action.ACCEPT)
+    assert again.status is ViewerStatus.WAITING_ON_THEM
+
+
+async def test_each_side_reads_the_explanation_written_for_it() -> None:
+    w = World()
+    a_text = Perspective(
+        you_bring=[BringItem(text="Life-cycle thinking")], they_bring=[BringItem(text="Process economics")],
+        why="Combining your life-cycle work with their economics.",
+    )  # fmt: skip
+    b_text = Perspective(
+        you_bring=[BringItem(text="Process economics")], they_bring=[BringItem(text="Life-cycle thinking")],
+        why="Combining your economics with their life-cycle work.",
+    )  # fmt: skip
+    w.agents.explainer = lambda _d: MatchRationale(for_a=a_text, for_b=b_text)
+    mid = await w.proposed()
+    ca, cb = await w.service.get(A, mid), await w.service.get(B, mid)
+    assert ca.why == a_text.why and cb.why == b_text.why
+    await w.decide.execute(A, mid, Action.ACCEPT)
+    rb = await w.decide.execute(B, mid, Action.ACCEPT)
+    ra = await w.service.get(A, mid)
+    assert isinstance(rb, RevealedMatchView) and isinstance(ra, RevealedMatchView)
+    assert (ra.why, rb.why) == (a_text.why, b_text.why)
+    assert rb.contact.display_name == "Ada" and ra.contact.display_name == "Bo"  # both sides get contact
+
+
+async def test_explainer_refs_are_dropped_and_a_leaky_b_text_falls_back_to_the_template() -> None:
+    w = World()
+    good = Perspective(
+        you_bring=[BringItem(text="Life-cycle thinking", source_refs=["work:W1"])],
+        they_bring=[BringItem(text="Process economics")], why="Complementary methods on shared topics.",
+    )  # fmt: skip
+    leaky_b = good.model_copy(update={"why": "See https://example.org for details"})
+    w.agents.explainer = lambda _d: MatchRationale(for_a=good, for_b=leaky_b)
+    mid = await w.proposed()
+    r = w.store.matches[mid].rationale
+    assert all(i.source_refs == [] for i in (*r.you_bring, *r.they_bring))
+    assert "http" not in (await w.service.get(B, mid)).why
+
+
+async def test_the_other_sides_vault_refs_are_never_shown() -> None:
+    from scout.matching.application.service import _idea_view
+
+    i = idea(["work:W1"], ["insight:doc-1.aims[0]"])
+    v = _idea_view(i, viewer_is_a=True)
+    assert v.uses_from_them[0].source_refs == [] and v.uses_from_you[0].source_refs == ["work:W1"]
+
+
 async def mutual(w: World) -> UUID:
     mid = await w.proposed()
     await w.decide.execute(A, mid, Action.ACCEPT)

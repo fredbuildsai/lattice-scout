@@ -25,7 +25,7 @@ test('navigates five pages through the menu and reports page_view events', async
   })
 
   await page.goto('/')
-  await expect(page.getByRole('heading', { level: 1, name: 'Home' })).toBeVisible()
+  await expect(page.getByRole('heading', { level: 1, name: /^(Hello, \w+|Home)$/ })).toBeVisible()
   await page.screenshot({ path: 'e2e/screenshots/home-1440.png', fullPage: true })
 
   await viaMenu(page, /Private vault/)

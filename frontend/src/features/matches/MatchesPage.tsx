@@ -122,7 +122,7 @@ export function MatchesPage() {
                   </h2>
                   <ul className="mt-2 space-y-3">
                     {list.map((m) => (
-                      <li key={m.id}>
+                      <li key={m.id} data-match-id={m.id}>
                         <button
                           type="button"
                           aria-current={m.id === shown.id ? 'true' : undefined}

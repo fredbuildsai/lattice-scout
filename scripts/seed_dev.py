@@ -25,6 +25,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "backend" / "src"))
 
 from scout.adapters.observability.prices import resolve_path  # noqa: E402
+from scout.identity.adapters.dev_auth import DevTokenIssuer  # noqa: E402
 from scout.bootstrap import build_container  # noqa: E402
 from scout.matching.adapters.agents import AgentsMatching  # noqa: E402
 from scout.matching.adapters.notifier import LoggingMatchNotifier  # noqa: E402
@@ -38,7 +39,15 @@ from scout.shared import AccountId, FixedClock  # noqa: E402
 from scout.worker.loop import build_handlers, run_once  # noqa: E402
 
 NOW = datetime(2026, 10, 21, 12, 0, tzinfo=UTC)  # the clock the matching fixtures were made with
-FOSTER, MOREIRA = AccountId(UUID(int=0xF0)), AccountId(UUID(int=0xF1))  # Foster is side "a" of the demo pair
+
+
+# Account ids are the ones dev login derives from the e-mail, so "log in as johan.foster@example.edu" reaches the
+# seeded account instead of failing with EmailInUse.
+def dev_id(email: str) -> AccountId:
+    return AccountId(UUID(DevTokenIssuer.sub_for(email)))
+
+
+FOSTER, MOREIRA = dev_id("johan.foster@example.edu"), dev_id("r.moreira@example.edu")
 PEOPLE = {
     FOSTER: ("johan.foster@example.edu", ["A5059588273", "A5140167166"]),
     MOREIRA: ("r.moreira@example.edu", ["A5033675494"]),
@@ -49,7 +58,7 @@ SYNTH = 24
 
 
 def synth_id(n: int) -> AccountId:
-    return AccountId(uuid5(SEED_NS, f"seed:{n}"))
+    return dev_id(f"synth{n:02d}@example.edu")
 
 
 async def real_people(c, settings: Settings) -> None:
@@ -68,7 +77,11 @@ async def synthetic(c, settings: Settings) -> None:
     vocab = load_vocabulary(resolve_path(settings.methods_config))
     async with SqlMatchUnitOfWork(c.db) as uow:
         base = await uow.profiles.get(FOSTER)
-    topics = list(base.topics) if base and len(base.topics) >= 3 else [TopicWeight(f"T{i}", f"Topic {i}", 1.0) for i in range(6)]
+    topics = (
+        list(base.topics)
+        if base and len(base.topics) >= 3
+        else [TopicWeight(f"T{i}", f"Topic {i}", 1.0) for i in range(6)]
+    )
     method_ids = [t.id for t in vocab.terms]
     async with c.db.engine.begin() as conn:
         for n in range(1, SYNTH + 1):
@@ -117,14 +130,23 @@ async def demo_pair(c, settings: Settings) -> None:
     """
     async with c.db.engine.begin() as conn:  # a re-seed starts from the same pool as the first one
         await conn.execute(
-            text("DELETE FROM match_profile WHERE account_id = ANY(:ids)"), {"ids": [synth_id(n) for n in range(1, SYNTH + 1)]}
+            text("DELETE FROM match_profile WHERE account_id = ANY(:ids)"),
+            {"ids": [synth_id(n) for n in range(1, SYNTH + 1)]},
         )
     vocab = load_vocabulary(resolve_path(settings.methods_config))
     reconnect = replace(
-        MatchConfig(field=settings.launch_field), exclude_coauthors=False, exclude_same_group=False, min_score=0.05
+        MatchConfig(field=settings.launch_field),
+        exclude_coauthors=False,
+        exclude_same_group=False,
+        min_score=0.05,
     )
     demo = ComputeMatches(
-        lambda: SqlMatchUnitOfWork(c.db), AgentsMatching(c.agents), vocab, LoggingMatchNotifier(), c.clock, reconnect
+        lambda: SqlMatchUnitOfWork(c.db),
+        AgentsMatching(c.agents),
+        vocab,
+        LoggingMatchNotifier(),
+        c.clock,
+        reconnect,
     )
     print("reconnect run for the demo pair:", await demo.execute(FOSTER))
 
@@ -148,7 +170,7 @@ async def main() -> None:
     print(
         "\nLog in as a demo user (AUTH_MODE=dev):\n"
         '  curl -s -X POST localhost:8000/api/v1/dev/login -H "content-type: application/json" '
-        "-d '{\"email\": \"johan.foster@example.edu\"}'\n"
+        '-d \'{"email": "johan.foster@example.edu"}\'\n'
         "  (also r.moreira@example.edu and synth01@example.edu ... synth24@example.edu)"
     )
 

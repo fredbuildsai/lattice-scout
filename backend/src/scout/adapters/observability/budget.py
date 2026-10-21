@@ -26,6 +26,14 @@ class SpendReader(Protocol):
         ...
 
 
+class CallCounter(Protocol):
+    """Number of provider requests since a point in time (optional part of a ``SpendReader``)."""
+
+    async def llm_calls_since(self, since: datetime) -> int:
+        """Rows of ``llm_call`` since ``since`` (every attempt counts, successful or not)."""
+        ...
+
+
 class SqlSpendReader:
     """Reads ``llm_call`` and ``external_call``."""
 
@@ -50,14 +58,22 @@ class SqlSpendReader:
             ).scalar()
         return Decimal(llm or 0), Decimal(oa or 0)
 
+    async def llm_calls_since(self, since: datetime) -> int:
+        """Count today's ``llm_call`` rows."""
+        async with self._db.sessionmaker() as s:
+            n = (await s.execute(text("SELECT count(*) FROM llm_call WHERE ts >= :t"), {"t": since})).scalar()
+        return int(n or 0)
+
 
 class GlobalBudget:
     """``GlobalBudgetPort``: status cached for ``ttl_s`` seconds; logs ``budget.warning`` at 80% and
     ``budget.cap_reached`` at 100%, once per service and UTC day (the alert rule watches these events)."""
 
     def __init__(
-        self, reader: SpendReader, clock: Clock, llm_cap: Decimal, openalex_cap: Decimal, ttl_s: float = 30.0
-    ) -> None:
+        self, reader: SpendReader, clock: Clock, llm_cap: Decimal, openalex_cap: Decimal, ttl_s: float = 30.0,
+        llm_calls_cap: int = 0,
+    ) -> None:  # fmt: skip
+        self._calls_cap = llm_calls_cap
         self._reader, self._clock, self._llm_cap, self._oa_cap, self._ttl = (
             reader,
             clock,
@@ -75,12 +91,18 @@ class GlobalBudget:
             return self._cached[1]
         midnight = self._clock.now().replace(hour=0, minute=0, second=0, microsecond=0)
         llm, oa = await self._reader.spent_since(midnight)
+        calls = 0
+        if self._calls_cap > 0:
+            counter: CallCounter = self._reader  # type: ignore[assignment]
+            calls = await counter.llm_calls_since(midnight)
         st = BudgetStatus(
-            llm_spent_usd=llm, llm_cap_usd=self._llm_cap, openalex_spent_usd=oa, openalex_cap_usd=self._oa_cap
-        )
+            llm_spent_usd=llm, llm_cap_usd=self._llm_cap, openalex_spent_usd=oa, openalex_cap_usd=self._oa_cap,
+            llm_calls=calls, llm_calls_cap=self._calls_cap,
+        )  # fmt: skip
         self._cached = (now, st)
         self._alert(str(midnight.date()), "llm", llm, self._llm_cap)
         self._alert(str(midnight.date()), "openalex", oa, self._oa_cap)
+        self._alert(str(midnight.date()), "llm_calls", Decimal(calls), Decimal(self._calls_cap))
         return st
 
     def _alert(self, day: str, service: str, spent: Decimal, cap: Decimal) -> None:

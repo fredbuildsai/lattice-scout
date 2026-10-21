@@ -86,7 +86,10 @@ class RevealMatch:
             else []
         )
         summary = ResearcherSummary(
-            topics=topics[:10], methods=[SummaryMethod(id=k, label=self._vocab.label(k) or k) for k in list(p_methods)[:10]],
+            topics=topics[:10], methods=[
+                SummaryMethod(id=k, label=self._vocab.label(k) or k)
+                for k, _ in sorted(p_methods.items(), key=lambda kv: (-kv[1], kv[0]))[:10]  # stable, whatever the store returns
+            ],
             works=[SummaryWork(ref=w.ref, title=w.title[:200]) for w in works],
         )  # fmt: skip
         return summary, {w.ref for w in works} | {s.ref for s in sig}, sig

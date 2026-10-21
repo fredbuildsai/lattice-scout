@@ -231,4 +231,59 @@ describe('polling', () => {
     await act(() => vi.advanceTimersByTimeAsync(6500))
     expect(lists()).toBe(n1)
   })
+
+  describe('Analyse with Scout', () => {
+    const many = (n: number) => Array.from({ length: n }, (_, i) => doc({ id: `d${i + 1}`, filename: `doc-${i + 1}.pdf` }))
+    const runStub = (server: Server, startStatus = 202) => {
+      const base = stub(server)
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async (url: string, init?: RequestInit) => {
+          if (init?.method === 'POST' && url.endsWith('/api/v1/runs')) {
+            server.calls.push({ url, method: 'POST', body: init.body })
+            return startStatus === 202
+              ? new Response(JSON.stringify({ id: 'run-1' }), { status: 202 })
+              : new Response(JSON.stringify({ code: 'run_limit_reached' }), { status: startStatus })
+          }
+          return base(url, init)
+        }),
+      )
+    }
+
+    it('sends every ready document when nothing is ticked (up to 10) and opens the run page', async () => {
+      const server: Server = { docs: many(3), calls: [] }
+      runStub(server)
+      renderPage()
+      await userEvent.click(await screen.findByRole('button', { name: /Analyse with Scout/ }))
+      await waitFor(() => expect(server.calls.some((c) => c.method === 'POST')).toBe(true))
+      const post = server.calls.find((c) => c.method === 'POST')
+      expect(JSON.parse(String(post?.body))).toEqual({ document_ids: ['d1', 'd2', 'd3'] })
+    })
+
+    it('with more than 10 ready documents, requires a choice and stops ticking at 10 (no 422)', async () => {
+      const server: Server = { docs: many(11), calls: [] }
+      runStub(server)
+      renderPage()
+      const button = await screen.findByRole('button', { name: /Analyse with Scout/ })
+      expect(button).toBeDisabled()
+      expect(screen.getByText(/Choose up to 10 documents/)).toBeInTheDocument()
+      const user = userEvent.setup()
+      for (let i = 1; i <= 10; i++) await user.click(screen.getByRole('checkbox', { name: `Select doc-${i}.pdf for analysis` }))
+      expect(button).toBeEnabled()
+      expect(screen.getByRole('checkbox', { name: 'Select doc-11.pdf for analysis' })).toBeDisabled()
+      expect(screen.getByText(/up to 10 documents per analysis/)).toBeInTheDocument()
+      await user.click(button)
+      await waitFor(() => expect(server.calls.some((c) => c.method === 'POST')).toBe(true))
+      const ids = JSON.parse(String(server.calls.find((c) => c.method === 'POST')?.body)).document_ids as string[]
+      expect(ids).toHaveLength(10)
+    })
+
+    it('shows a plain message when the run cannot start', async () => {
+      const server: Server = { docs: many(2), calls: [] }
+      runStub(server, 429)
+      renderPage()
+      await userEvent.click(await screen.findByRole('button', { name: /Analyse with Scout/ }))
+      expect(await screen.findByRole('alert')).toBeInTheDocument()
+    })
+  })
 })

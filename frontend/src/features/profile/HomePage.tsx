@@ -136,9 +136,9 @@ export function HomePage() {
               </p>
             )}
             {cards[0]?.why && (
-              <p className="mt-2 text-sm text-ink-2">
+              <div className="mt-2 text-sm text-ink-2">
                 Top idea: <Claim claim={cards[0].why} opportunityId={cards[0].id} />
-              </p>
+              </div>
             )}
           </div>
         </div>

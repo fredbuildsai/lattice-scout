@@ -114,6 +114,9 @@ def test_guards_catch_identity_leaks_and_copied_signals() -> None:
     assert copies_signal("we measured compression set of forty eight foams across", [sig])
     assert not copies_signal("compression data on many foams", [sig])
     assert clean_signal("call +49 170 1234567 or a@b.edu http://x.y ok") == "call or ok"
+    assert clean_signal("Follow Dr. Jane Smith and Prof Lee; see Garcia et al. for foams") == (
+        "Follow a colleague and a colleague; see a published study for foams"
+    )
 
 
 def test_region_mapping() -> None:

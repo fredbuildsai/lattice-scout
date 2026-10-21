@@ -58,6 +58,9 @@ class Settings(BaseSettings):
     account_daily_budget_usd: Decimal = Decimal("5.00")
     global_daily_llm_budget_usd: Decimal = Decimal("20.00")  # all users together; reached = new runs pause
     global_daily_openalex_budget_usd: Decimal = Decimal("5.00")
+    # Free models cost 0 USD, so the USD cap cannot trip on them; this caps provider requests per UTC day
+    # (every attempt counts). 0 = off. Set it below the providers' combined free daily quota.
+    global_daily_llm_calls: int = 1500
     upload_max_per_day: int = 30  # per account, 0 = unlimited
     run_llm_concurrency: int = 3
     run_openalex_concurrency: int = 4
@@ -112,6 +115,16 @@ class Settings(BaseSettings):
     prompts_dir: Path = Path("prompts")
     llm_max_concurrency: int = 8
     llm_router_allow_paid: bool = False  # free providers only
+    # Prod refuses llm_router (free-tier OpenRouter/Groq/Mistral) until the owner confirms the providers' data-use
+    # terms and opt-outs (docs/adr/015, docs/BLOCKERS.md). Default off.
+    llm_free_providers_acknowledged: bool = False
+    # Vault data (documents, passages, insights, profile text from them) goes only to deployments that are marked
+    # ``sanctioned: true`` in llm_router.yaml AND whose provider is listed here, e.g. "mistral,groq". Empty = no
+    # remote endpoint is sanctioned (only the fake backend can handle vault-tagged calls). ADR 015.
+    llm_vault_sanctioned_providers: str = ""
+    llm_vault_allow_any_provider: bool = (
+        False  # explicit waiver: vault data may reach any configured deployment
+    )
     llm_router_max_usd_per_day: float = 5.0
     analytics_queue_max: int = 20000
     usage_queue_max: int = 10000
@@ -120,6 +133,13 @@ class Settings(BaseSettings):
 
     embedding_model: str | None = None
     embedding_dim: int | None = None
+
+    @property
+    def vault_sanctioned_providers(self) -> frozenset[str]:
+        """Parsed ``LLM_VAULT_SANCTIONED_PROVIDERS``."""
+        return frozenset(
+            p.strip().lower() for p in self.llm_vault_sanctioned_providers.split(",") if p.strip()
+        )
 
     @property
     def supabase_issuer(self) -> str | None:
@@ -151,14 +171,34 @@ class Settings(BaseSettings):
                 problems.append("STORAGE_BACKEND=local is refused when APP_ENV=prod")
             if "*" in self.cors_origins or any(o.startswith("http://") for o in self.cors_origins):
                 problems.append("CORS_ORIGINS must be https origins without '*' when APP_ENV=prod")
+            if not self.app_base_url.startswith("https://") or "localhost" in self.app_base_url:
+                problems.append("APP_BASE_URL must be an https URL (not localhost) when APP_ENV=prod")
             if self.audit_hash_key.get_secret_value() == "dev-audit-hash-key-change-me":
                 problems.append("AUDIT_HASH_KEY must be set when APP_ENV=prod")
         if self.storage_backend == "supabase" and not (self.supabase_url and self.supabase_service_role_key):
             problems.append("STORAGE_BACKEND=supabase needs SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY")
         if self.auth_mode == "supabase" and not (self.jwks_url and self.supabase_url):
             problems.append("AUTH_MODE=supabase needs SUPABASE_URL (token issuer) and a JWKS URL")
+        if (
+            self.app_env == "prod"
+            and self.llm_backend == "llm_router"
+            and not self.llm_free_providers_acknowledged
+        ):
+            problems.append(
+                "LLM_BACKEND=llm_router sends text to free-tier providers; set "
+                "LLM_FREE_PROVIDERS_ACKNOWLEDGED=true only after confirming their data-use terms (docs/adr/015)"
+            )
+        if (
+            self.app_env == "prod"
+            and self.llm_backend in ("llm_router", "openai_direct")
+            and not (self.vault_sanctioned_providers or self.llm_vault_allow_any_provider)
+        ):
+            problems.append(
+                "vault-tagged agents exist but LLM_VAULT_SANCTIONED_PROVIDERS is empty; list the providers whose "
+                "terms you confirmed, or set LLM_VAULT_ALLOW_ANY_PROVIDER=true to waive the rule (docs/adr/015)"
+            )
         if self.llm_backend == "llm_router" and not (
-            self.openrouter_api_key or self.groq_api_key or self.mistral_api_key or self.openai_api_key
+            self.openrouter_api_key or self.groq_api_key or self.mistral_api_key
         ):
             problems.append(
                 "LLM_BACKEND=llm_router needs at least one provider key (OPENROUTER, GROQ, MISTRAL)"

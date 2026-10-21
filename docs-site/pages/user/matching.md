@@ -78,7 +78,7 @@ The card opens with **You both said yes** and shows:
 
 **Used after both of you accept:**
 
-- the same topic signals, from the methods and aims sections, if topic signals are still on at that time.
+- the same topic signals, from the methods and aims sections, if topic signals are still on at that time. The joint ideas that **both of you** can read may then paraphrase these short statements, including aims from unpublished documents. Scout removes e-mail addresses, links, phone numbers and titled names from them and blocks long verbatim copies, but if a statement is confidential, leave topic signals off.
 
 **Not used:**
 

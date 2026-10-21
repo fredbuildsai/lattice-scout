@@ -130,7 +130,7 @@ class FakeRevealRepo:
 
     async def contact(self, match_id: UUID, viewer: AccountId) -> Contact | None:
         m = self.s.matches.get(match_id)
-        if m is None or m.state is not MatchState.MUTUAL:
+        if m is None or m.state is not MatchState.MUTUAL or viewer not in (m.a_id, m.b_id):
             return None
         other = m.b_id if viewer == m.a_id else m.a_id
         return self.s.contacts.get(other) if other is not None else None
@@ -171,7 +171,7 @@ class FakeCandidates:
 
     async def candidates(
         self, *, field: str, account: AccountId | None, exclude_coauthors: bool, exclude_same_group: bool,
-        cooldown_since: datetime, limit: int,
+        cooldown_since: datetime, limit: int, per_person: int = 50,
     ) -> list[tuple[AccountId, AccountId]]:  # fmt: skip
         pool = {a: p for a, p in self.s.profiles.items() if p.eligible and p.field == field}
         reasons = {r for r, on in (("coauthor", exclude_coauthors), ("same_group", exclude_same_group)) if on}
@@ -194,7 +194,15 @@ class FakeCandidates:
                 ):
                     continue
                 out.append((-inter, a, b))
-        return [(a, b) for _, a, b in sorted(out)[:limit]]
+        ranked = sorted(out)
+        seen: dict[AccountId, int] = {}
+        keep: list[tuple[AccountId, AccountId]] = []
+        for _, a, b in ranked:
+            ra, rb = seen.get(a, 0), seen.get(b, 0)
+            seen[a], seen[b] = ra + 1, rb + 1
+            if ra < per_person or rb < per_person:
+                keep.append((a, b))
+        return keep[:limit]
 
 
 class FakeIdeaRepo:

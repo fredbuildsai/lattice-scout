@@ -19,6 +19,7 @@ from scout.matching.domain.profile import (
     topics_hash,
     weigh_methods,
 )
+from scout.matching.domain.proposal import PENDING
 from scout.matching.domain.regions import region_of
 from scout.matching.domain.vocabulary import Vocabulary
 from scout.matching.ports.agents import MatchAgentsPort
@@ -58,6 +59,12 @@ class ComputeResearcherProfile:
         if consent is None or not consent.matching or data is None:
             async with self._uow() as uow:
                 await uow.profiles.delete(account)
+                if consent is None or not consent.matching:
+                    # Withdrawn consent closes pending proposals at once, so nobody is revealed afterwards.
+                    for p in await uow.matches.involving_for_update(account):
+                        if p.state in PENDING:
+                            p.close_for_consent(p.side_of(account), now)
+                            await uow.matches.save(p)
                 await uow.commit()
             return {"status": "removed"}
         topics = compute_topics(data.works, now)

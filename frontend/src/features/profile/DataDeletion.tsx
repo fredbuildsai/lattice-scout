@@ -29,7 +29,13 @@ export function DataDeletion({ email }: { email: string }) {
   return (
     <div className="mt-8 space-y-4">
       <h2 className="text-lg font-semibold">Your data</h2>
-      <p className="font-semibold">Scout never trains models on your files.</p>
+      <p className="font-semibold">Scout does not train models on your files.</p>
+      <p className="text-sm text-ink-2">
+        To read and analyse your documents, Scout sends excerpts of their text to the AI providers it is set up
+        with. Private document text goes only to providers the operator has approved for it, and never to a
+        provider that is not on that list. The providers have their own terms; ask the operator which ones are
+        in use.
+      </p>
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="rounded-card border border-line bg-surface p-4">
           <h3 className="text-sm font-bold">Deleting removes</h3>
@@ -43,6 +49,12 @@ export function DataDeletion({ email }: { email: string }) {
           <h3 className="text-sm font-bold">What stays</h3>
           <ul className="mt-1 list-disc pl-5 text-sm text-ink-2">
             <li>Cost records without your identity, kept so we can track spend</li>
+            <li>
+              Ratings and comments you gave on a match stay visible to the other person (a comment may name you)
+            </li>
+            <li>Short paraphrases (up to 300 characters) in ideas already shown, after you delete only your vault</li>
+            <li>Region and career band on a closed match proposal, for 30 days</li>
+            <li>Server logs and the sign-in provider&apos;s own audit log, which are outside our database</li>
           </ul>
         </div>
       </div>

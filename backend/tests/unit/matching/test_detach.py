@@ -14,8 +14,7 @@ Assumed API (design note):
   ``<side>_decided_at`` cleared, ``never_similar_by`` cleared when it equals ``side``, and
   ``rationale = rationale.without(side)``. Terminal declined/expired proposals only get the clean-up. No event.
 * ``StoredRationale.without(side) -> StoredRationale``: the rationale is stored from side A's point of view
-  (``you_bring`` is A's, ``they_bring`` is B's); the deleted side's list and ``why`` become empty and every
-  ``source_refs`` (which point to the deleted user's works) is cleared. Returns a new frozen value.
+  (``you_bring`` is A's, ``they_bring`` is B's); every ``source_refs`` is cleared; the texts stay so the survivor's card does not change (M5 review 4). Returns a new frozen value.
 * ``MatchProposal.a_id`` / ``b_id`` are ``AccountId | None``. ``score_basis`` and both public facets are kept
   (the survivor's card shows them; changing them would leak).
 """
@@ -33,6 +32,7 @@ from tests.unit.matching._builders import A_ID, B_ID, EXPIRES_AT, NOW, VIEWER, m
 
 from scout.matching.domain.enums import Action, CloseReason, Decision, MatchState, Side, ViewerStatus
 from scout.matching.domain.proposal import BringItem, MatchProposal, StoredRationale
+from scout.matching.domain.reveal import build_anonymous
 from scout.shared import InvariantViolation, ScoutError
 
 PROFILE = settings(
@@ -70,6 +70,10 @@ def _refs(r: StoredRationale) -> list[str]:
     return [ref for item in (*r.you_bring, *r.they_bring) for ref in item.source_refs]
 
 
+def _gone_refs(r: StoredRationale, side: Side) -> list[str]:
+    return [ref for item in (r.you_bring if side is Side.A else r.they_bring) for ref in item.source_refs]
+
+
 def _in_state(name: str) -> MatchProposal:
     """A proposal in each reachable state (A is the viewer of the setup actions)."""
     p = make_proposal()
@@ -97,18 +101,21 @@ def test_close_reason_account_deleted_value() -> None:
     assert {r.value for r in CloseReason} >= {"declined", "consent_withdrawn", "account_deleted"}
 
 
-def test_rationale_without_a_clears_a_side_why_and_every_ref() -> None:
+def test_rationale_without_a_keeps_the_texts_and_clears_every_ref() -> None:
     original = _rich_rationale()
     out = original.without(Side.A)
-    assert out.you_bring == [] and out.why == ""
+    assert [i.text for i in out.you_bring] == [i.text for i in original.you_bring] and out.why == original.why
     assert _refs(out) == []
     assert out.source == "llm" and out.prompt_version == "MatchExplainer@1.0.0"
     assert original == _rich_rationale()  # frozen value: the input is untouched
 
 
-def test_rationale_without_b_clears_b_side_why_and_every_ref() -> None:
-    out = _rich_rationale().without(Side.B)
-    assert out.they_bring == [] and out.why == ""
+def test_rationale_without_b_keeps_the_texts_and_clears_every_ref() -> None:
+    original = _rich_rationale()
+    out = original.without(Side.B)
+    assert [i.text for i in out.they_bring] == [
+        i.text for i in original.they_bring
+    ] and out.why == original.why
     assert _refs(out) == []
 
 
@@ -288,11 +295,20 @@ def test_detach_is_indistinguishable_from_a_consent_close_for_the_survivor(prefi
     p, now = _replay_prefix(prefix)
     assume(p.state is not MatchState.MUTUAL)  # mutual proposals are deleted, never detached
     now += timedelta(days=gap)
+    p.rationale = _rich_rationale()
     via_detach, via_close = copy.deepcopy(p), copy.deepcopy(p)
     via_detach.detach(leaver, now)
     via_close.close_for_consent(leaver, now)
     survivor = VIEWER[leaver.other]
     assert _survivor_log(via_detach, survivor, now, tail) == _survivor_log(via_close, survivor, now, tail)
+
+    def card(q: MatchProposal) -> dict:
+        d = build_anonymous(q, survivor, now, "field").model_dump(mode="json")
+        for item in d["you_bring"]:
+            item["source_refs"] = []  # refs are never rendered, and new rationales carry none
+        return d
+
+    assert card(via_detach) == card(via_close)  # the whole card, texts included
 
 
 @PROFILE
@@ -379,7 +395,7 @@ class DetachMachine(RuleBasedStateMachine):
         assert _id_of(p, gone) is None and _id_of(p, gone.other) == VIEWER[gone.other]
         assert p.decision_of(gone) is None and _decided_at(p, gone) is None
         assert p.never_similar_by is not gone
-        assert _refs(p.rationale) == [] and p.rationale.why == ""
+        assert _refs(p.rationale) == []
 
     @invariant()
     def survivor_status_is_never_a_reveal_or_a_decline_by_the_other(self) -> None:

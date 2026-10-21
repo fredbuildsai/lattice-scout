@@ -2,6 +2,7 @@
 name: MethodExtractor
 version: 1.0.1
 tier: fast
+data_class: vault
 output_type: MethodSet
 inputs: |
   - vocabulary: list of {method_id, label, synonyms}   # config/methods.yaml (controlled vocabulary of the launch field)

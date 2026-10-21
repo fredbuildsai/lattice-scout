@@ -98,7 +98,7 @@ Outputs, under `backend/tests/fixtures/llm/<Agent>/`: MethodExtractor for Foster
 
 ## Demo data: `make seed`
 
-`scripts/seed_dev.py` loads a local database for the demo. It refuses `APP_ENV=prod` and it is idempotent (ids come from uuid5 over `seed:<n>`).
+`scripts/seed_dev.py` loads a local database for the demo. It refuses `APP_ENV=prod` and it is idempotent (account ids are the ids dev login derives from the e-mail, so you can sign in as `johan.foster@example.edu`, `r.moreira@example.edu` or `synth01@example.edu` to `synth24@example.edu`).
 
 ```bash
 make db        # PostgreSQL and the dev and test databases

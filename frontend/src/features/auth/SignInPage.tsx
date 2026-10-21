@@ -3,7 +3,7 @@ import { useAuth } from '../../auth/AuthProvider'
 import { Icon, LogoMark } from '../../ui/icons'
 
 const FEATURES: Array<{ icon: 'lock' | 'sparkle' | 'people'; tone: string; title: string; body: string }> = [
-  { icon: 'lock', tone: 'bg-accent-50 text-accent', title: 'A private vault for what never got published', body: 'Word, PDF, spreadsheets, slides, notebook photos. Never shared, never used to train models.' },
+  { icon: 'lock', tone: 'bg-accent-50 text-accent', title: 'A private vault for what never got published', body: 'Word, PDF, spreadsheets, slides, notebook photos. Never shared with other researchers. Scout does not train models on it.' },
   { icon: 'sparkle', tone: 'bg-scout-50 text-scout', title: 'An AI research scout with a team of sub-agents', body: 'Reads your files, maps the field, finds white spots and synergies with your published work. Every idea cites its sources.' },
   { icon: 'people', tone: 'bg-teal-50 text-teal', title: 'Matches with complementary researchers', body: 'Anonymous until you both say yes. Only then are contacts and joint opportunities revealed.' },
 ]

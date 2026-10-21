@@ -1647,6 +1647,7 @@
                 "type": "null"
               }
             ],
+            "description": "Omit to keep the earlier comment; null or '' clears it.",
             "title": "Comment"
           },
           "rating": {
@@ -1665,24 +1666,32 @@
             "title": "Rating"
           },
           "reasons": {
-            "items": {
-              "enum": [
-                "spot_on",
-                "already_knew",
-                "not_feasible",
-                "wrong_field",
-                "too_vague",
-                "methods_fit",
-                "right_seniority",
-                "shared_timeline",
-                "too_similar",
-                "already_knew_them"
-              ],
-              "type": "string"
-            },
-            "maxItems": 5,
-            "title": "Reasons",
-            "type": "array"
+            "anyOf": [
+              {
+                "items": {
+                  "enum": [
+                    "spot_on",
+                    "already_knew",
+                    "not_feasible",
+                    "wrong_field",
+                    "too_vague",
+                    "methods_fit",
+                    "right_seniority",
+                    "shared_timeline",
+                    "too_similar",
+                    "already_knew_them"
+                  ],
+                  "type": "string"
+                },
+                "maxItems": 5,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Omit to keep the earlier chips; [] clears them.",
+            "title": "Reasons"
           },
           "stars": {
             "anyOf": [
@@ -2100,27 +2109,36 @@
                 "type": "null"
               }
             ],
+            "description": "Omit to keep the earlier comment.",
             "title": "Comment"
           },
           "reasons": {
-            "items": {
-              "enum": [
-                "spot_on",
-                "already_knew",
-                "not_feasible",
-                "wrong_field",
-                "too_vague",
-                "methods_fit",
-                "right_seniority",
-                "shared_timeline",
-                "too_similar",
-                "already_knew_them"
-              ],
-              "type": "string"
-            },
-            "maxItems": 5,
-            "title": "Reasons",
-            "type": "array"
+            "anyOf": [
+              {
+                "items": {
+                  "enum": [
+                    "spot_on",
+                    "already_knew",
+                    "not_feasible",
+                    "wrong_field",
+                    "too_vague",
+                    "methods_fit",
+                    "right_seniority",
+                    "shared_timeline",
+                    "too_similar",
+                    "already_knew_them"
+                  ],
+                  "type": "string"
+                },
+                "maxItems": 5,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Omit to keep the earlier chips.",
+            "title": "Reasons"
           },
           "stars": {
             "maximum": 5.0,

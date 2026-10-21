@@ -9,8 +9,14 @@ from uuid import UUID
 
 from scout.matching.application.config import MatchConfig
 from scout.matching.domain.agent_io import JointIdea
-from scout.matching.domain.enums import Action, IdeasStatus, ViewerStatus
-from scout.matching.domain.proposal import MatchBecameMutual, MatchExpired, MatchNotFound, MatchProposal
+from scout.matching.domain.enums import Action, IdeasStatus, MatchState, ViewerStatus
+from scout.matching.domain.proposal import (
+    BringItem,
+    MatchBecameMutual,
+    MatchExpired,
+    MatchNotFound,
+    MatchProposal,
+)
 from scout.matching.domain.reveal import (
     AnonymousMatchView,
     JointIdeaView,
@@ -46,6 +52,8 @@ class MatchList:
 
 def _idea_view(i: JointIdea, viewer_is_a: bool) -> JointIdeaView:
     mine, theirs = (i.uses_from_a, i.uses_from_b) if viewer_is_a else (i.uses_from_b, i.uses_from_a)
+    # Refs into the other person's vault (insight:<document>.<section>[n]) are internal ids: never shown to us.
+    theirs = [BringItem(text=t.text) for t in theirs]
     return JointIdeaView(
         title=i.title, question=i.question, uses_from_you=mine, uses_from_them=theirs,
         first_step=i.first_step, possible_output=i.possible_output,
@@ -92,6 +100,12 @@ class MatchingService:
         nxt = str(offset + limit) if len(rows) > limit else None
         return MatchList(bool(consent and consent.matching), items, nxt)
 
+    async def is_mutual(self, viewer: AccountId, match_id: UUID) -> bool:
+        """True when ``viewer`` takes part in the proposal and it is mutual."""
+        async with self._uow() as uow:
+            p = await uow.matches.get(match_id, viewer)
+        return p is not None and p.state is MatchState.MUTUAL
+
     async def get(self, viewer: AccountId, match_id: UUID) -> MatchCard:
         """One card.
 
@@ -122,6 +136,18 @@ class DecideOnMatch:
             cfg,
         )
 
+    async def _close_if_counterpart_left(self, p: MatchProposal, viewer: AccountId, now: datetime) -> None:
+        """Never let a proposal become mutual with someone who withdrew consent or is being deleted.
+
+        The pending proposal is closed as a consent close, so to ``viewer`` it looks like any decline (DECISIONS 78).
+        """
+        other = p.b_id if viewer == p.a_id else p.a_id
+        if other is None:
+            return
+        consent = await self._consents.get(other)  # None for an account that is being deleted
+        if consent is None or not consent.matching:
+            p.close_for_consent(p.side_of(other), now)
+
     async def execute(
         self, viewer: AccountId, match_id: UUID, action: Action, never_similar: bool = False
     ) -> MatchCard:
@@ -141,6 +167,8 @@ class DecideOnMatch:
             p = await uow.matches.get_for_update(match_id, viewer)
             if p is None:
                 raise MatchNotFound()
+            if action is Action.ACCEPT:
+                await self._close_if_counterpart_left(p, viewer, now)
             try:
                 events = p.decide(viewer, action, now, never_similar=never_similar)
             except MatchExpired as exc:

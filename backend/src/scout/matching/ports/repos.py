@@ -110,8 +110,9 @@ class CandidateQuery(Protocol):
         exclude_same_group: bool,
         cooldown_since: datetime,
         limit: int,
+        per_person: int = 50,
     ) -> list[tuple[AccountId, AccountId]]:
-        """Canonical pairs (``a < b``) best overlap first. Excludes blocked pairs, pairs with a pending or mutual
+        """Canonical pairs (``a < b``) best overlap first, at most ``per_person`` best pairs for each person. Excludes blocked pairs, pairs with a pending or mutual
         proposal and pairs proposed since ``cooldown_since``."""
         ...
 

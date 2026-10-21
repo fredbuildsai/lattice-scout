@@ -72,7 +72,7 @@ export function ThumbButtons({
   )
 }
 
-/** Thumbs for a list card: prefilled from GET /feedback (404 means not rated), posts /feedback without reasons and updates the cached rating. */
+/** Thumbs for a list card: prefilled from GET /feedback (404 means not rated), posts /feedback with the rating only (saved reasons and comment are kept) and updates the cached rating. */
 export function Thumbs({ opportunityId }: { opportunityId: string }) {
   const existing = useFeedback(opportunityId)
   const give = useGiveFeedback(opportunityId)
@@ -82,7 +82,7 @@ export function Thumbs({ opportunityId }: { opportunityId: string }) {
       rating={existing.data?.rating ?? null}
       pending={give.isPending}
       error={give.isError}
-      onRate={(r) => give.mutate({ rating: r, reasons: [] })}
+      onRate={(r) => give.mutate({ rating: r })}
     />
   )
 }

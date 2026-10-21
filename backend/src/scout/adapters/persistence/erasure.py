@@ -111,6 +111,16 @@ class SqlAccountFinalizer:
                 ),
                 {"own": own_job_id, "p": pat},
             )
+            # A pass that ran out of attempts stays 'dead' with the raw id in its payload and last error. Only
+            # the current job and a queued pass 2 may keep it until they finish themselves.
+            await s.execute(
+                text(
+                    "DELETE FROM job WHERE id <> :own AND kind = 'account.delete' AND status = 'dead' AND ("
+                    "payload::text LIKE ANY(:p) OR coalesce(dedupe_key,'') LIKE ANY(:p) "
+                    "OR coalesce(result::text,'') LIKE ANY(:p) OR coalesce(last_error,'') LIKE ANY(:p))"
+                ),
+                {"own": own_job_id, "p": pat},
+            )
             audit = await s.execute(
                 text(
                     "DELETE FROM audit_log WHERE action <> 'account.deleted' AND ("

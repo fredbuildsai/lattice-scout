@@ -2,6 +2,7 @@
 name: InsightExtractor
 version: 1.1.0
 tier: fast
+data_class: vault
 output_type: DocumentInsights
 inputs: |
   - mode: "full" | "map" | "reduce"

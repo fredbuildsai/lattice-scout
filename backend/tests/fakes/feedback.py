@@ -49,15 +49,10 @@ class InMemoryFeedbackUnitOfWork:
         self.store = store
         self._staged: dict[Key, Feedback] = {}
         self._feedback = InMemoryFeedbackRepo(self._staged)
-        self._targets = InMemoryTargetCheck(store.rateable)
 
     @property
     def feedback(self) -> InMemoryFeedbackRepo:
         return self._feedback
-
-    @property
-    def targets(self) -> InMemoryTargetCheck:
-        return self._targets
 
     async def __aenter__(self) -> Self:
         self._staged.clear()

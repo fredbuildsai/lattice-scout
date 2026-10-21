@@ -70,6 +70,9 @@ Read by the API (upload limits, `RETENTION_POLICY`) and by the worker (extractio
 | `OPENAI_API_KEY` | unset | Secret for `LLM_BACKEND=openai_direct`. Never commit it. |
 | `LLM_ROUTER_CONFIG` | `config/llm_router.yaml` | llm-router deployments and routes. |
 | `LLM_ROUTER_SOURCE` | unset | Install source for llm-router, for example `git+https://github.com/fredbuildsai/llmrouter-free@v0.1.0`. Used by the install commands below. |
+| `LLM_VAULT_SANCTIONED_PROVIDERS` | empty | Comma list of providers (model prefix, e.g. `mistral,groq`) that may receive vault-tagged calls. A deployment also needs `sanctioned: true` in `config/llm_router.yaml`. Empty means no remote endpoint gets vault data. See ADR 015. |
+| `LLM_VAULT_ALLOW_ANY_PROVIDER` | `false` | Explicit waiver of the rule above. Prod with `llm_router` or `openai_direct` refuses to start with an empty allowlist unless this is `true`. |
+| `LLM_FREE_PROVIDERS_ACKNOWLEDGED` | `false` | `APP_ENV=prod` refuses `LLM_BACKEND=llm_router` (free-tier providers) until you set this to `true` after confirming their data-use terms (BLOCKERS B6). |
 | `LLM_ROUTER_ALLOW_PAID` | `false` | Whether llm-router may use paid deployments. |
 | `OPENROUTER_API_KEY`, `GROQ_API_KEY`, `MISTRAL_API_KEY` | unset | Provider keys for `LLM_BACKEND=llm_router`. `config/llm_router.yaml` skips a deployment whose key is unset, so one key is enough. Needed for live tests, the live eval and deployment, not for development. |
 | `LLM_ROUTER_MAX_USD_PER_DAY` | `5.0` | Daily spend limit (USD) passed to the llm-router client. |

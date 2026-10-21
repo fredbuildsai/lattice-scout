@@ -10,14 +10,17 @@ from pydantic import BaseModel, JsonValue
 
 from scout.adapters.llm.fake_llm import canonical_json
 from scout.adapters.llm.metering import record_for
+from scout.adapters.llm.vault_policy import VaultPolicy
 from scout.ports.llm import (
     AgentResult,
     AgentSpec,
     CallContext,
+    DataClass,
     LLMOutputInvalid,
     LLMUnavailable,
     ModelTier,
     TokenUsage,
+    VaultDataRefused,
 )
 from scout.ports.usage import LlmCallStatus, PriceTable, UsageMeterPort
 from scout.shared import Clock, IdGenerator
@@ -33,7 +36,9 @@ class OpenAIAgentsDirectAdapter:
         clock: Clock,
         ids: IdGenerator,
         model_for: Mapping[ModelTier, str],
+        vault_policy: VaultPolicy | None = None,
     ) -> None:
+        self._vault = vault_policy or VaultPolicy()
         self._prices, self._usage, self._clock, self._ids, self._model_for = (
             prices,
             usage,
@@ -49,6 +54,8 @@ class OpenAIAgentsDirectAdapter:
         from agents import Agent, ModelSettings, RunConfig, Runner  # lazy: optional ``llm`` extra
 
         model = self._model_for[agent.tier]
+        if agent.data_class is DataClass.VAULT and not self._vault.provider_allowed("openai"):
+            raise VaultDataRefused("Vault data refused: openai is not a sanctioned provider")
         sdk_agent: Agent[Any] = Agent(
             name=agent.name,
             instructions=agent.instructions,

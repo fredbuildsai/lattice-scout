@@ -76,3 +76,30 @@ async def test_a_new_day_starts_with_a_fresh_window() -> None:
     r.llm = Decimal(0)
     assert not (await g.status()).paused
     assert r.since[-1] == datetime(2026, 10, 25, tzinfo=UTC)
+
+
+class CountingReader(Reader):
+    def __init__(self, calls: int) -> None:
+        super().__init__("0", "0")
+        self.calls = calls
+
+    async def llm_calls_since(self, since: datetime) -> int:
+        return self.calls
+
+
+async def test_free_models_cost_nothing_but_the_call_cap_still_pauses() -> None:
+    """Decision 105: every model is priced 0 USD, so only a request counter can trip the guard."""
+    g = GlobalBudget(
+        CountingReader(1500), FixedClock(NOON), Decimal(10), Decimal(5), ttl_s=0, llm_calls_cap=1500
+    )
+    with capture_logs() as logs, pytest.raises(ServicePaused):
+        await g.ensure_open()
+    assert ("budget.cap_reached", "llm_calls") in [(e["event"], e["service"]) for e in logs]
+    below = GlobalBudget(
+        CountingReader(10), FixedClock(NOON), Decimal(10), Decimal(5), ttl_s=0, llm_calls_cap=1500
+    )
+    await below.ensure_open()
+    off = GlobalBudget(
+        CountingReader(10**6), FixedClock(NOON), Decimal(10), Decimal(5), ttl_s=0
+    )  # cap 0 = off
+    await off.ensure_open()

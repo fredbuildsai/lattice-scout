@@ -58,6 +58,9 @@ class DeleteAccountJob:
         h = subject_hash(self._key, account_id)
         now = self._clock.now()
         subject = await self._inventory.collect(account_id)
+        carried = {UUID(str(x)) for x in payload.get("sessions", [])}
+        if carried:  # pass 1 deleted app_session; a late writer may have recreated it without an account
+            subject = subject.model_copy(update={"session_ids": subject.session_ids | carried})
 
         forgotten = await self._matching.forget(account_id, now)
         prefix = f"vault/{account_id}"
@@ -67,7 +70,7 @@ class DeleteAccountJob:
         await self._delete_auth_user(account_id, h, last_attempt)
         observed = await self._obs.erase(subject)
         if pass_no == 1:
-            await self._enqueue_second_pass(account_id, h, now)
+            await self._enqueue_second_pass(account_id, h, now, subject.session_ids)
         counts = {
             "files": removed,
             "proposals_detached": forgotten.detached,
@@ -89,11 +92,18 @@ class DeleteAccountJob:
                 log.error("identity.auth_delete_failed", subject_hash=h)
             raise
 
-    async def _enqueue_second_pass(self, account_id: UUID, h: str, now: Any) -> None:
+    async def _enqueue_second_pass(
+        self, account_id: UUID, h: str, now: Any, session_ids: frozenset[UUID] = frozenset()
+    ) -> None:
         await self._jobs.enqueue(
             JobSpec(
                 kind="account.delete",
-                payload={"subject_id": str(account_id), "pass": 2, "feature": "account.delete"},
+                payload={
+                    "subject_id": str(account_id),
+                    "pass": 2,
+                    "feature": "account.delete",
+                    "sessions": sorted(str(i) for i in session_ids),  # rewritten away when pass 2 finishes
+                },
                 run_at=now + self._second_pass,
                 dedupe_key=f"erase:{h}:2",
                 max_attempts=10,
