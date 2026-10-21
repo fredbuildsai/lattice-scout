@@ -49,6 +49,15 @@ class Settings(BaseSettings):
     run_budget_usd: Decimal = Decimal("1.50")
     run_max_openalex_calls: int = 400
     run_max_corpus: int = 2500
+    run_max_per_day: int = 5
+    account_daily_budget_usd: Decimal = Decimal("5.00")
+    run_llm_concurrency: int = 3
+    run_openalex_concurrency: int = 4
+    run_analyse_max_calls: int = 2
+    run_max_resolve: int = 20
+    run_stall_minutes: int = 20
+    run_max_executions: int = 8
+    fields_config: Path = Path("config/fields.yaml")
     match_max_open_per_week: int = 3
     match_expiry_days: int = 21
     match_exclude_coauthors: bool = True

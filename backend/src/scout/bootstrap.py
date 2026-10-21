@@ -6,6 +6,7 @@ the default install, tests and CI never import them.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from typing import Protocol, assert_never, runtime_checkable
@@ -19,6 +20,15 @@ from scout.adapters.observability.usage_meter import BufferedUsageMeter
 from scout.adapters.persistence.db import Database
 from scout.adapters.queue.postgres import PostgresJobQueue
 from scout.adapters.storage.local import LocalFileStorage
+from scout.discovery.adapters.agents import AgentsDiscovery
+from scout.discovery.adapters.fields import load_field
+from scout.discovery.adapters.sql import SqlDiscoveryUnitOfWork, SqlRunLedger
+from scout.discovery.application.pipeline import PipelineConfig
+from scout.discovery.application.run_analysis import RunAnalysis, SweepRuns
+from scout.discovery.application.sources import ProfileSourceAdapter, VaultSourceAdapter
+from scout.discovery.application.start import StartAnalysisRun, StartConfig
+from scout.discovery.ports.repos import DiscoveryUnitOfWork
+from scout.discovery.ports.sources import VaultSource
 from scout.identity.adapters.dev_auth import DevKeyPair, DevTokenIssuer, DevVerifier
 from scout.identity.adapters.jwks import HttpJwksFetcher, SupabaseJwksVerifier
 from scout.identity.adapters.sql import SqlIdentityUnitOfWork
@@ -85,6 +95,11 @@ class Container:
     ingest_document: IngestDocument
     delete_document_job: DeleteDocumentJob
     sweep_vault: SweepVault
+    start_run: StartAnalysisRun
+    run_analysis: RunAnalysis
+    sweep_runs: SweepRuns
+    discovery_uow: Callable[[], DiscoveryUnitOfWork]
+    vault_source: VaultSource
     dev_tokens: DevTokenIssuer | None = None
 
 
@@ -212,9 +227,13 @@ def build_container(
         timeout_s=settings.vault_extract_timeout_s, memory_mb=settings.vault_extract_memory_mb,
         max_pages=settings.vault_max_pages, max_chars=settings.vault_max_text_chars,
     )  # fmt: skip
+    discovery_uow = lambda: SqlDiscoveryUnitOfWork(db)  # noqa: E731
+    vault_service = VaultService(vault_uow, queue, clock, ids)
+    profile_service = ProfileService(lambda: SqlProfileUnitOfWork(db), literature, queue, clock, ids, cfg)
+    profile_source, vault_source = ProfileSourceAdapter(profile_service), VaultSourceAdapter(vault_service)
     return Container(
         storage=storage, agents=agents,
-        vault=VaultService(vault_uow, queue, clock, ids),
+        vault=vault_service,
         upload_document=UploadDocument(
             vault_uow, storage, queue, clock, ids, RetentionPolicy(settings.retention_policy),
             settings.vault_max_bytes, settings.vault_max_documents,
@@ -222,12 +241,33 @@ def build_container(
         ingest_document=IngestDocument(vault_uow, storage, extractor, extract_insights, clock),
         delete_document_job=DeleteDocumentJob(vault_uow, storage, clock),
         sweep_vault=SweepVault(vault_uow, queue, clock),
+        start_run=StartAnalysisRun(
+            discovery_uow, queue, profile_source, vault_source, clock, ids,
+            StartConfig(
+                settings.run_budget_usd, settings.account_daily_budget_usd, settings.run_max_per_day,
+                settings.run_max_openalex_calls, settings.run_max_corpus,
+            ),
+        ),
+        run_analysis=RunAnalysis(
+            discovery_uow, SqlRunLedger(db, clock), literature, AgentsDiscovery(agents), profile_source,
+            vault_source, load_field(resolve_path(settings.fields_config), settings.launch_field),
+            PipelineConfig(
+                settings.run_llm_concurrency, settings.run_openalex_concurrency, settings.run_analyse_max_calls,
+                max_resolve=settings.run_max_resolve,
+            ),
+            clock,
+        ),
+        sweep_runs=SweepRuns(
+            discovery_uow, queue, clock, stall_minutes=settings.run_stall_minutes,
+            max_executions=settings.run_max_executions,
+        ),
+        discovery_uow=discovery_uow, vault_source=vault_source,
 
         auth_verifier=verifier, dev_tokens=dev_tokens,
         literature=literature,
         job_queue=queue,
         identity=IdentityService(lambda: SqlIdentityUnitOfWork(db), clock, ids, settings.launch_field),
-        profile=ProfileService(lambda: SqlProfileUnitOfWork(db), literature, queue, clock, ids, cfg),
+        profile=profile_service,
         import_profile=ImportProfile(lambda: SqlProfileUnitOfWork(db), literature, clock, ids, cfg),
         settings=settings, clock=clock, ids=ids, db=db, prices=prices, usage_meter=usage, analytics=analytics,
         llm=llm,

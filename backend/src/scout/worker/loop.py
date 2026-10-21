@@ -124,6 +124,12 @@ def build_handlers(c: Container) -> dict[str, Handler]:
     async def vault_sweep(job: Job) -> dict[str, JsonValue]:
         return await c.sweep_vault.handle(job.payload, last_attempt=last(job))
 
+    async def discovery_run(job: Job) -> dict[str, JsonValue]:
+        return await c.run_analysis.handle(job.payload, last_attempt=last(job))
+
+    async def discovery_sweep(job: Job) -> dict[str, JsonValue]:
+        return await c.sweep_runs.handle(job.payload, last_attempt=last(job))
+
     return {
         **DEFAULT_HANDLERS,
         partitions.KIND: partitions.make_handler(c.db, c.clock, c.job_queue),
@@ -131,4 +137,6 @@ def build_handlers(c: Container) -> dict[str, Handler]:
         "vault.ingest": vault_ingest,
         "vault.delete": vault_delete,
         "vault.sweep": vault_sweep,
+        "discovery.run": discovery_run,
+        "discovery.sweep": discovery_sweep,
     }
