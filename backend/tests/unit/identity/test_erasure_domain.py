@@ -25,9 +25,9 @@ import pytest
 from hypothesis import given
 from hypothesis import strategies as st
 from pydantic import ValidationError
-from scout.identity.domain.erasure import ErasureSubject, subject_hash
 
 from scout.identity.domain.account import Account, AccountDeleted, ConsentRequiresMatching
+from scout.identity.domain.erasure import ErasureSubject, subject_hash
 from scout.shared import AccountId
 
 NOW = datetime(2026, 10, 24, 9, 0, tzinfo=UTC)

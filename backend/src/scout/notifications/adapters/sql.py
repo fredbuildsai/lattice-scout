@@ -23,7 +23,8 @@ class SqlNotificationStore:
             row = (
                 await s.execute(
                     text(
-                        "SELECT email_runs, email_matches, email_digest FROM notification_pref WHERE account_id = :a"
+                        "SELECT email_runs, email_matches, email_digest, analytics_opt_out FROM notification_pref "
+                        "WHERE account_id = :a"
                     ),
                     {"a": account_id},
                 )
@@ -35,15 +36,16 @@ class SqlNotificationStore:
         async with self._db.sessionmaker() as s, s.begin():
             await s.execute(
                 text(
-                    "INSERT INTO notification_pref (account_id, email_runs, email_matches, email_digest, updated_at) "
-                    "VALUES (:a, :r, :m, :d, :t) ON CONFLICT (account_id) DO UPDATE SET email_runs = :r, "
-                    "email_matches = :m, email_digest = :d, updated_at = :t"
+                    "INSERT INTO notification_pref (account_id, email_runs, email_matches, email_digest, analytics_opt_out, "
+                    "updated_at) VALUES (:a, :r, :m, :d, :o, :t) ON CONFLICT (account_id) DO UPDATE SET "
+                    "email_runs = :r, email_matches = :m, email_digest = :d, analytics_opt_out = :o, updated_at = :t"
                 ),
                 {
                     "a": account_id,
                     "r": prefs.email_runs,
                     "m": prefs.email_matches,
                     "d": prefs.email_digest,
+                    "o": prefs.analytics_opt_out,
                     "t": now,
                 },
             )

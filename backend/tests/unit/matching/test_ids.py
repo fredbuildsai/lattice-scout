@@ -13,8 +13,8 @@ from datetime import UTC, datetime
 from uuid import NAMESPACE_URL, UUID, uuid5
 
 import pytest
-from scout.matching.domain.ids import MATCHING_NS, idea_id, iso_week, match_id
 
+from scout.matching.domain.ids import MATCHING_NS, idea_id, iso_week, match_id
 from scout.shared import AccountId
 
 A = AccountId(UUID(int=1))

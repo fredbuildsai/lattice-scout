@@ -1,0 +1,29 @@
+name: Live eval (manual)
+# Needs repository secrets that the human adds: OPENAI_API_KEY, OPENALEX_API_KEY.
+# Spends real money and calls real services. Never runs on push; start it by hand.
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Type SPEND to confirm that this run calls paid APIs"
+        required: true
+
+jobs:
+  live-eval:
+    if: ${{ inputs.confirm == 'SPEND' }}
+    runs-on: ubuntu-latest
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      OPENALEX_API_KEY: ${{ secrets.OPENALEX_API_KEY }}
+      LLM_BACKEND: openai_direct
+      LITERATURE_BACKEND: openalex
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with: { python-version: "3.12" }
+      - run: uv sync --frozen --extra llm
+        working-directory: backend
+      - run: uv run python ../eval/run_eval.py --live
+        working-directory: backend
+      - uses: actions/upload-artifact@v4
+        with: { name: eval-report, path: eval/reports/ }

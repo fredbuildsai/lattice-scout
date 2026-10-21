@@ -28,6 +28,7 @@ from scout.api import (
 from scout.api.errors import install_error_handlers
 from scout.api.logging import configure_logging
 from scout.api.middleware import RequestContextMiddleware
+from scout.api.security_headers import SecurityHeadersMiddleware
 from scout.api.upload_guard import UploadGuard
 from scout.bootstrap import Container, build_container, close_container, start_container
 from scout.settings import get_settings
@@ -53,8 +54,19 @@ def create_app(container: Container | None = None) -> FastAPI:
         finally:
             await close_container(c)
 
-    app = FastAPI(title="Lattice Scout API", version="0.1.0", lifespan=lifespan)
+    prod = (container.settings if container else get_settings()).app_env == "prod"
+    app = FastAPI(
+        title="Lattice Scout API", version="0.1.0", lifespan=lifespan,
+        docs_url=None if prod else "/docs", redoc_url=None if prod else "/redoc",
+        openapi_url=None if prod else "/openapi.json",
+    )  # fmt: skip
     app.add_middleware(RequestContextMiddleware)
+    cfg = container.settings if container else get_settings()
+    app.add_middleware(
+        SecurityHeadersMiddleware,
+        hsts=cfg.app_env == "prod",
+        relaxed_paths=("/docs", "/redoc", "/openapi.json"),
+    )
     app.add_middleware(
         UploadGuard,
         path="/api/v1/documents",
@@ -63,8 +75,8 @@ def create_app(container: Container | None = None) -> FastAPI:
     app.add_middleware(
         CORSMiddleware,
         allow_origins=(container.settings if container else get_settings()).cors_origins,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+        allow_headers=["Authorization", "Content-Type", "X-Session-Id", "X-Page", "X-Request-Id"],
         expose_headers=["X-Request-Id"],
     )
     install_error_handlers(app)

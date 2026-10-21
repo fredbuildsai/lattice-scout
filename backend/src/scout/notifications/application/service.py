@@ -73,14 +73,16 @@ class Notifications:
         return await self._store.get_prefs(account_id)
 
     async def update_prefs(
-        self, account_id: AccountId, *, runs: bool | None, matches: bool | None, digest: bool | None
-    ) -> Prefs:
+        self, account_id: AccountId, *, runs: bool | None = None, matches: bool | None = None,
+        digest: bool | None = None, analytics_opt_out: bool | None = None,
+    ) -> Prefs:  # fmt: skip
         """Apply a partial update and return the result."""
         cur = await self._store.get_prefs(account_id)
         new = Prefs(
             email_runs=cur.email_runs if runs is None else runs,
             email_matches=cur.email_matches if matches is None else matches,
             email_digest=cur.email_digest if digest is None else digest,
+            analytics_opt_out=cur.analytics_opt_out if analytics_opt_out is None else analytics_opt_out,
         )
         await self._store.save_prefs(account_id, new, self._clock.now())
         return new

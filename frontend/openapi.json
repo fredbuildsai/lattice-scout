@@ -2236,6 +2236,17 @@
         "additionalProperties": false,
         "description": "Partial update.",
         "properties": {
+          "analytics_opt_out": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Analytics Opt Out"
+          },
           "email_digest": {
             "anyOf": [
               {
@@ -2276,6 +2287,11 @@
       "NotificationPrefsOut": {
         "description": "What Scout may e-mail.",
         "properties": {
+          "analytics_opt_out": {
+            "description": "True: Scout drops your product-analytics events.",
+            "title": "Analytics Opt Out",
+            "type": "boolean"
+          },
           "email_digest": {
             "description": "A weekly summary (off by default).",
             "title": "Email Digest",
@@ -2295,7 +2311,8 @@
         "required": [
           "email_runs",
           "email_matches",
-          "email_digest"
+          "email_digest",
+          "analytics_opt_out"
         ],
         "title": "NotificationPrefsOut",
         "type": "object"

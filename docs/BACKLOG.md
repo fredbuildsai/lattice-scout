@@ -70,3 +70,6 @@ Things that are wrong or unfinished in what already exists, as opposed to the id
 | F-43 | backend | M6: the weekly digest carries no counts. Decide whether a count of waiting suggestions is worth replaying the decline-secrecy rules in a matching port (DECISIONS 98). | low | open |
 | F-44 | ops | Magic-link mail branding is a Supabase dashboard setting: paste `docs/EMAIL_TEMPLATES.md` and set the sender (human step). | med | open |
 | F-45 | tests | `test_ensure_account_is_race_safe` failed once in a full run (unique violation on `account_email_key` when two first calls race) and passed on re-run and alone. `add_if_absent` handles the id conflict but a concurrent insert can still trip the e-mail index first; map it to a retry instead of `EmailInUse`. | med | open |
+| F-46 | tests | `eval/run_eval.py --live` is a stub (exit 2). Wire the real LLM and OpenAlex backends, add matching eval cases (F-40), then run the manual workflow `live-eval.yml`. | med | open |
+| F-47 | ops | No per-IP rate limit on `/events` and sign-in. Add it at the proxy or CDN, or as middleware. See docs/SECURITY.md. | med | open |
+| F-48 | backend | `analytics_opt_out` lives in `notification_pref` and `/me/notifications`. Split into a preferences or privacy context when the account aggregate is next touched. | low | open |

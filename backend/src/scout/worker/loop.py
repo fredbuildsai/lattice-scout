@@ -175,7 +175,9 @@ def build_handlers(c: Container) -> dict[str, Handler]:
 
     return {
         **DEFAULT_HANDLERS,
-        partitions.KIND: partitions.make_handler(c.db, c.clock, c.job_queue),
+        partitions.KIND: partitions.make_handler(
+            c.db, c.clock, c.job_queue, c.settings.analytics_retention_months
+        ),
         "profile.import": profile_import,
         "vault.ingest": vault_ingest,
         "vault.delete": vault_delete,

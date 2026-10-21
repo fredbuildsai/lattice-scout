@@ -18,7 +18,6 @@ from uuid import UUID
 from scout.matching.domain.enums import Action, CareerBand, Region, Side
 from scout.matching.domain.ids import match_id
 from scout.matching.domain.proposal import MatchProposal, PublicFacet, ScoreBasis, StoredRationale
-
 from scout.shared import AccountId, ScoutError
 
 A_ID = AccountId(UUID(int=1))

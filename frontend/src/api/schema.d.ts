@@ -1506,6 +1506,8 @@ export interface components {
          * @description Partial update.
          */
         NotificationPrefsIn: {
+            /** Analytics Opt Out */
+            analytics_opt_out?: boolean | null;
             /** Email Digest */
             email_digest?: boolean | null;
             /** Email Matches */
@@ -1518,6 +1520,11 @@ export interface components {
          * @description What Scout may e-mail.
          */
         NotificationPrefsOut: {
+            /**
+             * Analytics Opt Out
+             * @description True: Scout drops your product-analytics events.
+             */
+            analytics_opt_out: boolean;
             /**
              * Email Digest
              * @description A weekly summary (off by default).

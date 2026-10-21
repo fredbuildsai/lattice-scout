@@ -79,6 +79,9 @@ class Settings(BaseSettings):
     retention_policy: Literal["keep", "discard", "user_choice"] = "user_choice"
 
     analytics_enabled: bool = True
+    analytics_retention_months: int = (
+        13  # raw analytics, LLM and external-call rows older than this are dropped
+    )
     analytics_flush_ms: int = 2000
     analytics_retention_days: int = 395
     usage_flush_ms: int = 2000
@@ -143,6 +146,8 @@ class Settings(BaseSettings):
                 problems.append("EMAIL_PROVIDER=console is refused when APP_ENV=prod")
             if self.storage_backend == "local":
                 problems.append("STORAGE_BACKEND=local is refused when APP_ENV=prod")
+            if "*" in self.cors_origins or any(o.startswith("http://") for o in self.cors_origins):
+                problems.append("CORS_ORIGINS must be https origins without '*' when APP_ENV=prod")
             if self.audit_hash_key.get_secret_value() == "dev-audit-hash-key-change-me":
                 problems.append("AUDIT_HASH_KEY must be set when APP_ENV=prod")
         if self.storage_backend == "supabase" and not (self.supabase_url and self.supabase_service_role_key):

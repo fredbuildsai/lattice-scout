@@ -59,6 +59,12 @@ def _metrics(mod: ModuleType, run, themes: list[list[str]], seconds: float) -> d
 
 async def main() -> int:
     """Run all cases; return the process exit code."""
+    if "--live" in sys.argv:
+        print(
+            "Live eval is not implemented yet: the runner uses fixtures only (BACKLOG F-46). "
+            "Wire the real backends here, then run the manual workflow."
+        )
+        return 2
     mod = _load_runner()
     rows = []
     for case in mod.load_cases():

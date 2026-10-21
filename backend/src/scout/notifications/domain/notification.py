@@ -22,6 +22,7 @@ class Prefs:
     email_runs: bool = True
     email_matches: bool = True
     email_digest: bool = False
+    analytics_opt_out: bool = False  # drop this account's product-analytics events
 
     def allows(self, template: Template) -> bool:
         """Whether ``template`` may be sent."""
