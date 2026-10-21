@@ -4,6 +4,26 @@
  */
 
 export interface paths {
+    "/api/v1/admin/claims": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Review claims of every status
+         * @description Vault quotes are hidden unless `ADMIN_CLAIMS_SHOW_VAULT_QUOTES=true`. Each call is audited.
+         */
+        get: operations["list_claims_api_v1_admin_claims_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/dev/login": {
         parameters: {
             query?: never;
@@ -96,6 +116,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/evidence/{evidence_id}/open": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Open the source behind a citation
+         * @description Vault passages are read live: a deleted document answers 404; under `discard` only the quote is returned.
+         */
+        get: operations["open_evidence_api_v1_evidence__evidence_id__open_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/me": {
         parameters: {
             query?: never;
@@ -134,6 +174,50 @@ export interface paths {
          * @description Turning matching off also turns vault signals off; vault signals need matching.
          */
         patch: operations["patch_consent_api_v1_me_consent_patch"];
+        trace?: never;
+    };
+    "/api/v1/opportunities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Your opportunities
+         * @description Shown and saved by default, best rank first. Dismissed ones only with `status=dismissed`.
+         */
+        get: operations["list_opportunities_api_v1_opportunities_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/opportunities/{opportunity_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * One opportunity with its evidence
+         * @description Verified claims only, each with its verified citations.
+         */
+        get: operations["get_opportunity_api_v1_opportunities__opportunity_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Save, dismiss or restore an opportunity
+         * @description Any order among `shown`, `saved` and `dismissed`.
+         */
+        patch: operations["patch_opportunity_api_v1_opportunities__opportunity_id__patch"];
         trace?: never;
     };
     "/api/v1/profile": {
@@ -216,6 +300,70 @@ export interface paths {
         patch: operations["patch_work_api_v1_profile_works__work_id__patch"];
         trace?: never;
     };
+    "/api/v1/runs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Your latest runs
+         * @description Newest first, at most 20.
+         */
+        get: operations["list_runs_api_v1_runs_get"];
+        put?: never;
+        /**
+         * Start a gap-analysis run
+         * @description The run is queued at once; poll `GET /runs/{id}` every few seconds.
+         */
+        post: operations["start_run_api_v1_runs_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/runs/{run_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * One run with its progress
+         * @description Status, phase, per-step progress, degradations and counts.
+         */
+        get: operations["get_run_api_v1_runs__run_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/runs/{run_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Stop a run
+         * @description A queued run is cancelled at once; a running one stops at its next step or model call.
+         */
+        post: operations["cancel_run_api_v1_runs__run_id__cancel_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -260,6 +408,79 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /**
+         * AdminClaimListOut
+         * @description A page of claims.
+         */
+        AdminClaimListOut: {
+            /** Items */
+            items: components["schemas"]["AdminClaimOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /**
+         * AdminClaimOut
+         * @description Claim row of the quality review (any status).
+         */
+        AdminClaimOut: {
+            /** Agent */
+            agent: string | null;
+            /**
+             * Claim Id
+             * Format: uuid
+             */
+            claim_id: string;
+            /** Critic Reason */
+            critic_reason: string | null;
+            /** Critic Verdict */
+            critic_verdict: string | null;
+            /** Evidence */
+            evidence: components["schemas"]["AdminEvidenceOut"][];
+            /** Model */
+            model: string | null;
+            /**
+             * Opportunity Id
+             * Format: uuid
+             */
+            opportunity_id: string;
+            /** Opportunity Status */
+            opportunity_status: string;
+            /** Prompt Version */
+            prompt_version: string | null;
+            /**
+             * Run Id
+             * Format: uuid
+             */
+            run_id: string;
+            /** Section */
+            section: string;
+            /** Set By */
+            set_by: string;
+            /** Status */
+            status: string;
+            /** Status Reason */
+            status_reason: string | null;
+            /** Text */
+            text: string;
+        };
+        /**
+         * AdminEvidenceOut
+         * @description Evidence row of the quality review.
+         */
+        AdminEvidenceOut: {
+            /** Check */
+            check: string | null;
+            /** Label */
+            label: string;
+            /** Quote */
+            quote: string | null;
+            /** Ref */
+            ref: string;
+            /** Source Type */
+            source_type: string;
+            /** Verified */
+            verified: boolean | null;
+        };
         /** Body_upload_document_api_v1_documents_post */
         Body_upload_document_api_v1_documents_post: {
             /**
@@ -346,6 +567,16 @@ export interface components {
             groups: components["schemas"]["CandidateGroupOut"][];
         };
         /**
+         * ChecklistItemOut
+         * @description A readiness item.
+         */
+        ChecklistItemOut: {
+            /** Item */
+            item: string;
+            /** Present */
+            present: boolean;
+        };
+        /**
          * ClaimIn
          * @description Claim one or more OpenAlex records as your profile.
          */
@@ -361,6 +592,27 @@ export interface components {
              */
             primary_author_id?: string | null;
         };
+        /**
+         * ClaimOut
+         * @description A verified claim and the citations that carry it.
+         */
+        ClaimOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Markers */
+            markers: components["schemas"]["EvidenceOut"][];
+            /** Text */
+            text: string;
+        };
+        /**
+         * ClaimStatus
+         * @description Claim status. Only ``verified`` claims are ever visible to users.
+         * @enum {string}
+         */
+        ClaimStatus: "pending" | "verified" | "unverified" | "contradicted" | "rejected_by_critic";
         /**
          * ConsentIn
          * @description Partial update of consents.
@@ -391,6 +643,16 @@ export interface components {
              * @enum {string}
              */
             status: "available" | "planned" | "partial";
+        };
+        /**
+         * DegradedOut
+         * @description A step that finished with less than full output.
+         */
+        DegradedOut: {
+            /** Reason */
+            reason: string;
+            /** Step */
+            step: string;
         };
         /**
          * DevLoginRequest
@@ -576,6 +838,102 @@ export interface components {
              */
             rejected: components["schemas"]["Rejection"][];
         };
+        /**
+         * EvidenceOpenOut
+         * @description The source behind a citation, resolved live.
+         */
+        EvidenceOpenOut: {
+            /** Abstract */
+            abstract?: string | null;
+            /** Count */
+            count?: number | null;
+            /** Document Id */
+            document_id?: string | null;
+            /** Doi */
+            doi?: string | null;
+            /** Filename */
+            filename?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "literature" | "profile" | "vault" | "count";
+            /**
+             * Original Available
+             * @default false
+             */
+            original_available: boolean;
+            /** Page From */
+            page_from?: number | null;
+            /** Page To */
+            page_to?: number | null;
+            /** Passage */
+            passage?: string | null;
+            /** Query */
+            query?: string | null;
+            /** Quote */
+            quote?: string | null;
+            /** Since Year */
+            since_year?: number | null;
+            /** Title */
+            title?: string | null;
+            /** Work Id */
+            work_id?: string | null;
+            /** Year */
+            year?: number | null;
+        };
+        /**
+         * EvidenceOut
+         * @description A verified citation. ``source_type`` says which fields are set.
+         */
+        EvidenceOut: {
+            /** Authors */
+            authors?: string[];
+            /** Count */
+            count?: number | null;
+            /** Document Id */
+            document_id?: string | null;
+            /** Doi */
+            doi?: string | null;
+            /** Filename */
+            filename?: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Original Available
+             * @default false
+             */
+            original_available: boolean;
+            /** Page From */
+            page_from?: number | null;
+            /** Page To */
+            page_to?: number | null;
+            /** Query */
+            query?: string | null;
+            /** Quote */
+            quote?: string | null;
+            /** Since Year */
+            since_year?: number | null;
+            /**
+             * Source Type
+             * @enum {string}
+             */
+            source_type: "literature" | "profile" | "vault" | "count";
+            /** Title */
+            title?: string | null;
+            /** Work Id */
+            work_id?: string | null;
+            /** Year */
+            year?: number | null;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -704,6 +1062,20 @@ export interface components {
             refs: components["schemas"]["RefOut"][];
         };
         /**
+         * NoveltyOut
+         * @description The measured count behind the novelty score.
+         */
+        NoveltyOut: {
+            /** Band */
+            band: string | null;
+            /** Count */
+            count: number | null;
+            /** Query */
+            query: string | null;
+            /** Since Year */
+            since_year: number | null;
+        };
+        /**
          * ObjectionOut
          * @description A reviewer objection: ``quote`` is verbatim from the document.
          */
@@ -740,6 +1112,119 @@ export interface components {
              * @description Works attributed to this record.
              */
             works_count: number;
+        };
+        /**
+         * OpportunityCardOut
+         * @description List item.
+         */
+        OpportunityCardOut: {
+            /** Clusters */
+            clusters: string[];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "white_spot" | "synergy" | "resubmission";
+            novelty: components["schemas"]["NoveltyOut"];
+            /**
+             * Run Id
+             * Format: uuid
+             */
+            run_id: string;
+            scores: components["schemas"]["ScoresOut"] | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "shown" | "saved" | "dismissed";
+            /** Title */
+            title: string;
+            /** Verified Sources */
+            verified_sources: number;
+            why: components["schemas"]["ClaimOut"] | null;
+        };
+        /**
+         * OpportunityDetailOut
+         * @description Detail page.
+         */
+        OpportunityDetailOut: {
+            /** Clusters */
+            clusters: string[];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Effort Estimate */
+            effort_estimate: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "white_spot" | "synergy" | "resubmission";
+            /** Next Steps */
+            next_steps: string[];
+            novelty: components["schemas"]["NoveltyOut"];
+            /** Objection */
+            objection: components["schemas"]["ClaimOut"][];
+            /** Rationale */
+            rationale: components["schemas"]["ClaimOut"][];
+            /** Readiness */
+            readiness: components["schemas"]["ChecklistItemOut"][];
+            /**
+             * Run Id
+             * Format: uuid
+             */
+            run_id: string;
+            /** Score Claims */
+            score_claims: components["schemas"]["ClaimOut"][];
+            scores: components["schemas"]["ScoresOut"] | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "shown" | "saved" | "dismissed";
+            /** Title */
+            title: string;
+            /** Verified Sources */
+            verified_sources: number;
+            why: components["schemas"]["ClaimOut"] | null;
+        };
+        /**
+         * OpportunityListOut
+         * @description A page of opportunity cards.
+         */
+        OpportunityListOut: {
+            /** Items */
+            items: components["schemas"]["OpportunityCardOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /**
+         * OpportunityPatchIn
+         * @description The owner's choice.
+         */
+        OpportunityPatchIn: {
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "shown" | "saved" | "dismissed";
         };
         /**
          * ProfileOut
@@ -904,12 +1389,126 @@ export interface components {
          */
         Retention: "keep" | "discard";
         /**
+         * RunCountsOut
+         * @description What the run found so far.
+         */
+        RunCountsOut: {
+            /** Candidates */
+            candidates: number;
+            /** Clusters */
+            clusters: number;
+            /** Corpus */
+            corpus: number;
+            /** Drafts */
+            drafts: number;
+            /** Shown */
+            shown: number;
+        };
+        /**
+         * RunIn
+         * @description Start a run.
+         */
+        RunIn: {
+            /**
+             * Document Ids
+             * @description Vault documents to include.
+             */
+            document_ids?: string[];
+        };
+        /**
+         * RunListOut
+         * @description Latest runs.
+         */
+        RunListOut: {
+            /** Items */
+            items: components["schemas"]["RunOut"][];
+        };
+        /**
+         * RunOut
+         * @description A run. Poll it every 3 seconds while ``status`` is ``queued`` or ``running``.
+         */
+        RunOut: {
+            /** Budget Usd */
+            budget_usd: string;
+            /** Cost Usd */
+            cost_usd: string;
+            counts: components["schemas"]["RunCountsOut"];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Degraded */
+            degraded: components["schemas"]["DegradedOut"][];
+            /** Document Ids */
+            document_ids: string[];
+            /** Error Code */
+            error_code: string | null;
+            /** Finished At */
+            finished_at: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Openalex Calls */
+            openalex_calls: number;
+            /** Openalex Cap */
+            openalex_cap: number;
+            /** Partial */
+            partial: boolean;
+            /** Percent */
+            percent: number;
+            /** Phase */
+            phase: string;
+            /** Started At */
+            started_at: string | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "queued" | "running" | "done" | "failed" | "cancelled";
+            /** Step */
+            step: string | null;
+            /** Steps */
+            steps: components["schemas"]["StepOut"][];
+        };
+        /**
+         * ScoresOut
+         * @description Opportunity scores in [0, 1].
+         */
+        ScoresOut: {
+            /** Effort */
+            effort: number;
+            /** Fit */
+            fit: number;
+            /** Novelty */
+            novelty: number;
+            /** Readiness */
+            readiness: number;
+        };
+        /**
          * Status
          * @description Simple status body.
          */
         Status: {
             /** Status */
             status: string;
+        };
+        /**
+         * StepOut
+         * @description One step of the progress list.
+         */
+        StepOut: {
+            /** Name */
+            name: string;
+            /** Progress */
+            progress: number;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "pending" | "running" | "done" | "degraded";
         };
         /**
          * TopicOut
@@ -1048,6 +1647,51 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    list_claims_api_v1_admin_claims_get: {
+        parameters: {
+            query?: {
+                status?: components["schemas"]["ClaimStatus"] | null;
+                reason?: string | null;
+                agent?: string | null;
+                prompt_version?: string | null;
+                model?: string | null;
+                run_id?: string | null;
+                cursor?: string | null;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminClaimListOut"];
+                };
+            };
+            /** @description Admin role required. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     dev_login_api_v1_dev_login_post: {
         parameters: {
             query?: never;
@@ -1282,6 +1926,44 @@ export interface operations {
             };
         };
     };
+    open_evidence_api_v1_evidence__evidence_id__open_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                evidence_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvidenceOpenOut"];
+                };
+            };
+            /** @description Not yours, not visible, or the source is gone. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_me_api_v1_me_get: {
         parameters: {
             query?: never;
@@ -1323,6 +2005,128 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["MeOut"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_opportunities_api_v1_opportunities_get: {
+        parameters: {
+            query?: {
+                run_id?: string | null;
+                status?: ("shown" | "saved" | "dismissed") | null;
+                kind?: ("white_spot" | "synergy" | "resubmission") | null;
+                cursor?: string | null;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpportunityListOut"];
+                };
+            };
+            /** @description Not your run. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_opportunity_api_v1_opportunities__opportunity_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                opportunity_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpportunityDetailOut"];
+                };
+            };
+            /** @description Not yours, or not visible. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_opportunity_api_v1_opportunities__opportunity_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                opportunity_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OpportunityPatchIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpportunityCardOut"];
+                };
+            };
+            /** @description Not yours, or not visible. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {
@@ -1445,6 +2249,161 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["WorkOut"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_runs_api_v1_runs_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunListOut"];
+                };
+            };
+        };
+    };
+    start_run_api_v1_runs_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RunIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunOut"];
+                };
+            };
+            /** @description A document is not yours. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description `run_in_progress` or `profile_required`. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description `document_not_ready` or `validation_failed` (at most 10 different documents). */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description `run_limit_reached` or `daily_budget_reached`. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    get_run_api_v1_runs__run_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunOut"];
+                };
+            };
+            /** @description Not your run. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    cancel_run_api_v1_runs__run_id__cancel_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunOut"];
+                };
+            };
+            /** @description Not your run. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The run already ended. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

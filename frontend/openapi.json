@@ -1,6 +1,227 @@
 {
   "components": {
     "schemas": {
+      "AdminClaimListOut": {
+        "description": "A page of claims.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AdminClaimOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "AdminClaimListOut",
+        "type": "object"
+      },
+      "AdminClaimOut": {
+        "description": "Claim row of the quality review (any status).",
+        "properties": {
+          "agent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agent"
+          },
+          "claim_id": {
+            "format": "uuid",
+            "title": "Claim Id",
+            "type": "string"
+          },
+          "critic_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Critic Reason"
+          },
+          "critic_verdict": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Critic Verdict"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/AdminEvidenceOut"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "opportunity_id": {
+            "format": "uuid",
+            "title": "Opportunity Id",
+            "type": "string"
+          },
+          "opportunity_status": {
+            "title": "Opportunity Status",
+            "type": "string"
+          },
+          "prompt_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prompt Version"
+          },
+          "run_id": {
+            "format": "uuid",
+            "title": "Run Id",
+            "type": "string"
+          },
+          "section": {
+            "title": "Section",
+            "type": "string"
+          },
+          "set_by": {
+            "title": "Set By",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "status_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status Reason"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "claim_id",
+          "opportunity_id",
+          "run_id",
+          "section",
+          "text",
+          "status",
+          "status_reason",
+          "set_by",
+          "agent",
+          "prompt_version",
+          "model",
+          "critic_verdict",
+          "critic_reason",
+          "opportunity_status",
+          "evidence"
+        ],
+        "title": "AdminClaimOut",
+        "type": "object"
+      },
+      "AdminEvidenceOut": {
+        "description": "Evidence row of the quality review.",
+        "properties": {
+          "check": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Check"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "quote": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quote"
+          },
+          "ref": {
+            "title": "Ref",
+            "type": "string"
+          },
+          "source_type": {
+            "title": "Source Type",
+            "type": "string"
+          },
+          "verified": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verified"
+          }
+        },
+        "required": [
+          "source_type",
+          "label",
+          "ref",
+          "verified",
+          "check",
+          "quote"
+        ],
+        "title": "AdminEvidenceOut",
+        "type": "object"
+      },
       "Body_upload_document_api_v1_documents_post": {
         "properties": {
           "file": {
@@ -149,6 +370,25 @@
         "title": "CandidatesOut",
         "type": "object"
       },
+      "ChecklistItemOut": {
+        "description": "A readiness item.",
+        "properties": {
+          "item": {
+            "title": "Item",
+            "type": "string"
+          },
+          "present": {
+            "title": "Present",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "item",
+          "present"
+        ],
+        "title": "ChecklistItemOut",
+        "type": "object"
+      },
       "ClaimIn": {
         "additionalProperties": false,
         "description": "Claim one or more OpenAlex records as your profile.",
@@ -181,6 +421,46 @@
         ],
         "title": "ClaimIn",
         "type": "object"
+      },
+      "ClaimOut": {
+        "description": "A verified claim and the citations that carry it.",
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "markers": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceOut"
+            },
+            "title": "Markers",
+            "type": "array"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "text",
+          "markers"
+        ],
+        "title": "ClaimOut",
+        "type": "object"
+      },
+      "ClaimStatus": {
+        "description": "Claim status. Only ``verified`` claims are ever visible to users.",
+        "enum": [
+          "pending",
+          "verified",
+          "unverified",
+          "contradicted",
+          "rejected_by_critic"
+        ],
+        "title": "ClaimStatus",
+        "type": "string"
       },
       "ConsentIn": {
         "additionalProperties": false,
@@ -244,6 +524,25 @@
           "refs"
         ],
         "title": "DatasetOut",
+        "type": "object"
+      },
+      "DegradedOut": {
+        "description": "A step that finished with less than full output.",
+        "properties": {
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          },
+          "step": {
+            "title": "Step",
+            "type": "string"
+          }
+        },
+        "required": [
+          "step",
+          "reason"
+        ],
+        "title": "DegradedOut",
         "type": "object"
       },
       "DevLoginRequest": {
@@ -681,6 +980,363 @@
         "title": "EventsAccepted",
         "type": "object"
       },
+      "EvidenceOpenOut": {
+        "description": "The source behind a citation, resolved live.",
+        "properties": {
+          "abstract": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Abstract"
+          },
+          "count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Count"
+          },
+          "document_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Document Id"
+          },
+          "doi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Doi"
+          },
+          "filename": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Filename"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "literature",
+              "profile",
+              "vault",
+              "count"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "original_available": {
+            "default": false,
+            "title": "Original Available",
+            "type": "boolean"
+          },
+          "page_from": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page From"
+          },
+          "page_to": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page To"
+          },
+          "passage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Passage"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Query"
+          },
+          "quote": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quote"
+          },
+          "since_year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Since Year"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "work_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Work Id"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          }
+        },
+        "required": [
+          "kind",
+          "id"
+        ],
+        "title": "EvidenceOpenOut",
+        "type": "object"
+      },
+      "EvidenceOut": {
+        "description": "A verified citation. ``source_type`` says which fields are set.",
+        "properties": {
+          "authors": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Authors",
+            "type": "array"
+          },
+          "count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Count"
+          },
+          "document_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Document Id"
+          },
+          "doi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Doi"
+          },
+          "filename": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Filename"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "original_available": {
+            "default": false,
+            "title": "Original Available",
+            "type": "boolean"
+          },
+          "page_from": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page From"
+          },
+          "page_to": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page To"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Query"
+          },
+          "quote": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quote"
+          },
+          "since_year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Since Year"
+          },
+          "source_type": {
+            "enum": [
+              "literature",
+              "profile",
+              "vault",
+              "count"
+            ],
+            "title": "Source Type",
+            "type": "string"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "work_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Work Id"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          }
+        },
+        "required": [
+          "id",
+          "source_type"
+        ],
+        "title": "EvidenceOut",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -953,6 +1609,63 @@
         "title": "MethodOut",
         "type": "object"
       },
+      "NoveltyOut": {
+        "description": "The measured count behind the novelty score.",
+        "properties": {
+          "band": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Band"
+          },
+          "count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Count"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Query"
+          },
+          "since_year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Since Year"
+          }
+        },
+        "required": [
+          "count",
+          "since_year",
+          "query",
+          "band"
+        ],
+        "title": "NoveltyOut",
+        "type": "object"
+      },
       "ObjectionOut": {
         "description": "A reviewer objection: ``quote`` is verbatim from the document.",
         "properties": {
@@ -1011,6 +1724,288 @@
           "works_count"
         ],
         "title": "OpenAlexIdOut",
+        "type": "object"
+      },
+      "OpportunityCardOut": {
+        "description": "List item.",
+        "properties": {
+          "clusters": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Clusters",
+            "type": "array"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "white_spot",
+              "synergy",
+              "resubmission"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "novelty": {
+            "$ref": "#/components/schemas/NoveltyOut"
+          },
+          "run_id": {
+            "format": "uuid",
+            "title": "Run Id",
+            "type": "string"
+          },
+          "scores": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScoresOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "enum": [
+              "shown",
+              "saved",
+              "dismissed"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "verified_sources": {
+            "title": "Verified Sources",
+            "type": "integer"
+          },
+          "why": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ClaimOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "run_id",
+          "kind",
+          "title",
+          "why",
+          "scores",
+          "novelty",
+          "status",
+          "verified_sources",
+          "clusters",
+          "created_at"
+        ],
+        "title": "OpportunityCardOut",
+        "type": "object"
+      },
+      "OpportunityDetailOut": {
+        "description": "Detail page.",
+        "properties": {
+          "clusters": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Clusters",
+            "type": "array"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "effort_estimate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effort Estimate"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "white_spot",
+              "synergy",
+              "resubmission"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "next_steps": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Next Steps",
+            "type": "array"
+          },
+          "novelty": {
+            "$ref": "#/components/schemas/NoveltyOut"
+          },
+          "objection": {
+            "items": {
+              "$ref": "#/components/schemas/ClaimOut"
+            },
+            "title": "Objection",
+            "type": "array"
+          },
+          "rationale": {
+            "items": {
+              "$ref": "#/components/schemas/ClaimOut"
+            },
+            "title": "Rationale",
+            "type": "array"
+          },
+          "readiness": {
+            "items": {
+              "$ref": "#/components/schemas/ChecklistItemOut"
+            },
+            "title": "Readiness",
+            "type": "array"
+          },
+          "run_id": {
+            "format": "uuid",
+            "title": "Run Id",
+            "type": "string"
+          },
+          "score_claims": {
+            "items": {
+              "$ref": "#/components/schemas/ClaimOut"
+            },
+            "title": "Score Claims",
+            "type": "array"
+          },
+          "scores": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScoresOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "enum": [
+              "shown",
+              "saved",
+              "dismissed"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "verified_sources": {
+            "title": "Verified Sources",
+            "type": "integer"
+          },
+          "why": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ClaimOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "run_id",
+          "kind",
+          "title",
+          "why",
+          "scores",
+          "novelty",
+          "status",
+          "verified_sources",
+          "clusters",
+          "created_at",
+          "rationale",
+          "objection",
+          "score_claims",
+          "next_steps",
+          "readiness",
+          "effort_estimate"
+        ],
+        "title": "OpportunityDetailOut",
+        "type": "object"
+      },
+      "OpportunityListOut": {
+        "description": "A page of opportunity cards.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/OpportunityCardOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "OpportunityListOut",
+        "type": "object"
+      },
+      "OpportunityPatchIn": {
+        "description": "The owner's choice.",
+        "properties": {
+          "status": {
+            "enum": [
+              "shown",
+              "saved",
+              "dismissed"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "OpportunityPatchIn",
         "type": "object"
       },
       "ProfileOut": {
@@ -1259,6 +2254,252 @@
         "title": "Retention",
         "type": "string"
       },
+      "RunCountsOut": {
+        "description": "What the run found so far.",
+        "properties": {
+          "candidates": {
+            "title": "Candidates",
+            "type": "integer"
+          },
+          "clusters": {
+            "title": "Clusters",
+            "type": "integer"
+          },
+          "corpus": {
+            "title": "Corpus",
+            "type": "integer"
+          },
+          "drafts": {
+            "title": "Drafts",
+            "type": "integer"
+          },
+          "shown": {
+            "title": "Shown",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "corpus",
+          "clusters",
+          "candidates",
+          "drafts",
+          "shown"
+        ],
+        "title": "RunCountsOut",
+        "type": "object"
+      },
+      "RunIn": {
+        "description": "Start a run.",
+        "properties": {
+          "document_ids": {
+            "description": "Vault documents to include.",
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Document Ids",
+            "type": "array"
+          }
+        },
+        "title": "RunIn",
+        "type": "object"
+      },
+      "RunListOut": {
+        "description": "Latest runs.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RunOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "RunListOut",
+        "type": "object"
+      },
+      "RunOut": {
+        "description": "A run. Poll it every 3 seconds while ``status`` is ``queued`` or ``running``.",
+        "properties": {
+          "budget_usd": {
+            "title": "Budget Usd",
+            "type": "string"
+          },
+          "cost_usd": {
+            "title": "Cost Usd",
+            "type": "string"
+          },
+          "counts": {
+            "$ref": "#/components/schemas/RunCountsOut"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "degraded": {
+            "items": {
+              "$ref": "#/components/schemas/DegradedOut"
+            },
+            "title": "Degraded",
+            "type": "array"
+          },
+          "document_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Document Ids",
+            "type": "array"
+          },
+          "error_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Code"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "openalex_calls": {
+            "title": "Openalex Calls",
+            "type": "integer"
+          },
+          "openalex_cap": {
+            "title": "Openalex Cap",
+            "type": "integer"
+          },
+          "partial": {
+            "title": "Partial",
+            "type": "boolean"
+          },
+          "percent": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Percent",
+            "type": "integer"
+          },
+          "phase": {
+            "title": "Phase",
+            "type": "string"
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At"
+          },
+          "status": {
+            "enum": [
+              "queued",
+              "running",
+              "done",
+              "failed",
+              "cancelled"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "step": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Step"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/StepOut"
+            },
+            "title": "Steps",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "phase",
+          "step",
+          "steps",
+          "percent",
+          "partial",
+          "degraded",
+          "error_code",
+          "document_ids",
+          "cost_usd",
+          "budget_usd",
+          "openalex_calls",
+          "openalex_cap",
+          "counts",
+          "created_at",
+          "started_at",
+          "finished_at"
+        ],
+        "title": "RunOut",
+        "type": "object"
+      },
+      "ScoresOut": {
+        "description": "Opportunity scores in [0, 1].",
+        "properties": {
+          "effort": {
+            "title": "Effort",
+            "type": "number"
+          },
+          "fit": {
+            "title": "Fit",
+            "type": "number"
+          },
+          "novelty": {
+            "title": "Novelty",
+            "type": "number"
+          },
+          "readiness": {
+            "title": "Readiness",
+            "type": "number"
+          }
+        },
+        "required": [
+          "fit",
+          "novelty",
+          "readiness",
+          "effort"
+        ],
+        "title": "ScoresOut",
+        "type": "object"
+      },
       "Status": {
         "description": "Simple status body.",
         "properties": {
@@ -1271,6 +2512,38 @@
           "status"
         ],
         "title": "Status",
+        "type": "object"
+      },
+      "StepOut": {
+        "description": "One step of the progress list.",
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "progress": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Progress",
+            "type": "number"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "running",
+              "done",
+              "degraded"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "status",
+          "progress"
+        ],
+        "title": "StepOut",
         "type": "object"
       },
       "TopicOut": {
@@ -1505,6 +2778,168 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/admin/claims": {
+      "get": {
+        "description": "Vault quotes are hidden unless `ADMIN_CLAIMS_SHOW_VAULT_QUOTES=true`. Each call is audited.",
+        "operationId": "list_claims_api_v1_admin_claims_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/ClaimStatus"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "reason",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Reason"
+            }
+          },
+          {
+            "in": "query",
+            "name": "agent",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Agent"
+            }
+          },
+          {
+            "in": "query",
+            "name": "prompt_version",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Prompt Version"
+            }
+          },
+          {
+            "in": "query",
+            "name": "model",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Model"
+            }
+          },
+          {
+            "in": "query",
+            "name": "run_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Run Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 50,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminClaimListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "description": "Admin role required."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Review claims of every status",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
     "/api/v1/dev/login": {
       "post": {
         "description": "Return a token without any credential check. Refused at startup when APP_ENV=prod.",
@@ -1770,6 +3205,53 @@
         ]
       }
     },
+    "/api/v1/evidence/{evidence_id}/open": {
+      "get": {
+        "description": "Vault passages are read live: a deleted document answers 404; under `discard` only the quote is returned.",
+        "operationId": "open_evidence_api_v1_evidence__evidence_id__open_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "evidence_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Evidence Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvidenceOpenOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not yours, not visible, or the source is gone."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Open the source behind a citation",
+        "tags": [
+          "discovery"
+        ]
+      }
+    },
     "/api/v1/me": {
       "get": {
         "description": "Return the signed-in account; creates it on the first call.",
@@ -1831,6 +3313,232 @@
         "summary": "Update matching and vault-signal consents",
         "tags": [
           "identity"
+        ]
+      }
+    },
+    "/api/v1/opportunities": {
+      "get": {
+        "description": "Shown and saved by default, best rank first. Dismissed ones only with `status=dismissed`.",
+        "operationId": "list_opportunities_api_v1_opportunities_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "run_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Run Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "shown",
+                    "saved",
+                    "dismissed"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "kind",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "white_spot",
+                    "synergy",
+                    "resubmission"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kind"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 50,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpportunityListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not your run."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Your opportunities",
+        "tags": [
+          "discovery"
+        ]
+      }
+    },
+    "/api/v1/opportunities/{opportunity_id}": {
+      "get": {
+        "description": "Verified claims only, each with its verified citations.",
+        "operationId": "get_opportunity_api_v1_opportunities__opportunity_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "opportunity_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Opportunity Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpportunityDetailOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not yours, or not visible."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "One opportunity with its evidence",
+        "tags": [
+          "discovery"
+        ]
+      },
+      "patch": {
+        "description": "Any order among `shown`, `saved` and `dismissed`.",
+        "operationId": "patch_opportunity_api_v1_opportunities__opportunity_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "opportunity_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Opportunity Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpportunityPatchIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpportunityCardOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not yours, or not visible."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Save, dismiss or restore an opportunity",
+        "tags": [
+          "discovery"
         ]
       }
     },
@@ -2015,6 +3723,167 @@
         "summary": "Include or exclude one of your works",
         "tags": [
           "profile"
+        ]
+      }
+    },
+    "/api/v1/runs": {
+      "get": {
+        "description": "Newest first, at most 20.",
+        "operationId": "list_runs_api_v1_runs_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Your latest runs",
+        "tags": [
+          "discovery"
+        ]
+      },
+      "post": {
+        "description": "The run is queued at once; poll `GET /runs/{id}` every few seconds.",
+        "operationId": "start_run_api_v1_runs_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "A document is not yours."
+          },
+          "409": {
+            "description": "`run_in_progress` or `profile_required`."
+          },
+          "422": {
+            "description": "`document_not_ready` or `validation_failed` (at most 10 different documents)."
+          },
+          "429": {
+            "description": "`run_limit_reached` or `daily_budget_reached`."
+          }
+        },
+        "summary": "Start a gap-analysis run",
+        "tags": [
+          "discovery"
+        ]
+      }
+    },
+    "/api/v1/runs/{run_id}": {
+      "get": {
+        "description": "Status, phase, per-step progress, degradations and counts.",
+        "operationId": "get_run_api_v1_runs__run_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not your run."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "One run with its progress",
+        "tags": [
+          "discovery"
+        ]
+      }
+    },
+    "/api/v1/runs/{run_id}/cancel": {
+      "post": {
+        "description": "A queued run is cancelled at once; a running one stops at its next step or model call.",
+        "operationId": "cancel_run_api_v1_runs__run_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not your run."
+          },
+          "409": {
+            "description": "The run already ended."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Stop a run",
+        "tags": [
+          "discovery"
         ]
       }
     },
