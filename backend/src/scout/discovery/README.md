@@ -133,7 +133,7 @@ Other rules that keep an opportunity off the screen:
 | `GET /evidence/{id}/open` | The source behind a citation (see below). |
 | `GET /admin/claims` | Claims of every status, for the admin role only (403 otherwise). Each request is audited (`admin.claims_viewed`). |
 
-Opening evidence (`EvidenceOpen`): for a vault passage under `keep`, the passage with its pages, read live from the document. Under `discard`, only the retained quote is returned, and `original_available` is false. A deleted document answers 404. Literature and profile evidence return a link (DOI, otherwise OpenAlex). Count evidence returns the OpenAlex search with the query and the date filter. No signed URLs are issued.
+Opening evidence (`EvidenceOpen`): for a vault passage under `keep`, the passage with its pages, read live from the document. Under `discard`, only the retained quote is returned, and `original_available` is false. A deleted document answers 404. Literature and profile evidence return the title, year, DOI, abstract and quote; count evidence returns the query, the count and the start year (no URL yet, BACKLOG F-29).
 
 Admin claims redact vault quotes unless `ADMIN_CLAIMS_SHOW_VAULT_QUOTES=true` (DECISIONS 70, Q2).
 
