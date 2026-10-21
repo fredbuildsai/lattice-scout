@@ -1,0 +1,35 @@
+# Pass/fail thresholds of the live model eval (eval/run_eval.py --live). Read by eval/live_eval/report.py.
+# Keys are `min_<metric>` / `max_<metric>`; <metric> is a name in the report ("schema_valid_rate", "bad_catch_rate", ...).
+# `default` applies to every agent that produces the metric; `agents.<Name>` adds or overrides.
+# Rates are over the completed calls of ONE deployment; with few cases a single miss moves a rate a lot, so read
+# the numbers, not only the verdict. Start here, tune after the first real run (docs/prompt-findings/README.md).
+
+min_calls_per_agent: 2          # fewer completed (not unavailable) calls: "insufficient_data", never a pass
+
+# Go / no-go (see report.verdict): a required agent that fails -> NO_GO. All required pass -> GO.
+# Required published agents pass but a required confidential-class agent was not evaluated -> GO_PUBLISHED_ONLY.
+required_published: [ClusterLabeler, MatchExplainer]
+required_confidential: [GapAnalyst, Critic, QueryPlanner, JointIdeas]
+
+default:
+  min_schema_valid_rate: 0.90   # parse + Pydantic ok, over calls that reached the model
+  max_unavailable_rate: 0.25    # provider errors / 429 exhaustion after the router's own retries
+  max_empty_rate: 0.15          # valid JSON with nothing in it (no queries, no ideas, ...)
+  min_rule_pass_rate: 0.80      # outputs with no rule failure (ids, quotes, anonymity, critic)
+  max_latency_p95_s: 120        # one call, including router retries
+  max_invented_id_count: 0      # an id (work, chunk, cluster, method, ref) that is not in the input
+
+agents:
+  Critic:
+    min_bad_catch_rate: 0.875   # planted-bad drafts not kept AND planted claim not verified (7 of 8)
+    min_good_keep_rate: 0.60    # good drafts kept with every claim verified
+  GapAnalyst:
+    min_quote_verbatim_rate: 0.90   # evidence quotes found verbatim (normalised) in their source
+  InsightExtractor:
+    min_quote_verbatim_rate: 0.90
+  MatchExplainer:
+    max_anonymity_leak_rate: 0.10   # texts with a year, id, DOI, URL, e-mail or 6 title words (the product drops them)
+  JointIdeas:
+    max_anonymity_leak_rate: 0.0    # also covers copied signal text (8 words or a number)
+  MethodExtractor:
+    min_expected_recall: 0.50

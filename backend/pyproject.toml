@@ -58,7 +58,7 @@ packages = ["src/scout"]
 testpaths = ["tests"]
 asyncio_mode = "auto"
 addopts = "-ra -m 'not needs_network and not needs_supabase'"
-pythonpath = ["."]
+pythonpath = [".", "../eval"]
 markers = [
   "integration: needs the VM's PostgreSQL 16",
   "needs_network: live external calls (skipped by default)",
@@ -68,7 +68,7 @@ markers = [
 [tool.ruff]
 line-length = 110
 target-version = "py312"
-src = ["src", "tests"]
+src = ["src", "tests", "../eval"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "ASYNC", "S", "RUF"]
@@ -80,7 +80,7 @@ ignore = ["S101", "RUF012", "RUF028", "E501"]
 
 [tool.mypy]
 python_version = "3.12"
-mypy_path = "src"
+mypy_path = "src:../eval"
 plugins = ["pydantic.mypy"]
 warn_unused_ignores = true
 ignore_missing_imports = true

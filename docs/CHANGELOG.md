@@ -4,6 +4,11 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 
 ## [Unreleased]
 
+### Added (live model eval, F-46, DECISIONS 131)
+- `eval/run_eval.py --live`: scores real free models (OpenRouter Nemotron/GLM, Groq gpt-oss, Mistral) on the nine runtime agents through the same agent factory and llm-router adapter as the app. Per deployment and agent: schema-valid rate, strict-schema acceptance with JSON-mode fallback, empty rate, latency p50/p95, retries, 429/quota events; rule checks for the Critic (8 planted-bad and 8 good drafts), evidence quotes, invented ids, MatchExplainer (12 cases) and JointIdeas anonymity. `eval/thresholds.yaml` sets pass/fail and the verdict `GO` / `GO_PUBLISHED_ONLY` / `NO_GO` / `INCOMPLETE` per deployment. Flags: `--deployment`, `--route`, `--agents`, `--runs`, `--max-calls` (hard cap per deployment, default 60), `--allow-synthetic-confidential`, `--out`, `--dry-run`. Free deployments only. Reports go to `eval/reports/live-<date>.json|md` and hold no prompt or model text.
+- Confidential-class agents run only on synthetic `[SAMPLE]` inputs built from public OpenAlex titles, and only on deployments the operator lists.
+- `.github/workflows/live-eval.yml` takes deployments, call cap, runs and the synthetic allowlist as inputs; `docs/prompt-findings/` holds the tuning loop and one file per agent for failing cases. How to run: OPERATIONS "Live model eval".
+
 ### Removed (F-3)
 - The floating "Ask Scout" button: the feature does not exist, so nothing for it is shown. The `scout_fab_clicked` event name stays in the analytics catalogue (shared with the backend) and is no longer emitted.
 
