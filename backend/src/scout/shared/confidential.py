@@ -27,6 +27,7 @@ class DataClass(StrEnum):
 
 _TAG = "data_class"
 _ITEMS = "confidential_items"
+_DERIVED = "derived"
 
 
 def published_field(**kwargs: Any) -> Any:
@@ -47,10 +48,25 @@ def mixed_items_field(**kwargs: Any) -> Any:
     return Field(json_schema_extra={_TAG: _ITEMS}, **kwargs)
 
 
+def derived_field(**kwargs: Any) -> Any:
+    """A field whose class follows its provenance: text that was written (by an agent) or selected (by code)
+    while confidential material was in play. It is published when the input is not ``tainted`` and confidential
+    when it is. Withholding resets it to its default; without a default the input has no published form and is
+    not sent to an unauthorized route."""
+    return Field(json_schema_extra={_TAG: _DERIVED}, **kwargs)
+
+
 class AgentInput(BaseModel):
     """Base of every agent input model. Each field must be declared with ``published_field``,
-    ``confidential_field`` or ``mixed_items_field``; a field without a declaration is rejected when the class
-    is defined, and treated as confidential by ``withhold_confidential`` if it ever slips through."""
+    ``confidential_field``, ``mixed_items_field`` or ``derived_field``; a field without a declaration is rejected
+    when the class is defined, and treated as confidential by ``withhold_confidential`` if it ever slips through.
+
+    ``tainted`` is set by the step that builds the input when the run used confidential material at any point
+    (provenance decides the class, not the field tag): every ``derived_field`` of a tainted input is confidential.
+    It is not part of the serialized prompt input.
+    """
+
+    tainted: bool = Field(default=False, exclude=True, json_schema_extra={_TAG: DataClass.PUBLISHED.value})
 
     @classmethod
     def __pydantic_init_subclass__(cls, **kwargs: Any) -> None:
@@ -67,15 +83,22 @@ def _tag(info: Any) -> str | None:
 
 def contains_confidential(model: BaseModel) -> bool:
     """Whether any confidential part of ``model`` is non-empty. A non-``AgentInput`` model counts as confidential;
-    an untagged field of any model counts as confidential. Pure."""
+    an untagged field of any model counts as confidential; a derived field counts when the input is tainted. Pure."""
     if not isinstance(model, AgentInput):
         return True
     for name, info in type(model).model_fields.items():
         tag, value = _tag(info), getattr(model, name)
-        if tag == _ITEMS:
+        if tag == DataClass.PUBLISHED.value:
+            continue
+        if tag == _DERIVED:
+            if model.tainted and value:
+                return True
+        elif tag == _ITEMS:
+            if value is None:
+                continue
             if any(getattr(i, "is_confidential", True) for i in value):
                 return True
-        elif tag != DataClass.PUBLISHED.value and value:
+        elif value:
             return True
     return False
 
@@ -91,15 +114,18 @@ def withhold_confidential[M: BaseModel](model: M) -> M:
     updates: dict[str, Any] = {}
     for name, info in type(model).model_fields.items():
         tag = _tag(info)
-        if tag == DataClass.PUBLISHED.value:
+        if tag == DataClass.PUBLISHED.value or (tag == _DERIVED and not model.tainted):
             continue
         if tag == _ITEMS:
-            updates[name] = [i for i in getattr(model, name) if not getattr(i, "is_confidential", True)]
+            updates[name] = [
+                i for i in (getattr(model, name) or []) if not getattr(i, "is_confidential", True)
+            ]
             continue
         default = info.get_default(call_default_factory=True)
         if default is PydanticUndefined:
             raise ValueError(f"confidential field {name} has no default")
         updates[name] = default
+    updates["tainted"] = False
     return model.model_copy(update=updates)
 
 
@@ -110,13 +136,12 @@ def input_for_route(
 
     Returns ``(input, class)`` or ``None`` when the call has no published form and must be skipped. An
     authorized route receives the input unchanged (class ``CONFIDENTIAL`` if it carries confidential parts,
-    else ``PUBLISHED``). An unauthorized route never receives a confidential part: they are withheld, and an
-    input that cannot be classified or emptied (not an ``AgentInput``, required confidential field) is not
+    else ``PUBLISHED``; ``agent_class`` does not matter, a non-``AgentInput`` always carries). An unauthorized
+    route never receives a confidential part: they are withheld, and an input that cannot be classified or emptied (not an ``AgentInput``, required confidential field) is not
     sent at all.
     """
-    carries = (agent_class is DataClass.CONFIDENTIAL and contains_confidential(model)) or (
-        agent_class is DataClass.PUBLISHED and isinstance(model, AgentInput) and contains_confidential(model)
-    )
+    del agent_class  # the parts decide, whatever the agent's declared class says (kept for the call sites)
+    carries = contains_confidential(model)
     if not carries:
         return model, DataClass.PUBLISHED
     if authorized:

@@ -64,10 +64,11 @@ stateDiagram-v2
 | `start_extraction` | `uploaded`, `extracting` | Re-running after a crash is allowed. |
 | `finish_extraction` | `extracting` | Sets pages, page basis, chunk count and extractor. |
 | `reject(code)` | `extracting` | Terminal. Records the code and an event. |
-| `start_analysis` | `extracted`, `analysing` | Re-running is allowed. |
+| `start_analysis` | `extracted`, `analysing`, `awaiting_approved_provider` | Re-running is allowed. |
 | `finish_analysis` | `analysing` | Sets `ready`, `kind_suggested` and `kind_reason`. |
 | `fail(code)` | `uploaded`, `extracting`, `extracted`, `analysing` | Only after the last job attempt, or from the sweeper. |
-| `mark_original_deleted` | `ready`, `failed`, `rejected`, and only for `discard` | Idempotent. Returns True the first time. |
+| `await_provider` | `extracted`, `analysing`, `awaiting_approved_provider` | No authorized endpoint (ADR 016): the document is kept and parked; the vault sweep requeues it when one exists. Not a failure. |
+| `mark_original_deleted` | `ready`, `failed`, `rejected`, `awaiting_approved_provider`, and only for `discard` | Idempotent. Returns True the first time. |
 | `set_kind` | any except `deleting` | The user's choice overrides the suggestion. |
 | `request_deletion` | any except `deleting` | Idempotent. Returns False when already deleting. |
 
@@ -80,7 +81,7 @@ The deployment setting `RETENTION_POLICY` is read when the API starts. Each uplo
 | Policy | Form field `keep_original` | Original bytes | Chunk text after a terminal status | What the API returns |
 |---|---|---|---|---|
 | `keep` | ignored | kept until `DELETE` | kept | `retention=keep`, `original_available=true` |
-| `discard` | ignored | deleted by the purge step right after `ready`, `failed` or `rejected` | `NULL`. Kept per chunk: verified objection quotes (at most 300 characters, `truncated` flag) and a summary of the verified items that cite it (at most 300 characters) | `retention=discard`, `original_available=false` |
+| `discard` | ignored | deleted by the purge step right after `ready`, `failed` or `rejected`, and as soon as extraction is done for a document that waits for a provider (`awaiting_approved_provider`: the extracted text stays until analysis, then it is redacted as below) | `NULL`. Kept per chunk: verified objection quotes (at most 300 characters, `truncated` flag) and a summary of the verified items that cite it (at most 300 characters) | `retention=discard`, `original_available=false` |
 | `user_choice` (default) | `true` keeps; absent or `false` discards | as chosen | as chosen | as chosen |
 
 Notes:

@@ -8,13 +8,13 @@ from fastapi import APIRouter, Depends, Request, Response
 
 from scout.api.deps import current_account, get_container
 from scout.api.schemas.discovery import (
-    PUBLISHED_ONLY_NOTE,
     DegradedOut,
     RunCountsOut,
     RunIn,
     RunListOut,
     RunOut,
     StepOut,
+    basis_note_for,
     basis_of,
 )
 from scout.discovery.application.service import RunView
@@ -35,7 +35,7 @@ def run_out(v: RunView) -> RunOut:
         error_code=r.error_code, document_ids=v.document_ids, cost_usd=str(r.spend.cost_usd),
         budget_usd=str(r.budget.usd), openalex_calls=r.spend.openalex_calls, openalex_cap=r.budget.openalex_calls,
         counts=RunCountsOut(**v.counts),
-        basis=basis_of(r.inputs.basis), basis_note=PUBLISHED_ONLY_NOTE if r.inputs.basis == "published_only" else None, created_at=r.created_at, started_at=r.started_at, finished_at=r.finished_at,
+        basis=basis_of(r.inputs.basis), basis_note=basis_note_for(r.inputs.basis, bool(r.inputs.documents)), created_at=r.created_at, started_at=r.started_at, finished_at=r.finished_at,
     )  # fmt: skip
 
 

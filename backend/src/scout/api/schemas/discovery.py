@@ -48,9 +48,18 @@ def basis_of(value: object) -> Literal["full", "published_only"]:
 
 
 PUBLISHED_ONLY_NOTE = (
-    "Based on your published work only; your uploaded documents were not used because no approved provider "
-    "is configured."
+    "Based on your published work only. Your uploaded documents were read on our server but not sent to any AI "
+    "model, because no approved AI provider covers every step."
 )
+PUBLISHED_ONLY_NOTE_NO_DOCUMENTS = "Based on your published work only."
+
+
+def basis_note_for(basis: object, had_documents: bool) -> str | None:
+    """The fixed note for a published-only analysis (``None`` for a full one). It mentions documents only when the
+    run had some, so a user who uploaded nothing is not told their documents were left out."""
+    if basis != "published_only":
+        return None
+    return PUBLISHED_ONLY_NOTE if had_documents else PUBLISHED_ONLY_NOTE_NO_DOCUMENTS
 
 
 class RunOut(BaseModel):

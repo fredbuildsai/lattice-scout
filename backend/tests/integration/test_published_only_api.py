@@ -14,7 +14,7 @@ from tests.integration.test_discovery_fixtures import CASES
 from tests.integration.test_vault_api import PROPOSAL_PDF
 
 from scout.api.app import create_app
-from scout.api.schemas.discovery import PUBLISHED_ONLY_NOTE
+from scout.api.schemas.discovery import PUBLISHED_ONLY_NOTE_NO_DOCUMENTS
 from scout.bootstrap import build_container
 from scout.settings import Settings
 from scout.shared import FixedClock
@@ -87,7 +87,7 @@ def test_documents_wait_and_the_run_finishes_on_published_data_with_the_note(
     assert (
         run["status"] == "done"
         and run["basis"] == "published_only"
-        and run["basis_note"] == PUBLISHED_ONLY_NOTE
+        and run["basis_note"] == PUBLISHED_ONLY_NOTE_NO_DOCUMENTS  # started without documents
     )
     cards = client.get("/api/v1/opportunities", params={"run_id": run["id"]}, headers=h).json()["items"]
     assert cards and all(c["basis"] == "published_only" and c["basis_note"] for c in cards)

@@ -109,6 +109,14 @@ class StepContext:
         labelled = tuple((d.label, d.document_id) for d in run.inputs.documents)
         return await self.vault.run_material(self.owner_id, labelled) if labelled else []
 
+    @staticmethod
+    def tainted(run: AnalysisRun) -> bool:
+        """Whether text this run produced or selected may derive from vault material (ADR 016, provenance).
+
+        True once the run was started on a full basis with documents, whatever the authorization is now: drafts
+        written while the vault was in play stay confidential after authorization is withdrawn."""
+        return run.inputs.basis != PUBLISHED_ONLY and bool(run.inputs.documents)
+
     def basis(self) -> str:
         """``published_only`` when confidential (vault) material is left out of this run, else ``full``."""
         return "full" if self.agents.confidential_allowed() else PUBLISHED_ONLY

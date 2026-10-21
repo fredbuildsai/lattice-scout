@@ -47,7 +47,9 @@ async def fail_document(
         now = clock.now()
         doc.fail(code, now)
         await uow.documents.save(doc)
-        if doc.needs_purge:
+        if (
+            doc.retention is Retention.DISCARD
+        ):  # the original may already be gone (it is purged while waiting)
             await uow.chunks.redact(document_id, {}, now)
         await uow.commit()
         return True
@@ -161,7 +163,7 @@ class IngestDocument:
             now = self._clock.now()
             cur.reject(code, now)
             await uow.documents.save(cur)
-            if cur.needs_purge:
+            if cur.retention is Retention.DISCARD:
                 await uow.chunks.redact(document_id, {}, now)
             await uow.audit.add(
                 AuditEntry(
@@ -186,6 +188,8 @@ class IngestDocument:
             await uow.documents.save(cur)
             await uow.commit()
         log.info("vault.awaiting_approved_provider", document_id=str(doc.id))
+        # "Discard original" holds while waiting: the file goes now, the extracted text stays until analysis.
+        await self._purge(await self._load(doc.id))
         return {"status": DocStatus.AWAITING_PROVIDER.value}
 
     async def _analyse(self, doc: Document, ctx: CallContext, phase: _Phase) -> Result | None:
@@ -214,7 +218,7 @@ class IngestDocument:
             cur.finish_analysis(stored.kind_suggested, stored.kind_reason, now)
             await uow.documents.save(cur)
             if (
-                cur.needs_purge
+                cur.retention is Retention.DISCARD
             ):  # discard: text is replaced by verified quotes and summaries in this same commit
                 await uow.chunks.redact(doc.id, retained_content(chunks, stored.items), now)
             await uow.commit()

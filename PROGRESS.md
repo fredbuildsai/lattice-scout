@@ -83,7 +83,7 @@ Last session: 2026-10-20 s01 — M0, M1 and M2 built; M2 done and approved by th
 - M2 not verified live: Supabase storage (`needs_supabase`) and real LLM output. Docling is deferred (BACKLOG).
 
 ## Open blockers
-- B6 confirm the LLM providers' data-use terms (ADR 015): until then vault-tagged calls are refused on `llm_router`, and prod refuses to start with it
+- B6 (owner, not blocking, ADR 016): confirm a provider's data-use terms, then mark its deployments `authorized: true` and list it in `LLM_CONFIDENTIAL_AUTHORIZED_PROVIDERS`. Until then Scout runs on published data only and says so; production starts with a warning
 - B2 live services, B3 llm-router response-text ledger (both have fallbacks; see docs/BLOCKERS.md)
 
 ## M4 — Opportunities UX + feedback

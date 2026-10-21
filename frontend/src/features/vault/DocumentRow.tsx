@@ -163,7 +163,7 @@ export function DocumentRow({ doc, selected, onToggle, selectDisabled }: { doc: 
           <p className="break-words font-semibold">{doc.filename}</p>
           <p className="text-xs text-ink-3">
             {doc.mime.endsWith('pdf') ? 'PDF' : 'DOCX'} · {formatSize(doc.size_bytes)}
-            {doc.pages ? ` · ${doc.pages} pages` : ''} · {doc.original_available ? 'original kept' : 'insights only'} · Added {formatAdded(doc.created_at)}
+            {doc.pages ? ` · ${doc.pages} pages` : ''} · {doc.original_available ? 'original kept' : doc.status === 'awaiting_approved_provider' ? 'file removed, text kept until analysed' : 'insights only'} · Added {formatAdded(doc.created_at)}
           </p>
         </div>
         <StatusChip status={doc.status} />

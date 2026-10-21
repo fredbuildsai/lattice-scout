@@ -9,7 +9,6 @@ from fastapi import APIRouter, Depends, Query, Request
 
 from scout.api.deps import current_account, get_container
 from scout.api.schemas.discovery import (
-    PUBLISHED_ONLY_NOTE,
     ChecklistItemOut,
     ClaimOut,
     EvidenceOpenOut,
@@ -20,6 +19,7 @@ from scout.api.schemas.discovery import (
     OpportunityListOut,
     OpportunityPatchIn,
     ScoresOut,
+    basis_note_for,
     basis_of,
 )
 from scout.discovery.application.service import CardView, ClaimView, DetailView
@@ -44,7 +44,7 @@ def card_out(v: CardView) -> OpportunityCardOut:
         scores=ScoresOut(fit=s.fit, novelty=s.novelty, readiness=s.readiness, effort=s.effort) if s else None,
         novelty=NoveltyOut(count=basis.get("count"), since_year=basis.get("since_year"), query=basis.get("query"), band=basis.get("band")),
         status=o.status.value, verified_sources=v.verified_sources, clusters=v.clusters, created_at=o.created_at,
-        basis=basis_of(basis.get("basis")), basis_note=PUBLISHED_ONLY_NOTE if basis.get("basis") == "published_only" else None,
+        basis=basis_of(basis.get("basis")), basis_note=basis_note_for(basis.get("basis"), bool(basis.get("documents", 1))),
     )  # fmt: skip
 
 

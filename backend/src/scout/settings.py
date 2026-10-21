@@ -153,17 +153,35 @@ class Settings(BaseSettings):
             p.strip().lower() for p in self.llm_confidential_authorized_providers.split(",") if p.strip()
         )
 
-    @property
-    def confidential_startup_warning(self) -> str | None:
-        """Why confidential data is not used by this installation (``None`` when it can be). No secrets."""
-        if self.llm_backend == "fake" or self.llm_confidential_allow_any_provider:
-            return None
-        if self.llm_backend in ("llm_router", "openai_direct") and not self.confidential_authorized_providers:
-            return (
-                "No authorized provider for confidential data (LLM_CONFIDENTIAL_AUTHORIZED_PROVIDERS is empty): "
-                "analyses, matching and document processing run on published data only"
+    def confidential_startup_events(self, allowed: bool) -> list[tuple[str, str, str]]:
+        """Start-up log events about confidential data as ``(event, level, detail)``; no secrets in the detail.
+
+        ``allowed`` is what the built adapter reports (``LLMPort.confidential_allowed()``), not what the settings say:
+        providers may be listed while no deployment is marked ``authorized`` in ``llm_router.yaml``.
+        """
+        if self.llm_backend == "fake":
+            return []
+        events: list[tuple[str, str, str]] = []
+        if self.llm_confidential_allow_any_provider:
+            events.append(
+                (
+                    "confidential_allow_any",
+                    "error" if self.app_env == "prod" else "warning",
+                    "LLM_CONFIDENTIAL_ALLOW_ANY_PROVIDER is set: vault documents and everything derived from them may "
+                    "be sent to ANY configured provider, free tiers included. Use it for development only.",
+                )
             )
-        return None
+        elif not allowed:
+            events.append(
+                (
+                    "confidential_data_disabled",
+                    "warning",
+                    "No deployment is authorized for confidential data (list providers in "
+                    "LLM_CONFIDENTIAL_AUTHORIZED_PROVIDERS and mark deployments authorized in llm_router.yaml): "
+                    "analyses, matching and document processing run on published data only",
+                )
+            )
+        return events
 
     @property
     def supabase_issuer(self) -> str | None:

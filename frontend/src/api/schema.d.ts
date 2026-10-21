@@ -2091,7 +2091,7 @@ export interface components {
             accepting_runs: boolean;
             /**
              * Confidential Data Enabled
-             * @description False when no approved language-model provider is configured: analyses, matching and document processing then use published data only (uploaded documents are kept but not read).
+             * @description False unless an approved language-model provider covers every step (both the fast and the reasoning tier): analyses and matching then use published data only. Documents are read on the server either way and are analysed as soon as the fast tier is approved.
              * @default true
              */
             confidential_data_enabled: boolean;

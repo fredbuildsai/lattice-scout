@@ -384,8 +384,8 @@ def build_container(
         admin_show_vault_quotes=settings.admin_claims_show_vault_quotes,
     )  # fmt: skip
 
-    if (warning := settings.confidential_startup_warning) is not None:
-        structlog.get_logger("scout.startup").warning("confidential_data_disabled", detail=warning)
+    for event, level, detail in settings.confidential_startup_events(llm.confidential_allowed()):
+        getattr(structlog.get_logger("scout.startup"), level)(event, detail=detail)
     return Container(
         matching=matching_service,
         decide_match=DecideOnMatch(match_uow, consent_source, queue, match_notifier, clock, match_cfg),

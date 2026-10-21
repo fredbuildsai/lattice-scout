@@ -17,7 +17,7 @@ Reviewed by the lead developer on 2026-10-23, backend and configuration only. It
 | Authorization | Admin routes check `role == admin` in the handler; every other route scopes by the account id in the query. | Covered by the isolation tests of each context (M1 to M5). |
 | Dependencies | `pip-audit` on the locked backend dependencies and `pnpm audit --prod`: no known vulnerabilities on 2026-10-23. | `make audit` and the weekly workflow `audit.yml`. |
 | Secrets | `.env` is git-ignored; `.env.example` holds defaults only. Production refuses the dev defaults for auth, LLM, literature, e-mail, storage and the audit hash key. | Secret scanning is a hard stop in CLAUDE.md; nothing was committed. |
-| Traces | Agent traces must not carry prompts or documents. | `trace_include_sensitive_data=False`, exception messages are dropped from spans and logs, and a static test forbids the opposite setting. The llm-router ledger still keeps response text in memory (B3). |
+| Traces | Agent traces must not carry prompts or documents. | `trace_include_sensitive_data=False`, exception messages are dropped from spans and logs, and a static test forbids the opposite setting. The llm-router ledger still keeps response, reasoning and error text of every call, confidential ones included, in process memory for the life of the process (B3, F-58); router log records carry route, deployment, outcome and exception class only (ADR 016, amendment 1). |
 
 ## Not done
 

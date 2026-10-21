@@ -98,3 +98,47 @@ async def test_even_a_raw_mapping_is_not_sent_when_unauthorized() -> None:
     with pytest.raises(ConfidentialDataRefused):
         await factory.run(spec, {"text": SECRET}, CallContext(feature="f"))
     assert spy.received == []
+
+
+async def test_unclassified_input_is_never_sent_to_a_published_agent_either() -> None:
+    from pydantic import BaseModel
+
+    from scout.discovery.domain.agent_io import ClusterLabel
+
+    class Plain(BaseModel):
+        cluster_id: str = "k1"
+        text: str = SECRET
+
+    for authorized in (False, True):
+        spy = SpyLLM()
+        spy.confidential_ok = authorized
+        spy.script("ClusterLabeler", ClusterLabel(cluster_id="k1", label="L"))
+        factory = AgentFactory(spy, PROMPTS)
+        spec = factory.spec("ClusterLabeler", ClusterLabel)
+        assert spec.data_class.value == "published"
+        for data in (Plain(), {"text": SECRET}):
+            if not authorized:
+                with pytest.raises(ConfidentialDataRefused):
+                    await factory.run(spec, data, CallContext(feature="f"))
+            else:  # an authorized route may take it, but only ever as confidential
+                await factory.run(spec, data, CallContext(feature="f"))
+        assert [k for _, k, _ in spy.received] == ([] if not authorized else ["confidential"] * 2)
+
+
+def test_a_mixed_items_field_holding_none_is_treated_as_empty() -> None:
+    from scout.shared.confidential import (
+        AgentInput,
+        contains_confidential,
+        mixed_items_field,
+        withhold_confidential,
+    )
+
+    class Item:
+        is_confidential = True
+
+    class Inp(AgentInput):
+        items: list[Item] | None = mixed_items_field(default=None)
+
+        model_config = {"arbitrary_types_allowed": True}
+
+    assert not contains_confidential(Inp()) and withhold_confidential(Inp()).items == []

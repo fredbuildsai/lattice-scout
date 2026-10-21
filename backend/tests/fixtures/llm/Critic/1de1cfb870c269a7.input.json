@@ -29,7 +29,7 @@
       {
         "check_status": "passed",
         "evidence": [
-          "n5"
+          "n3"
         ],
         "index": 3,
         "text": "Only 595 works since 2021 match 'lignin fluorescence fiber cement interface', a small literature for lignin fluorescence methods."
@@ -68,7 +68,7 @@
       "year": null
     },
     {
-      "ref_id": "n5",
+      "ref_id": "n3",
       "text": "lignin fluorescence fiber cement interface: 595 works",
       "title": null,
       "type": "count",

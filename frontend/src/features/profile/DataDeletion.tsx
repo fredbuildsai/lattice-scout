@@ -32,8 +32,8 @@ export function DataDeletion({ email }: { email: string }) {
       <p className="font-semibold">Scout does not train models on your files.</p>
       <p className="text-sm text-ink-2">
         Text from your documents goes only to AI providers the operator has approved for confidential data, and
-        never to any other provider. If no provider is approved, Scout stores your files but does not read them
-        with a model, and your analyses and matches use your published work only; they say so. The providers have
+        never to any other provider. If no provider is approved, Scout reads your files on its server but does not send them
+        to any AI model, and your analyses and matches use your published work only; they say so. The providers have
         their own terms; ask the operator which ones are approved.
       </p>
       <div className="grid gap-3 sm:grid-cols-2">

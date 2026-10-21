@@ -12,7 +12,13 @@ from typing import Annotated, Literal
 
 from pydantic import AfterValidator, BaseModel, BeforeValidator, ConfigDict, Field
 
-from scout.shared.confidential import AgentInput, confidential_field, mixed_items_field, published_field
+from scout.shared.confidential import (
+    AgentInput,
+    confidential_field,
+    derived_field,
+    mixed_items_field,
+    published_field,
+)
 from scout.shared.text import clean_text
 
 
@@ -66,7 +72,8 @@ class PlanField(BaseModel):
 
 
 class QueryPlannerInput(AgentInput):
-    """What the QueryPlanner sees. No names, no quotes, no chunks. Insights and keywords come from the vault."""
+    """What the QueryPlanner sees. No names, no quotes, no chunks. ``insights`` and ``keywords`` would come from the
+    vault, but the pipeline leaves them empty: the planned search strings go to OpenAlex (ADR 016)."""
 
     topics: list[PlanTopic] = published_field()
     recent_titles: list[S200] = published_field(default_factory=list, max_length=20)
@@ -230,7 +237,9 @@ class GapContext(AgentInput):
     papers: list[PaperForAnalyst] = published_field(max_length=40)
     chunks: list[ChunkForAnalyst] = confidential_field(default_factory=list, max_length=40)
     max_opportunities: int = published_field(default=5)
-    exclude_titles: list[S120] = published_field(default_factory=list, max_length=40)
+    exclude_titles: list[S120] = derived_field(
+        default_factory=list, max_length=40
+    )  # earlier titles: provenance
 
 
 class EvidenceRefOut(_Out):
@@ -319,10 +328,13 @@ class SimilarPaper(BaseModel):
 
 
 class CriticInput(AgentInput):
-    """What the Critic sees: one draft and only its evidence (vault passages and insights are withheld when
-    no authorized endpoint exists; such a draft cites none, since the analyst never saw them)."""
+    """What the Critic sees: one draft and only its evidence. The draft's text is derived from whatever the
+    analyst saw: when the run used vault material (``tainted``) the draft is confidential, so the call goes to an
+    authorized endpoint or not at all; passages and insights are withheld when none exists."""
 
-    draft: CriticDraft = published_field()
+    draft: CriticDraft = (
+        derived_field()
+    )  # written by an analyst that saw the vault: confidential when tainted
     evidence_texts: list[EvidenceText] = mixed_items_field()
     similar_papers: list[SimilarPaper] = published_field(default_factory=list, max_length=5)
 

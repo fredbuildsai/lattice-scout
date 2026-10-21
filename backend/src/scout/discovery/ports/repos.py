@@ -142,6 +142,14 @@ class OpportunityRepo(Protocol):
         """Titles of the owner's earlier ``shown``, ``saved`` and ``dismissed`` opportunities (newest first)."""
         ...
 
+    async def previous_titles_by_basis(
+        self, owner_id: AccountId, exclude_run: UUID
+    ) -> list[tuple[str, bool]]:
+        """Like ``previous_titles``: ``(title, published_only)``. ``published_only`` is true only for an opportunity
+        scored in a run that used no vault material; an opportunity with no recorded basis counts as derived from
+        the vault (ADR 016: text written while confidential material was in play stays confidential)."""
+        ...
+
     async def list_for_owner(
         self,
         owner_id: AccountId,

@@ -22,7 +22,6 @@ from scout.discovery.domain.agent_io import (
     InsightTopicTaggerInput,
     InsightTopicTags,
     PlanField,
-    PlanInsight,
     PlanTopic,
     QueryPlannerInput,
     TagCluster,
@@ -62,10 +61,8 @@ async def plan_queries(c: StepContext) -> Summary:
     if not c.profile.import_done:
         raise RunFailed(RunFailure.PROFILE_MISSING)
     material = await c.material(run)
-    active = [m for m in material if m.active]
     now_year = c.clock.now().year
     year_from, novelty_from = now_year - c.field.query.years_back, now_year - c.field.novelty.years_back
-    keywords = list(dict.fromkeys(k for m in active for k in m.keywords))[:30]
     existing = run.step_state.get(step)
     queries = existing.data.get("queries") if existing else None
     version: str | None = None
@@ -73,12 +70,8 @@ async def plan_queries(c: StepContext) -> Summary:
         data = QueryPlannerInput(
             topics=[PlanTopic(id=t[0], name=t[1], weight=t[3]) for t in c.profile.topics[:20]],
             recent_titles=[clean_text(w.title, 200) for w in c.profile.works[:20]],
-            insights=[
-                PlanInsight(insight_ref=i.ref, section=i.section, text=i.text)
-                for m in active
-                for i in m.insights
-            ][:60],
-            keywords=keywords,
+            # ADR 016: the planned strings go to OpenAlex, which is not an authorized recipient of confidential
+            # data, so the planner sees no vault insights or keywords (``insights`` / ``keywords`` stay empty).
             field=PlanField(
                 name=c.field.label, openalex_topic_ids=c.field.openalex_topic_ids, keywords=c.field.keywords
             ),

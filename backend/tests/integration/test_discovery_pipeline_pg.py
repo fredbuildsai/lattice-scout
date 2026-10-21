@@ -86,7 +86,7 @@ async def test_pipeline_on_postgres_runs_to_done_and_a_rerun_adds_no_rows(db: Da
         final = await uow.runs.get(run.id, OWNER)
         opps = await uow.opportunities.list_for_run(run.id)
     assert final is not None and final.status is RunStatus.DONE and final.percent() == 100
-    assert final.spend.llm_calls == 8 and final.spend.openalex_calls == 4 and final.spend.cost_usd > 0
+    assert final.spend.llm_calls == 8 and final.spend.openalex_calls == 3 and final.spend.cost_usd > 0
     assert [o.status for o in opps].count(OppStatus.SHOWN) == 1
     shown = next(o for o in opps if o.status is OppStatus.SHOWN)
     assert shown.scores is not None and len(shown.visible_claims()) == 3

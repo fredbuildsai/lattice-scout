@@ -1,0 +1,150 @@
+{
+  "field": {
+    "keywords": [
+      "lignin",
+      "cellulose",
+      "nanocellulose",
+      "biopolymer",
+      "bio-based foam",
+      "biocomposite",
+      "wood",
+      "PFAS",
+      "membrane"
+    ],
+    "name": "Bio-based materials",
+    "openalex_topic_ids": [
+      "T10610",
+      "T11208",
+      "T10513",
+      "T10488",
+      "T12628"
+    ]
+  },
+  "insights": [],
+  "keywords": [],
+  "recent_titles": [
+    "Sustainable Synthesis of Bio‐Based Magnetic and Conductive Wood for Electromagnetic Interference Shielding Applications",
+    "Lignin Type and Content Influence the Foaming Dynamics and Properties of Flexible Polyurethane Foams",
+    "The AP-1 adaptor complex is required for cell surface modifications and the survival of Cryptococcus neoformans in phagocytic cells",
+    "Disruption of Lignin-Emissive Domains: Deciphering Fiber–Cement Interfacial Reactions by EEM Fluorescence and DUV Raman Spectroscopy",
+    "Engineering low-carbon fiber cement with biochar: understanding its physicochemical properties and their impact on the composite performance and carbon footprint",
+    "Advanced chitosan hybrid dye labels for dynamic monitoring of shrimp and milk freshness",
+    "Bioinspired waterproof, breathable materials: How does nature transport water across its surfaces and through its membranes?",
+    "Development of a robust ion-selective membrane from sulfonated cellulose nanofibers for zinc–iodine redox flow batteries",
+    "Polyphosphatases have a polyphosphate-independent influence on the virulence of Cryptococcus neoformans",
+    "Droplet-templating soft materials into structured bead-based aerogels with compartmentalized or welded configurations",
+    "Improving yield and colloidal stability of cellulose nanocrystals isolated via assisted subcritical water hydrolysis: influence of mechanical pretreatments and esterifying agents on cellulose hydrolys",
+    "Artificial substitutes for Descemet's membrane - corneal endothelium complex: state of the art",
+    "Structural dependence of PFAS oxidation in a boron doped diamond-electrochemical system",
+    "Hybrid graphenic and iron oxide photocatalysts for the decomposition of synthetic chemicals",
+    "Development of a pH-responsive intelligent label using low molecular weight chitosan grafted with phenol red for food packaging applications",
+    "Fungal-derived adsorption membrane to capture potentially toxic elements",
+    "Proton Exchange Membranes from Sulfonated Lignin Nanocomposites for Redox Flow Battery Applications",
+    "Alternative proton exchange membrane based on a bicomponent anionic nanocellulose system",
+    "Hydrophobized lignin nanoparticle-stabilized Pickering foams: building blocks for sustainable lightweight porous materials",
+    "Green and sustainable fabrication of DES-pretreated high-strength densified wood"
+  ],
+  "topics": [
+    {
+      "id": "T10610",
+      "name": "Advanced Cellulose Research Studies",
+      "weight": 1.0
+    },
+    {
+      "id": "T10488",
+      "name": "Nanocomposite Films for Food Packaging",
+      "weight": 0.349
+    },
+    {
+      "id": "T11208",
+      "name": "Lignin and Wood Chemistry",
+      "weight": 0.253
+    },
+    {
+      "id": "T10513",
+      "name": "Natural Fiber Reinforced Composites",
+      "weight": 0.211
+    },
+    {
+      "id": "T10869",
+      "name": "Polysaccharides and Plant Cell Walls",
+      "weight": 0.161
+    },
+    {
+      "id": "T10306",
+      "name": "Liquid Crystal Research Advancements",
+      "weight": 0.144
+    },
+    {
+      "id": "T10501",
+      "name": "Polymer Nanocomposites and Properties",
+      "weight": 0.129
+    },
+    {
+      "id": "T10810",
+      "name": "Polymer composites and self-healing",
+      "weight": 0.121
+    },
+    {
+      "id": "T11737",
+      "name": "Advanced Materials and Mechanics",
+      "weight": 0.113
+    },
+    {
+      "id": "T11419",
+      "name": "Supramolecular Self-Assembly in Materials",
+      "weight": 0.11
+    },
+    {
+      "id": "T10343",
+      "name": "Hydrogels: synthesis, properties, applications",
+      "weight": 0.102
+    },
+    {
+      "id": "T11298",
+      "name": "Synthesis and Properties of Aromatic Compounds",
+      "weight": 0.095
+    },
+    {
+      "id": "T10389",
+      "name": "Polymer crystallization and properties",
+      "weight": 0.089
+    },
+    {
+      "id": "T11511",
+      "name": "Dyeing and Modifying Textile Fibers",
+      "weight": 0.079
+    },
+    {
+      "id": "T10661",
+      "name": "biodegradable polymer synthesis and properties",
+      "weight": 0.076
+    },
+    {
+      "id": "T10903",
+      "name": "Porphyrin and Phthalocyanine Chemistry",
+      "weight": 0.065
+    },
+    {
+      "id": "T10484",
+      "name": "Wood Treatment and Properties",
+      "weight": 0.058
+    },
+    {
+      "id": "T10729",
+      "name": "Electrospun Nanofibers in Biomedical Applications",
+      "weight": 0.049
+    },
+    {
+      "id": "T12195",
+      "name": "Aerogels and thermal insulation",
+      "weight": 0.048
+    },
+    {
+      "id": "T10313",
+      "name": "Surface Modification and Superhydrophobicity",
+      "weight": 0.047
+    }
+  ],
+  "year_from": 2020
+}

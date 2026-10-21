@@ -3,25 +3,25 @@
     {
       "search": "lignin polyurethane foam",
       "purpose": "core",
-      "because": "insight:d1.aims[0]",
+      "because": "topic:T11208",
       "max_results": 50
     },
     {
       "search": "cellulose nanofiber membrane flow battery",
       "purpose": "core",
-      "because": "insight:d2.aims[0]",
+      "because": "topic:T10610",
       "max_results": 50
     },
     {
       "search": "PFAS adsorption membrane",
       "purpose": "core",
-      "because": "insight:d3.aims[0]",
+      "because": "field:Bio-based materials",
       "max_results": 50
     },
     {
       "search": "photocatalytic PFAS degradation",
       "purpose": "bridge",
-      "because": "insight:d3.aims[1]",
+      "because": "field:Bio-based materials",
       "max_results": 50
     },
     {

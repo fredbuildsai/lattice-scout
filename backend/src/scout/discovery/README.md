@@ -251,3 +251,11 @@ Field config (`config/fields.yaml`) and the novelty bands are reviewed by a doma
 
 - Developer page: [gap analysis](https://github.com/fredbuildsai/lattice-scout/blob/main/docs-site/pages/dev/discovery.md) (local run, endpoints, fixtures).
 - Vault module, which supplies verified material: `backend/src/scout/vault/README.md`.
+
+## Confidential data and provenance (ADR 016)
+
+- `StepContext.material()` is empty when no authorized endpoint exists; the run is stored with `basis = published_only`.
+- `StepContext.tainted(run)` is true for a run started on a `full` basis with documents. Tainted runs build `GapContext` and `CriticInput` with `tainted=True`: their `derived_field`s (`exclude_titles`, the Critic's `draft`) are confidential, so they go only to authorized deployments or the call is not made (the Critic then leaves the opportunity `unverified`, `critic_unavailable`).
+- No vault-derived string goes into an OpenAlex query: the QueryPlanner gets no insights or keywords, and novelty probes use the cluster's search terms only.
+- `previous_titles_by_basis` tells an untainted run which earlier titles came from published-only runs (the only ones it may send).
+- Regression: `tests/unit/discovery/test_confidential_provenance.py` (spy backend with some tiers authorized).

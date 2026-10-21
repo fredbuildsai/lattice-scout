@@ -198,6 +198,16 @@ class InMemoryOpportunityRepo:
         )  # fmt: skip
         return [(o.id, o.title) for o in opps]
 
+    async def previous_titles_by_basis(
+        self, owner_id: AccountId, exclude_run: UUID
+    ) -> list[tuple[str, bool]]:
+        seen = {"shown", "saved", "dismissed"}
+        opps = sorted(
+            (o for o in self.data.values() if o.owner_id == owner_id and o.run_id != exclude_run and o.status.value in seen),
+            key=lambda o: o.created_at, reverse=True,
+        )  # fmt: skip
+        return [(o.title, o.score_basis.get("basis") == "published_only") for o in opps]
+
     async def list_for_owner(
         self,
         owner_id: AccountId,

@@ -31,7 +31,7 @@ from scout.ports.llm import (
     ModelTier,
 )
 from scout.shared import InfrastructureError, ValidationFailed
-from scout.shared.confidential import input_for_route
+from scout.shared.confidential import AgentInput, input_for_route
 
 log = structlog.get_logger("scout.agents")
 _PLACEHOLDER = re.compile(r"\{\{\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*\}\}")
@@ -101,12 +101,10 @@ class AgentFactory:
         started = time.perf_counter()
         authorized = self._llm.confidential_allowed(spec.tier)
         planned: tuple[BaseModel | Mapping[str, JsonValue], DataClass] | None
-        if isinstance(input, BaseModel):
+        if isinstance(input, AgentInput):
             planned = input_for_route(spec.data_class, input, authorized=authorized)
-        else:  # a bare mapping cannot be classified: confidential unless the agent is published-only
-            planned = (
-                (input, spec.data_class) if spec.data_class is DataClass.PUBLISHED or authorized else None
-            )
+        else:  # a plain model or mapping cannot be classified, so it is confidential, whatever the agent's class
+            planned = (input, DataClass.CONFIDENTIAL) if authorized else None
         if planned is None:
             log.warning("agent_skipped", agent=self.version(spec), reason="no_published_form")
             raise ConfidentialDataRefused(f"{spec.name}: no published form of this input") from None

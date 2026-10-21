@@ -64,6 +64,9 @@ describe('VaultPage', () => {
     expect(screen.getByText(/analysed automatically once the operator approves a provider/)).toBeInTheDocument()
     expect(await screen.findByText(notice)).toBeInTheDocument()
     expect(screen.queryByRole('alert')).toBeNull() // waiting is not a failure
+    // a discard document that waits has lost its file but keeps its text until analysis: the row must not say "insights only"
+    expect(screen.getByText(/file removed, text kept until analysed/)).toBeInTheDocument()
+    expect(screen.queryByText(/insights only/)).toBeNull()
   })
 
   it('keeps the original-file checkbox unticked by default and explains it', async () => {

@@ -82,7 +82,7 @@ from scout.discovery.ports.agents import AgentOutcome
 from scout.discovery.ports.repos import DiscoveryUnitOfWork
 from scout.discovery.ports.sources import DocMaterial
 from scout.ports.literature import WorkQuery
-from scout.ports.llm import LLMOutputInvalid, LLMUnavailable
+from scout.ports.llm import ConfidentialDataRefused, LLMOutputInvalid, LLMUnavailable
 from scout.shared import InvariantViolation
 from scout.shared.text import clean_text, norm
 
@@ -103,14 +103,11 @@ async def measure_novelty(c: StepContext) -> Summary:
         clusters = [cl for cl in await uow.clusters.list(c.run_id) if cl.candidate_rank is not None]
         existing = {p.label: p for p in await uow.probes.list(c.run_id)}
     clusters.sort(key=lambda cl: (cl.candidate_rank or 0, cl.key))
-    material = [m for m in await c.material(run) if m.active]
-    kw = Counter(k.lower() for m in material for k in m.keywords)
-    top_keyword = sorted(kw.items(), key=lambda kv: (-kv[1], kv[0]))[0][0] if kw else None
     since = run.inputs.novelty_from or (c.clock.now().year - c.field.novelty.years_back)
 
     plan: list[NoveltyProbe] = []
     for cl in clusters:
-        for q in probe_queries(cl.search_terms, top_keyword):
+        for q in probe_queries(cl.search_terms, None):  # ADR 016: no vault keyword in an OpenAlex query
             label = f"n{len(plan) + 1}"
             old = existing.get(label)
             plan.append(
@@ -303,7 +300,7 @@ async def analyse(c: StepContext) -> Summary:
         clusters = await uow.clusters.list(c.run_id)
         probes = await uow.probes.list(c.run_id)
         corpus = await uow.corpus.list(c.run_id)
-        previous = await uow.opportunities.previous_titles(c.owner_id, c.run_id)
+        previous = await uow.opportunities.previous_titles_by_basis(c.owner_id, c.run_id)
         drafts_so_far = await uow.opportunities.list_for_run(c.run_id)
     measured = {p.cluster_id for p in probes if p.status == "measured"}
     cands = sorted(
@@ -316,13 +313,21 @@ async def analyse(c: StepContext) -> Summary:
     by_key = {cl.label_key: cl for cl in clusters}
     origins = {w.openalex_id: w.origin for w in corpus}
     done: list[int] = list(run.step_state[step].data.get("batches_done", []))
-    exclude = [t for _, t in previous] + [o.title for o in drafts_so_far]
+    tainted = c.tainted(run)
+    # Titles are text written while the vault may have been in play: a tainted run sends all of them as
+    # confidential; an untainted run sends only titles of published-only runs (the dedup check still sees all).
+    exclude = [t for t, published in previous if tainted or published]
+    exclude += [
+        o.title for o in drafts_so_far
+    ]  # this run's own: confidential exactly when the run is tainted
     truncated = len(batches) > c.cfg.analyse_max_calls
     made = len(drafts_so_far)
     for n, batch in enumerate(batches[: c.cfg.analyse_max_calls]):
         if n in done:
             continue
-        data = _analyst_context(c, run, batch, probes, corpus, material, exclude)
+        data = _analyst_context(c, run, batch, probes, corpus, material, exclude).model_copy(
+            update={"tainted": tainted}
+        )
         try:
             outcome = await c.ask("reasoning", partial(_analyse_call, c, data))
         except BudgetExhausted:
@@ -510,9 +515,13 @@ async def verify(c: StepContext) -> Summary:
             outcome = None
             if budget_out is None:
                 try:
-                    outcome = await _critic(c, opp, alive, index, corpus)
+                    outcome = await _critic(c, run, opp, alive, index, corpus)
                 except BudgetExhausted:
                     budget_out = "budget_exhausted"
+                except (
+                    ConfidentialDataRefused
+                ):  # the draft is confidential and no authorized endpoint exists now
+                    budget_out = "critic_unavailable"
                 except _LLM_ERRORS:
                     if not c.last_attempt:
                         raise
@@ -560,8 +569,9 @@ def _finish_opp(opp: Opportunity, status: OppStatus, reason: str) -> None:
 
 
 async def _critic(
-    c: StepContext, opp: Opportunity, alive: list[Claim], index: RunMaterialIndex, corpus: list[CorpusWork]
-) -> AgentOutcome[CriticVerdict]:
+    c: StepContext, run: AnalysisRun, opp: Opportunity, alive: list[Claim], index: RunMaterialIndex,
+    corpus: list[CorpusWork],
+) -> AgentOutcome[CriticVerdict]:  # fmt: skip
     texts: dict[str, EvidenceText] = {}
     for cl in opp.claims:
         for e in cl.evidence:
@@ -587,6 +597,7 @@ async def _critic(
         ),
         evidence_texts=list(texts.values()),
         similar_papers=[SimilarPaper(work_id=w.openalex_id, title=w.title[:200], year=w.year, abstract=(w.abstract or "")[:800]) for w in similar],
+        tainted=c.tainted(run),
     )  # fmt: skip
     return await c.ask("reasoning", lambda: c.agents.critique(data, c.call_ctx("discovery.critic")))
 
@@ -674,6 +685,7 @@ async def score_persist(c: StepContext) -> Summary:
         o.score_basis = {
             "count": count, "probe": probe.label, "query": probe.query, "since_year": since, "saturation": sat,
             "band": c.field.novelty.bands.label(count), "basis": run.inputs.basis,
+            "documents": len(run.inputs.documents),
         }  # fmt: skip
         if not any(cl.section is ClaimSection.SCORE for cl in o.claims):
             ordn = max((cl.ord for cl in o.claims), default=-1) + 1

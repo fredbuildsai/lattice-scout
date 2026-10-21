@@ -62,3 +62,17 @@ def test_standard_library_log_records_drop_the_exception_message() -> None:
         log.removeHandler(handler)
     out = stream.getvalue()
     assert CANARY not in out and "RuntimeError" in out and "message withheld" in out
+
+
+def test_router_records_with_provider_text_are_cut_before_the_text() -> None:
+    """The old router format put the provider's error text after a colon; it is dropped (older router versions)."""
+    import logging
+
+    from scout.api.logging import ScrubProviderText
+
+    rec = logging.LogRecord(
+        "llmrouter_free.router", logging.WARNING, "r.py", 1, "%s on route %r via %s: %s",
+        ("rate_limited", "fast", "eu", "failed_generation SECRET-TEXT"), None,
+    )  # fmt: skip
+    assert ScrubProviderText().filter(rec)
+    assert rec.getMessage() == "rate_limited on route 'fast' via eu" and "SECRET" not in rec.getMessage()

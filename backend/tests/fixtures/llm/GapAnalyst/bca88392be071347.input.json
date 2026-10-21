@@ -265,51 +265,23 @@
     },
     {
       "candidate_id": "n2",
-      "cluster_id": "k4",
-      "count": 427,
-      "query": "cellulose separator zinc iodine battery 31p nmr",
-      "since_year": 2021
-    },
-    {
-      "candidate_id": "n3",
       "cluster_id": "k3",
       "count": 1731,
       "query": "lignin polyurethane foam flame retardant",
       "since_year": 2021
     },
     {
-      "candidate_id": "n4",
-      "cluster_id": "k3",
-      "count": 1731,
-      "query": "lignin polyurethane foam flame retardant 31p nmr",
-      "since_year": 2021
-    },
-    {
-      "candidate_id": "n5",
+      "candidate_id": "n3",
       "cluster_id": "k5",
       "count": 595,
       "query": "lignin fluorescence fiber cement interface",
       "since_year": 2021
     },
     {
-      "candidate_id": "n6",
-      "cluster_id": "k5",
-      "count": 595,
-      "query": "lignin fluorescence fiber cement interface 31p nmr",
-      "since_year": 2021
-    },
-    {
-      "candidate_id": "n7",
+      "candidate_id": "n4",
       "cluster_id": "k2",
       "count": 1731,
       "query": "wood composite EMI shielding",
-      "since_year": 2021
-    },
-    {
-      "candidate_id": "n8",
-      "cluster_id": "k2",
-      "count": 1731,
-      "query": "wood composite EMI shielding 31p nmr",
       "since_year": 2021
     }
   ],

@@ -159,7 +159,7 @@ def test_spend_never_exceeds_the_budget_and_a_shortfall_is_never_silent(milli: i
 # ---- OpenAlex calls ---------------------------------------------------------------------------------------------------
 @pytest.mark.parametrize("cap", range(1, 10))
 async def test_the_openalex_cap_is_never_exceeded_and_a_hit_is_reported(cap: int) -> None:
-    """Six queries need 6 searches + 2 counts = 8 port calls; with a smaller cap the run degrades, never overshoots."""
+    """Six queries need 6 searches + 1 count (one probe: no vault keyword probe, ADR 016) = 7 port calls; with a smaller cap the run degrades, never overshoots."""
     w = World(start_cfg=StartConfig(openalex_calls=cap))
     w.agents.script("QueryPlanner", plan_n(6))
     run = await w.start()
@@ -171,7 +171,7 @@ async def test_the_openalex_cap_is_never_exceeded_and_a_hit_is_reported(cap: int
     assert len(w.literature.calls) <= cap  # what actually reached OpenAlex
     assert final.spend.openalex_calls == len(w.literature.calls)  # charged before each call, no more no less
     hit = {(d.step.value, d.reason) for d in final.degraded}
-    if cap < 8:
+    if cap < 7:
         assert final.partial and any(reason == "openalex_cap" for _, reason in hit)
     else:
         assert not final.partial and not any(reason == "openalex_cap" for _, reason in hit)
@@ -197,7 +197,7 @@ async def test_a_cap_of_five_with_the_default_plan_is_not_hit() -> None:
     run = await w.start()
     await w.run(run)
     final = w.get(run)
-    assert final.spend.openalex_calls == 4 and not final.partial and w.shown(run)
+    assert final.spend.openalex_calls == 3 and not final.partial and w.shown(run)
 
 
 async def test_a_cap_hit_while_measuring_novelty_drops_unmeasured_candidates() -> None:
@@ -213,7 +213,7 @@ async def test_a_cap_hit_while_measuring_novelty_drops_unmeasured_candidates() -
 
 
 async def test_a_cap_hit_while_resolving_a_cited_work_leaves_the_citation_unresolved() -> None:
-    w = World(start_cfg=StartConfig(openalex_calls=4))  # searches and counts use all four
+    w = World(start_cfg=StartConfig(openalex_calls=3))  # searches and the count use all three
     script_drafts(
         w,
         draft(
@@ -230,7 +230,7 @@ async def test_a_cap_hit_while_resolving_a_cited_work_leaves_the_citation_unreso
     run = await w.start()
     await w.run(run)
     final = w.get(run)
-    assert final.status is RunStatus.DONE and final.spend.openalex_calls == 4 == len(w.literature.calls)
+    assert final.status is RunStatus.DONE and final.spend.openalex_calls == 3 == len(w.literature.calls)
     assert "get" not in w.literature.calls  # the cap stopped the lookup before it reached OpenAlex
     [opp] = w.opps(run)
     unresolved = opp.claims[0].evidence[0]

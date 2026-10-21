@@ -25,7 +25,9 @@ All numbers come from the `analytics` schema, which the application role can rea
 | Erasure stuck | log event `identity.auth_delete_failed` | application log |
 | API errors | 5xx rate above 2% over 5 minutes | request log (`status`) |
 
-Budget events: `budget.warning` and `budget.cap_reached` carry `service` = `llm`, `openalex` or `llm_calls`. `llm_calls` counts provider requests per UTC day against `GLOBAL_DAILY_LLM_CALLS` (free models cost 0 USD, so only the counter can trip). Set it below the providers' combined free daily quota. A refused vault call logs `vault_data_refused agent=... route=...` without any content: it means no sanctioned deployment is configured for private data (ADR 015).
+Budget events: `budget.warning` and `budget.cap_reached` carry `service` = `llm`, `openalex` or `llm_calls`. `llm_calls` counts provider requests per UTC day against `GLOBAL_DAILY_LLM_CALLS` (free models cost 0 USD, so only the counter can trip). Set it below the providers' combined free daily quota. 
+
+Confidential-data events (ADR 016; none carries content): `confidential_data_disabled` (warning at start: no deployment is authorized, so analyses, matching and document processing use published data only), `confidential_allow_any` (start; error level in production: `LLM_CONFIDENTIAL_ALLOW_ANY_PROVIDER` sends private text to every provider, use it for development only), `agent_skipped reason=no_published_form` (a wholly confidential step was not sent), `confidential_refused` (backstop in the adapter; users never see it), `vault.awaiting_approved_provider` (a document was parked) and the vault sweep result `awaiting_requeued`. Router warnings carry route, deployment, outcome and exception class only. To authorize a provider see BLOCKERS B6.
 
 ## Dashboards (Metabase or similar)
 

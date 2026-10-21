@@ -47,7 +47,7 @@
       {
         "check_status": "passed",
         "evidence": [
-          "n3"
+          "n2"
         ],
         "index": 5,
         "text": "1731 works since 2021 match 'lignin polyurethane foam flame retardant', so fire performance of lignin foams is a crowded topic and the resubmission must state what is new."
@@ -93,7 +93,7 @@
       "year": null
     },
     {
-      "ref_id": "n3",
+      "ref_id": "n2",
       "text": "lignin polyurethane foam flame retardant: 1731 works",
       "title": null,
       "type": "count",

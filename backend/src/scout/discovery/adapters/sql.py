@@ -397,6 +397,22 @@ class SqlOpportunityRepo:
         )
         return [(r.id, r.title) for r in rows]
 
+    async def previous_titles_by_basis(
+        self, owner_id: AccountId, exclude_run: UUID
+    ) -> list[tuple[str, bool]]:
+        """``(title, published_only)`` of earlier user-visible opportunities (newest first)."""
+        t = m.opportunity
+        rows = await self._s.execute(
+            select(t.c.title, t.c.score_basis)
+            .where(
+                t.c.owner_id == owner_id,
+                t.c.run_id != exclude_run,
+                t.c.status.in_(("shown", "saved", "dismissed")),
+            )
+            .order_by(t.c.created_at.desc())
+        )
+        return [(r.title, (r.score_basis or {}).get("basis") == "published_only") for r in rows]
+
     async def list_for_owner(
         self,
         owner_id: AccountId,

@@ -10,6 +10,12 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 - Production no longer refuses to start without an allowlist: one warning is logged and `GET /system/status` returns `confidential_data_enabled` and `confidential_data_notice`. `LLM_FREE_PROVIDERS_ACKNOWLEDGED` is removed.
 - Renamed (breaking for config files): `sanctioned: true` is now `authorized: true` in `config/llm_router.yaml` (the old key is still read); `LLM_VAULT_SANCTIONED_PROVIDERS` is `LLM_CONFIDENTIAL_AUTHORIZED_PROVIDERS` and `LLM_VAULT_ALLOW_ANY_PROVIDER` is `LLM_CONFIDENTIAL_ALLOW_ANY_PROVIDER` (the old environment names are still read); `VaultDataRefused` is `ConfidentialDataRefused`; prompt front-matter `data_class` is `published` or `confidential`. New: `LLM_FAKE_CONFIDENTIAL_ALLOWED` (demo and tests). Privacy tab, vault page and user pages updated.
 
+### Security and privacy (ADR 016 review round 1)
+- Text derived from confidential input is confidential: the Critic's draft and earlier opportunity titles go only to authorized deployments in a run that used the vault (`derived_field`, `tainted`); no vault keyword or insight goes into an OpenAlex query (the second novelty probe and the vault part of the query plan are gone).
+- Unclassified input is never sent, also for published agents. "Discard original" now holds while a document waits for a provider (file deleted after extraction; text redacted after analysis, also after a failure).
+- Start-up warning follows the built policy; `LLM_CONFIDENTIAL_ALLOW_ANY_PROVIDER` is logged loudly (error level in production). Router log records no longer carry the provider's error text. Fixture generators repaired and smoke-tested.
+- One wording for the published-only notices; the run note no longer claims documents were left out when none were uploaded.
+
 ### Security and privacy (review follow-up, M4 to M6)
 - Vault text goes only to sanctioned LLM endpoints (ADR 015, DECISIONS 106-107): `data_class` on every agent, `sanctioned: true` deployments plus `LLM_VAULT_SANCTIONED_PROVIDERS`, a refusal that logs no content, production start-up guards (`LLM_VAULT_ALLOW_ANY_PROVIDER`, `LLM_FREE_PROVIDERS_ACKNOWLEDGED`), a minimal environment for the PDF parser process. The privacy tab, vault page, sign-in page and user pages now say who receives the text and list everything a deletion leaves behind.
 - Migration 0015: default privileges, function EXECUTE and views are closed to the PostgREST roles; migration 0016: feedback reasons per target type.

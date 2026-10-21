@@ -7,10 +7,16 @@ from pydantic import BaseModel, Field
 
 from scout.api.deps import current_account, get_container
 from scout.identity.domain.account import Account
+from scout.ports.llm import ModelTier
 
 CONFIDENTIAL_NOTICE = (
-    "No approved provider is configured, so Scout works from your published work only. Uploaded documents are "
-    "stored but not read until the operator approves a provider."
+    "No approved AI provider is configured for confidential data, so Scout works from your published work only. "
+    "Uploaded documents are read on our server but not sent to any AI model, so they are not analysed until the "
+    "operator approves a provider."
+)
+PARTIAL_NOTICE = (
+    "The operator has approved an AI provider for reading your documents, but not for every analysis step, so "
+    "analyses and matches still use your published work only."
 )
 
 router = APIRouter(prefix="/api/v1/system", tags=["system"])
@@ -25,8 +31,9 @@ class SystemStatusOut(BaseModel):
     )
     confidential_data_enabled: bool = Field(
         default=True,
-        description="False when no approved language-model provider is configured: analyses, matching and "
-        "document processing then use published data only (uploaded documents are kept but not read).",
+        description="False unless an approved language-model provider covers every step (both the fast and the "
+        "reasoning tier): analyses and matching then use published data only. Documents are read on the server "
+        "either way and are analysed as soon as the fast tier is approved.",
     )
     confidential_data_notice: str | None = Field(
         default=None,
@@ -39,8 +46,9 @@ async def system_status(request: Request, account: Account = Depends(current_acc
     """The shared daily budget is a pilot safeguard. When it is used up, runs resume after midnight UTC."""
     c = get_container(request)
     st = await c.global_budget.status()
-    enabled = c.llm.confidential_allowed()
-    notice = None if enabled else CONFIDENTIAL_NOTICE
+    enabled = c.llm.confidential_allowed()  # every tier: analyses and matching need both
+    documents_analysed = c.llm.confidential_allowed(ModelTier.FAST)  # what ingestion needs
+    notice = None if enabled else PARTIAL_NOTICE if documents_analysed else CONFIDENTIAL_NOTICE
     if st.paused:
         return SystemStatusOut(
             accepting_runs=False,

@@ -125,29 +125,32 @@ def test_prod_with_llm_router_and_no_authorized_provider_starts_with_a_warning()
     """ADR 016: no refusal; runs go ahead on published data and the warning says so (no secrets in it)."""
     st = _s(app_env="prod", **{**ROUTER, "llm_confidential_authorized_providers": ""})
     assert st.app_env == "prod"
-    assert st.confidential_startup_warning and "published data only" in st.confidential_startup_warning
-    assert "k" * 8 not in st.confidential_startup_warning
+    [(event, level, detail)] = st.confidential_startup_events(allowed=False)
+    assert (event, level) == ("confidential_data_disabled", "warning") and "published data only" in detail
+    assert "k" * 8 not in detail
 
 
-def test_no_warning_when_a_provider_is_authorized_or_waived_or_fake() -> None:
-    assert (
-        _s(
-            app_env="prod", **{**ROUTER, "llm_confidential_authorized_providers": "mistral"}
-        ).confidential_startup_warning
-        is None
-    )
-    assert (
-        _s(
-            app_env="prod",
-            **{
-                **ROUTER,
-                "llm_confidential_authorized_providers": "",
-                "llm_confidential_allow_any_provider": True,
-            },
-        ).confidential_startup_warning
-        is None
-    )
-    assert _s(app_env="dev").confidential_startup_warning is None
+def test_the_warning_follows_the_policy_that_was_built_not_the_settings() -> None:
+    """Providers listed but no deployment marked authorized: the adapter says no, so the warning is logged."""
+    st = _s(app_env="prod", **{**ROUTER, "llm_confidential_authorized_providers": "mistral"})
+    assert st.confidential_startup_events(allowed=True) == []
+    [(event, _, detail)] = st.confidential_startup_events(allowed=False)
+    assert event == "confidential_data_disabled" and "mark deployments authorized" in detail
+
+
+def test_allow_any_waiver_is_loud_in_production_and_fake_is_silent() -> None:
+    waived = {
+        **ROUTER,
+        "llm_confidential_authorized_providers": "",
+        "llm_confidential_allow_any_provider": True,
+    }
+    [(event, level, detail)] = _s(app_env="prod", **waived).confidential_startup_events(allowed=True)
+    assert (event, level) == ("confidential_allow_any", "error") and "ANY configured provider" in detail
+    [(_, dev_level, _)] = _s(
+        app_env="dev", **{k: v for k, v in waived.items() if k != "auth_mode"}
+    ).confidential_startup_events(True)
+    assert dev_level == "warning"
+    assert _s(app_env="dev").confidential_startup_events(allowed=False) == []  # fake backend
 
 
 def test_legacy_vault_env_names_are_still_read(monkeypatch: pytest.MonkeyPatch) -> None:
