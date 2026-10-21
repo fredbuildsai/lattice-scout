@@ -553,3 +553,31 @@ async def test_the_sweeper_brings_back_a_killed_run_whose_job_is_dead() -> None:
     final = w.get(run)
     assert final.status is RunStatus.DONE and final.executions == 2
     assert w.agents.count("QueryPlanner") == 1 and w.agents.count("GapAnalyst") == 1
+
+
+# ---- global budget (M6) -----------------------------------------------------------------------------------------------
+async def test_a_paused_service_refuses_new_runs_and_creates_nothing() -> None:
+    from decimal import Decimal as D
+
+    from scout.adapters.observability.budget import GlobalBudget
+    from scout.discovery.application.start import StartAnalysisRun
+    from scout.ports.budget import ServicePaused
+
+    class Spent:
+        async def spent_since(self, since: object) -> tuple[D, D]:
+            return D(20), D(0)
+
+    w = World()
+    starter = StartAnalysisRun(
+        w.uow,
+        w.jobs,
+        w.profiles,
+        w.vault,
+        w.clock,
+        w.ids,
+        w.start_cfg,
+        GlobalBudget(Spent(), w.clock, D(20), D(5)),
+    )
+    with pytest.raises(ServicePaused):
+        await starter.start(OWNER, ())
+    assert w.store.runs == {} and not w.jobs.jobs

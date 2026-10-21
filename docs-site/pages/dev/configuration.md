@@ -114,6 +114,11 @@ Read by the API (start rules, the run and opportunity endpoints, `ADMIN_CLAIMS_S
 | `RUN_MAX_CORPUS` | `2500` | Largest literature corpus of one run, in works. Profile works do not count. |
 | `RUN_MAX_PER_DAY` | `5` | Runs one account may start in 24 hours. More gives 429 `run_limit_reached`. |
 | `ACCOUNT_DAILY_BUDGET_USD` | `5.00` | Spend of one account's runs in 24 hours, in USD. When the remainder is below USD 0.36 (the reasoning reserve plus three fast reserves), a new run gives 429 `daily_budget_reached`. |
+| `GLOBAL_DAILY_LLM_BUDGET_USD` | `20.00` | LLM spend of all users since UTC midnight. At the cap new runs give 503 `service_paused` and the nightly matching job skips computation. The log carries `budget.warning` at 80% and `budget.cap_reached`. |
+| `GLOBAL_DAILY_OPENALEX_BUDGET_USD` | `5.00` | Same for OpenAlex calls (`external_call.cost_usd`). |
+| `UPLOAD_MAX_PER_DAY` | `30` | Uploads per account in 24 hours (`0` = unlimited). The 31st gives 429 `upload_limit_reached`. |
+| `AUDIT_HASH_KEY` | dev default | Key for the pseudonymous tombstone of an erased account. Required when `APP_ENV=prod`. |
+| `ERASURE_SECOND_PASS_MINUTES` | `15` | Delay of the second sweep after an account deletion. |
 | `RUN_LLM_CONCURRENCY` | `3` | Agent calls one run makes at the same time. |
 | `RUN_OPENALEX_CONCURRENCY` | `4` | Literature calls one run makes at the same time. |
 | `RUN_ANALYSE_MAX_CALLS` | `2` | GapAnalyst batches per run (4 candidates each). |

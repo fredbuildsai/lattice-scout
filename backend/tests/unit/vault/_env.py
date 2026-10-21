@@ -293,13 +293,14 @@ class VaultEnv:
         policy: RetentionPolicy = RetentionPolicy.USER_CHOICE,
         max_bytes: int = 10_000_000,
         max_documents: int = 50,
+        max_per_day: int = 0,
     ) -> UploadDocument:
         """``UploadDocument`` over this environment."""
         from scout.vault.application.upload import UploadDocument
 
         return UploadDocument(
             uow=self.uow, storage=self.storage, jobs=self.jobs, clock=self.clock, ids=self.ids, policy=policy,
-            max_bytes=max_bytes, max_documents=max_documents,
+            max_bytes=max_bytes, max_documents=max_documents, max_per_day=max_per_day,
         )  # fmt: skip
 
     def insights_uc(self) -> ExtractInsights:

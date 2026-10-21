@@ -15,6 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from scout.adapters.persistence import models as m
 from scout.adapters.persistence.audit import SqlAuditLog
+from scout.adapters.persistence.models import audit_log
 from scout.adapters.persistence.uow import SqlUnitOfWork
 from scout.ports.audit import AuditLog
 from scout.shared import AccountId
@@ -116,6 +117,16 @@ class SqlDocumentRepo:
         t = m.document
         n = await self._s.scalar(
             select(func.count()).select_from(t).where(t.c.owner_id == owner_id, t.c.status != "deleting")
+        )
+        return int(n or 0)
+
+    async def count_uploaded_since(self, owner_id: AccountId, since: datetime) -> int:
+        """Count ``document.uploaded`` audit rows, so upload-delete loops do not reset the limit."""
+        a = audit_log
+        n = await self._s.scalar(
+            select(func.count())
+            .select_from(a)
+            .where(a.c.actor_id == owner_id, a.c.action == "document.uploaded", a.c.at >= since)
         )
         return int(n or 0)
 

@@ -5,6 +5,10 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 ## [Unreleased]
 
 ### Added
+- M6 slice B, rate limits and global budget guard (backend):
+  - `UPLOAD_MAX_PER_DAY` (default 30 per account, 0 = off): the 31st upload in 24 hours gets 429 `upload_limit_reached`. Upload-delete loops count too, because the limit reads the audit trail.
+  - `GLOBAL_DAILY_LLM_BUDGET_USD` (20) and `GLOBAL_DAILY_OPENALEX_BUDGET_USD` (5) cap the spend of all users since UTC midnight. At the cap `POST /api/v1/runs` answers 503 `service_paused` and the nightly matching job skips profile and match computation. The log carries `budget.warning` (80%) and `budget.cap_reached`, once per service and day, for the alert rule.
+  - `GET /api/v1/system/status` returns `accepting_runs` and a plain-language message for the UI.
 - M6 slice A, account and vault deletion (backend):
   - `POST /api/v1/me/delete` (typed e-mail confirmation, 202) blocks the account at once and queues the job `account.delete`. The job detaches pending matches, deletes mutual ones, purges the storage prefix `vault/{id}` and the sign-in record, removes analytics, anonymises cost rows, and deletes the account with everything it owns. A second pass 15 minutes later sweeps late writers. Only an HMAC tombstone (`account.deleted`) stays in the audit log.
   - The other person in a pending match sees the same thing as after a consent withdrawal: the card expires. Detached proposals are purged 30 days after they expire.

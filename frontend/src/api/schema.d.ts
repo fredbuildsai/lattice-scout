@@ -508,6 +508,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/system/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Are new analyses accepted right now?
+         * @description The shared daily budget is a pilot safeguard. When it is used up, runs resume after midnight UTC.
+         */
+        get: operations["system_status_api_v1_system_status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -1956,6 +1976,22 @@ export interface components {
             status: "pending" | "running" | "done" | "degraded";
         };
         /**
+         * SystemStatusOut
+         * @description Whether new analyses are accepted right now.
+         */
+        SystemStatusOut: {
+            /**
+             * Accepting Runs
+             * @description False when a global daily spend cap is reached.
+             */
+            accepting_runs: boolean;
+            /**
+             * Message
+             * @description Plain-language reason, shown by the UI when paused.
+             */
+            message?: string | null;
+        };
+        /**
          * TopicOut
          * @description A topic with a weight between 0 and 1.
          */
@@ -3169,6 +3205,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    system_status_api_v1_system_status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SystemStatusOut"];
                 };
             };
         };

@@ -53,6 +53,9 @@ class Settings(BaseSettings):
     run_max_corpus: int = 2500
     run_max_per_day: int = 5
     account_daily_budget_usd: Decimal = Decimal("5.00")
+    global_daily_llm_budget_usd: Decimal = Decimal("20.00")  # all users together; reached = new runs pause
+    global_daily_openalex_budget_usd: Decimal = Decimal("5.00")
+    upload_max_per_day: int = 30  # per account, 0 = unlimited
     run_llm_concurrency: int = 3
     run_openalex_concurrency: int = 4
     run_analyse_max_calls: int = 2

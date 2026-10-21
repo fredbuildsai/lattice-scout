@@ -204,3 +204,23 @@ async def test_delete_all_marks_every_document_once_and_refreshes_the_matching_p
     assert [e.action for e in env.store.audit.entries].count("vault.cleared") == 1
     assert await svc.delete_all(OWNER) == 0  # idempotent
     assert [e.action for e in env.store.audit.entries].count("vault.cleared") == 1
+
+
+# --------------------------------------------------------------------------- daily upload limit (M6)
+async def test_upload_limit_per_day_counts_per_owner_and_resets_after_24_hours() -> None:
+    from scout.vault.application.upload import UploadLimitReached
+
+    env = VaultEnv()
+    for seed in (1, 2):
+        await env.upload(pdf_bytes(make_pages(1, seed=seed)), max_per_day=2)
+    with pytest.raises(UploadLimitReached) as info:
+        await env.upload(pdf_bytes(make_pages(1, seed=3)), max_per_day=2)
+    assert info.value.code == "upload_limit_reached" and info.value.http_status == 429
+    await env.upload(
+        pdf_bytes(make_pages(1, seed=1)), max_per_day=2
+    )  # the same bytes: returns the existing one
+    await env.upload(
+        pdf_bytes(make_pages(1, seed=4)), owner=OTHER, max_per_day=2
+    )  # another owner is unaffected
+    env.clock.advance(timedelta(hours=25))
+    await env.upload(pdf_bytes(make_pages(1, seed=3)), max_per_day=2)

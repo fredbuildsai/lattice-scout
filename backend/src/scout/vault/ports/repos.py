@@ -57,6 +57,10 @@ class DocumentRepo(Protocol):
         """Documents that count against the vault limit."""
         ...
 
+    async def count_uploaded_since(self, owner_id: AccountId, since: datetime) -> int:
+        """Uploads by the owner since ``since`` (counts deleted ones too: the audit trail keeps them)."""
+        ...
+
     async def add(self, document: Document) -> None:
         """Insert. Raises ``DuplicateDocument`` when the unique index is hit."""
         ...

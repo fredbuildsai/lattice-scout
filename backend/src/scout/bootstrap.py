@@ -15,6 +15,7 @@ from scout.adapters.literature.fixtures import FixtureLiterature
 from scout.adapters.llm.factory import AgentFactory
 from scout.adapters.llm.fake_llm import FakeLLM
 from scout.adapters.observability.analytics import BufferedAnalytics, NullAnalytics
+from scout.adapters.observability.budget import GlobalBudget, SqlSpendReader
 from scout.adapters.observability.prices import load_price_table, resolve_path
 from scout.adapters.observability.usage_meter import BufferedUsageMeter
 from scout.adapters.persistence.db import Database
@@ -58,6 +59,7 @@ from scout.matching.application.service import DecideOnMatch, MatchingService
 from scout.matching.application.sources import ConsentSourceAdapter, VaultSignalAdapter
 from scout.matching.application.sources import ProfileSourceAdapter as MatchProfileSource
 from scout.ports.analytics import AnalyticsPort
+from scout.ports.budget import GlobalBudgetPort
 from scout.ports.jobs import JobQueuePort
 from scout.ports.literature import LiteraturePort
 from scout.ports.llm import LLMPort, ModelTier
@@ -110,6 +112,7 @@ class Container:
     job_queue: JobQueuePort
     identity: IdentityService
     delete_account: DeleteAccountJob
+    global_budget: GlobalBudgetPort
     sweep_erasures: SweepErasures
     profile: ProfileService
     import_profile: ImportProfile
@@ -276,12 +279,19 @@ def build_container(
     vault_service = VaultService(vault_uow, queue, clock, ids)
     profile_service = ProfileService(lambda: SqlProfileUnitOfWork(db), literature, queue, clock, ids, cfg)
     profile_source, vault_source = ProfileSourceAdapter(profile_service), VaultSourceAdapter(vault_service)
+    global_budget = GlobalBudget(
+        SqlSpendReader(db),
+        clock,
+        settings.global_daily_llm_budget_usd,
+        settings.global_daily_openalex_budget_usd,
+    )
     start_run = StartAnalysisRun(
         discovery_uow, queue, profile_source, vault_source, clock, ids,
         StartConfig(
             settings.run_budget_usd, settings.account_daily_budget_usd, settings.run_max_per_day,
             settings.run_max_openalex_calls, settings.run_max_corpus,
         ),
+        global_budget,
     )  # fmt: skip
     match_uow = lambda: SqlMatchUnitOfWork(db)  # noqa: E731
     vocabulary = load_vocabulary(resolve_path(settings.methods_config))
@@ -325,12 +335,12 @@ def build_container(
         decide_match=DecideOnMatch(match_uow, consent_source, queue, match_notifier, clock, match_cfg),
         match_profile=profile_job, compute_matches=compute_matches,
         reveal_match=RevealMatch(match_uow, match_profile_source, consent_source, signal_source, match_agents, vocabulary, clock),
-        match_nightly=MatchingNightly(match_uow, queue, profile_job, compute_matches, clock, match_cfg),
+        match_nightly=MatchingNightly(match_uow, queue, profile_job, compute_matches, clock, match_cfg, global_budget),
         storage=storage, agents=agents,
         vault=vault_service,
         upload_document=UploadDocument(
             vault_uow, storage, queue, clock, ids, RetentionPolicy(settings.retention_policy),
-            settings.vault_max_bytes, settings.vault_max_documents,
+            settings.vault_max_bytes, settings.vault_max_documents, settings.upload_max_per_day,
         ),
         ingest_document=IngestDocument(vault_uow, storage, extractor, extract_insights, clock),
         delete_document_job=DeleteDocumentJob(vault_uow, storage, clock),
@@ -361,6 +371,7 @@ def build_container(
         job_queue=queue,
         identity=identity_service,
         delete_account=delete_account,
+        global_budget=global_budget,
         sweep_erasures=SweepErasures(SqlStuckErasures(db), queue, clock, audit_key),
         profile=profile_service,
         import_profile=ImportProfile(lambda: SqlProfileUnitOfWork(db), literature, clock, ids, cfg),

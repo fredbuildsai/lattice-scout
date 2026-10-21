@@ -25,6 +25,7 @@ from scout.matching.domain.vocabulary import Vocabulary
 from scout.matching.ports.agents import MatchAgentsPort
 from scout.matching.ports.repos import MatchUnitOfWork
 from scout.matching.ports.sources import ConsentSource, ProfileSource, VaultSignalSource
+from scout.ports.budget import GlobalBudgetPort
 from scout.ports.jobs import JobQueuePort, JobSpec
 from scout.ports.llm import CallContext, LLMOutputInvalid
 from scout.shared import AccountId, Clock
@@ -152,7 +153,8 @@ class MatchingNightly:
     KIND = "matching.nightly"
 
     def __init__(
-        self, uow: Callable[[], MatchUnitOfWork], jobs: JobQueuePort, profile_job: Any, compute: Any, clock: Clock, cfg: MatchConfig
+        self, uow: Callable[[], MatchUnitOfWork], jobs: JobQueuePort, profile_job: Any, compute: Any, clock: Clock, cfg: MatchConfig,
+        budget: GlobalBudgetPort | None = None,
     ) -> None:  # fmt: skip
         self._uow, self._jobs, self._profile, self._compute, self._clock, self._cfg = (
             uow,
@@ -162,6 +164,7 @@ class MatchingNightly:
             clock,
             cfg,
         )
+        self._budget = budget
 
     async def ensure_scheduled(self) -> None:
         """Queue the next run at the configured UTC hour (deduped per day)."""
@@ -205,6 +208,14 @@ class MatchingNightly:
                 )
             )
             retried += 1
+        if self._budget is not None and (await self._budget.status()).paused:
+            return {
+                "expired": expired,
+                "closed": closed,
+                "reveal_retried": retried,
+                "detached_purged": purged,
+                "paused": True,
+            }
         for acc in accounts:
             await self._profile.execute(acc)
         result = await self._compute.execute(None)

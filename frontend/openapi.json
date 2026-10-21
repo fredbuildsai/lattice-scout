@@ -3277,6 +3277,33 @@
         "title": "StepOut",
         "type": "object"
       },
+      "SystemStatusOut": {
+        "description": "Whether new analyses are accepted right now.",
+        "properties": {
+          "accepting_runs": {
+            "description": "False when a global daily spend cap is reached.",
+            "title": "Accepting Runs",
+            "type": "boolean"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Plain-language reason, shown by the UI when paused.",
+            "title": "Message"
+          }
+        },
+        "required": [
+          "accepting_runs"
+        ],
+        "title": "SystemStatusOut",
+        "type": "object"
+      },
       "TopicOut": {
         "description": "A topic with a weight between 0 and 1.",
         "properties": {
@@ -5070,6 +5097,28 @@
         "summary": "Stop a run",
         "tags": [
           "discovery"
+        ]
+      }
+    },
+    "/api/v1/system/status": {
+      "get": {
+        "description": "The shared daily budget is a pilot safeguard. When it is used up, runs resume after midnight UTC.",
+        "operationId": "system_status_api_v1_system_status_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemStatusOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Are new analyses accepted right now?",
+        "tags": [
+          "system"
         ]
       }
     },

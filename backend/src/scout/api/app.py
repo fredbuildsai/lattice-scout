@@ -21,6 +21,7 @@ from scout.api import (
     opportunities,
     profile,
     runs,
+    system,
     vault,
 )
 from scout.api.errors import install_error_handlers
@@ -76,6 +77,7 @@ def create_app(container: Container | None = None) -> FastAPI:
     app.include_router(feedback.router)
     app.include_router(matches.router)
     app.include_router(admin.router)
+    app.include_router(system.router)
     if (container.settings if container else get_settings()).auth_mode == "dev":
         app.include_router(dev_auth.router)
         structlog.get_logger().warning(
