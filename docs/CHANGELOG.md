@@ -5,6 +5,17 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 ## [Unreleased]
 
 ### Added
+- M3 gap analysis engine (backend):
+  - `POST /api/v1/runs` (202, 0 to 10 ready documents), `GET /api/v1/runs`, `GET /api/v1/runs/{id}` and `POST /api/v1/runs/{id}/cancel`. A run has eight ordered steps (plan queries, retrieve, group by topic, coverage, measure novelty, analyse, verify, score and persist) and runs as the resumable `discovery.run` job. `discovery.sweep` re-enqueues stalled runs.
+  - `GET /api/v1/opportunities`, `GET /api/v1/opportunities/{id}`, `PATCH /api/v1/opportunities/{id}` (shown, saved, dismissed) and `GET /api/v1/evidence/{id}/open`. An opportunity is shown only with at least two distinct verified sources, one of them published literature, and a measured novelty count.
+  - Every citation is checked in code against stored text before the Critic reviews a claim. Each claim keeps its status, reason, step, agent, prompt version and model. Unverified claims are stored and never returned.
+  - Budgets: exact per-run totals through an atomic ledger, a reservation before each model call, at most 400 OpenAlex calls per run, and per-account limits on runs and spend in 24 hours. A budget hit degrades the step and marks the run `partial`.
+  - Resume after a kill: a restarted run continues at its last checkpoint without duplicate rows. A worker that lost its lease stops at its next call or commit.
+  - `GET /api/v1/admin/claims` for the admin role. Vault quotes are redacted unless `ADMIN_CLAIMS_SHOW_VAULT_QUOTES=true`, and each view is audited (`admin.claims_viewed`).
+  - Migrations `20261021_0005_discovery` (eight tables) and `20261021_0006_discovery_views` (`analytics.v_claim_quality` and `analytics.v_run_cost`).
+  - Prompts: QueryPlanner 1.1.0, ClusterLabeler 1.1.0, InsightTopicTagger 1.0.1, GapAnalyst 1.1.0 and Critic 1.1.0. Each prompt states that its input text is data.
+  - Field configuration `config/fields.yaml`, the offline eval (`make eval`, `eval/run_eval.py`) and the FakeLLM fixtures for two eval cases, regenerated with `scripts/make_discovery_fixtures.py` (`--check` reports stale fixtures).
+- M3 documentation: discovery module README, developer page on gap analysis, user page "Find opportunities", and the configuration reference for the run variables.
 - M2 private vault and ingestion (backend):
   - `POST`, `GET`, `PATCH` and `DELETE /api/v1/documents`. Uploads are PDF or DOCX, up to 25 MB; the type is read from the content, and DOCX archives pass zip-bomb limits. The same bytes uploaded again return the existing document (200).
   - Document lifecycle as a state machine (`uploaded`, `extracting`, `extracted`, `analysing`, `ready`, `failed`, `rejected`, `deleting`), with a resumable `vault.ingest` job, `vault.delete` and the `vault.sweep` recovery job (every 10 minutes).
@@ -71,8 +82,14 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 - M1 documentation: module READMEs for `identity` and `profile`; developer pages on authentication and on the profile claim; user page "Getting started".
 
 ### Changed
+- Configuration: `RUN_*`, `ACCOUNT_DAILY_BUDGET_USD`, `FIELDS_CONFIG`, `LAUNCH_FIELD` and `ADMIN_CLAIMS_SHOW_VAULT_QUOTES` are read from M3 on and are no longer listed as reserved. The configuration reference documents them.
+- Text normalisation (`norm`, `clean_text`) moved from the vault domain to `scout/shared/text.py`. The vault re-exports them, so existing imports keep working.
 - Configuration: `RETENTION_POLICY`, `VAULT_*`, `INSIGHT_*` and `SUPABASE_STORAGE_BUCKET` are read from M2 on. `RETENTION_POLICY` is no longer listed as reserved. The default `user_choice` is provisional (ADR-009).
 - Configuration: `OPENALEX_API_KEY`, `OPENALEX_MAILTO`, `LITERATURE_FIXTURES_DIR`, `DEV_KEYS_DIR` and `DEV_ISSUER` are read by the application from M1 on; they are no longer listed as reserved. `.env.example` lists `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`. The configuration reference documents them and the frontend variables.
+
+### Fixed
+- Traces and logs no longer carry exception messages. A span processor withholds exception messages and stack traces from finished spans, and a logging filter does the same for the server's own error logs. A database error can no longer copy vault text into a trace (BACKLOG F-17).
+- A worker that loses its job lease logs `job_lease_lost` (M2 review N6).
 
 ### Notes
 - M2 runs offline by default. On 2026-10-20 the vault unit and storage contract tests passed without a database, and `make test-integration` passed (39 tests, including the 30-page acceptance flow with the fake LLM). Not run for this entry: live LLM calls (`needs_network`), live Supabase storage (`needs_supabase`), and the frontend end-to-end test against a running stack.

@@ -103,6 +103,29 @@ These are read by Vite from `frontend/` (`frontend/.env`, or the environment) an
 | `VITE_API_URL` | `http://localhost:8000` | Base URL of the API. |
 | `VITE_ANALYTICS_ENABLED` | `true` | `false` turns the frontend analytics client off. |
 
+## Gap analysis runs
+
+Read by the API (start rules, the run and opportunity endpoints, `ADMIN_CLAIMS_SHOW_VAULT_QUOTES`) and by the worker (the run and sweep jobs, budgets and stall detection). Restart both after a change. The rules are in the [discovery module](https://github.com/fredbuildsai/lattice-scout/blob/main/backend/src/scout/discovery/README.md) and the [gap analysis page](discovery.md).
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `RUN_BUDGET_USD` | `1.50` | Spend limit of one run, in USD. The run budget is the smaller of this and the account's daily remainder. |
+| `RUN_MAX_OPENALEX_CALLS` | `400` | OpenAlex calls per run, counting cache hits. |
+| `RUN_MAX_CORPUS` | `2500` | Largest literature corpus of one run, in works. Profile works do not count. |
+| `RUN_MAX_PER_DAY` | `5` | Runs one account may start in 24 hours. More gives 429 `run_limit_reached`. |
+| `ACCOUNT_DAILY_BUDGET_USD` | `5.00` | Spend of one account's runs in 24 hours, in USD. When the remainder is below USD 0.36 (the reasoning reserve plus three fast reserves), a new run gives 429 `daily_budget_reached`. |
+| `RUN_LLM_CONCURRENCY` | `3` | Agent calls one run makes at the same time. |
+| `RUN_OPENALEX_CONCURRENCY` | `4` | Literature calls one run makes at the same time. |
+| `RUN_ANALYSE_MAX_CALLS` | `2` | GapAnalyst batches per run (4 candidates each). |
+| `RUN_MAX_RESOLVE` | `20` | `get_work` calls per run for works cited but missing from the corpus. |
+| `RUN_STALL_MINUTES` | `20` | Minutes without a heartbeat before the sweeper re-enqueues a running run. |
+| `RUN_MAX_EXECUTIONS` | `8` | Executions of one run (restarts included) before it fails with `stalled`. |
+| `FIELDS_CONFIG` | `config/fields.yaml` | Field definitions file (topics, keywords, query window, novelty bands, cluster sizes). |
+| `LAUNCH_FIELD` | `bio-based-materials` | Key of the field the runs use, in `FIELDS_CONFIG`. |
+| `ADMIN_CLAIMS_SHOW_VAULT_QUOTES` | `false` | `true` shows vault quotes in `GET /api/v1/admin/claims`. Each view is audited. |
+
+Not settings (fixed in code): reserves of USD 0.02 for a fast model call and USD 0.30 for a reasoning call, at most 8 candidate clusters per run, at most 10 documents per run, and the title similarity of 0.6 above which an idea counts as a duplicate.
+
 ## Reserved for later milestones
 
 These fields exist in `Settings` and in `.env.example`, but no code reads them yet. They are documented so that the
@@ -110,10 +133,6 @@ names stay stable. Each is defined by the milestone in brackets.
 
 | Variable | Default | Milestone | Purpose |
 |---|---|---|---|
-| `LAUNCH_FIELD` | `bio-based-materials` | not scheduled (ADR-008) | Launch field for the pilot. |
-| `RUN_BUDGET_USD` | `1.50` | M3 | Spend limit per analysis run. |
-| `RUN_MAX_OPENALEX_CALLS` | `400` | M3 | OpenAlex call limit per run. |
-| `RUN_MAX_CORPUS` | `2500` | M3 | Maximum literature corpus size per run. |
 | `ANALYTICS_RETENTION_DAYS` | `395` | not scheduled | Retention for analytics rows. |
 | `MATCH_MAX_OPEN_PER_WEEK` | `3` | M5 | Matching: open proposals per researcher per week. |
 | `MATCH_EXPIRY_DAYS` | `21` | M5 | Matching: days before a proposal expires. |
