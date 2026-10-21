@@ -1,6 +1,7 @@
-# ADR-014: Resumable, fenced analysis runs with an exact budget ledger
+# ADR 014: Resumable, fenced analysis runs with an exact budget ledger
 
-Status: accepted (M3, 2026-10-21). Decisions 57, 59, 62, 71, 72 and 74.
+- **Status:** accepted
+- **Date:** 2026-10-21 (M3; DECISIONS 57, 59, 62, 71, 72, 74)
 
 ## Context
 
