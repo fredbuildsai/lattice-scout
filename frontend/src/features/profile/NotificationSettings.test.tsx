@@ -2,11 +2,12 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { analytics } from '../../analytics/client'
 import { AuthProvider } from '../../auth/AuthProvider'
 import { fakeAuthClient } from '../../test-utils'
 import { NotificationSettings } from './NotificationSettings'
 
-const INITIAL = { email_runs: true, email_matches: true, email_digest: false }
+const INITIAL = { email_runs: true, email_matches: true, email_digest: false, analytics_opt_out: false }
 
 function stub(patch: (body: Record<string, boolean>) => Response) {
   const patches: Record<string, boolean>[] = []
@@ -61,5 +62,27 @@ describe('NotificationSettings', () => {
     await userEvent.click(await screen.findByLabelText('Weekly summary'))
     expect(await screen.findByRole('alert')).toHaveTextContent('Could not save')
     expect(screen.getByLabelText('Weekly summary')).not.toBeChecked()
+  })
+
+  it('sends {analytics_opt_out:true} and switches the analytics client off', async () => {
+    const patches = stub((b) => new Response(JSON.stringify({ ...INITIAL, ...b })))
+    const spy = vi.spyOn(analytics, 'setOptOut')
+    renderIt()
+    expect(screen.queryByText('Usage analytics')).not.toBeInTheDocument()
+    await userEvent.click(await screen.findByLabelText('Do not record my usage (product analytics)'))
+    await waitFor(() => expect(patches).toEqual([{ analytics_opt_out: true }]))
+    expect(screen.getByLabelText('Do not record my usage (product analytics)')).toBeChecked()
+    expect(screen.getByRole('heading', { name: 'Usage analytics' })).toBeInTheDocument()
+    await waitFor(() => expect(spy).toHaveBeenLastCalledWith(true))
+    spy.mockRestore()
+    analytics.setOptOut(false)
+  })
+
+  it('rolls back the analytics switch when saving fails', async () => {
+    stub(() => new Response('{}', { status: 500 }))
+    renderIt()
+    await userEvent.click(await screen.findByLabelText('Do not record my usage (product analytics)'))
+    expect(await screen.findByRole('alert')).toHaveTextContent('Could not save')
+    expect(screen.getByLabelText('Do not record my usage (product analytics)')).not.toBeChecked()
   })
 })

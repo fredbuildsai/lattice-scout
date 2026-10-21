@@ -26,6 +26,8 @@ export function NotificationSettings() {
           <Row id="notify-runs" title="When an analysis finishes" hint="One mail per finished analysis." checked={prefs.data.email_runs} disabled={false} onChange={(v) => update.mutate({ email_runs: v })} />
           <Row id="notify-matches" title="When a collaboration suggestion arrives or becomes a match" hint="Suggestions stay anonymous until you both accept." checked={prefs.data.email_matches} disabled={false} onChange={(v) => update.mutate({ email_matches: v })} />
           <Row id="notify-digest" title="Weekly summary" hint="Off by default." checked={prefs.data.email_digest} disabled={false} onChange={(v) => update.mutate({ email_digest: v })} />
+          <h3 className="pt-2 text-sm font-semibold text-ink-2">Usage analytics</h3>
+          <Row id="analytics-opt-out" title="Do not record my usage (product analytics)" hint="Scout counts page views to improve the product. Switch this on and nothing is stored for your account." checked={prefs.data.analytics_opt_out} disabled={false} onChange={(v) => update.mutate({ analytics_opt_out: v })} />
         </>
       )}
       {update.isError && (

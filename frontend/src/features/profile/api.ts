@@ -1,4 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useEffect } from 'react'
+import { analytics } from '../../analytics/client'
 import { apiJson, type components } from '../../api/client'
 
 export type Me = components['schemas']['MeOut']
@@ -111,8 +113,14 @@ export function useDeleteAccount() {
 }
 
 /** GET /me/notifications (query key `['notification-prefs']`). */
-export function useNotificationPrefs() {
-  return useQuery({ queryKey: ['notification-prefs'], queryFn: () => apiJson<NotificationPrefs>('/api/v1/me/notifications') })
+export function useNotificationPrefs(enabled = true) {
+  const q = useQuery({ queryKey: ['notification-prefs'], queryFn: () => apiJson<NotificationPrefs>('/api/v1/me/notifications'), enabled })
+  const optOut = q.data?.analytics_opt_out
+  // Keep the analytics client in step with the stored preference (also after optimistic updates and rollbacks).
+  useEffect(() => {
+    if (optOut !== undefined) analytics.setOptOut(optOut)
+  }, [optOut])
+  return q
 }
 
 /** PATCH /me/notifications with a partial body: applies it to the cache at once, rolls back only that change on error. */

@@ -46,7 +46,16 @@ def test_prod_refuses_each_offline_backend(key: str, value: str, needle: str) ->
 
 
 def test_prod_accepts_real_backends() -> None:
-    assert _s(app_env="prod", auth_mode="supabase", audit_hash_key="k" * 32, **REAL).app_env == "prod"
+    assert (
+        _s(
+            app_env="prod",
+            auth_mode="supabase",
+            audit_hash_key="k" * 32,
+            cors_origins=["https://app.example.edu"],
+            **REAL,
+        ).app_env
+        == "prod"
+    )
 
 
 def test_every_settings_field_is_in_env_example() -> None:

@@ -1,7 +1,7 @@
 # Progress
 
 Merge policy: stack
-Current milestone: M6 in progress (slice A account/vault deletion done, review skipped). M5 done (review pending, skipped by user decision). Next: M6 Notifications, privacy, hardening. M4 built (Opportunities UX + feedback), review pending (skipped for cost). M3 done and approved. M2 done and approved after round 2, awaiting human sign-off. M0 and M1 done and awaiting human sign-off; PR #1 open (M1 and M2 added to the same branch)
+Current milestone: M6 done (slices A-E; review pending, skipped by user decision; independent security review still to run). Next: M7 Pilot launch (build only). M5 done (review pending, skipped by user decision). Next: M6 Notifications, privacy, hardening. M4 built (Opportunities UX + feedback), review pending (skipped for cost). M3 done and approved. M2 done and approved after round 2, awaiting human sign-off. M0 and M1 done and awaiting human sign-off; PR #1 open (M1 and M2 added to the same branch)
 Current branch: claude/zealous-curie-7m18vd (harness-designated; used instead of m0-foundations)
 Last session: 2026-10-20 s01 — M0, M1 and M2 built; M2 done and approved by the reviewer
 
@@ -66,7 +66,7 @@ Last session: 2026-10-20 s01 — M0, M1 and M2 built; M2 done and approved by th
 - [x] Slice B: upload rate limit, global daily budget guard, `GET /system/status` (UI banner comes with slice C)
 - [x] Slice C: privacy tab, deletion dialogs, pause banner (notification preferences move to slice D with the emails)
 - [x] Slice D: notifications and emails (console sender by default; Resend only with keys; magic-link template in docs/EMAIL_TEMPLATES.md)
-- [ ] Slice E: security review, observability, eval in CI
+- [x] Slice E: RLS, headers, CORS, retention, funnel/ops views, analytics opt-out, audit and eval workflows (docs/SECURITY.md, docs/OPERATIONS.md)
 ## M7 — Pilot launch (build only)
 ## M8 — Documentation
 
