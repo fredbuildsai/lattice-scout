@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { latestDone, useRuns } from '../runs/api'
 import { emptyReason } from '../runs/messages'
+import { PausedBanner } from '../runs/PausedBanner'
 import { IdeasChart } from './IdeasChart'
 import { OpportunityCard } from './OpportunityCard'
 import { useOpportunities, type OpportunityCard as Card } from './api'
@@ -73,6 +74,7 @@ export function OpportunitiesPage() {
         <h1 id="page-title" className="font-serif text-3xl font-semibold md:text-4xl">
           Opportunities
         </h1>
+        <PausedBanner />
         <p className="mt-1 text-ink-2">
           {runId ? `${all.length} ${view === 'dismissed' ? 'dismissed ' : ''}ideas from ${runNo} · every one cites the files and papers it builds on · best fit first` : 'Every idea cites the files and papers it builds on.'}
         </p>

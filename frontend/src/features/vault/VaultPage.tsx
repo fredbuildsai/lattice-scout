@@ -1,8 +1,9 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useStartRun } from '../runs/api'
-import { ApiError } from '../../api/client'
+import { useStartRun, useSystemStatus } from '../runs/api'
+import { startRunErrorMessage } from '../runs/messages'
+import { PausedBanner } from '../runs/PausedBanner'
 import { track } from '../../analytics/client'
 import { Icon } from '../../ui/icons'
 import { DocumentRow } from './DocumentRow'
@@ -70,6 +71,9 @@ export function VaultPage({ upload = uploadDocument }: { upload?: Uploader }) {
   const ready = list.filter((d) => d.status === 'ready')
   const navigate = useNavigate()
   const start = useStartRun()
+  const status = useSystemStatus()
+  const paused = status.data?.accepting_runs === false
+  const pausedMessage = status.data?.message ?? ''
   const [selected, setSelected] = useState<string[]>([])
   const chosen = selected.filter((id) => ready.some((d) => d.id === id))
   const toggle = (id: string) => setSelected((xs) => (xs.includes(id) ? xs.filter((x) => x !== id) : [...xs, id]))
@@ -89,6 +93,8 @@ export function VaultPage({ upload = uploadDocument }: { upload?: Uploader }) {
         </span>
       </div>
       <p className="mt-2 max-w-[640px] text-ink-2">Everything that never made it into a paper. Scout reads it to find opportunities — nobody else can see it, and it is never used to train models.</p>
+
+      <PausedBanner />
 
       <div className="mt-6">
         <UploadZone onFiles={onFiles} />
@@ -136,7 +142,7 @@ export function VaultPage({ upload = uploadDocument }: { upload?: Uploader }) {
       {ready.length > 0 && (
         <div className="mt-3 rounded-card border border-scout-50 bg-scout-100 p-3">
           <div className="flex flex-wrap items-center gap-3">
-            <button type="button" disabled={start.isPending} onClick={analyse} className="inline-flex min-h-11 items-center gap-2 rounded-btn bg-scout px-4 text-sm font-semibold text-white hover:bg-scout-ink disabled:opacity-60">
+            <button type="button" disabled={start.isPending || paused} title={paused ? pausedMessage : undefined} onClick={analyse} className="inline-flex min-h-11 items-center gap-2 rounded-btn bg-scout px-4 text-sm font-semibold text-white hover:bg-scout-ink disabled:opacity-60">
               <Icon name="sparkle" size={16} /> Analyse with Scout
             </button>
             <p className="text-sm text-ink-2">
@@ -145,7 +151,7 @@ export function VaultPage({ upload = uploadDocument }: { upload?: Uploader }) {
           </div>
           {start.isError && (
             <p role="alert" className="mt-2 text-sm text-warm">
-              {start.error instanceof ApiError && start.error.detail ? start.error.detail : 'We could not start the analysis. Please try again.'}
+              {startRunErrorMessage(start.error)}
             </p>
           )}
         </div>

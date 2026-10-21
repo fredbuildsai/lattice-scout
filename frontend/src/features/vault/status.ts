@@ -62,6 +62,8 @@ const ERRORS: Record<string, string> = {
   unsupported_file_type: 'Only PDF and Word (.docx) files are supported for now.',
   vault_limit_reached: 'Your vault is full. Delete a document to add another.',
   file_rejected: 'This file could not be accepted. It may be empty, damaged or protected.',
+  upload_limit_reached: 'You have reached today’s upload limit. Please try again tomorrow.',
+  service_paused: 'Scout is paused for today to keep costs in check. Uploads resume after midnight UTC.',
   network_error: 'The upload was interrupted. Check your connection and try again.',
 }
 

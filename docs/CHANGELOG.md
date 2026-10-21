@@ -5,6 +5,9 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 ## [Unreleased]
 
 ### Added
+- M6 slice C, privacy tab and pause banner (frontend):
+  - Privacy tab (`/settings/privacy`): "Delete my vault" (type `DELETE`) and "Delete my account" (retype your e-mail), a statement that Scout never trains models on your files, and a list of what deletion removes and keeps. After an account deletion the user is signed out with an "account is being deleted" message; any 403 `account_deleted` does the same.
+  - Banner on the Vault and Opportunities pages when new analyses are paused by the daily budget; the "Analyse with Scout" button is disabled with the same message. Friendly messages for `service_paused` and `upload_limit_reached`.
 - M6 slice B, rate limits and global budget guard (backend):
   - `UPLOAD_MAX_PER_DAY` (default 30 per account, 0 = off): the 31st upload in 24 hours gets 429 `upload_limit_reached`. Upload-delete loops count too, because the limit reads the audit trail.
   - `GLOBAL_DAILY_LLM_BUDGET_USD` (20) and `GLOBAL_DAILY_OPENALEX_BUDGET_USD` (5) cap the spend of all users since UTC midnight. At the cap `POST /api/v1/runs` answers 503 `service_paused` and the nightly matching job skips profile and match computation. The log carries `budget.warning` (80%) and `budget.cap_reached`, once per service and day, for the alert rule.

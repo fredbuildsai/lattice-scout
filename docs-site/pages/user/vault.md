@@ -116,4 +116,12 @@ The document disappears from your list straight away. The stored file is removed
 
 ## Delete everything
 
-The privacy tab will offer "Delete my vault". It removes every document you uploaded, the text and insights taken from them, and the stored files. Your profile, past runs and matches stay. Deleting your whole account removes those too.
+The privacy tab (Settings, Privacy) offers "Delete my vault". You confirm by typing DELETE. It removes every document you uploaded, the text and insights taken from them, and the stored files. Your profile, past runs and matches stay. Deleting your whole account removes those too.
+
+## Delete your account
+
+In the same tab, "Delete my account" asks you to type your e-mail address again. Your files, profile, runs, feedback and matches are then erased in the background and you are signed out. Matches that are still pending simply expire for the other person; they are not told why. Scout keeps only cost records that no longer name you. This cannot be undone.
+
+## Daily limit
+
+If many people use Scout on the same day, new analyses can pause until the next day (UTC). A banner tells you when that happens; your documents and earlier results stay available.

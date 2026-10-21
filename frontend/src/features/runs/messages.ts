@@ -1,3 +1,4 @@
+import { ApiError } from '../../api/client'
 import type { Run } from './api'
 
 /** The 8 pipeline steps in order, with plain labels. */
@@ -36,4 +37,14 @@ export function emptyReason(run: Run | null | undefined): string {
   if (run.counts.candidates > 0 && run.counts.shown === 0)
     return 'Scout drafted some ideas but none had enough verified evidence (at least two checked sources and a measured novelty count), so it shows nothing rather than guess. More documents or a broader profile usually help.'
   return 'Scout did not find a well-supported opportunity in this run. Adding more documents usually helps.'
+}
+
+/** Friendly text for a failed API call that starts a run (`service_paused`, `upload_limit_reached`, else the server detail). */
+export function startRunErrorMessage(error: unknown): string {
+  if (error instanceof ApiError) {
+    if (error.code === 'service_paused') return 'Scout is paused for today to keep costs in check. New analyses resume after midnight UTC.'
+    if (error.code === 'upload_limit_reached') return 'You have reached today’s limit. Please try again tomorrow.'
+    if (error.detail) return error.detail
+  }
+  return 'We could not start the analysis. Please try again.'
 }

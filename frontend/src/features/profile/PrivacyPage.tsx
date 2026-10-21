@@ -1,7 +1,8 @@
 import { ConsentToggles } from './ConsentToggles'
+import { DataDeletion } from './DataDeletion'
 import { useMe } from './api'
 
-/** Minimal /settings/privacy (W10, M1 stage): consent switches. */
+/** Minimal /settings/privacy (W10, M1 stage): consent switches, data deletion. */
 export function PrivacyPage() {
   const me = useMe()
   return (
@@ -24,6 +25,7 @@ export function PrivacyPage() {
           <p className="text-ink-3">Signed in as {me.data.email}</p>
           <h2 className="text-lg font-semibold">Matching with other researchers</h2>
           <ConsentToggles me={me.data} />
+          <DataDeletion email={me.data.email} />
         </div>
       )}
     </section>

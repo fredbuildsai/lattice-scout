@@ -100,3 +100,10 @@ export function storedClaim(profile: Profile): ClaimBody {
   const first = primary?.author_id
   return { author_ids: first ? [first, ...ids.filter((i) => i !== first)] : ids, primary_author_id: first ?? null }
 }
+
+/** POST /me/delete: starts account deletion; the caller must retype the account e-mail. Throws `ApiError` (422 `confirmation_mismatch`). */
+export function useDeleteAccount() {
+  return useMutation({
+    mutationFn: (confirmEmail: string) => apiJson<{ deleting?: boolean }>('/api/v1/me/delete', { method: 'POST', body: JSON.stringify({ confirm_email: confirmEmail }) }),
+  })
+}
