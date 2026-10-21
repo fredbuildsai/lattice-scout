@@ -7,7 +7,7 @@ from dataclasses import dataclass, replace
 
 from scout.vault.domain.chunking import Chunk
 from scout.vault.domain.ids import ChunkId
-from scout.vault.domain.insights import InsightItem, ItemStatus, Section
+from scout.vault.domain.insights import InsightItem, ItemStatus, Section, StoredInsights
 from scout.vault.domain.verification import MAX_QUOTE_CHARS, norm
 
 MAX_QUOTE = MAX_QUOTE_CHARS
@@ -63,6 +63,18 @@ def retained_content(chunks: Sequence[Chunk], items: Sequence[InsightItem]) -> d
         summary = _cut(joined, MAX_QUOTE)[0] if joined else None
         out[cid] = Retained(tuple(quotes.get(cid, [])), summary)
     return out
+
+
+def bounded_stored_for_discard(stored: StoredInsights) -> StoredInsights:
+    """``stored`` with items, title, keywords and kind reason all cut to ``MAX_QUOTE`` characters."""
+
+    def cut(text: str | None) -> str | None:
+        return None if text is None else _cut(text, MAX_QUOTE)[0]
+
+    return replace(
+        stored, items=bounded_for_discard(stored.items), title=cut(stored.title), kind_reason=cut(stored.kind_reason),
+        keywords=[_cut(k, MAX_QUOTE)[0] for k in stored.keywords],
+    )  # fmt: skip
 
 
 def bounded_for_discard(items: Sequence[InsightItem]) -> list[InsightItem]:

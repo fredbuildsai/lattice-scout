@@ -1,9 +1,9 @@
 # Progress
 
 Merge policy: stack
-Current milestone: M2 — Vault + ingestion (built, review round 1 fixed, round 2 pending). M0 and M1 done and awaiting human sign-off; PR #1 open (M1 and M2 added to the same branch)
+Current milestone: M2 — Vault + ingestion (done, reviewer approved after round 2; awaiting human sign-off). M0 and M1 done and awaiting human sign-off; PR #1 open (M1 and M2 added to the same branch)
 Current branch: claude/zealous-curie-7m18vd (harness-designated; used instead of m0-foundations)
-Last session: 2026-10-20 s01 — M0, M1 and M2 built; M2 review round 1 fixed
+Last session: 2026-10-20 s01 — M0, M1 and M2 built; M2 done and approved by the reviewer
 
 <!-- Merge policy: "stack" (default) = leave each milestone PR open for the human and branch the next milestone from the previous one.
      "self-merge" = squash-merge your own PR when checks are green. The human may change this line at any time. See plan §0.4. -->
@@ -46,7 +46,8 @@ Last session: 2026-10-20 s01 — M0, M1 and M2 built; M2 review round 1 fixed
 - [x] F1-F2 vault screen W3 and polling [frontend-dev]
 - [x] doc-writer pass
 - [x] reviewer round 1 (docs/reviews/M2.md): 2 blocking, 4 major fixed; round 2 pending
-- [ ] reviewer round 2, PR updated
+- [x] reviewer round 2: approved (docs/reviews/M2.md); N2 and N4 fixed, N1, N3, N7 in BACKLOG F-17 to F-20
+- [x] PR #1 updated (M0 + M1 + M2)
 ## M3 — Gap analysis engine
 ## M4 — Opportunities UX + feedback
 ## M5 — Matching

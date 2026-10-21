@@ -59,6 +59,7 @@ class UploadGuard:
             return
         seen = 0
         started = False
+        exceeded = False
 
         async def counting_receive() -> Message:
             nonlocal seen
@@ -66,11 +67,18 @@ class UploadGuard:
             if message["type"] == "http.request":
                 seen += len(message.get("body", b""))
                 if seen > self._max:
+                    nonlocal exceeded
+                    exceeded = True
                     raise _TooLarge
             return message
 
         async def tracking_send(message: Message) -> None:
             nonlocal started
+            if exceeded:  # the form parser turned our abort into a 400: answer what really happened
+                if message["type"] == "http.response.start" and not started:
+                    started = True
+                    await _problem(send, FileTooLarge("The file is larger than the limit"))
+                return
             started = started or message["type"] == "http.response.start"
             await send(message)
 

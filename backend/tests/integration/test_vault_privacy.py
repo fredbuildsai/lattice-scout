@@ -245,3 +245,22 @@ def test_upload_guard_refuses_before_reading_the_body(
     assert reads  # a normal upload is parsed
     assert DocumentMime.PDF
     _ = Stage.FULL
+
+
+def test_streamed_body_over_the_limit_gets_413_not_400(client: TestClient) -> None:
+    h = _login(client, "ada@example.edu")
+    boundary = "xBOUNDARYx"
+    head = f'--{boundary}\r\nContent-Disposition: form-data; name="file"; filename="a.pdf"\r\nContent-Type: application/pdf\r\n\r\n'
+
+    def body() -> Iterator[bytes]:  # no Content-Length: sent chunked
+        yield head.encode()
+        for _ in range(27):
+            yield b"%PDF-1.7 " + b"0" * (1024 * 1024)
+        yield f"\r\n--{boundary}--\r\n".encode()
+
+    r = client.post(
+        "/api/v1/documents",
+        content=body(),
+        headers={**h, "Content-Type": f"multipart/form-data; boundary={boundary}"},
+    )
+    assert r.status_code == 413 and r.json()["code"] == "file_too_large"

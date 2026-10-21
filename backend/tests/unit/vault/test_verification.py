@@ -153,3 +153,17 @@ def test_model_output_is_sanitised_and_bounded() -> None:
     )
     assert "\x00" not in raw.aims[0].summary and len(raw.aims[0].summary) <= 600
     assert raw.keywords == ["key"]
+
+
+def test_discard_bounds_title_keywords_and_kind_reason_too() -> None:
+    from scout.vault.domain.insights import StoredInsights
+    from scout.vault.domain.retention import bounded_stored_for_discard
+
+    long = "word " * 150
+    stored = StoredInsights(
+        document_id=DOC, items=[], keywords=[long, "short"], title=long, kind_suggested=None, kind_reason=long,
+        prompt_version="x@1", model="fake", mode="full", slices=1,
+    )  # fmt: skip
+    out = bounded_stored_for_discard(stored)
+    assert len(out.title or "") <= 300 and len(out.kind_reason or "") <= 300
+    assert [len(k) <= 300 for k in out.keywords] == [True, True] and out.keywords[1] == "short"
