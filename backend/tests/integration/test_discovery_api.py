@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 import pytest
 from fastapi.testclient import TestClient
@@ -15,7 +16,7 @@ pytestmark = pytest.mark.integration
 def finished(
     client: TestClient,  # noqa: F811
     tmp_path: Path,
-) -> tuple[TestClient, dict[str, str], dict]:
+) -> tuple[TestClient, dict[str, str], dict[str, Any]]:
     case = CASES["moreira"]
     h = _login(client, "api-demo@example.edu")
     ids = case["author_ids"]
@@ -35,7 +36,7 @@ def finished(
 
 
 def test_isolation_status_evidence_admin_and_limits(
-    finished: tuple[TestClient, dict[str, str], dict],
+    finished: tuple[TestClient, dict[str, str], dict[str, Any]],
 ) -> None:
     api, h, run = finished
     other = _login(api, "intruder@example.edu")
