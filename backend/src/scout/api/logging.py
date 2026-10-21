@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import traceback
 from collections.abc import MutableMapping
 from typing import Any
 
@@ -25,8 +26,36 @@ def _add_context(_: Any, __: str, event: MutableMapping[str, Any]) -> MutableMap
     return event
 
 
+class ScrubExceptions(logging.Filter):
+    """Standard-library log records (uvicorn, Starlette) keep the traceback frames but not the exception message.
+
+    Messages can quote user content, including private vault text (database errors quote row and JSON values).
+    """
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        """Replace ``exc_info`` by the class name and the frames; never the message."""
+        if record.exc_info and record.exc_info[1] is not None:
+            exc_type, _, tb = record.exc_info
+            frames = "".join(traceback.format_tb(tb))
+            record.exc_text = f"{exc_type.__name__ if exc_type else 'Exception'} (message withheld)\n{frames}"
+            record.exc_info = None
+        return True
+
+
+def install_exception_scrubber() -> None:
+    """Attach the scrubber to the root logger and to uvicorn's loggers (idempotent)."""
+    for name in ("", "uvicorn", "uvicorn.error", "starlette", "fastapi"):
+        logger = logging.getLogger(name)
+        if not any(isinstance(f, ScrubExceptions) for f in logger.filters):
+            logger.addFilter(ScrubExceptions())
+        for handler in logger.handlers:
+            if not any(isinstance(f, ScrubExceptions) for f in handler.filters):
+                handler.addFilter(ScrubExceptions())
+
+
 def configure_logging(*, json: bool = True, level: int = logging.INFO) -> None:
     """Configure structlog (idempotent)."""
+    install_exception_scrubber()
     renderer = structlog.processors.JSONRenderer() if json else structlog.dev.ConsoleRenderer()
     structlog.configure(
         processors=[
