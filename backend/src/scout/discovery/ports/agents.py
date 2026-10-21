@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from decimal import Decimal
 from typing import Protocol
 
 from scout.discovery.domain.agent_io import (
@@ -18,18 +16,9 @@ from scout.discovery.domain.agent_io import (
     QueryPlan,
     QueryPlannerInput,
 )
-from scout.ports.llm import CallContext, TokenUsage
+from scout.ports.llm import AgentOutcome, CallContext
 
-
-@dataclass(frozen=True)
-class AgentOutcome[T]:
-    """A model output with its accounting (the run ledger charges ``cost_usd`` and the tokens)."""
-
-    output: T
-    prompt_version: str
-    model: str
-    cost_usd: Decimal
-    usage: TokenUsage
+__all__ = ["AgentOutcome", "DiscoveryAgentsPort"]
 
 
 class DiscoveryAgentsPort(Protocol):

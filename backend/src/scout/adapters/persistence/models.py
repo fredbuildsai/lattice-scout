@@ -274,3 +274,36 @@ match_block = Table(
     Column("blocked_account_id", UUID(as_uuid=True), ForeignKey("account.id"), primary_key=True),
     Column("match_id", UUID(as_uuid=True)), ts("created_at", nullable=False),
 )  # fmt: skip
+
+match_profile = Table(
+    "match_profile", metadata,
+    Column("account_id", UUID(as_uuid=True), ForeignKey("account.id"), primary_key=True),
+    Column("researcher_id", UUID(as_uuid=True), ForeignKey("researcher.id"), nullable=False),
+    Column("field", Text, nullable=False), Column("region", Text, nullable=False),
+    Column("career_band", Text, nullable=False), Column("activity", Float, nullable=False),
+    Column("eligible", Boolean, nullable=False), Column("topics_hash", Text, nullable=False),
+    Column("methods_hash", Text, nullable=False), Column("vocabulary_version", Text, nullable=False),
+    Column("methods_prompt_version", Text, nullable=False), Column("uses_vault_signals", Boolean, nullable=False),
+    ts("computed_at", nullable=False), ts("created_at", nullable=False), ts("updated_at", nullable=False),
+)  # fmt: skip
+
+match_profile_topic = Table(
+    "match_profile_topic", metadata,
+    Column("account_id", UUID(as_uuid=True), ForeignKey("match_profile.account_id"), primary_key=True),
+    Column("topic_id", Text, primary_key=True), Column("name", Text, nullable=False),
+    Column("weight", Float, nullable=False),
+)  # fmt: skip
+
+match_profile_method = Table(
+    "match_profile_method", metadata,
+    Column("account_id", UUID(as_uuid=True), ForeignKey("match_profile.account_id"), primary_key=True),
+    Column("method_id", Text, primary_key=True), Column("weight", Float, nullable=False),
+    Column("source", Text, primary_key=True),
+)  # fmt: skip
+
+match_method_proposal = Table(
+    "match_method_proposal", metadata,
+    Column("id", UUID(as_uuid=True), primary_key=True),
+    Column("account_id", UUID(as_uuid=True), ForeignKey("account.id"), nullable=False),
+    Column("label", Text, nullable=False), Column("source_refs", ARRAY(Text), nullable=False), ts("created_at", nullable=False),
+)  # fmt: skip

@@ -125,3 +125,14 @@ class LLMPort(Protocol):
     ) -> AgentResult[OutT]:
         """Execute ``agent`` on ``input``; record usage; raise ``LLMUnavailable`` / ``LLMOutputInvalid``."""
         ...
+
+
+@dataclass(frozen=True)
+class AgentOutcome[T]:
+    """A model output with its accounting (the run ledger charges ``cost_usd`` and the tokens)."""
+
+    output: T
+    prompt_version: str
+    model: str
+    cost_usd: Decimal
+    usage: TokenUsage

@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from datetime import datetime
 from typing import Protocol
 from uuid import UUID
 
+from scout.matching.domain.agent_io import JointIdea
+from scout.matching.domain.profile import MatchProfile
 from scout.matching.domain.proposal import MatchProposal
 from scout.matching.domain.reveal import Contact
 from scout.shared import AccountId, UnitOfWork
@@ -42,6 +45,78 @@ class MatchRepo(Protocol):
         """Proposals created for ``account`` since ``since``."""
         ...
 
+    async def open_counts(self, accounts: Sequence[AccountId], since: datetime) -> dict[AccountId, int]:
+        """Proposals created for each account since ``since`` (for the weekly cap)."""
+        ...
+
+    async def pending_outside_pool(self, limit: int) -> list[UUID]:
+        """Pending proposals where a party left the matching pool (consent withdrawn or account gone)."""
+        ...
+
+    async def ideas_pending_before(self, before: datetime, limit: int) -> list[UUID]:
+        """Mutual matches whose ideas are still pending since before ``before``."""
+        ...
+
+    async def get_any(self, match_id: UUID, lock: bool = False) -> MatchProposal | None:
+        """Worker side: any participant, optionally locked."""
+        ...
+
+
+class MatchProfileRepo(Protocol):
+    """Matching profiles."""
+
+    async def get(self, account: AccountId) -> MatchProfile | None:
+        """The stored profile."""
+        ...
+
+    async def get_many(self, accounts: Sequence[AccountId]) -> dict[AccountId, MatchProfile]:
+        """Stored profiles by account."""
+        ...
+
+    async def save(self, profile: MatchProfile, proposals: Sequence[tuple[str, tuple[str, ...]]]) -> None:
+        """Replace the profile, its topics and methods; remember proposed new method labels."""
+        ...
+
+    async def delete(self, account: AccountId) -> None:
+        """Remove the profile (consent withdrawn)."""
+        ...
+
+    async def accounts(self) -> list[AccountId]:
+        """Accounts that have a profile."""
+        ...
+
+
+class CandidateQuery(Protocol):
+    """Candidate pairs by topic overlap, with the exclusions applied in SQL."""
+
+    async def candidates(
+        self,
+        *,
+        field: str,
+        account: AccountId | None,
+        exclude_coauthors: bool,
+        exclude_same_group: bool,
+        cooldown_since: datetime,
+        limit: int,
+    ) -> list[tuple[AccountId, AccountId]]:
+        """Canonical pairs (``a < b``) best overlap first. Excludes blocked pairs, pairs with a pending or mutual
+        proposal and pairs proposed since ``cooldown_since``."""
+        ...
+
+
+class JointIdeaRepo(Protocol):
+    """Joint ideas of mutual matches."""
+
+    async def add_many(
+        self, match_id: UUID, ideas: Sequence[JointIdea], prompt_version: str, model: str, now: datetime
+    ) -> None:
+        """Insert (idempotent on match and position)."""
+        ...
+
+    async def list(self, match_id: UUID) -> list[JointIdea]:
+        """Ideas in order."""
+        ...
+
 
 class RevealRepo(Protocol):
     """Identity and contact of the other side. Reads only ``match_reveal_v``."""
@@ -75,4 +150,19 @@ class MatchUnitOfWork(UnitOfWork, Protocol):
     @property
     def blocks(self) -> BlockRepo:
         """Blocks."""
+        ...
+
+    @property
+    def profiles(self) -> MatchProfileRepo:
+        """Profiles."""
+        ...
+
+    @property
+    def candidates(self) -> CandidateQuery:
+        """Candidate query."""
+        ...
+
+    @property
+    def ideas(self) -> JointIdeaRepo:
+        """Joint ideas."""
         ...
