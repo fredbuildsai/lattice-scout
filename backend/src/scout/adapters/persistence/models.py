@@ -7,6 +7,7 @@ from sqlalchemy import (
     BigInteger,
     Boolean,
     Column,
+    Date,
     Float,
     ForeignKey,
     Integer,
@@ -131,4 +132,104 @@ document_insights = Table(
     Column("mode", Text, nullable=False), Column("slices", Integer, nullable=False),
     Column("cost_usd", Numeric(12, 8), nullable=False),
     ts("created_at", nullable=False), ts("updated_at", nullable=False),
+)  # fmt: skip
+
+analysis_run = Table(
+    "analysis_run", metadata,
+    Column("id", UUID(as_uuid=True), primary_key=True),
+    Column("owner_id", UUID(as_uuid=True), ForeignKey("account.id"), nullable=False),
+    Column("session_id", UUID(as_uuid=True)),
+    Column("status", Text, nullable=False), Column("step", Text),
+    Column("step_state", JSONB, nullable=False), Column("inputs", JSONB, nullable=False),
+    Column("budget", JSONB, nullable=False),
+    Column("cost_usd", Numeric(12, 8), nullable=False), Column("llm_calls", Integer, nullable=False),
+    Column("openalex_calls", Integer, nullable=False), Column("tokens_in", BigInteger, nullable=False),
+    Column("tokens_out", BigInteger, nullable=False),
+    Column("generation", Integer, nullable=False), Column("executions", Integer, nullable=False),
+    Column("partial", Boolean, nullable=False), Column("degraded", JSONB, nullable=False),
+    Column("error_code", Text), Column("error_step", Text),
+    ts("cancel_requested_at"), Column("prompt_versions", JSONB, nullable=False),
+    ts("heartbeat_at"), ts("started_at"), ts("finished_at"), ts("created_at", nullable=False), ts("updated_at", nullable=False),
+)  # fmt: skip
+
+run_document = Table(
+    "run_document", metadata,
+    Column("run_id", UUID(as_uuid=True), ForeignKey("analysis_run.id"), primary_key=True),
+    Column("document_id", UUID(as_uuid=True), ForeignKey("document.id"), primary_key=True),
+    Column("label", Text, nullable=False),
+)  # fmt: skip
+
+cluster = Table(
+    "cluster", metadata,
+    Column("id", UUID(as_uuid=True), primary_key=True),
+    Column("run_id", UUID(as_uuid=True), ForeignKey("analysis_run.id"), nullable=False),
+    Column("key", Text, nullable=False), Column("label_key", Text, nullable=False),
+    Column("label", Text, nullable=False), Column("description", Text, nullable=False),
+    Column("search_terms", JSONB, nullable=False), Column("label_source", Text, nullable=False),
+    Column("topic_ids", JSONB, nullable=False), Column("subfield", Text), Column("size", Integer, nullable=False),
+    Column("user_works", Integer, nullable=False), Column("insight_weight", Float, nullable=False),
+    Column("user_coverage", Float, nullable=False), Column("density", Float, nullable=False),
+    Column("candidate_rank", Integer), Column("is_misc", Boolean, nullable=False),
+)  # fmt: skip
+
+corpus_work = Table(
+    "corpus_work", metadata,
+    Column("id", UUID(as_uuid=True), primary_key=True),
+    Column("run_id", UUID(as_uuid=True), ForeignKey("analysis_run.id"), nullable=False),
+    Column("openalex_work_id", Text, nullable=False), Column("doi", Text),
+    Column("title", Text, nullable=False), Column("abstract", Text), Column("year", Integer),
+    Column("cited_by", Integer, nullable=False), Column("type", Text), Column("topics", JSONB, nullable=False),
+    Column("primary_topic_id", Text), Column("authors", JSONB, nullable=False), Column("origin", Text, nullable=False),
+    Column("query_labels", ARRAY(Text), nullable=False), Column("cluster_id", UUID(as_uuid=True), ForeignKey("cluster.id")),
+)  # fmt: skip
+
+novelty_probe = Table(
+    "novelty_probe", metadata,
+    Column("id", UUID(as_uuid=True), primary_key=True),
+    Column("run_id", UUID(as_uuid=True), ForeignKey("analysis_run.id"), nullable=False),
+    Column("label", Text, nullable=False), Column("cluster_id", UUID(as_uuid=True), ForeignKey("cluster.id")),
+    Column("query", Text, nullable=False), Column("from_date", Date, nullable=False),
+    Column("count", Integer), Column("status", Text, nullable=False), ts("measured_at"),
+)  # fmt: skip
+
+opportunity = Table(
+    "opportunity", metadata,
+    Column("id", UUID(as_uuid=True), primary_key=True),
+    Column("run_id", UUID(as_uuid=True), ForeignKey("analysis_run.id"), nullable=False),
+    Column("owner_id", UUID(as_uuid=True), ForeignKey("account.id"), nullable=False),
+    Column("batch", Integer, nullable=False), Column("ord", Integer, nullable=False),
+    Column("kind", Text, nullable=False), Column("title", Text, nullable=False), Column("one_line", Text, nullable=False),
+    Column("status", Text, nullable=False), Column("status_reason", Text), Column("status_step", Text),
+    Column("duplicate_of", UUID(as_uuid=True)), Column("cluster_ids", ARRAY(UUID(as_uuid=True)), nullable=False),
+    Column("fit", Numeric(4, 3)), Column("novelty", Numeric(4, 3)), Column("readiness", Numeric(4, 3)),
+    Column("effort", Numeric(4, 3)), Column("rank_score", Numeric(4, 3)),
+    Column("score_basis", JSONB, nullable=False), Column("novelty_probe_id", UUID(as_uuid=True), ForeignKey("novelty_probe.id")),
+    Column("readiness_checklist", JSONB, nullable=False), Column("effort_estimate", Text),
+    Column("next_steps", JSONB, nullable=False), Column("analyst_version", Text), Column("critic_version", Text),
+    Column("model", Text), Column("critic", JSONB), Column("verify_state", Text, nullable=False),
+    ts("created_at", nullable=False), ts("updated_at", nullable=False),
+)  # fmt: skip
+
+claim = Table(
+    "claim", metadata,
+    Column("id", UUID(as_uuid=True), primary_key=True),
+    Column("opportunity_id", UUID(as_uuid=True), ForeignKey("opportunity.id"), nullable=False),
+    Column("ord", Integer, nullable=False), Column("section", Text, nullable=False), Column("text", Text, nullable=False),
+    Column("status", Text, nullable=False), Column("status_reason", Text), Column("set_by", Text, nullable=False),
+    Column("agent", Text), Column("prompt_version", Text), Column("model", Text),
+    Column("critic_verdict", Text), Column("critic_reason", Text), Column("critic_fix", Text),
+    ts("created_at", nullable=False), ts("updated_at", nullable=False),
+)  # fmt: skip
+
+evidence = Table(
+    "evidence", metadata,
+    Column("id", UUID(as_uuid=True), primary_key=True),
+    Column("claim_id", UUID(as_uuid=True), ForeignKey("claim.id"), nullable=False),
+    Column("ord", Integer, nullable=False), Column("source_type", Text, nullable=False),
+    Column("label", Text, nullable=False), Column("ref", Text, nullable=False), Column("quote", Text),
+    Column("verified", Boolean), Column("check_code", Text), Column("check_detail", Text),
+    Column("corpus_work_id", UUID(as_uuid=True), ForeignKey("corpus_work.id")),
+    Column("chunk_id", UUID(as_uuid=True), ForeignKey("document_chunk.id")),
+    Column("document_id", UUID(as_uuid=True)), Column("probe_id", UUID(as_uuid=True), ForeignKey("novelty_probe.id")),
+    Column("insight_ref", Text),
 )  # fmt: skip

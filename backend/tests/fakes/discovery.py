@@ -67,7 +67,7 @@ class InMemoryRunRepo:
         self.data[run.id] = copy.deepcopy(run)
 
     async def save(self, run: AnalysisRun) -> None:
-        self.data[run.id] = copy.deepcopy(run)
+        self.data[run.id] = copy.deepcopy(run)  # spend and heartbeat are owned by the ledger: kept on publish
 
     async def active_for(self, owner_id: AccountId) -> AnalysisRun | None:
         return next(
@@ -243,6 +243,10 @@ class InMemoryDiscoveryUoW:
 
     async def commit(self) -> None:
         s = self._store
+        for rid, staged_run in self._r.items():  # the ledger charged the committed rows while this unit ran
+            live = s.runs.get(rid)
+            if live is not None:
+                staged_run.spend, staged_run.heartbeat_at = live.spend, live.heartbeat_at
         for target, staged in (
             (s.runs, self._r), (s.corpus, self._c), (s.clusters, self._k), (s.probes, self._p), (s.opportunities, self._o),
         ):  # fmt: skip
