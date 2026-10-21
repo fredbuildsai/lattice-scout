@@ -123,6 +123,13 @@ class InMemoryChunkRepo:
             r.text, r.retained, r.redacted_at = None, retained.get(r.chunk.id), now
         return len(rows)
 
+    async def get(self, chunk_id: ChunkId) -> Chunk | None:
+        for rows in self.data.values():
+            for r in rows:
+                if r.chunk.id == chunk_id:
+                    return replace(r.chunk, text=r.text or "")
+        return None
+
     async def retained(self, document_id: UUID) -> dict[ChunkId, Retained]:
         return {r.chunk.id: r.retained for r in self.data.get(document_id, []) if r.retained is not None}
 

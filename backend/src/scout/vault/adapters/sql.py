@@ -228,6 +228,17 @@ class SqlChunkRepo:
         )  # fmt: skip
         return len(ids)
 
+    async def get(self, chunk_id: ChunkId) -> Chunk | None:
+        """One chunk by id."""
+        t = m.document_chunk
+        r = (await self._s.execute(select(t).where(t.c.id == chunk_id))).first()
+        if r is None:
+            return None
+        return Chunk(
+            id=ChunkId(r.id), document_id=r.document_id, ord=r.ord, page_from=r.page_from, page_to=r.page_to,
+            char_start=r.char_start, char_end=r.char_end, text=r.text or "",
+        )  # fmt: skip
+
     async def retained(self, document_id: UUID) -> dict[ChunkId, Retained]:
         """Quotes and summaries kept on redacted chunks."""
         t = m.document_chunk

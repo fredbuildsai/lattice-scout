@@ -89,6 +89,10 @@ class ChunkRepo(Protocol):
         """Replace every chunk's text by its retained quotes and summary; return how many chunks were redacted."""
         ...
 
+    async def get(self, chunk_id: ChunkId) -> Chunk | None:
+        """One chunk (text is empty when it was redacted); ownership is checked through its document."""
+        ...
+
     async def retained(self, document_id: UUID) -> dict[ChunkId, Retained]:
         """Quotes and summaries kept for redacted chunks."""
         ...
