@@ -22,7 +22,8 @@ Assumptions the seed must keep (or the fixtures miss and the template is used):
 * Foster's account id sorts before Moreira's (Foster is side ``a``); here ``UUID(int=0xF0)`` and ``UUID(int=0xF1)``.
 * Matching consent on; no vault documents for either account (so no signals, whatever ``consent_vault_signals`` is).
 * The clock is 2026-10-21 (works window, recency weights and ISO week depend on it).
-* The reconnect run lowers ``MATCH_MIN_SCORE`` to 0.05: the pair scores about 0.055, below the default 0.08.
+* The reconnect run turns the two exclusion filters off only. The pair scores about 0.119 with formula ``c2``, above
+  the default ``MATCH_MIN_SCORE`` 0.11 (it scored 0.055 under ``c1``, which needed a lowered threshold; F-39).
 
 Title fallback: the recorded OpenAlex works of both researchers carry no abstract, so with ``method_works`` keeping
 only works with an abstract the profile job never calls MethodExtractor and the pair can never be proposed. Until the
@@ -115,10 +116,10 @@ PEOPLE: dict[AccountId, tuple[str, list[str]]] = {
     FOSTER: ("foster", ["A5059588273", "A5140167166"]),  # split record with the same ORCID, claimed together
     MOREIRA: ("moreira", ["A5033675494"]),
 }
-# Reconnect mode for the demo pair (co-authors at the same institution). Their topic overlap is about 0.07, so the
-# score (about 0.055) is below the default MATCH_MIN_SCORE 0.08: the seed run must lower it too. The threshold is not
-# part of any agent input, so it does not change the fixture hashes.
-RECONNECT = MatchConfig(exclude_coauthors=False, exclude_same_group=False, min_score=0.05)
+# Reconnect mode for the demo pair (co-authors at the same institution): only the exclusion filters are off. Under
+# formula c2 the pair scores about 0.119, above the default MATCH_MIN_SCORE 0.11, so no lowered threshold is needed.
+# The threshold is not part of any agent input, so it does not change the fixture hashes.
+RECONNECT = MatchConfig(exclude_coauthors=False, exclude_same_group=False)
 _HASH_FILE = re.compile(r"^[0-9a-f]{16}(\.input)?\.json$")
 
 # ==== cues ========================================================================================================
@@ -560,8 +561,13 @@ class PairRun:
     shimmed: bool
 
 
-async def run_pair() -> PairRun:
-    """Claim, import, profile, propose (reconnect mode), accept twice and reveal, in memory (fixed clock)."""
+async def run_pair(extra: dict[AccountId, tuple[str, list[str]]] | None = None) -> PairRun:
+    """Claim, import, profile, propose (reconnect mode), accept twice and reveal, in memory (fixed clock).
+
+    ``extra`` adds more recorded researchers (used by ``calibrate_matching.py`` for the third test subject); the
+    fixtures are only ever written from the default two.
+    """
+    people = {**PEOPLE, **(extra or {})}
     s = Settings(_env_file=None, app_env="test")
     clock, ids = FixedClock(NOW), SequentialIdGenerator(1)
     fake = FakeLLM(OUT, InMemoryUsageMeter(), load_price_table(ROOT / s.llm_price_table), clock, ids)
@@ -583,7 +589,7 @@ async def run_pair() -> PairRun:
 
     profile = ProfileService(puow, lit, jobs, clock, ids)
     importer = ImportProfile(puow, lit, clock, ids)
-    for account, (_, authors) in PEOPLE.items():
+    for account, (_, authors) in people.items():
         await profile.claim(account, authors, authors[0], None)
         while (job := await jobs.claim("fixtures", ["profile.import"])) is not None:
             await jobs.complete(job.id, dict(await importer.handle(job.payload, last_attempt=False)))
@@ -595,7 +601,7 @@ async def run_pair() -> PairRun:
     profile_job = ComputeResearcherProfile(
         muow, source, consents, signals, agents, vocab, jobs, clock, RECONNECT
     )
-    for account in PEOPLE:
+    for account in people:
         await profile_job.execute(account)
     await agents.extract_methods(  # edge case: a synthetic source without any method
         MethodExtractorInput(

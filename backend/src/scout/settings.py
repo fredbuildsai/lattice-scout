@@ -76,7 +76,7 @@ class Settings(BaseSettings):
     match_max_open_per_week: int = 3
     match_expiry_days: int = 14
     match_cooldown_days: int = 180
-    match_min_score: float = 0.08
+    match_min_score: float = 0.11
     match_alpha: float = 1.0
     match_beta: float = 1.5
     match_exclude_coauthors: bool = True

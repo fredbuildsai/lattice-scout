@@ -4,7 +4,7 @@
   consent and profiles built by the real jobs and the committed FakeLLM fixtures.
 * 24 clearly synthetic researchers ("Synthetic Researcher NN (sample)", ``example.edu`` e-mails) with graded
   complementarity, inserted directly.
-* A "reconnect" run for the demo pair first (co-authors at the same institution, lowered score threshold), then one
+* A "reconnect" run for the demo pair first (co-authors at the same institution, default score threshold), then one
   matching run with the default filters over everyone.
 
 Idempotent (deterministic ids) and refuses ``APP_ENV=prod``. Needs the dev database (``scripts/dev_db.sh``).
@@ -138,7 +138,6 @@ async def demo_pair(c, settings: Settings) -> None:
         MatchConfig(field=settings.launch_field),
         exclude_coauthors=False,
         exclude_same_group=False,
-        min_score=0.05,
     )
     demo = ComputeMatches(
         lambda: SqlMatchUnitOfWork(c.db),

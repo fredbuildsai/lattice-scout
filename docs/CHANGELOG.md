@@ -4,6 +4,10 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 
 ## [Unreleased]
 
+### Changed (matching score, ADR 017, F-39)
+- Formula `c2`: topic similarity is the overlap coefficient instead of the weighted Jaccard. Default `MATCH_MIN_SCORE` is 0.11 (was 0.08). The demo pair Foster/Moreira scores 0.119 and no longer needs a lowered threshold in the seed. Stored `c1` proposals stay readable. Final tuning on pilot feedback is still expected in M7.
+- `scripts/calibrate_matching.py` (new) reproduces the calibration; `scripts/fetch_fixtures.py` gained `--find` and `--add-author --openalex-id` to record a further public author (blocker B7).
+
 ### Changed (privacy model, ADR 016)
 - Confidential data is withheld, not refused. With no authorized LLM endpoint, analyses, matching, joint ideas and document ingestion go ahead on published data only: vault passages, insights, keywords and consented vault statements are left out of every prompt, the run is marked `basis: published_only`, and the run page, opportunity cards and detail page say "Based on your published work only; your uploaded documents were not used because no approved provider is configured." Documents wait in the new status `awaiting_approved_provider` (migration 0017) and are analysed by the vault sweep once a provider is authorized.
 - Every agent input classifies each field as published or confidential (`AgentInput`); an unclassified field fails at import.

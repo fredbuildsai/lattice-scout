@@ -55,7 +55,7 @@ Tests (fakes first) → implement → `make check` → commit → push. Conventi
 - A task is not done until its docs are updated in the same commit.
 
 ## Hard stops (stop and wait; everything else: decide, record, continue)
-Committing secrets · deploying, spending money, sending real emails, calling paid APIs at scale · contacting real people · contradictions the decision register cannot resolve. Demo data uses Johan Foster and Raphaell Moreira's **public** OpenAlex records only; never invent private documents attributed to them outside fixtures labelled "sample"; synthetic people use `example.edu` emails.
+Committing secrets · deploying, spending money, sending real emails, calling paid APIs at scale · contacting real people · contradictions the decision register cannot resolve. Demo data uses the **public** OpenAlex records of Johan Foster, Raphaell Moreira and Frederick (François) Chesneau (Heidelberg University, BASF; the project owner, who authorised it) only; never invent private documents attributed to them outside fixtures labelled "sample"; synthetic people use `example.edu` emails.
 
 ## End of every session (even if interrupted early, do this first when context runs low)
 1. Commit and push all work.

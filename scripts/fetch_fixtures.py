@@ -4,6 +4,10 @@
 Usage:
     OPENALEX_API_KEY=... python scripts/fetch_fixtures.py [--out tests/fixtures/openalex]
 
+Add a public test subject (needs network; B7 in docs/BLOCKERS.md), two steps so a namesake is never picked:
+    python scripts/fetch_fixtures.py --find "Frederick Chesneau" --affiliation Heidelberg   # prints candidates only
+    python scripts/fetch_fixtures.py --add-author --openalex-id A<id>                       # records that exact id
+
 Reads the existing manifest.json, replays every request against the live API and
 rewrites the files in the same shape (subset of OpenAlex fields). Run it manually;
 CI never calls it. Requires only the standard library.
@@ -68,10 +72,56 @@ def fetch(entry: dict) -> dict:
     raise ValueError(f"unknown port method {m}")
 
 
+def find_author(name: str, affiliation: str | None) -> None:
+    """Print candidate authors (id, ORCID, institutions, works) without writing anything."""
+    for a in get("authors", {"search": name, "per_page": "10"})["results"]:
+        insts = [i["display_name"] for i in a.get("last_known_institutions") or []]
+        hit = affiliation and any(affiliation.lower() in i.lower() for i in insts)
+        print(f"{'*' if hit else ' '} {a['id'].rsplit('/', 1)[-1]}  {a['display_name']}  orcid={a.get('orcid')}"
+              f"  works={a.get('works_count')}  {'; '.join(insts)}")
+    print("Pick the id by hand, then rerun with --add-author --openalex-id <id>.")
+
+
+def add_author(out: Path, author_id: str) -> None:
+    """Record get_author, list_author_works and the topic names for one exact author id; manifest entries are idempotent."""
+    manifest = json.loads((out / "manifest.json").read_text())
+    entries = [
+        {"port_method": "get_author", "params": {"author_id": author_id}, "file": f"authors/{author_id}.json"},
+        {"port_method": "list_author_works", "params": {"author_id": author_id},
+         "file": f"works_by_author/{author_id}.json"},
+    ]
+    topics_file = out / "topics.json"
+    topics = json.loads(topics_file.read_text())
+    for e in entries:
+        obj = fetch(e)
+        (out / e["file"]).parent.mkdir(parents=True, exist_ok=True)
+        (out / e["file"]).write_text(json.dumps(obj, ensure_ascii=False, indent=1))
+        for w in obj.get("results", []):
+            for t in w.get("topics") or []:
+                topics.setdefault(t["id"].rsplit("/", 1)[-1], {"name": t["display_name"],
+                                                               "subfield": t["subfield"]["display_name"]})
+        if e not in manifest["entries"]:
+            manifest["entries"].append(e)
+        print("ok", e["file"])
+    topics_file.write_text(json.dumps(topics, ensure_ascii=False, indent=1))
+    (out / "manifest.json").write_text(json.dumps(manifest, indent=1))
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="tests/fixtures/openalex")
-    out = Path(ap.parse_args().out)
+    ap.add_argument("--find", help="author name: print candidates only")
+    ap.add_argument("--affiliation", help="with --find: mark candidates whose institution contains this text")
+    ap.add_argument("--add-author", action="store_true", help="record one author (needs --openalex-id)")
+    ap.add_argument("--openalex-id", help="exact OpenAlex author id, e.g. A5012345678")
+    args = ap.parse_args()
+    out = Path(args.out)
+    if args.find:
+        return find_author(args.find, args.affiliation)
+    if args.add_author:
+        if not args.openalex_id or not args.openalex_id.startswith("A"):
+            ap.error("--add-author needs --openalex-id A<digits> (use --find to look it up)")
+        return add_author(out, args.openalex_id)
     manifest = json.loads((out / "manifest.json").read_text())
     for entry in manifest["entries"]:
         obj = fetch(entry)

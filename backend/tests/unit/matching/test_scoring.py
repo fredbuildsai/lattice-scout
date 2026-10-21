@@ -25,7 +25,13 @@ import pytest
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
-from scout.matching.domain.scoring import score_pair, select_pairs, weighted_jaccard
+from scout.matching.domain.scoring import (
+    cosine,
+    overlap_coefficient,
+    score_pair,
+    select_pairs,
+    weighted_jaccard,
+)
 from scout.shared import AccountId
 
 PROFILE = settings(
@@ -74,7 +80,7 @@ def test_jaccard_worked_examples() -> None:
     assert weighted_jaccard({"a": 1.0}, {"b": 1.0}) == 0.0
 
 
-# ------------------------------------------------------------------ score_pair (formula c1)
+# ------------------------------------------------------------------ score_pair (formula c1, legacy)
 
 A_TOPICS = {"t1": 1.0, "t2": 1.0}
 B_TOPICS = {"t1": 1.0, "t3": 1.0}  # T = 1/3
@@ -90,6 +96,8 @@ def pair(**over):
         b_methods=B_METHODS,
         a_activity=1.0,
         b_activity=0.5,
+        formula="c1",  # the legacy formula keeps the hand-computed examples below; c2 is tested after them
+        min_score=0.08,
     )
     args.update(over)
     return score_pair(**args)  # type: ignore[arg-type]
@@ -219,3 +227,104 @@ def test_select_pairs_never_exceeds_cap_is_maximal_and_deterministic(raw, counts
         assert any(open_counts.get(x, 0) + used[x] >= cap for x in (a, b))
     # deterministic regardless of input order
     assert select_pairs(list(reversed(pairs)), open_counts=open_counts, cap=cap) == chosen
+
+
+# ------------------------------------------------------------------ other topic measures and formula c2
+
+
+@PROFILE
+@given(x=vectors, y=vectors)
+def test_overlap_and_cosine_symmetric_bounded_and_not_below_jaccard(x, y) -> None:
+    for f in (overlap_coefficient, cosine):
+        assert f(x, y) == pytest.approx(f(y, x))
+        assert 0.0 <= f(x, y) <= 1.0
+    # sum(min)/min(sums) >= sum(min)/sum(max): the overlap coefficient never scores below the weighted Jaccard
+    assert overlap_coefficient(x, y) >= weighted_jaccard(x, y) - 1e-12
+
+
+@PROFILE
+@given(x=nonempty)
+def test_overlap_and_cosine_identity_is_one_and_empty_is_zero(x) -> None:
+    for f in (overlap_coefficient, cosine):
+        assert f(x, dict(x)) == pytest.approx(1.0)
+        assert f({}, x) == 0.0 and f(x, {}) == 0.0
+
+
+def test_overlap_coefficient_worked_example() -> None:
+    # shared mass 1.0 (min over b), lighter profile has total 1.5
+    assert overlap_coefficient({"a": 1.0, "b": 0.5}, {"b": 1.0, "c": 0.5}) == pytest.approx(0.5 / 1.5)
+    # a narrow profile fully inside a broad one scores 1
+    assert overlap_coefficient({"a": 1.0}, {"a": 1.0, "b": 1.0, "c": 1.0}) == pytest.approx(1.0)
+
+
+def test_c2_is_the_default_and_uses_the_overlap_coefficient() -> None:
+    r = pair(formula="c2", min_score=0.0)
+    d = score_pair(  # no formula argument: the current one
+        a_topics=A_TOPICS, b_topics=B_TOPICS, a_methods=A_METHODS, b_methods=B_METHODS,
+        a_activity=1.0, b_activity=0.5, min_score=0.0,
+    )  # fmt: skip
+    assert r is not None and d is not None
+    expected = 0.5 * (2 / 3) ** 1.5 * 0.75  # T = 1/2 (shared 1.0 of the lighter 2.0)
+    assert r.score == pytest.approx(expected) and d.score == pytest.approx(expected)
+    assert d.basis.formula == "c2" and d.basis.topic_overlap == pytest.approx(0.5)
+
+
+def test_unknown_formula_is_refused() -> None:
+    with pytest.raises(ValueError):
+        pair(formula="c9")
+
+
+def test_default_threshold_is_the_calibrated_one() -> None:
+    import inspect
+
+    assert inspect.signature(score_pair).parameters["min_score"].default == 0.11
+
+
+@PROFILE
+@given(
+    at=nonempty, bt=nonempty, am=nonempty, bm=nonempty, aa=st.floats(0, 1), ba=st.floats(0, 1),
+    f=st.sampled_from(["c1", "c2"]),
+)  # fmt: skip
+def test_score_bounds_and_symmetry_for_both_formulas(at, bt, am, bm, aa, ba, f) -> None:
+    fwd = pair(
+        a_topics=at,
+        b_topics=bt,
+        a_methods=am,
+        b_methods=bm,
+        a_activity=aa,
+        b_activity=ba,
+        min_score=0.0,
+        formula=f,
+    )
+    rev = pair(
+        a_topics=bt,
+        b_topics=at,
+        a_methods=bm,
+        b_methods=am,
+        a_activity=ba,
+        b_activity=aa,
+        min_score=0.0,
+        formula=f,
+    )
+    assert (fwd is None) == (rev is None)
+    if fwd is not None and rev is not None:
+        assert 0.0 <= fwd.score <= 1.0
+        assert fwd.score == pytest.approx(rev.score)
+
+
+@PROFILE
+@given(w1=st.floats(0.05, 1.0), w2=st.floats(0.05, 1.0), f=st.sampled_from(["c1", "c2"]))
+def test_score_is_monotone_in_shared_topic_mass_and_in_method_difference(w1, w2, f) -> None:
+    lo, hi = sorted((w1, w2))
+
+    def at(w, methods_b=None):
+        r = pair(
+            a_topics={"s": 1.0, "x": 1.0}, b_topics={"s": w, "y": 1.0}, min_score=0.0, formula=f,
+            a_methods={"m1": 1.0, "m2": 1.0}, b_methods=methods_b or {"m3": 1.0},
+        )  # fmt: skip
+        assert r is not None
+        return r.score
+
+    assert at(hi) >= at(lo) - 1e-12  # more shared topic mass never lowers the score
+    # sharing more method weight lowers the score (b also has m3, so both sides keep a method of their own)
+    assert at(0.5, {"m3": 1.0, "m2": 0.9}) <= at(0.5, {"m3": 1.0, "m2": 0.1}) + 1e-12

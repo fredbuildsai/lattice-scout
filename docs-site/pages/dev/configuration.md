@@ -146,7 +146,7 @@ and the [matching developer page](matching.md). The values below are the same as
 | `MATCH_MAX_OPEN_PER_WEEK` | `3` | Weekly cap: proposals one account may receive in a rolling seven days (counted when created). |
 | `MATCH_EXPIRY_DAYS` | `14` | Days a proposal stays open before it expires. |
 | `MATCH_COOLDOWN_DAYS` | `180` | Days before the same pair may be proposed again after its last proposal. |
-| `MATCH_MIN_SCORE` | `0.08` | Lowest score a pair needs to be proposed. |
+| `MATCH_MIN_SCORE` | `0.11` | Lowest score (formula `c2`) a pair needs to be proposed. Calibrated with `scripts/calibrate_matching.py` (DECISIONS 112); final tuning on pilot feedback in M7. |
 | `MATCH_ALPHA` | `1.0` | Exponent on the topic overlap in the score. |
 | `MATCH_BETA` | `1.5` | Exponent on the method difference in the score. |
 | `MATCH_EXCLUDE_COAUTHORS` | `true` | Do not propose researchers who share a claimed OpenAlex work. |

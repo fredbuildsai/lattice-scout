@@ -13,7 +13,7 @@ class MatchConfig:
     expiry_days: int = 14
     cooldown_days: int = 180
     weekly_cap: int = 3
-    min_score: float = 0.08
+    min_score: float = 0.11
     alpha: float = 1.0
     beta: float = 1.5
     exclude_coauthors: bool = True

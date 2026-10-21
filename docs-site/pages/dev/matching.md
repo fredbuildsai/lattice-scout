@@ -4,24 +4,31 @@ Matching proposes a pair of researchers whose work complements each other. Each 
 
 Code and rules: [matching module](https://github.com/fredbuildsai/lattice-scout/blob/main/backend/src/scout/matching/README.md) (state machine, reveal guard, jobs, endpoints, tables). Design: `docs/design/M5-matching.md`. Decisions: `docs/DECISIONS.md` 77 to 86. This page covers the scoring, the filters, the offline fixtures and how to run the jobs locally.
 
-## Scoring (formula `c1`)
+## Scoring (formula `c2`)
 
-Source: `backend/src/scout/matching/domain/scoring.py` (`score_pair`, `weighted_jaccard`).
+Source: `backend/src/scout/matching/domain/scoring.py` (`score_pair`, `overlap_coefficient`, `weighted_jaccard`).
 
 ```text
-T     = WJ(topic weights of a, topic weights of b)
+T     = OC(topic weights of a, topic weights of b)   (c2; c1 used WJ)
 M     = WJ(method weights of a, method weights of b)
 act   = 0.5 + 0.5 * min(activity_a, activity_b)
 score = T^alpha * (1 - M)^beta * act          alpha = 1.0, beta = 1.5
 ```
 
-- **Weighted Jaccard** `WJ(x, y) = sum(min) / sum(max)` over the union of keys. It is 0 when either side is empty, and it is symmetric.
+- **Weighted Jaccard** `WJ(x, y) = sum(min) / sum(max)` over the union of keys. It is 0 when either side is empty, and it is symmetric. It measures the methods (`M`).
+- **Overlap coefficient** `OC(x, y) = sum(min) / min(sum x, sum y)`: the share of the lighter profile the other covers. It measures the topics (`T`) from formula `c2` on, because two capped 25-topic sets with a long low-weight tail give a structurally small Jaccard. `c1` (Jaccard for topics) stays computable and stored `c1` proposals stay readable.
 - **Topics.** Works of the last five years (all dated works when there are fewer than three). Each work weighs `recency * (0.5 + 0.5 * citation_share)`, where `recency = max(0.1, 1 - 0.1 * age)`. Weights are summed per topic, normalised by the largest, cut to the top 25, and weights under 0.05 are dropped.
 - **Methods.** Each mention from the MethodExtractor adds 1.0 (high confidence) or 0.5 (medium) per source ref. Totals are normalised by the largest. A method has a source of `abstract` or `vault`. The effective weight is the maximum over the permitted sources.
 - **Activity.** Works in the last three years, divided by three, capped at 1.
-- **Keep a pair** only if `score >= MATCH_MIN_SCORE` (0.08 by default), and each side has at least one method that the other side lacks. `ScoreBasis` keeps the numbers (`topic_overlap`, `method_overlap`, `activity`, the shared topics and each side's methods).
+- **Keep a pair** only if `score >= MATCH_MIN_SCORE` (0.11 by default), and each side has at least one method that the other side lacks. `ScoreBasis` keeps the numbers (`topic_overlap`, `method_overlap`, `activity`, the shared topics and each side's methods).
 
-Worked example: the demo pair Foster and Moreira scores 0.055 in the fixture run. That is below the default 0.08. This is why the seed uses reconnect mode (see below).
+Worked example: the demo pair Foster and Moreira has `T(c1) = 0.068`, `T(c2) = 0.147`, `M = 0.132` and activity 1.0. Under `c1` that is `0.068 * 0.868^1.5 = 0.055` (below the old 0.08 floor); under `c2` it is `0.147 * 0.868^1.5 = 0.119`, above the default 0.11. The pair is still dropped by the default exclusion filters (co-authors at one institution), so the seed proposes it in reconnect mode, but with the default threshold.
+
+### Calibration
+
+`cd backend && uv run python ../scripts/calibrate_matching.py` (no network, deterministic) builds a pool of 36 synthetic `example.edu` profiles from the controlled vocabularies, labels pairs by construction (good complementary: same topic theme, different methods; too similar: same theme, same methods; unrelated: different themes) and prints T, M and score per label for the weighted Jaccard, the overlap coefficient and cosine, plus the demo pair. At 0.11 with `c2`: 98% of good pairs pass, 0% of too-similar, 4% of unrelated; the demo pair passes narrowly. This fixes the order of the labels, not the absolute level of real pairs: final tuning on pilot feedback is expected in M7.
+
+The script also includes Frederick Chesneau (Heidelberg, BASF; owner, public record only) automatically once his OpenAlex record is recorded. Until then his pairs with Foster and Moreira are reported as not evaluated. Recording is a networked, human step (blocker B7): `python scripts/fetch_fixtures.py --find "Frederick Chesneau" --affiliation Heidelberg` lists candidates, then `python scripts/fetch_fixtures.py --add-author --openalex-id A<id>` records exactly that id (needs `OPENALEX_API_KEY`). Never write his works by hand.
 
 ## Filters
 
@@ -35,7 +42,7 @@ Candidates pass these checks, in the order they run:
 | No block in either direction (`never_similar`) | `match_block` | always |
 | No pending or mutual proposal for the pair | `match_proposal` | always |
 | No proposal created within the cool-down | `match_proposal.created_at` | `MATCH_COOLDOWN_DAYS` (180) |
-| Score at or above the minimum, with a distinct method on each side | `score_pair` | `MATCH_MIN_SCORE` (0.08) |
+| Score at or above the minimum, with a distinct method on each side | `score_pair` | `MATCH_MIN_SCORE` (0.11) |
 | Weekly cap per person | `select_pairs` | `MATCH_MAX_OPEN_PER_WEEK` (3) |
 
 The coauthor and same-group rules are the default **exclusions**. The seed turns both off for the demo pair (reconnect mode).

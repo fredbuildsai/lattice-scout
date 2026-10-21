@@ -109,8 +109,9 @@ change state. The anonymous card reads only the proposal row.
 - **Exclusions.** Co-authors (`match_pair_conflict_v`, reason `coauthor`, when `MATCH_EXCLUDE_COAUTHORS`). Same
   normalised institution (reason `same_group`, when `MATCH_EXCLUDE_SAME_GROUP`). A block in either direction. A pending
   or mutual proposal. A proposal created within the cool-down.
-- **Score** (`domain/scoring.py`, formula `c1`). `score = WJ(topics)^alpha * (1 - WJ(methods))^beta * (0.5 + 0.5 * min(activity_a, activity_b))`,
-  with alpha 1.0 and beta 1.5. A pair is kept only at or above `MATCH_MIN_SCORE` and only if each side has a method the
+- **Score** (`domain/scoring.py`, formula `c2`). `score = OC(topics)^alpha * (1 - WJ(methods))^beta * (0.5 + 0.5 * min(activity_a, activity_b))`,
+  with `OC` the overlap coefficient `sum(min) / min(sum a, sum b)`, `WJ` the weighted Jaccard, alpha 1.0 and beta 1.5.
+  Formula `c1` (`WJ` for topics too) stays available and readable for stored proposals (`ScoreBasis.formula`; ADR 017). A pair is kept only at or above `MATCH_MIN_SCORE` and only if each side has a method the
   other lacks.
 - **Weekly cap** (`select_pairs`, pure). Pairs are sorted by `(-score, a, b)`. A pair is taken while both sides have
   fewer than `MATCH_MAX_OPEN_PER_WEEK` proposals created in the last seven days.
@@ -200,7 +201,7 @@ Downgrades drop these objects and restore the earlier feedback constraints.
 
 Settings are read in `scout/settings.py` and passed into `MatchConfig` in `bootstrap.py`. Variables and defaults are in
 `docs-site/pages/dev/configuration.md` and `.env.example`: `MATCH_MAX_OPEN_PER_WEEK` (3), `MATCH_EXPIRY_DAYS` (14),
-`MATCH_COOLDOWN_DAYS` (180), `MATCH_MIN_SCORE` (0.08), `MATCH_ALPHA` (1.0), `MATCH_BETA` (1.5),
+`MATCH_COOLDOWN_DAYS` (180), `MATCH_MIN_SCORE` (0.11, calibrated with `scripts/calibrate_matching.py`), `MATCH_ALPHA` (1.0), `MATCH_BETA` (1.5),
 `MATCH_EXCLUDE_COAUTHORS` (true), `MATCH_EXCLUDE_SAME_GROUP` (true), `MATCH_MAX_EXPLAINS_PER_RUN` (200),
 `MATCH_NIGHTLY_UTC_HOUR` (2), `METHODS_CONFIG` (`config/methods.yaml`). `MATCH_NON_MEMBERS` is defined but no code reads it.
 Fixed in code: `candidate_limit` (2000) and `reveal_retry_minutes` (10).
