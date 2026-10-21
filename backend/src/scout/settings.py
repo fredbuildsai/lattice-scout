@@ -7,7 +7,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal, Self
 
-from pydantic import SecretStr, model_validator
+from pydantic import Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -47,7 +47,7 @@ class Settings(BaseSettings):
     launch_field: str = "bio-based-materials"
 
     run_budget_usd: Decimal = Decimal("1.50")
-    run_max_openalex_calls: int = 400
+    run_max_openalex_calls: int = Field(default=400, ge=1, le=400)
     run_max_corpus: int = 2500
     run_max_per_day: int = 5
     account_daily_budget_usd: Decimal = Decimal("5.00")

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 from collections import Counter, defaultdict
+from collections.abc import Coroutine
 from dataclasses import replace
 from functools import partial
 from uuid import UUID
@@ -227,6 +228,18 @@ async def _degrade(run: AnalysisRun, c: StepContext, step: RunStep, reason: str)
         run.degrade(step, reason, c.generation)
 
 
+async def _gather_or_cancel(coros: list[Coroutine[None, None, None]]) -> None:
+    """Run together; when one fails, cancel the others and wait for them, so nothing keeps calling after a cancel."""
+    tasks = [asyncio.ensure_future(x) for x in coros]
+    try:
+        await asyncio.gather(*tasks)
+    except BaseException:
+        for t in tasks:
+            t.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
+        raise
+
+
 # ---- 3. group_by_topic ---------------------------------------------------------------------------------------------
 def _topic_names(works: list[CorpusWork]) -> list[tuple[str, str]]:
     names: dict[str, str] = {}
@@ -340,7 +353,7 @@ async def group_by_topic(c: StepContext) -> Summary:
 
         await c.tx(write)
 
-    await asyncio.gather(*(label_one(cl) for cl in todo))
+    await _gather_or_cancel([label_one(cl) for cl in todo])
     real = [cl for cl in clusters if not cl.is_misc]
     if degraded or any(cl.label_source == "topic" for cl in real):
         await c.tx(lambda uow, r: _degrade(r, c, step, "label_fallback"))

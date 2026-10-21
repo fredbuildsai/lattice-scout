@@ -53,11 +53,12 @@ Last session: 2026-10-20 s01 — M0, M1 and M2 built; M2 done and approved by th
 - [x] domain (run, opportunity, show rule, verification, grouping, coverage, novelty, scoring) with test-engineer tests
 - [x] pipeline: start, runner, sweeper, 8 steps, guard and ledger, SQL layer, migrations 0005 and 0006
 - [x] endpoints /runs, /opportunities, /evidence, /admin/claims; client regenerated
-- [ ] test-engineer call 2 (resume, fencing, budgets, hostile drafts, canary)
-- [ ] prompt-engineer: five prompts, fixtures, eval cases
-- [ ] acceptance A1, A2, A3 and canary tests on PostgreSQL
-- [ ] eval harness (`make eval`)
-- [ ] doc-writer, reviewer (max 2 rounds), PR update
+- [x] test-engineer call 2 (resume, fencing, budgets, hostile drafts, canary)
+- [x] prompt-engineer: five prompts, fixtures, eval cases
+- [x] acceptance A1, A2, A3 and canary tests on PostgreSQL
+- [x] eval harness (`make eval`)
+- [x] doc-writer; reviewer round 1 done (docs/reviews/M3.md), fixes in DECISIONS 74
+- [ ] reviewer round 2, PR update
 ## M4 — Opportunities UX + feedback
 ## M5 — Matching
 ## M6 — Notifications, privacy, hardening

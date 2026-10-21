@@ -25,7 +25,7 @@ from scout.discovery.domain.budget import (
 from scout.discovery.domain.run import RunCancelled, Superseded
 from scout.discovery.ports.ledger import LedgerState, RunLedgerPort
 from scout.ports.literature import LiteraturePort, WorkQuery, WorkRecord
-from scout.ports.llm import TokenUsage
+from scout.ports.llm import LLMOutputInvalid, TokenUsage
 
 Tier = Literal["fast", "reasoning"]
 
@@ -79,14 +79,38 @@ class RunGuard:
         ticket = LlmTicket()
         try:
             yield ticket
-        finally:
-            async with self._lock:
-                self._inflight_usd -= reserve
-        state = await self._ledger.charge(
-            self._run_id, self._generation, cost_usd=ticket.cost, llm_calls=1,
-            tokens_in=ticket.usage.input_tokens if ticket.usage else 0,
-            tokens_out=ticket.usage.output_tokens if ticket.usage else 0,
-        )  # fmt: skip
+        except BaseException as exc:
+            paid = ticket.settled or isinstance(exc, LLMOutputInvalid)  # an invalid answer was still paid for
+            if isinstance(exc, LLMOutputInvalid) and not ticket.settled:
+                ticket.cost = reserve
+            if paid:
+                try:
+                    await self._settle(ticket, reserve)
+                except (Superseded, RunCancelled):
+                    pass  # the original error is the one to surface
+            else:
+                await self._release(reserve)
+            raise
+        await self._settle(ticket, reserve)
+
+    async def _release(self, reserve: Decimal) -> None:
+        async with self._lock:
+            self._inflight_usd -= reserve
+
+    async def _settle(self, ticket: LlmTicket, reserve: Decimal) -> None:
+        """Charge the call, then release its reservation and apply the new totals in one step."""
+        try:
+            state = await self._ledger.charge(
+                self._run_id, self._generation, cost_usd=ticket.cost, llm_calls=1,
+                tokens_in=ticket.usage.input_tokens if ticket.usage else 0,
+                tokens_out=ticket.usage.output_tokens if ticket.usage else 0,
+            )  # fmt: skip
+        except BaseException:
+            await self._release(reserve)
+            raise
+        async with self._lock:
+            self._inflight_usd -= reserve
+            self.spend = state.spend
         self._apply(state)
 
     async def openalex(self) -> None:

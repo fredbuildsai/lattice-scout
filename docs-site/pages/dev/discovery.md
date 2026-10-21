@@ -100,7 +100,7 @@ All paths are under `/api/v1`. Errors use problem+json.
 | `GET /evidence/{id}/open` | 200, the source | 404 (not yours, not visible, or the source is gone) |
 | `GET /admin/claims` `?status&reason&agent&prompt_version&model&run_id&cursor&limit` | 200 `{items, next_cursor}` | 403 unless the account has the `admin` role |
 
-Opening evidence returns a passage for a document kept with `keep_original=true`, and only the retained quote for a `discard` document. Literature and profile evidence return a link, and count evidence returns the OpenAlex search for the query.
+Opening evidence returns a passage for a document kept with `keep_original=true`, and only the retained quote for a `discard` document. Literature and profile evidence return the title, year, DOI, abstract and the quote; count evidence returns the query, the count and the start year (no URL yet, BACKLOG F-29).
 
 `GET /admin/claims` is for the review team. It hides vault quotes unless `ADMIN_CLAIMS_SHOW_VAULT_QUOTES=true`, and each call writes an `admin.claims_viewed` audit row. To give a local account the admin role, update the row in the `account` table (`UPDATE account SET role = 'admin' WHERE email = 'researcher@example.edu';`).
 
@@ -135,7 +135,7 @@ make eval
 
 `make eval` runs `eval/run_eval.py`. It runs every case in `eval/cases/` through the pipeline in memory, with no network. It writes `eval/reports/<timestamp>.json` and prints a Markdown table with these columns: shown count, verified-evidence rate, Critic rejection rate, `already_done_rate`, `duplicate_of_previous_rate`, theme recall, cost per run and wall time.
 
-The command exits with status 1 when a case shows fewer than 3 or more than 10 opportunities, or when the verified-evidence rate is below 0.6. CI runs this check. The live backends (`--live`) need network and are not run in CI.
+The command exits with status 1 when a case shows fewer than 3 or more than 10 opportunities, or when the verified-evidence rate is below 0.6. `make eval` is run by hand and by the reviewer; `make check` does not call it. A live mode (`--live`) is not built yet (BACKLOG F-28); the live backends would need network and are not run in CI.
 
 The cases are `eval/cases/foster.yaml` (three sample documents, one kept) and `eval/cases/moreira.yaml` (profile only). Each case lists the themes a domain reader expects. A theme is recalled when one shown opportunity contains all its keywords.
 

@@ -235,7 +235,7 @@ cd backend && uv run python ../scripts/make_discovery_fixtures.py          # reg
 
 `make eval` runs `eval/run_eval.py`. For each case in `eval/cases/*.yaml` (Johan Foster with three fictional sample documents, and Raphaell Moreira profile-only) it runs the real pipeline in memory with `FixtureLiterature` and `FakeLLM`. It then computes metrics and writes `eval/reports/<timestamp>.json`, and prints a Markdown table.
 
-It exits with status 1 when a case shows fewer than 3 or more than 10 opportunities, or when the verified-evidence rate (verified items over all items) is below 0.6. It needs no network. The live run (`--live`) is not run in CI.
+It exits with status 1 when a case shows fewer than 3 or more than 10 opportunities, or when the verified-evidence rate (verified items over all items) is below 0.6. It needs no network. A live mode is not built (BACKLOG F-28). The live run (`--live`) is not run in CI.
 
 Metrics: shown count, verified-evidence rate, Critic rejection rate, `already_done_rate`, `duplicate_of_previous_rate`, theme recall (a theme is recalled when one shown opportunity contains all its keywords), cost per run, wall time.
 

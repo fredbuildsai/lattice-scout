@@ -133,3 +133,17 @@ async def test_every_literature_call_counts_and_the_cap_stops_the_inner_client()
     with pytest.raises(OpenAlexCapReached):
         await lit.search_works(WorkQuery(search="y"))
     assert inner.calls == ["search", "count", "get"] and run.spend.openalex_calls == 3
+
+
+async def test_an_invalid_answer_was_paid_for_and_is_charged_at_the_reserve() -> None:
+    from scout.ports.llm import LLMOutputInvalid, LLMUnavailable
+
+    guard, _, run = _setup()
+    with pytest.raises(LLMOutputInvalid):
+        async with guard.llm("reasoning"):
+            raise LLMOutputInvalid("bad json")
+    assert run.spend.llm_calls == 1 and run.spend.cost_usd == Decimal("0.30")
+    with pytest.raises(LLMUnavailable):  # nothing came back: nothing to pay
+        async with guard.llm("fast"):
+            raise LLMUnavailable("down")
+    assert run.spend.llm_calls == 1

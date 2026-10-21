@@ -165,3 +165,58 @@ async def test_a2_resume_after_a_kill_during_analyse_repeats_nothing_completed(d
         final = await uow.runs.get(run.id, OWNER)
     assert final is not None and final.generation == 2 and final.spend.llm_calls == 8
     assert await _count(db, "opportunity") == 2
+
+
+async def test_an_overlong_model_quote_is_stored_clipped_and_marked_not_crashed(db: Database) -> None:
+    from tests.unit.discovery import _world
+
+    await _account(db)
+    w = PgWorld(db)
+
+    def long_quote(data: Any) -> Any:
+        out = _world.analyst(data)
+        first = out.opportunities[0]
+        ref = first.claims[0].evidence_refs[0].model_copy(update={"quote": "lignin " * 80})
+        refs = [ref, *first.claims[0].evidence_refs[1:]]
+        claim = first.claims[0].model_copy(update={"evidence_refs": refs})
+        opp = first.model_copy(update={"claims": [claim, *first.claims[1:]]})
+        return out.model_copy(update={"opportunities": [opp, *out.opportunities[1:]]})
+
+    w.agents.script("GapAnalyst", long_quote)
+    run = await w.start()
+    assert (await w.run(run))["status"] == "done"
+    async with db.engine.connect() as conn:
+        rows = (
+            await conn.execute(
+                text(
+                    "SELECT check_code, char_length(quote) FROM evidence WHERE check_code = 'quote_too_long'"
+                )
+            )
+        ).all()
+    assert rows and all(r[1] <= 300 for r in rows)
+
+
+async def test_a_readiness_flag_without_a_resolvable_ref_is_not_believed(db: Database) -> None:
+    from tests.unit.discovery import _world
+
+    await _account(db)
+    w = PgWorld(db)
+
+    def hostile(data: Any) -> Any:
+        out = _world.analyst(data)
+        items = [{"item": "Pilot line", "present_in_vault": True, "ref": "d9.aims[0]"}]
+        from scout.discovery.domain.agent_io import ChecklistItem
+
+        opps = [
+            o.model_copy(update={"readiness_checklist": [ChecklistItem(**items[0])]})
+            for o in out.opportunities
+        ]
+        return out.model_copy(update={"opportunities": opps})
+
+    w.agents.script("GapAnalyst", hostile)
+    run = await w.start()
+    await w.run(run)
+    async with w.uow() as uow:
+        opps = await uow.opportunities.list_for_run(run.id)
+    assert opps and all(not o.readiness_checklist[0]["present_in_vault"] for o in opps if o.scores)
+    assert all(o.scores.readiness == 0.0 for o in opps if o.scores)

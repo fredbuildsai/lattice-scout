@@ -66,6 +66,7 @@ from scout.discovery.domain.scoring import (
 )
 from scout.discovery.domain.verification import (
     EMAIL,
+    MAX_QUOTE,
     CheckResult,
     ChunkMaterial,
     EvidenceRef,
@@ -83,7 +84,7 @@ from scout.discovery.ports.sources import DocMaterial
 from scout.ports.literature import WorkQuery
 from scout.ports.llm import LLMOutputInvalid, LLMUnavailable
 from scout.shared import InvariantViolation
-from scout.shared.text import clean_text
+from scout.shared.text import clean_text, norm
 
 log = structlog.get_logger()
 _LLM_ERRORS = (LLMUnavailable, LLMOutputInvalid)
@@ -262,17 +263,18 @@ def _to_opportunity(
                 st = SourceType.COUNT
             else:
                 st = SourceType.VAULT
-            evidence.append(
-                Evidence(
-                    id=evidence_id(cid, j),
-                    ord=j,
-                    source_type=st,
-                    label=ref.id,
-                    ref=ref.id,
-                    quote=ref.quote,
-                    insight_ref=ref.id if ref.type == "insight" else None,
-                )  # fmt: skip
+            ev = Evidence(
+                id=evidence_id(cid, j),
+                ord=j,
+                source_type=st,
+                label=ref.id,
+                ref=ref.id,
+                quote=ref.quote[:MAX_QUOTE] if ref.quote else None,
+                insight_ref=ref.id if ref.type == "insight" else None,
             )
+            if ref.quote and len(norm(ref.quote)) > MAX_QUOTE:
+                ev.mark_failed(CheckCode.QUOTE_TOO_LONG, "the model's quote was cut at 300 characters")
+            evidence.append(ev)
         claim = Claim(
             id=cid, ord=i, section=ClaimSection(cd.section), text=cd.text, agent="GapAnalyst",
             prompt_version=version, model=model, evidence=evidence,
@@ -468,7 +470,11 @@ async def verify(c: StepContext) -> Summary:
                         new_works.append(cw)
                         resolved_new += 1
                         works[rec.id] = WorkMaterial(rec.id, cw.title, cw.abstract, CorpusOrigin.RESOLVED)
-                if ref.type in ("chunk", "insight") and _doc_label(ref.id) in inactive:
+                if e.verified is False and e.check is CheckCode.QUOTE_TOO_LONG:
+                    res = CheckResult(CheckCode.QUOTE_TOO_LONG, e.check_detail)
+                elif ref.type == "count" and _off_topic(opp, ref.id, probes):
+                    res = CheckResult(CheckCode.UNKNOWN_COUNT, "the count belongs to another cluster")
+                elif ref.type in ("chunk", "insight") and _doc_label(ref.id) in inactive:
                     res = CheckResult(CheckCode.SOURCE_DELETED)
                 else:
                     try:
@@ -483,7 +489,16 @@ async def verify(c: StepContext) -> Summary:
             if not claim_passes(code):
                 claim.set_status(ClaimStatus.UNVERIFIED, code.value, SetBy.VERIFY_CODE)
         alive = [cl for cl in opp.claims if cl.status is ClaimStatus.PENDING]
-        if EMAIL.search(" ".join([opp.title, opp.one_line, *opp.next_steps])):
+        if EMAIL.search(
+            " ".join(
+                [
+                    opp.title,
+                    opp.one_line,
+                    *opp.next_steps,
+                    *(str(x.get("item", "")) for x in opp.readiness_checklist),
+                ]
+            )
+        ):
             for cl in alive:
                 cl.set_status(ClaimStatus.UNVERIFIED, CheckCode.PERSONAL_DATA.value, SetBy.VERIFY_CODE)
             _finish_opp(opp, OppStatus.UNVERIFIED, CheckCode.PERSONAL_DATA.value)
@@ -532,6 +547,12 @@ async def verify(c: StepContext) -> Summary:
     by_status = Counter(f"n_{o.status.value}" for o in everything)
     done_resolved = sum(1 for w in corpus if w.origin is CorpusOrigin.RESOLVED) + resolved_new
     return {"checked": total_drafts, "resolved": done_resolved, **by_status}
+
+
+def _off_topic(opp: Opportunity, label: str, probes: list[NoveltyProbe]) -> bool:
+    """A count may only back an opportunity about the cluster it was measured for."""
+    probe = next((p for p in probes if p.label == label), None)
+    return probe is not None and probe.cluster_id not in opp.cluster_ids
 
 
 def _finish_opp(opp: Opportunity, status: OppStatus, reason: str) -> None:
@@ -619,6 +640,9 @@ async def score_persist(c: StepContext) -> Summary:
         probes = {p.id: p for p in await uow.probes.list(c.run_id)}
         opps = await uow.opportunities.list_for_run(c.run_id)
         previous = await uow.opportunities.previous_titles(c.owner_id, c.run_id)
+    known_refs = {i.ref for m in await c.material(run) if m.active for i in m.insights} | {
+        p.label for m in await c.material(run) if m.active for p in m.passages
+    }
     weights = {t.id: t.weight for t in run.inputs.topics}
     since = run.inputs.novelty_from or (c.clock.now().year - c.field.novelty.years_back)
     sat = c.field.novelty.saturation_count
@@ -636,6 +660,10 @@ async def score_persist(c: StepContext) -> Summary:
         count = probe.count
         topic_ids = [t for cid in o.cluster_ids if cid in clusters for t in clusters[cid].topic_ids][:10]
         insight = sum(clusters[cid].insight_weight for cid in o.cluster_ids if cid in clusters)
+        for (
+            item
+        ) in o.readiness_checklist:  # a model's "present in the vault" counts only when its ref resolves
+            item["present_in_vault"] = bool(item.get("present_in_vault")) and item.get("ref") in known_refs
         checklist = o.readiness_checklist
         fit = fit_score(weights, topic_ids, insight)
         nov = novelty_score(count, sat)
