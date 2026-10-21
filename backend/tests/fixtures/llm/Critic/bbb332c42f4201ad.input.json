@@ -1,0 +1,110 @@
+{
+  "draft": {
+    "claims": [
+      {
+        "check_status": "passed",
+        "evidence": [
+          "W7204036258"
+        ],
+        "index": 0,
+        "text": "Lignin's heterogeneity, poor solubility and limited reactivity hinder its use as a polyol in polyurethane foams."
+      },
+      {
+        "check_status": "passed",
+        "evidence": [
+          "W7214346167"
+        ],
+        "index": 1,
+        "text": "You have published EEM fluorescence and DUV Raman analysis of lignin-emissive domains at fibre-cement interfaces."
+      },
+      {
+        "check_status": "passed",
+        "evidence": [
+          "d1.c0",
+          "d1.aims[1]"
+        ],
+        "index": 2,
+        "text": "Your proposal aims to relate lignin type and hydroxyl content to foaming dynamics and cell structure."
+      },
+      {
+        "check_status": "passed",
+        "evidence": [
+          "n5"
+        ],
+        "index": 3,
+        "text": "Only 595 works since 2021 match 'lignin fluorescence fiber cement interface', a small literature for lignin fluorescence methods."
+      }
+    ],
+    "kind": "synergy",
+    "title": "Map lignin domains in flexible polyurethane foams with EEM fluorescence"
+  },
+  "evidence_texts": [
+    {
+      "ref_id": "W7204036258",
+      "text": "Replacing petroleum-derived polyols with lignin in polyurethane foams is essential for increasing renewable carbon utilization but is hindered by lignin’s heterogeneity, poor solubility, and limited reactivity. Here, we report a hydrogen-bond-engineered, eutectic-like polyol platform based on polyethylene glycol (PEG) and salicylic acid (SA), with ethylene carbonate (EC) as a cosolvent, enabling high lignin",
+      "title": "High-Lignin Polyurethane Foams via a Eutectic-Like Polyol Strategy: Enabling Scalable Processing and Enhanced Structural Performance",
+      "type": "work",
+      "year": null
+    },
+    {
+      "ref_id": "W7214346167",
+      "text": "Disruption of Lignin-Emissive Domains: Deciphering Fiber–Cement Interfacial Reactions by EEM Fluorescence and DUV Raman Spectroscopy",
+      "title": "Disruption of Lignin-Emissive Domains: Deciphering Fiber–Cement Interfacial Reactions by EEM Fluorescence and DUV Raman Spectroscopy",
+      "type": "work",
+      "year": null
+    },
+    {
+      "ref_id": "d1.c0",
+      "text": "SAMPLE DOCUMENT — fictional, written for Lattice Scout testing. Not authored by any real\nperson.\nLignin-rich flexible polyurethane foams for\nupholstery (proposal, declined)\nSummary\nWe propose to replace up to 30 % of the petroleum polyol in flexible polyurethane foams with kraft\nand organosolv lignin. Preliminary foams with 15 % lignin reached a compression set below 10 %.\nAims\n1. Formulate flexible foams with 30 % bio-content using fractionated lignin.\n2. Relate lignin type and hydroxyl content to foaming dynamics and cell structure.\n3. Demonstrate durability under cyclic compression for upholstery use.\n\nMethods\nLignin fractions are characterised by 31P NMR and GPC. Foams are produced in free-rise\nconditions and analysed by SEM, compression testing and dynamic mechanical analysis.\nExpected outcomes\nA formulation window for lignin-rich flexible foams and a dataset linking lignin structure to foam\nproperties.\n\nPanel summary and reviewer comments\nReviewer 1: The preliminary data are convincing and the team has the right expertise in lignin\nchemistry.\nReviewer 2: The applicants do not demonstrate that the foams meet fire-safety standard EN 13501\nat the proposed bio-content.\nReviewer 3",
+      "title": null,
+      "type": "chunk",
+      "year": null
+    },
+    {
+      "ref_id": "d1.aims[1]",
+      "text": "Relate lignin type and hydroxyl content to foaming dynamics and cell structure.",
+      "title": null,
+      "type": "insight",
+      "year": null
+    },
+    {
+      "ref_id": "n5",
+      "text": "lignin fluorescence fiber cement interface: 595 works",
+      "title": null,
+      "type": "count",
+      "year": null
+    }
+  ],
+  "similar_papers": [
+    {
+      "abstract": "",
+      "title": "Disruption of Lignin-Emissive Domains: Deciphering Fiber–Cement Interfacial Reactions by EEM Fluorescence and DUV Raman Spectroscopy",
+      "work_id": "W7214346167",
+      "year": 2026
+    },
+    {
+      "abstract": "",
+      "title": "Lignin Type and Content Influence the Foaming Dynamics and Properties of Flexible Polyurethane Foams",
+      "work_id": "W7164334760",
+      "year": 2026
+    },
+    {
+      "abstract": "",
+      "title": "Unraveling lignin degradation in fibre cement via multidimensional fluorometry",
+      "work_id": "W4378071563",
+      "year": 2023
+    },
+    {
+      "abstract": "Antimicrobial materials are an urgent need for modern wound care in the clinic. Although traditional polyurethane foams have proven to be clinically valuable for wound treatment, their petroleum-originated preparation and bioinert nature have restricted their efficacy in biomedical applications. Here, we propose a simple one-step foaming method to prepare lignin-based polyurethane foams (LPUFs) in which fully biobase",
+      "title": "Antimicrobial Lignin-Based Polyurethane/Ag Composite Foams for Improving Wound Healing",
+      "work_id": "W4210817058",
+      "year": 2022
+    },
+    {
+      "abstract": "",
+      "title": "Green co-solvent-assisted one-pot synthesis of high-performance flexible lignin polyurethane foam",
+      "work_id": "W4402758757",
+      "year": 2024
+    }
+  ]
+}

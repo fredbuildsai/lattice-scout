@@ -1,0 +1,135 @@
+{
+  "draft": {
+    "claims": [
+      {
+        "check_status": "passed",
+        "evidence": [
+          "d1.c0",
+          "d1.reviewer_objections[0]"
+        ],
+        "index": 0,
+        "text": "A reviewer found that the proposal did not demonstrate EN 13501 fire safety at the proposed bio-content."
+      },
+      {
+        "check_status": "passed",
+        "evidence": [
+          "d1.c0"
+        ],
+        "index": 1,
+        "text": "Another reviewer asked for a durability comparison with commercial petroleum-based foams over at least 50,000 compression cycles."
+      },
+      {
+        "check_status": "passed",
+        "evidence": [
+          "d1.c0",
+          "d1.findings[0]"
+        ],
+        "index": 2,
+        "text": "Your preliminary foams with 15 % lignin already reached a compression set below 10 %."
+      },
+      {
+        "check_status": "passed",
+        "evidence": [
+          "W7164334760"
+        ],
+        "index": 3,
+        "text": "You have published how lignin type and content influence the foaming dynamics and properties of flexible polyurethane foams."
+      },
+      {
+        "check_status": "passed",
+        "evidence": [
+          "W7204036258",
+          "W7204036258"
+        ],
+        "index": 4,
+        "text": "Lignin's heterogeneity, poor solubility and limited reactivity hinder high-lignin polyurethane foams, and a eutectic-like polyol platform has been reported to address this."
+      },
+      {
+        "check_status": "passed",
+        "evidence": [
+          "n3"
+        ],
+        "index": 5,
+        "text": "1731 works since 2021 match 'lignin polyurethane foam flame retardant', so fire performance of lignin foams is a crowded topic and the resubmission must state what is new."
+      }
+    ],
+    "kind": "resubmission",
+    "title": "Resubmit lignin-rich upholstery foams with fire-safety and 50,000-cycle durability evidence"
+  },
+  "evidence_texts": [
+    {
+      "ref_id": "d1.c0",
+      "text": "SAMPLE DOCUMENT — fictional, written for Lattice Scout testing. Not authored by any real\nperson.\nLignin-rich flexible polyurethane foams for\nupholstery (proposal, declined)\nSummary\nWe propose to replace up to 30 % of the petroleum polyol in flexible polyurethane foams with kraft\nand organosolv lignin. Preliminary foams with 15 % lignin reached a compression set below 10 %.\nAims\n1. Formulate flexible foams with 30 % bio-content using fractionated lignin.\n2. Relate lignin type and hydroxyl content to foaming dynamics and cell structure.\n3. Demonstrate durability under cyclic compression for upholstery use.\n\nMethods\nLignin fractions are characterised by 31P NMR and GPC. Foams are produced in free-rise\nconditions and analysed by SEM, compression testing and dynamic mechanical analysis.\nExpected outcomes\nA formulation window for lignin-rich flexible foams and a dataset linking lignin structure to foam\nproperties.\n\nPanel summary and reviewer comments\nReviewer 1: The preliminary data are convincing and the team has the right expertise in lignin\nchemistry.\nReviewer 2: The applicants do not demonstrate that the foams meet fire-safety standard EN 13501\nat the proposed bio-content.\nReviewer 3",
+      "title": null,
+      "type": "chunk",
+      "year": null
+    },
+    {
+      "ref_id": "d1.reviewer_objections[0]",
+      "text": "Fire-safety compliance (EN 13501) at the proposed bio-content is not shown.",
+      "title": null,
+      "type": "insight",
+      "year": null
+    },
+    {
+      "ref_id": "d1.findings[0]",
+      "text": "Preliminary foams with 15 % lignin reached a compression set below 10 %.",
+      "title": null,
+      "type": "insight",
+      "year": null
+    },
+    {
+      "ref_id": "W7164334760",
+      "text": "Lignin Type and Content Influence the Foaming Dynamics and Properties of Flexible Polyurethane Foams",
+      "title": "Lignin Type and Content Influence the Foaming Dynamics and Properties of Flexible Polyurethane Foams",
+      "type": "work",
+      "year": null
+    },
+    {
+      "ref_id": "W7204036258",
+      "text": "Replacing petroleum-derived polyols with lignin in polyurethane foams is essential for increasing renewable carbon utilization but is hindered by lignin’s heterogeneity, poor solubility, and limited reactivity. Here, we report a hydrogen-bond-engineered, eutectic-like polyol platform based on polyethylene glycol (PEG) and salicylic acid (SA), with ethylene carbonate (EC) as a cosolvent, enabling high lignin",
+      "title": "High-Lignin Polyurethane Foams via a Eutectic-Like Polyol Strategy: Enabling Scalable Processing and Enhanced Structural Performance",
+      "type": "work",
+      "year": null
+    },
+    {
+      "ref_id": "n3",
+      "text": "lignin polyurethane foam flame retardant: 1731 works",
+      "title": null,
+      "type": "count",
+      "year": null
+    }
+  ],
+  "similar_papers": [
+    {
+      "abstract": "",
+      "title": "Lignin Type and Content Influence the Foaming Dynamics and Properties of Flexible Polyurethane Foams",
+      "work_id": "W7164334760",
+      "year": 2026
+    },
+    {
+      "abstract": "Replacing petroleum-derived polyols with lignin in polyurethane foams is essential for increasing renewable carbon utilization but is hindered by lignin’s heterogeneity, poor solubility, and limited reactivity. Here, we report a hydrogen-bond-engineered, eutectic-like polyol platform based on polyethylene glycol (PEG) and salicylic acid (SA), with ethylene carbonate (EC) as a cosolvent, enabling high lignin",
+      "title": "High-Lignin Polyurethane Foams via a Eutectic-Like Polyol Strategy: Enabling Scalable Processing and Enhanced Structural Performance",
+      "work_id": "W7204036258",
+      "year": 2026
+    },
+    {
+      "abstract": "Antimicrobial materials are an urgent need for modern wound care in the clinic. Although traditional polyurethane foams have proven to be clinically valuable for wound treatment, their petroleum-originated preparation and bioinert nature have restricted their efficacy in biomedical applications. Here, we propose a simple one-step foaming method to prepare lignin-based polyurethane foams (LPUFs) in which fully biobase",
+      "title": "Antimicrobial Lignin-Based Polyurethane/Ag Composite Foams for Improving Wound Healing",
+      "work_id": "W4210817058",
+      "year": 2022
+    },
+    {
+      "abstract": "",
+      "title": "Hydrophobized lignin nanoparticle-stabilized Pickering foams: building blocks for sustainable lightweight porous materials",
+      "work_id": "W4399506670",
+      "year": 2024
+    },
+    {
+      "abstract": "",
+      "title": "Recent advances in nanocellulose for biomedical applications",
+      "work_id": "W1984903735",
+      "year": 2014
+    }
+  ]
+}

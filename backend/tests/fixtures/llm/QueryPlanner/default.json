@@ -1,0 +1,40 @@
+{
+  "queries": [
+    {
+      "search": "lignin polyurethane foam",
+      "purpose": "core",
+      "because": "field:Bio-based materials",
+      "max_results": 50
+    },
+    {
+      "search": "cellulose nanofiber membrane flow battery",
+      "purpose": "core",
+      "because": "field:Bio-based materials",
+      "max_results": 50
+    },
+    {
+      "search": "PFAS adsorption membrane",
+      "purpose": "core",
+      "because": "field:Bio-based materials",
+      "max_results": 50
+    },
+    {
+      "search": "photocatalytic PFAS degradation",
+      "purpose": "bridge",
+      "because": "field:Bio-based materials",
+      "max_results": 50
+    },
+    {
+      "search": "lignin fiber cement",
+      "purpose": "adjacent",
+      "because": "field:Bio-based materials",
+      "max_results": 50
+    },
+    {
+      "search": "wood electromagnetic interference shielding",
+      "purpose": "adjacent",
+      "because": "field:Bio-based materials",
+      "max_results": 50
+    }
+  ]
+}

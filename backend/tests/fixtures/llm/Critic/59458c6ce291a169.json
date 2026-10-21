@@ -1,0 +1,35 @@
+{
+  "claims": [
+    {
+      "index": 0,
+      "status": "verified",
+      "reason": null,
+      "fix": null
+    },
+    {
+      "index": 1,
+      "status": "verified",
+      "reason": null,
+      "fix": null
+    },
+    {
+      "index": 2,
+      "status": "unverified",
+      "reason": "failed code check",
+      "fix": null
+    },
+    {
+      "index": 3,
+      "status": "verified",
+      "reason": null,
+      "fix": null
+    }
+  ],
+  "already_done": false,
+  "already_done_by": null,
+  "keep": true,
+  "reasons": [
+    "3 claims verified against their evidence, including literature.",
+    "No similar paper combines these elements."
+  ]
+}

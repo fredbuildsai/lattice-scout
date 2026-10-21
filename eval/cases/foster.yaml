@@ -1,0 +1,28 @@
+# Eval case: Johan Foster (public OpenAlex records only) plus the three fictional sample vault documents.
+# Plan M3 task 6, design docs/design/M3-gap-analysis-engine.md section 7 (Eval).
+#
+# - author_ids: the claimed OpenAlex records (the first one is the primary record). Foster has a split record with the
+#   same ORCID (A5140167166), claimed together as in the M1 acceptance test.
+# - documents: Markdown sources of the SAMPLE documents (fictional, labelled as such in their first line, never
+#   attributed to a real person). The runner renders each one to PDF with scripts/make_sample_docs.py `to_pdf`,
+#   uploads it as `<stem>.pdf` (the filename is part of the InsightExtractor fixture key) with the given retention, in
+#   this order (the run labels them d1, d2, d3).
+# - expected_themes: one inner list per theme a domain reader expects; a theme is recalled when one shown opportunity
+#   contains every keyword of the list (case-insensitive substring) in its title or verified claims.
+# - min_shown / max_shown: bounds on shown opportunities for the fixture run (FakeLLM + FixtureLiterature).
+#
+# FakeLLM fixtures for this exact case come from scripts/make_discovery_fixtures.py; changing anything here changes the
+# agents' inputs, so re-run that script.
+id: foster
+author_ids: [A5059588273, A5140167166]
+documents:
+  - {path: tests/fixtures/vault/declined-proposal-lignin-foams.md, retention: keep}
+  - {path: tests/fixtures/vault/unpublished-results-cnf-membrane.md, retention: discard}
+  - {path: tests/fixtures/vault/lab-notes-pfas-membrane.md, retention: discard}
+expected_themes:
+  - [lignin, foam, fire]
+  - [zinc, iodine]
+  - [lignin, fluorescence]
+  - [pfas, photocatalyt]
+min_shown: 3
+max_shown: 10

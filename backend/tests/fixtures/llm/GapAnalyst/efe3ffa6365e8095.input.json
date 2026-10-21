@@ -1,0 +1,253 @@
+{
+  "chunks": [],
+  "coverage": [
+    {
+      "cluster_id": "k1",
+      "corpus_count": 9,
+      "density": 1.0,
+      "label": "PFAS adsorption and photocatalytic degradation",
+      "user_insights": 0.0,
+      "user_works": 6
+    },
+    {
+      "cluster_id": "k2",
+      "corpus_count": 5,
+      "density": 0.5555556,
+      "label": "Lignin polyurethane foams",
+      "user_insights": 0.0,
+      "user_works": 0
+    },
+    {
+      "cluster_id": "k3",
+      "corpus_count": 5,
+      "density": 0.5555556,
+      "label": "Wood composites for EMI shielding",
+      "user_insights": 0.0,
+      "user_works": 0
+    }
+  ],
+  "exclude_titles": [],
+  "insights": [],
+  "max_opportunities": 5,
+  "novelty": [
+    {
+      "candidate_id": "n1",
+      "cluster_id": "k1",
+      "count": 865,
+      "query": "photocatalytic regeneration PFAS membrane",
+      "since_year": 2021
+    },
+    {
+      "candidate_id": "n2",
+      "cluster_id": "k2",
+      "count": 1731,
+      "query": "lignin polyurethane foam flame retardant",
+      "since_year": 2021
+    },
+    {
+      "candidate_id": "n3",
+      "cluster_id": "k3",
+      "count": 1731,
+      "query": "wood composite EMI shielding",
+      "since_year": 2021
+    }
+  ],
+  "papers": [
+    {
+      "abstract": "",
+      "title": "Perfluoroalkyl substances (PFAS) adsorption in drinking water by granular activated carbon: Influence of activated carbon and PFAS characteristics",
+      "work_id": "W3180734447",
+      "year": 2021
+    },
+    {
+      "abstract": "",
+      "title": "High-pressure membrane filtration processes for separation of Per- and polyfluoroalkyl substances (PFAS)",
+      "work_id": "W4200078914",
+      "year": 2021
+    },
+    {
+      "abstract": "Mass transfer of per- and polyfluoroalkyl substances (PFAS) to container walls during sample collection and storage or experimentation is an important source of error in PFAS analysis. To minimize this error, high-density polyethylene (HDPE) and polypropylene containers are widely used for PFAS studies. However, there is sparse data to justify these container polymer choices. In this study, we investigated the adsorp",
+      "title": "Adsorption of per- and polyfluoroalkyl substances (PFAS) to containers",
+      "work_id": "W4286511477",
+      "year": 2022
+    },
+    {
+      "abstract": "",
+      "title": "Progress and perspectives on carbon-based materials for adsorptive removal and photocatalytic degradation of perfluoroalkyl and polyfluoroalkyl substances (PFAS)",
+      "work_id": "W4390708195",
+      "year": 2024
+    },
+    {
+      "abstract": "",
+      "title": "Demonstration of Photocatalytic Degradation of Per- and Polyfluoroalkyl Substances (PFAS) in Landfill Leachate Using 3D Printed TiO2 Composite Tiles",
+      "work_id": "W4308040918",
+      "year": 2022
+    },
+    {
+      "abstract": "Antimicrobial materials are an urgent need for modern wound care in the clinic. Although traditional polyurethane foams have proven to be clinically valuable for wound treatment, their petroleum-originated preparation and bioinert nature have restricted their efficacy in biomedical applications. Here, we propose a simple one-step foaming method to prepare lignin-based polyurethane foams (LPUFs) in which fully biobase",
+      "title": "Antimicrobial Lignin-Based Polyurethane/Ag Composite Foams for Improving Wound Healing",
+      "work_id": "W4210817058",
+      "year": 2022
+    },
+    {
+      "abstract": "",
+      "title": "Chemical recycling of a lignin-based non-isocyanate polyurethane foam",
+      "work_id": "W4313562066",
+      "year": 2023
+    },
+    {
+      "abstract": "",
+      "title": "Green co-solvent-assisted one-pot synthesis of high-performance flexible lignin polyurethane foam",
+      "work_id": "W4402758757",
+      "year": 2024
+    },
+    {
+      "abstract": "Replacing petroleum-derived polyols with lignin in polyurethane foams is essential for increasing renewable carbon utilization but is hindered by lignin’s heterogeneity, poor solubility, and limited reactivity. Here, we report a hydrogen-bond-engineered, eutectic-like polyol platform based on polyethylene glycol (PEG) and salicylic acid (SA), with ethylene carbonate (EC) as a cosolvent, enabling high lignin",
+      "title": "High-Lignin Polyurethane Foams via a Eutectic-Like Polyol Strategy: Enabling Scalable Processing and Enhanced Structural Performance",
+      "work_id": "W7204036258",
+      "year": 2026
+    },
+    {
+      "abstract": "Deciphering the fiber–cement interfacial reaction without chemical labeling and digestion remains a significant challenge in vibrational and fluorescence spectroscopy. Herein, we have elucidated the reaction between lignin and calcium hydroxide (Ca(OH)2) utilizing excitation emission matrix (EEM) fluorescence and deep ultraviolet (DUV) Raman spectroscopy. Tracking lignin photoluminescence via excitation–emis",
+      "title": "Disruption of Lignin-Emissive Domains: Deciphering Fiber–Cement Interfacial Reactions by EEM Fluorescence and DUV Raman Spectroscopy",
+      "work_id": "W7214346167",
+      "year": 2026
+    },
+    {
+      "abstract": "In this review, wood-based composites for efficient EMI shielding and MA are comprehensively introduced.",
+      "title": "Sustainable wood-based composites for microwave absorption and electromagnetic interference shielding",
+      "work_id": "W3097374082",
+      "year": 2020
+    },
+    {
+      "abstract": "Electric conductors are ubiquitously used for electromagnetic shielding, flexible electronics, and energy storage, with metals and carbon-based compounds as traditional choices for these applications. Here, we develop a conductive wood as a new type of structural electromagnetic interference (EMI) shielding material with combined load-bearing function via delignification and subsequent in situ chemical vapor depositi",
+      "title": "Conductive Wood for High-Performance Structural Electromagnetic Interference Shielding",
+      "work_id": "W3026932531",
+      "year": 2020
+    },
+    {
+      "abstract": "Electromagnetic interference (EMI) shielding materials have attracted intensive attention with the increased electromagnetic pollution, which are required to possess high transparency and flexibility for applications in visualization windows, aerospace equipment, and wearable devices. However, it remains a challenge to achieve high-performance EMI shielding while maintaining excellent light transmittance. Herein, a s",
+      "title": "Transparent and Flexible Electromagnetic Interference Shielding Materials by Constructing Sandwich AgNW@MXene/Wood Composites",
+      "work_id": "W4296639055",
+      "year": 2022
+    },
+    {
+      "abstract": "",
+      "title": "Highly anisotropic MXene@Wood composites for tunable electromagnetic interference shielding",
+      "work_id": "W4319766258",
+      "year": 2023
+    },
+    {
+      "abstract": "Currently, due to the rapid development of communication technology, electromagnetic interference (EMI) and irradiation have become an emerging environmental pollutant. Herein, hierarchical and porous structured wood is used as the lightweight three‐dimensional organic scaffold for the incorporation of magnetic iron oxide nanoparticles through an in situ mineralization process that endows the woodblock with favorable",
+      "title": "Lightweight and Construable Magnetic Wood for Electromagnetic Interference Shielding",
+      "work_id": "W3033851578",
+      "year": 2020
+    }
+  ],
+  "profile_summary": {
+    "recent_works": [
+      {
+        "title": "Fe3O4/GO, ZnO, and TiO2 thin films for efficient photocatalytic removal of tetracycline from aqueous media under UV LED, blue LED and solar radiation",
+        "work_id": "W7163127579",
+        "year": 2026
+      },
+      {
+        "title": "Sustainable Mizoroki–Heck Cross-Coupling Using a Pd(II)-Polymer as Precatalyst in 1-Butanol",
+        "work_id": "W7164855134",
+        "year": 2026
+      },
+      {
+        "title": "Copper Containing Covalent Triazine Frameworks as Highly Stable and Efficient Catalysts for the Guerbet Reaction",
+        "work_id": "W7164938406",
+        "year": 2026
+      },
+      {
+        "title": "pH-Dependent charge regulation and ion-specific supramolecular organization in surfactin–iturin-rich bioamphiphile mixtures",
+        "work_id": "W7167644942",
+        "year": 2026
+      },
+      {
+        "title": "Impact of Synthesis Temperature on the Drug Loading Capacity of Linde Type A Zeolite",
+        "work_id": "W7169494011",
+        "year": 2026
+      },
+      {
+        "title": "Harnessing tri-s-triazine polyimide–P25 hybrids for boosted photocatalytic activity under low-power visible LEDs illumination",
+        "work_id": "W7170056032",
+        "year": 2026
+      },
+      {
+        "title": "Sustainable Heck–Mizoroki and Suzuki–Miyaura reactions mediated by aqueous palladium nanoparticles and imidazolium–sulfonate additives",
+        "work_id": "W4407708295",
+        "year": 2025
+      },
+      {
+        "title": "Polyphosphatases have a polyphosphate-independent influence on the virulence of Cryptococcus neoformans",
+        "work_id": "W4408343920",
+        "year": 2025
+      },
+      {
+        "title": "Tailormade PMMA Spheres: Synthesis and Growth Mechanism",
+        "work_id": "W4411023486",
+        "year": 2025
+      },
+      {
+        "title": "Mullite-type Bi2(M1-Fe )4O9 (M = Al, Ga) with tailored crystallite size and band gap: Toward next-generation visible-light functional oxides",
+        "work_id": "W4414832469",
+        "year": 2025
+      },
+      {
+        "title": "On-chip catalytic combustion of hydrogen using Pt and Ru quantum-crystallites on functionalized SiO2 aerogels",
+        "work_id": "W4416235139",
+        "year": 2025
+      },
+      {
+        "title": "Highly Active and Robust Nanoporous Gold for CO Oxidation: Widening Temperature Window with an Au‐Cu‐Ag Ternary System",
+        "work_id": "W4416808046",
+        "year": 2025
+      },
+      {
+        "title": "Structural dependence of PFAS oxidation in a boron doped diamond-electrochemical system",
+        "work_id": "W4390531961",
+        "year": 2024
+      },
+      {
+        "title": "Fungal-derived adsorption membrane to capture potentially toxic elements",
+        "work_id": "W4394732631",
+        "year": 2024
+      },
+      {
+        "title": "Hybrid graphenic and iron oxide photocatalysts for the decomposition of synthetic chemicals",
+        "work_id": "W4401793377",
+        "year": 2024
+      }
+    ],
+    "topics": [
+      "Catalytic Processes in Materials Science",
+      "Electrocatalysts for Energy Conversion",
+      "Advanced Photocatalysis Techniques",
+      "Advanced oxidation water treatment",
+      "Catalytic C–H Functionalization Methods",
+      "Catalytic Cross-Coupling Reactions",
+      "TiO2 Photocatalysis and Solar Cells",
+      "Per- and polyfluoroalkyl substances research",
+      "Nanoporous metals and alloys",
+      "Organometallic Complex Synthesis and Catalysis",
+      "Antifungal resistance and susceptibility",
+      "Perovskite Materials and Applications",
+      "Crystal structures of chemical compounds",
+      "Fungal and yeast genetics research",
+      "Surfactants and Colloidal Systems",
+      "Career Development and Diversity",
+      "Catalytic Alkyne Reactions",
+      "Fungal Infections and Studies",
+      "Inorganic and Organometallic Chemistry",
+      "Metal-Catalyzed Oxygenation Mechanisms",
+      "Organophosphorus compounds synthesis",
+      "Clay minerals and soil interactions",
+      "Gender, Sexuality, and Education",
+      "Machine Learning in Materials Science",
+      "Chemical Reaction Mechanisms"
+    ]
+  }
+}

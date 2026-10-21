@@ -1,0 +1,81 @@
+{
+  "draft": {
+    "claims": [
+      {
+        "check_status": "passed",
+        "evidence": [
+          "W4286511477"
+        ],
+        "index": 0,
+        "text": "PFAS transfer to container walls during sampling, storage or experiments is an important source of error in PFAS analysis."
+      },
+      {
+        "check_status": "passed",
+        "evidence": [
+          "W4286511477",
+          "W4286511477"
+        ],
+        "index": 1,
+        "text": "Data that justify the usual polyethylene and polypropylene container choices are sparse."
+      },
+      {
+        "check_status": "passed",
+        "evidence": [
+          "W4390531961"
+        ],
+        "index": 2,
+        "text": "You have studied how PFAS structure affects oxidation in a boron-doped diamond electrochemical system."
+      }
+    ],
+    "kind": "white_spot",
+    "title": "Correct PFAS degradation tests for losses to container walls"
+  },
+  "evidence_texts": [
+    {
+      "ref_id": "W4286511477",
+      "text": "Mass transfer of per- and polyfluoroalkyl substances (PFAS) to container walls during sample collection and storage or experimentation is an important source of error in PFAS analysis. To minimize this error, high-density polyethylene (HDPE) and polypropylene containers are widely used for PFAS studies. However, there is sparse data to justify these container polymer choices. In this study, we investigated the adsorp",
+      "title": "Adsorption of per- and polyfluoroalkyl substances (PFAS) to containers",
+      "type": "work",
+      "year": null
+    },
+    {
+      "ref_id": "W4390531961",
+      "text": "Structural dependence of PFAS oxidation in a boron doped diamond-electrochemical system",
+      "title": "Structural dependence of PFAS oxidation in a boron doped diamond-electrochemical system",
+      "type": "work",
+      "year": null
+    }
+  ],
+  "similar_papers": [
+    {
+      "abstract": "Mass transfer of per- and polyfluoroalkyl substances (PFAS) to container walls during sample collection and storage or experimentation is an important source of error in PFAS analysis. To minimize this error, high-density polyethylene (HDPE) and polypropylene containers are widely used for PFAS studies. However, there is sparse data to justify these container polymer choices. In this study, we investigated the adsorp",
+      "title": "Adsorption of per- and polyfluoroalkyl substances (PFAS) to containers",
+      "work_id": "W4286511477",
+      "year": 2022
+    },
+    {
+      "abstract": "",
+      "title": "Structural dependence of PFAS oxidation in a boron doped diamond-electrochemical system",
+      "work_id": "W4390531961",
+      "year": 2024
+    },
+    {
+      "abstract": "• Tested an adsorptive photocatalyst (Ga/TNTs@AC) for treating PFAS in field water • Field water matrix impeded column adsorption and photocatalysis of PFAS • Addition of Fe 3+ during photocatalysis enhanced PFAS degradation and mineralization • Column tests confirmed effective sorption of all PFAS from the surface water • PFAS retained by the column were effectively photodegraded, regenerating the media Per- and pol",
+      "title": "Photocatalytic degradation of PFAS under field water matrix conditions using an adsorptive photocatalyst",
+      "work_id": "W7119226140",
+      "year": 2026
+    },
+    {
+      "abstract": "Photocatalytic degradation has attracted increasing attention for the remediation of per- and polyfluoroalkyl substances (PFAS) because of its mild operating conditions, high treatment efficiency and relatively low energy demand. Based on literature indexed in the Web of Science from 1999 to 2025, this study used CiteSpace to analyze research output, collaboration networks, high impact journals and keyword evolution,",
+      "title": "Insights into development trends for photocatalytic degradation of PFAS: A bibliometric time-series perspective",
+      "work_id": "W7167079830",
+      "year": 2026
+    },
+    {
+      "abstract": "Per- and polyfluoroalkyl substances (PFAS) are highly persistent environmental contaminants whose stability originates from strong C-F bonds, electron-deficient fluorinated chains, and resistance to conventional degradation processes. Separation-based technologies such as adsorption, ion exchange, and membrane filtration can remove PFAS from water but do not achieve chemical destruction and often generate secondary w",
+      "title": "Oxidative and reductive mechanisms for the photocatalytic degradation of per- and polyfluoroalkyl substances (PFAS): A critical review",
+      "work_id": "W7203860180",
+      "year": 2026
+    }
+  ]
+}

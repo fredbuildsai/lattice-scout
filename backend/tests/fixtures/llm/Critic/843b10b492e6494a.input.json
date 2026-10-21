@@ -1,0 +1,87 @@
+{
+  "draft": {
+    "claims": [
+      {
+        "check_status": "passed",
+        "evidence": [
+          "W3033851578"
+        ],
+        "index": 0,
+        "text": "Porous wood has been used as a lightweight scaffold for magnetic iron oxide nanoparticles grown in situ."
+      },
+      {
+        "check_status": "passed",
+        "evidence": [
+          "W4401793377"
+        ],
+        "index": 1,
+        "text": "You have developed hybrid graphenic and iron oxide photocatalysts for the decomposition of synthetic chemicals."
+      },
+      {
+        "check_status": "passed",
+        "evidence": [
+          "W7163127579"
+        ],
+        "index": 2,
+        "text": "Your Fe3O4/GO, ZnO and TiO2 thin films removed tetracycline photocatalytically under UV LED, blue LED and solar light."
+      }
+    ],
+    "kind": "synergy",
+    "title": "Magnetic iron-oxide wood as a recoverable photocatalyst support for PFAS degradation"
+  },
+  "evidence_texts": [
+    {
+      "ref_id": "W3033851578",
+      "text": "Currently, due to the rapid development of communication technology, electromagnetic interference (EMI) and irradiation have become an emerging environmental pollutant. Herein, hierarchical and porous structured wood is used as the lightweight three‐dimensional organic scaffold for the incorporation of magnetic iron oxide nanoparticles through an in situ mineralization process that endows the woodblock with favorable",
+      "title": "Lightweight and Construable Magnetic Wood for Electromagnetic Interference Shielding",
+      "type": "work",
+      "year": null
+    },
+    {
+      "ref_id": "W4401793377",
+      "text": "Hybrid graphenic and iron oxide photocatalysts for the decomposition of synthetic chemicals",
+      "title": "Hybrid graphenic and iron oxide photocatalysts for the decomposition of synthetic chemicals",
+      "type": "work",
+      "year": null
+    },
+    {
+      "ref_id": "W7163127579",
+      "text": "Fe3O4/GO, ZnO, and TiO2 thin films for efficient photocatalytic removal of tetracycline from aqueous media under UV LED, blue LED and solar radiation",
+      "title": "Fe3O4/GO, ZnO, and TiO2 thin films for efficient photocatalytic removal of tetracycline from aqueous media under UV LED, blue LED and solar radiation",
+      "type": "work",
+      "year": null
+    }
+  ],
+  "similar_papers": [
+    {
+      "abstract": "",
+      "title": "Hybrid graphenic and iron oxide photocatalysts for the decomposition of synthetic chemicals",
+      "work_id": "W4401793377",
+      "year": 2024
+    },
+    {
+      "abstract": "• Tested an adsorptive photocatalyst (Ga/TNTs@AC) for treating PFAS in field water • Field water matrix impeded column adsorption and photocatalysis of PFAS • Addition of Fe 3+ during photocatalysis enhanced PFAS degradation and mineralization • Column tests confirmed effective sorption of all PFAS from the surface water • PFAS retained by the column were effectively photodegraded, regenerating the media Per- and pol",
+      "title": "Photocatalytic degradation of PFAS under field water matrix conditions using an adsorptive photocatalyst",
+      "work_id": "W7119226140",
+      "year": 2026
+    },
+    {
+      "abstract": "Currently, due to the rapid development of communication technology, electromagnetic interference (EMI) and irradiation have become an emerging environmental pollutant. Herein, hierarchical and porous structured wood is used as the lightweight three‐dimensional organic scaffold for the incorporation of magnetic iron oxide nanoparticles through an in situ mineralization process that endows the woodblock with favorable",
+      "title": "Lightweight and Construable Magnetic Wood for Electromagnetic Interference Shielding",
+      "work_id": "W3033851578",
+      "year": 2020
+    },
+    {
+      "abstract": "Removal of perfluoroalkyl and polyfluoroalkyl substances (PFAS) by nanofiltration (NF) membranes has been well-documented, but the impact of PFAS interaction with the NF separation layer on the permselectivity of layer-by-layer (LBL) NF membranes has yet to be explored. The work reported two different LBL membranes prepared with pairs of long-chain polyelectrolytes (PVAm/PSS, L/L) and short-chain polyelectrolytes (S/",
+      "title": "Interaction of Layer-by-Layer Nanofiltration Membranes and PFAS: Filtration after Adsorption",
+      "work_id": "W4412487818",
+      "year": 2025
+    },
+    {
+      "abstract": "Photocatalytic degradation has attracted increasing attention for the remediation of per- and polyfluoroalkyl substances (PFAS) because of its mild operating conditions, high treatment efficiency and relatively low energy demand. Based on literature indexed in the Web of Science from 1999 to 2025, this study used CiteSpace to analyze research output, collaboration networks, high impact journals and keyword evolution,",
+      "title": "Insights into development trends for photocatalytic degradation of PFAS: A bibliometric time-series perspective",
+      "work_id": "W7167079830",
+      "year": 2026
+    }
+  ]
+}
