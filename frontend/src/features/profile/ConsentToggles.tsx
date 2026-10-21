@@ -1,6 +1,7 @@
 import { useConsent, type Me } from './api'
 
-function Row({ id, title, hint, checked, disabled, dim, onChange }: { id: string; title: string; hint: string; checked: boolean; disabled: boolean; dim?: boolean; onChange: (v: boolean) => void }) {
+/** One labelled switch row (checkbox) with a hint, shared by consent and notification settings. */
+export function Row({ id, title, hint, checked, disabled, dim, onChange }: { id: string; title: string; hint: string; checked: boolean; disabled: boolean; dim?: boolean; onChange: (v: boolean) => void }) {
   return (
     <div className={`flex items-start justify-between gap-4 rounded-btn bg-subtle p-4 ${dim ? 'opacity-60' : ''}`}>
       <div>

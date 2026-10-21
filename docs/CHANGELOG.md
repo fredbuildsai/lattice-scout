@@ -5,7 +5,7 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 ## [Unreleased]
 
 ### Added
-- M6 slice D, notifications (backend): mails for a finished run, a new suggestion, a mutual match and an optional weekly digest. Plain text with a link only, no names or counts; a decline is never mailed. `GET/PATCH /api/v1/me/notifications`; migration 0012 (`notification_pref`, `notification`); jobs `notification.send` and `notification.digest`; senders `console` (default) and `resend`; setting `APP_BASE_URL`.
+- M6 slice D, notifications (backend): mails for a finished run, a new suggestion, a mutual match and an optional weekly digest. Plain text with a link only, no names or counts; a decline is never mailed. `GET/PATCH /api/v1/me/notifications`; migration 0012 (`notification_pref`, `notification`); jobs `notification.send` and `notification.digest`; senders `console` (default) and `resend`; setting `APP_BASE_URL`. Privacy page: "E-mail notifications" section with three switches.
 - M6 slice C, privacy tab and pause banner (frontend):
   - Privacy tab (`/settings/privacy`): "Delete my vault" (type `DELETE`) and "Delete my account" (retype your e-mail), a statement that Scout never trains models on your files, and a list of what deletion removes and keeps. After an account deletion the user is signed out with an "account is being deleted" message; any 403 `account_deleted` does the same.
   - Banner on the Vault and Opportunities pages when new analyses are paused by the daily budget; the "Analyse with Scout" button is disabled with the same message. Friendly messages for `service_paused` and `upload_limit_reached`.

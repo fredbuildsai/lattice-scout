@@ -1,5 +1,6 @@
 import { ConsentToggles } from './ConsentToggles'
 import { DataDeletion } from './DataDeletion'
+import { NotificationSettings } from './NotificationSettings'
 import { useMe } from './api'
 
 /** Minimal /settings/privacy (W10, M1 stage): consent switches, data deletion. */
@@ -25,6 +26,7 @@ export function PrivacyPage() {
           <p className="text-ink-3">Signed in as {me.data.email}</p>
           <h2 className="text-lg font-semibold">Matching with other researchers</h2>
           <ConsentToggles me={me.data} />
+          <NotificationSettings />
           <DataDeletion email={me.data.email} />
         </div>
       )}

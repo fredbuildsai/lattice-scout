@@ -94,7 +94,7 @@ async def test_match_notifier_queues_proposed_and_mutual_mails() -> None:
     n = MatchMailNotifier(e.n)
     await n.proposed(A, UUID(int=7))
     await n.mutual(B, UUID(int=7))
-    templates = sorted(j.payload["template"] for j in e.jobs.jobs.values())
+    templates = sorted(str(j.payload["template"]) for j in e.jobs.jobs.values())
     assert templates == ["match_mutual", "match_proposed"]
 
 

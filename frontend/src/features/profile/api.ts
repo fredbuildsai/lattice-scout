@@ -8,6 +8,8 @@ export type CandidateRecord = components['schemas']['RecordOut']
 export type Work = components['schemas']['WorkOut']
 export type Topic = components['schemas']['TopicOut']
 export type ConsentPatch = components['schemas']['ConsentIn']
+export type NotificationPrefs = components['schemas']['NotificationPrefsOut']
+export type NotificationPrefsPatch = components['schemas']['NotificationPrefsIn']
 export type ClaimBody = components['schemas']['ClaimIn']
 
 /** The signed-in account (query key `['me']`). Enabled only when signed in. */
@@ -105,5 +107,29 @@ export function storedClaim(profile: Profile): ClaimBody {
 export function useDeleteAccount() {
   return useMutation({
     mutationFn: (confirmEmail: string) => apiJson<{ deleting?: boolean }>('/api/v1/me/delete', { method: 'POST', body: JSON.stringify({ confirm_email: confirmEmail }) }),
+  })
+}
+
+/** GET /me/notifications (query key `['notification-prefs']`). */
+export function useNotificationPrefs() {
+  return useQuery({ queryKey: ['notification-prefs'], queryFn: () => apiJson<NotificationPrefs>('/api/v1/me/notifications') })
+}
+
+/** PATCH /me/notifications with a partial body: applies it to the cache at once, rolls back only that change on error. */
+export function useUpdateNotificationPrefs() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (patch: NotificationPrefsPatch) =>
+      apiJson<NotificationPrefs>('/api/v1/me/notifications', { method: 'PATCH', body: JSON.stringify(patch) }),
+    onMutate: async (patch) => {
+      await qc.cancelQueries({ queryKey: ['notification-prefs'] })
+      const previous = qc.getQueryData<NotificationPrefs>(['notification-prefs'])
+      if (previous) qc.setQueryData(['notification-prefs'], { ...previous, ...patch })
+      return { previous }
+    },
+    onError: (_e, patch, ctx) => {
+      const undo = Object.fromEntries(Object.keys(patch).map((k) => [k, ctx?.previous?.[k as keyof NotificationPrefs]]))
+      qc.setQueryData<NotificationPrefs>(['notification-prefs'], (p) => (p ? { ...p, ...undo } : p))
+    },
   })
 }

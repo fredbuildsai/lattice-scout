@@ -65,7 +65,7 @@ Last session: 2026-10-20 s01 — M0, M1 and M2 built; M2 done and approved by th
 - [x] Slice A: account and vault deletion backend, scan test (docs/design/M6-deletion.md)
 - [x] Slice B: upload rate limit, global daily budget guard, `GET /system/status` (UI banner comes with slice C)
 - [x] Slice C: privacy tab, deletion dialogs, pause banner (notification preferences move to slice D with the emails)
-- [ ] Slice D: notifications and emails
+- [x] Slice D: notifications and emails (console sender by default; Resend only with keys; magic-link template in docs/EMAIL_TEMPLATES.md)
 - [ ] Slice E: security review, observability, eval in CI
 ## M7 — Pilot launch (build only)
 ## M8 — Documentation
