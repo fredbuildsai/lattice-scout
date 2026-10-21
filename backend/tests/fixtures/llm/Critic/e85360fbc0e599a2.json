@@ -1,0 +1,54 @@
+{
+  "claims": [
+    {
+      "index": 0,
+      "status": "verified",
+      "reason": null,
+      "fix": null
+    },
+    {
+      "index": 1,
+      "status": "verified",
+      "reason": null,
+      "fix": null
+    },
+    {
+      "index": 2,
+      "status": "verified",
+      "reason": null,
+      "fix": null
+    },
+    {
+      "index": 3,
+      "status": "unverified",
+      "reason": "The abstract shows CNF reinforcement of cellulose acetate membranes, not processing for flow-cell separators.",
+      "fix": "Cellulose nanofibres have been used to reinforce nonwoven cellulose acetate membranes."
+    },
+    {
+      "index": 4,
+      "status": "verified",
+      "reason": null,
+      "fix": null
+    },
+    {
+      "index": 5,
+      "status": "verified",
+      "reason": null,
+      "fix": null
+    },
+    {
+      "index": 6,
+      "status": "verified",
+      "reason": null,
+      "fix": null
+    }
+  ],
+  "already_done": false,
+  "already_done_by": null,
+  "keep": true,
+  "reasons": [
+    "6 claims verified against their evidence, including literature.",
+    "No similar paper combines these elements.",
+    "Claim 3 overreaches its evidence; narrower wording suggested."
+  ]
+}

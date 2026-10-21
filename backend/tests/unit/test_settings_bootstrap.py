@@ -1,0 +1,92 @@
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+import pytest
+from pydantic import ValidationError
+
+from scout.settings import Settings
+
+ROOT = Path(__file__).resolve().parents[3]
+
+
+def _s(**kw: object) -> Settings:
+    return Settings(_env_file=None, **kw)  # type: ignore[arg-type]
+
+
+def test_offline_defaults() -> None:
+    s = _s()
+    assert (s.llm_backend, s.literature_backend, s.storage_backend, s.email_provider, s.auth_mode) == (
+        "fake", "fixtures", "local", "console", "dev",
+    )  # fmt: skip
+
+
+REAL = {
+    "llm_backend": "openai_direct", "openai_api_key": "k", "literature_backend": "openalex",
+    "email_provider": "resend", "email_api_key": "k", "email_from": "a@b.c",
+    "storage_backend": "supabase", "supabase_url": "https://x.supabase.co", "supabase_service_role_key": "k",
+}  # fmt: skip
+
+
+def test_prod_refuses_dev_auth_even_with_real_backends() -> None:
+    with pytest.raises(ValidationError, match="AUTH_MODE"):
+        _s(app_env="prod", auth_mode="dev", **REAL)
+
+
+@pytest.mark.parametrize(
+    ("key", "value", "needle"),
+    [("llm_backend", "fake", "LLM_BACKEND"), ("literature_backend", "fixtures", "LITERATURE_BACKEND"),
+     ("email_provider", "console", "EMAIL_PROVIDER")],
+)  # fmt: skip
+def test_prod_refuses_each_offline_backend(key: str, value: str, needle: str) -> None:
+    kw = {**REAL, "auth_mode": "supabase", "supabase_url": "https://x.supabase.co", key: value}
+    with pytest.raises(ValidationError, match=needle):
+        _s(app_env="prod", **kw)
+
+
+def test_prod_accepts_real_backends() -> None:
+    assert _s(app_env="prod", auth_mode="supabase", **REAL).app_env == "prod"
+
+
+def test_every_settings_field_is_in_env_example() -> None:
+    keys = {
+        k.lower()
+        for k in re.findall(r"^#?\s*([A-Z][A-Z0-9_]*)=", (ROOT / ".env.example").read_text(), flags=re.M)
+    }
+    assert [f for f in Settings.model_fields if f not in keys] == []
+
+
+def test_every_env_example_key_has_a_field() -> None:
+    keys = re.findall(r"^([A-Z][A-Z0-9_]*)=", (ROOT / ".env.example").read_text(), flags=re.M)
+    fields = set(Settings.model_fields)
+    missing = [k for k in keys if not k.startswith("VITE_") and k.lower() not in fields]
+    assert missing == []
+
+
+def test_build_container_is_lazy_and_light() -> None:
+    """Runs in a fresh interpreter: other tests may already have imported optional adapters."""
+    code = (
+        "import sys\n"
+        "from scout.bootstrap import build_container\n"
+        "from scout.settings import Settings\n"
+        "c = build_container(Settings(_env_file=None, app_env='test'))\n"
+        "bad = {'openai', 'agents', 'llmrouter_free', 'litellm'} & set(sys.modules)\n"
+        "sys.exit(1 if bad else 0)\n"
+    )
+    assert subprocess.run([sys.executable, "-c", code], check=False).returncode == 0
+
+
+def test_src_never_imports_tests() -> None:
+    for f in (ROOT / "backend/src").rglob("*.py"):
+        assert not re.search(r"^\s*(import|from) tests\b", f.read_text(), flags=re.M), f
+
+
+def test_supabase_auth_needs_url_for_issuer() -> None:
+    with pytest.raises(ValidationError, match="SUPABASE_URL"):
+        _s(auth_mode="supabase", supabase_jwks_url="https://x/jwks")
+
+
+def test_prod_refuses_local_storage() -> None:
+    with pytest.raises(ValidationError, match="STORAGE_BACKEND=local"):
+        _s(app_env="prod", auth_mode="supabase", **{**REAL, "storage_backend": "local"})

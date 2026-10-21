@@ -1,0 +1,26 @@
+{
+  "cluster_id": "k6",
+  "openalex_topics": [
+    {
+      "id": "T10409",
+      "name": "Fuel Cells and Related Materials"
+    },
+    {
+      "id": "T11690",
+      "name": "Advanced battery technologies research"
+    },
+    {
+      "id": "T10281",
+      "name": "Advanced Battery Materials and Technologies"
+    },
+    {
+      "id": "T10610",
+      "name": "Advanced Cellulose Research Studies"
+    }
+  ],
+  "sample_titles": [
+    "Cellulose nanofiber‐derived carbon aerogel for advanced room‐temperature sodium–sulfur batteries",
+    "Spray deposition of sulfonated cellulose nanofibers as electrolyte membranes in fuel cells",
+    "Development of a robust ion-selective membrane from sulfonated cellulose nanofibers for zinc–iodine redox flow batteries"
+  ]
+}

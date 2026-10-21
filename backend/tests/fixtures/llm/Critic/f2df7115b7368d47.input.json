@@ -1,0 +1,72 @@
+{
+  "draft": {
+    "claims": [
+      {
+        "check_status": "passed",
+        "evidence": [
+          "W4286511477"
+        ],
+        "index": 0,
+        "text": "PFAS adsorb to surfaces during sampling and experiments, a known source of error in PFAS analysis."
+      },
+      {
+        "check_status": "passed",
+        "evidence": [
+          "W4390531961"
+        ],
+        "index": 1,
+        "text": "You have studied PFAS oxidation in a boron-doped diamond electrochemical system."
+      }
+    ],
+    "kind": "white_spot",
+    "title": "Granular activated carbon adsorption of PFAS from drinking water"
+  },
+  "evidence_texts": [
+    {
+      "ref_id": "W4286511477",
+      "text": "Mass transfer of per- and polyfluoroalkyl substances (PFAS) to container walls during sample collection and storage or experimentation is an important source of error in PFAS analysis. To minimize this error, high-density polyethylene (HDPE) and polypropylene containers are widely used for PFAS studies. However, there is sparse data to justify these container polymer choices. In this study, we investigated the adsorp",
+      "title": "Adsorption of per- and polyfluoroalkyl substances (PFAS) to containers",
+      "type": "work",
+      "year": null
+    },
+    {
+      "ref_id": "W4390531961",
+      "text": "Structural dependence of PFAS oxidation in a boron doped diamond-electrochemical system",
+      "title": "Structural dependence of PFAS oxidation in a boron doped diamond-electrochemical system",
+      "type": "work",
+      "year": null
+    }
+  ],
+  "similar_papers": [
+    {
+      "abstract": "",
+      "title": "Perfluoroalkyl substances (PFAS) adsorption in drinking water by granular activated carbon: Influence of activated carbon and PFAS characteristics",
+      "work_id": "W3180734447",
+      "year": 2021
+    },
+    {
+      "abstract": "Per- and polyfluoroalkyl substances (PFAS) are persistent and toxic contaminants that are difficult to remove from complex wastewater because dissolved organic matter, salts, co-pollutants, and membrane fouling reduce treatment efficiency. This study evaluated an integrated adsorption-membrane process for PFAS removal through combined Aspen Plus/MATLAB simulation and bench-scale validation using synthetic complex was",
+      "title": "Integrated adsorption-membrane separation for PFAS removal from complex wastewater",
+      "work_id": "W7166672107",
+      "year": 2026
+    },
+    {
+      "abstract": "",
+      "title": "Progress and perspectives on carbon-based materials for adsorptive removal and photocatalytic degradation of perfluoroalkyl and polyfluoroalkyl substances (PFAS)",
+      "work_id": "W4390708195",
+      "year": 2024
+    },
+    {
+      "abstract": "Mass transfer of per- and polyfluoroalkyl substances (PFAS) to container walls during sample collection and storage or experimentation is an important source of error in PFAS analysis. To minimize this error, high-density polyethylene (HDPE) and polypropylene containers are widely used for PFAS studies. However, there is sparse data to justify these container polymer choices. In this study, we investigated the adsorp",
+      "title": "Adsorption of per- and polyfluoroalkyl substances (PFAS) to containers",
+      "work_id": "W4286511477",
+      "year": 2022
+    },
+    {
+      "abstract": "Removal of perfluoroalkyl and polyfluoroalkyl substances (PFAS) by nanofiltration (NF) membranes has been well-documented, but the impact of PFAS interaction with the NF separation layer on the permselectivity of layer-by-layer (LBL) NF membranes has yet to be explored. The work reported two different LBL membranes prepared with pairs of long-chain polyelectrolytes (PVAm/PSS, L/L) and short-chain polyelectrolytes (S/",
+      "title": "Interaction of Layer-by-Layer Nanofiltration Membranes and PFAS: Filtration after Adsorption",
+      "work_id": "W4412487818",
+      "year": 2025
+    }
+  ]
+}

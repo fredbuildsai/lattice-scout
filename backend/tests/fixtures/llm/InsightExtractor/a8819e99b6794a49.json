@@ -1,0 +1,59 @@
+{
+  "kind": "declined_grant",
+  "kind_reason": "The title marks the proposal as declined and it ends with a panel summary and reviewer comments.",
+  "title": "Long sample proposal (declined)",
+  "aims": [
+    {
+      "summary": "Study across 28 work packages how lignin hydroxyl content, set by the pulping process and fractionation route, affects reactivity towards isocyanates in foam formulations.",
+      "chunk_ids": [
+        "c0",
+        "c27"
+      ]
+    }
+  ],
+  "findings": [],
+  "methods": [
+    {
+      "name": "Lignin fractionation",
+      "detail": "Fractionation route chosen alongside the pulping process.",
+      "chunk_ids": [
+        "c0"
+      ]
+    }
+  ],
+  "datasets": [],
+  "reviewer_objections": [
+    {
+      "quote": "The applicants do not demonstrate that the foams meet fire-safety standard EN 13501 at the proposed bio-content.",
+      "summary": "Fire-safety compliance (EN 13501) at the proposed bio-content is not shown.",
+      "chunk_ids": [
+        "c27"
+      ]
+    },
+    {
+      "quote": "Strong science, but the application case is not yet convincing.",
+      "summary": "The panel finds the application case unconvincing.",
+      "chunk_ids": [
+        "c27"
+      ]
+    }
+  ],
+  "open_questions": [
+    {
+      "summary": "Can the foams meet fire-safety standard EN 13501 at the proposed bio-content?",
+      "chunk_ids": [
+        "c27"
+      ]
+    }
+  ],
+  "keywords": [
+    "lignin",
+    "polyurethane foam",
+    "hydroxyl content",
+    "isocyanate reactivity",
+    "lignin fractionation",
+    "pulping process",
+    "fire safety",
+    "EN 13501"
+  ]
+}

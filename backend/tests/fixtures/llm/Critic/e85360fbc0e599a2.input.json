@@ -1,0 +1,147 @@
+{
+  "draft": {
+    "claims": [
+      {
+        "check_status": "passed",
+        "evidence": [
+          "d2.findings[0]"
+        ],
+        "index": 0,
+        "text": "Your unpublished results show the sulfonated CNF membrane completing 500 hours of cycling at 20 mA cm-2 with coulombic efficiency above 98 %."
+      },
+      {
+        "check_status": "passed",
+        "evidence": [
+          "d2.findings[1]"
+        ],
+        "index": 1,
+        "text": "Iodide crossover stayed below the UV-vis detection limit after 300 hours of cycling."
+      },
+      {
+        "check_status": "passed",
+        "evidence": [
+          "W4412978443"
+        ],
+        "index": 2,
+        "text": "You have already published a sulfonated cellulose nanofibre ion-selective membrane for zinc-iodine redox flow batteries."
+      },
+      {
+        "check_status": "passed",
+        "evidence": [
+          "W4391533065"
+        ],
+        "index": 3,
+        "text": "Cellulose nanofibres already reinforce cellulose acetate membranes, so membrane-grade CNF processing is established."
+      },
+      {
+        "check_status": "passed",
+        "evidence": [
+          "W3096818993"
+        ],
+        "index": 4,
+        "text": "Publications and patents on nanocelluloses have been increasing every year."
+      },
+      {
+        "check_status": "passed",
+        "evidence": [
+          "n1"
+        ],
+        "index": 5,
+        "text": "Only 427 works since 2021 match 'cellulose separator zinc iodine battery', a thin literature for cellulose separators in zinc-iodine cells."
+      },
+      {
+        "check_status": "passed",
+        "evidence": [
+          "d2.open_questions[0]"
+        ],
+        "index": 6,
+        "text": "Stability beyond 1,000 hours is still an open question in your own data."
+      }
+    ],
+    "kind": "white_spot",
+    "title": "Sulfonated cellulose nanofibre separators for zinc-iodine flow cells beyond 1,000 hours"
+  },
+  "evidence_texts": [
+    {
+      "ref_id": "d2.findings[0]",
+      "text": "The sulfonated CNF membrane completed 500 hours of cycling at 20 mA cm-2 with coulombic efficiency above 98 %.",
+      "title": null,
+      "type": "insight",
+      "year": null
+    },
+    {
+      "ref_id": "d2.findings[1]",
+      "text": "Iodide crossover stayed below the UV-vis detection limit after 300 hours.",
+      "title": null,
+      "type": "insight",
+      "year": null
+    },
+    {
+      "ref_id": "W4412978443",
+      "text": "Development of a robust ion-selective membrane from sulfonated cellulose nanofibers for zinc–iodine redox flow batteries",
+      "title": "Development of a robust ion-selective membrane from sulfonated cellulose nanofibers for zinc–iodine redox flow batteries",
+      "type": "work",
+      "year": null
+    },
+    {
+      "ref_id": "W4391533065",
+      "text": "Membranes find applications across a wide spectrum of industries, including water treatment, energy production, and biomedicine. In this study, nonwoven membranes were fabricated using cellulose acetate (CA) as the primary component, with varying percentages of cellulose nanofibers (CNFs) embedded as reinforcement. These CNFs were prepared through an oxalic acid pretreatment (Oxalic-CNFs). Their incorporatio",
+      "title": "Impact of cellulose nanofibers on cellulose acetate membrane performance",
+      "type": "work",
+      "year": null
+    },
+    {
+      "ref_id": "W3096818993",
+      "text": "Nanocelluloses are prepared by downsizing plant cellulose fibers, which are efficiently produced at the industrial level as paper and dissolving pulps from renewable wood biomass resources. The number of scientific publications and patents concerning nanocelluloses has been increasing every year, because nanocelluloses are expected to contribute to creation of a sustainable society partly in place of petroleumbased m",
+      "title": "Cellulose Nanofibers: Recent Progress and Future Prospects",
+      "type": "work",
+      "year": null
+    },
+    {
+      "ref_id": "n1",
+      "text": "cellulose separator zinc iodine battery: 427 works",
+      "title": null,
+      "type": "count",
+      "year": null
+    },
+    {
+      "ref_id": "d2.open_questions[0]",
+      "text": "Does the membrane remain stable beyond 1,000 hours?",
+      "title": null,
+      "type": "insight",
+      "year": null
+    }
+  ],
+  "similar_papers": [
+    {
+      "abstract": "",
+      "title": "Development of a robust ion-selective membrane from sulfonated cellulose nanofibers for zinc–iodine redox flow batteries",
+      "work_id": "W4412978443",
+      "year": 2025
+    },
+    {
+      "abstract": "Nanocellulose is a promising new membrane material for fuel cells, with much lower cost and environmental impact compared with Nafion or Aquivion. It is mechanically strong, is an excellent hydrogen barrier and has reasonable proton conductivity. Here, sulfonation of cellulose nanofibers is performed to enhance the conductivity (up to 2 × 10− 3 S cm− 1) without compromising the membrane integrity, and fuel c",
+      "title": "Spray deposition of sulfonated cellulose nanofibers as electrolyte membranes in fuel cells",
+      "work_id": "W3118918678",
+      "year": 2021
+    },
+    {
+      "abstract": "Membranes find applications across a wide spectrum of industries, including water treatment, energy production, and biomedicine. In this study, nonwoven membranes were fabricated using cellulose acetate (CA) as the primary component, with varying percentages of cellulose nanofibers (CNFs) embedded as reinforcement. These CNFs were prepared through an oxalic acid pretreatment (Oxalic-CNFs). Their incorporatio",
+      "title": "Impact of cellulose nanofibers on cellulose acetate membrane performance",
+      "work_id": "W4391533065",
+      "year": 2024
+    },
+    {
+      "abstract": "",
+      "title": "Quiescent and flow-induced crystallization in polyamide 12/cellulose nanocrystal composites",
+      "work_id": "W2953106105",
+      "year": 2019
+    },
+    {
+      "abstract": "",
+      "title": "Proton Exchange Membranes from Sulfonated Lignin Nanocomposites for Redox Flow Battery Applications",
+      "work_id": "W4393116980",
+      "year": 2024
+    }
+  ]
+}

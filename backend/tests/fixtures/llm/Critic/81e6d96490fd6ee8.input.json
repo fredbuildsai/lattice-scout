@@ -1,0 +1,87 @@
+{
+  "draft": {
+    "claims": [
+      {
+        "check_status": "passed",
+        "evidence": [
+          "W3033851578"
+        ],
+        "index": 0,
+        "text": "Porous wood scaffolds loaded with magnetic iron oxide nanoparticles have been used for lightweight EMI shielding."
+      },
+      {
+        "check_status": "passed",
+        "evidence": [
+          "W3026932531"
+        ],
+        "index": 1,
+        "text": "Conductive wood has been developed as a structural EMI shielding material with a load-bearing function."
+      },
+      {
+        "check_status": "passed",
+        "evidence": [
+          "W7119086364"
+        ],
+        "index": 2,
+        "text": "You have published bio-based magnetic and conductive wood for EMI shielding."
+      }
+    ],
+    "kind": "white_spot",
+    "title": "Lightweight magnetic wood panels for EMI shielding"
+  },
+  "evidence_texts": [
+    {
+      "ref_id": "W3033851578",
+      "text": "Currently, due to the rapid development of communication technology, electromagnetic interference (EMI) and irradiation have become an emerging environmental pollutant. Herein, hierarchical and porous structured wood is used as the lightweight three‐dimensional organic scaffold for the incorporation of magnetic iron oxide nanoparticles through an in situ mineralization process that endows the woodblock with favorable",
+      "title": "Lightweight and Construable Magnetic Wood for Electromagnetic Interference Shielding",
+      "type": "work",
+      "year": null
+    },
+    {
+      "ref_id": "W3026932531",
+      "text": "Electric conductors are ubiquitously used for electromagnetic shielding, flexible electronics, and energy storage, with metals and carbon-based compounds as traditional choices for these applications. Here, we develop a conductive wood as a new type of structural electromagnetic interference (EMI) shielding material with combined load-bearing function via delignification and subsequent in situ chemical vapor depositi",
+      "title": "Conductive Wood for High-Performance Structural Electromagnetic Interference Shielding",
+      "type": "work",
+      "year": null
+    },
+    {
+      "ref_id": "W7119086364",
+      "text": "Sustainable Synthesis of Bio‐Based Magnetic and Conductive Wood for Electromagnetic Interference Shielding Applications",
+      "title": "Sustainable Synthesis of Bio‐Based Magnetic and Conductive Wood for Electromagnetic Interference Shielding Applications",
+      "type": "work",
+      "year": null
+    }
+  ],
+  "similar_papers": [
+    {
+      "abstract": "Currently, due to the rapid development of communication technology, electromagnetic interference (EMI) and irradiation have become an emerging environmental pollutant. Herein, hierarchical and porous structured wood is used as the lightweight three‐dimensional organic scaffold for the incorporation of magnetic iron oxide nanoparticles through an in situ mineralization process that endows the woodblock with favorable",
+      "title": "Lightweight and Construable Magnetic Wood for Electromagnetic Interference Shielding",
+      "work_id": "W3033851578",
+      "year": 2020
+    },
+    {
+      "abstract": "",
+      "title": "Sustainable Synthesis of Bio‐Based Magnetic and Conductive Wood for Electromagnetic Interference Shielding Applications",
+      "work_id": "W7119086364",
+      "year": 2026
+    },
+    {
+      "abstract": "Electric conductors are ubiquitously used for electromagnetic shielding, flexible electronics, and energy storage, with metals and carbon-based compounds as traditional choices for these applications. Here, we develop a conductive wood as a new type of structural electromagnetic interference (EMI) shielding material with combined load-bearing function via delignification and subsequent in situ chemical vapor depositi",
+      "title": "Conductive Wood for High-Performance Structural Electromagnetic Interference Shielding",
+      "work_id": "W3026932531",
+      "year": 2020
+    },
+    {
+      "abstract": "",
+      "title": "Lightweight and elastic wood-derived composites for pressure sensing and electromagnetic interference shielding",
+      "work_id": "W3179719703",
+      "year": 2021
+    },
+    {
+      "abstract": "In this review, wood-based composites for efficient EMI shielding and MA are comprehensively introduced.",
+      "title": "Sustainable wood-based composites for microwave absorption and electromagnetic interference shielding",
+      "work_id": "W3097374082",
+      "year": 2020
+    }
+  ]
+}

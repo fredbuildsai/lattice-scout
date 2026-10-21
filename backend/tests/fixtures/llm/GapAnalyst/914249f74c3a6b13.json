@@ -1,0 +1,218 @@
+{
+  "opportunities": [
+    {
+      "kind": "white_spot",
+      "title": "Correct PFAS degradation tests for losses to container walls",
+      "one_line": "PFAS sorption to containers biases degradation results; your oxidation work could quantify it.",
+      "cluster_ids": [
+        "k1"
+      ],
+      "claims": [
+        {
+          "text": "PFAS transfer to container walls during sampling, storage or experiments is an important source of error in PFAS analysis.",
+          "section": "rationale",
+          "evidence_refs": [
+            {
+              "type": "work",
+              "id": "W4286511477",
+              "quote": "Mass transfer of per- and polyfluoroalkyl substances (PFAS) to container walls during sample collection and storage or experimentation is an important source of error in PFAS analysis."
+            }
+          ]
+        },
+        {
+          "text": "Data that justify the usual polyethylene and polypropylene container choices are sparse.",
+          "section": "rationale",
+          "evidence_refs": [
+            {
+              "type": "work",
+              "id": "W4286511477",
+              "quote": "However, there is sparse data to justify these container polymer choices."
+            },
+            {
+              "type": "work",
+              "id": "W4286511477",
+              "quote": "To minimize this error, high-density polyethylene (HDPE) and polypropylene containers are widely used for PFAS studies."
+            }
+          ]
+        },
+        {
+          "text": "You have studied how PFAS structure affects oxidation in a boron-doped diamond electrochemical system.",
+          "section": "rationale",
+          "evidence_refs": [
+            {
+              "type": "work",
+              "id": "W4390531961",
+              "quote": "Structural dependence of PFAS oxidation in a boron doped diamond-electrochemical system"
+            }
+          ]
+        }
+      ],
+      "readiness_checklist": [
+        {
+          "item": "Mass-balance protocol for PFAS degradation tests",
+          "present_in_vault": false,
+          "ref": null
+        }
+      ],
+      "effort_estimate": "low",
+      "next_steps": [
+        "Run blank container tests alongside the next electrochemical PFAS series",
+        "Report recovered PFAS mass for each container polymer"
+      ]
+    },
+    {
+      "kind": "synergy",
+      "title": "Magnetic iron-oxide wood as a recoverable photocatalyst support for PFAS degradation",
+      "one_line": "Magnetic wood scaffolds could hold your iron-oxide photocatalysts and be recovered after treatment.",
+      "cluster_ids": [
+        "k1",
+        "k3"
+      ],
+      "claims": [
+        {
+          "text": "Porous wood has been used as a lightweight scaffold for magnetic iron oxide nanoparticles grown in situ.",
+          "section": "rationale",
+          "evidence_refs": [
+            {
+              "type": "work",
+              "id": "W3033851578",
+              "quote": "hierarchical and porous structured wood is used as the lightweight three‐dimensional organic scaffold for the incorporation of magnetic iron oxide nanoparticles"
+            }
+          ]
+        },
+        {
+          "text": "You have developed hybrid graphenic and iron oxide photocatalysts for the decomposition of synthetic chemicals.",
+          "section": "rationale",
+          "evidence_refs": [
+            {
+              "type": "work",
+              "id": "W4401793377",
+              "quote": "Hybrid graphenic and iron oxide photocatalysts for the decomposition of synthetic chemicals"
+            }
+          ]
+        },
+        {
+          "text": "Your Fe3O4/GO, ZnO and TiO2 thin films removed tetracycline photocatalytically under UV LED, blue LED and solar light.",
+          "section": "rationale",
+          "evidence_refs": [
+            {
+              "type": "work",
+              "id": "W7163127579",
+              "quote": "Fe3O4/GO, ZnO, and TiO2 thin films for efficient photocatalytic removal of tetracycline from aqueous media under UV LED, blue LED and solar radiation"
+            }
+          ]
+        }
+      ],
+      "readiness_checklist": [
+        {
+          "item": "Iron-oxide photocatalyst synthesis",
+          "present_in_vault": false,
+          "ref": null
+        },
+        {
+          "item": "Wood scaffold supplier or partner",
+          "present_in_vault": false,
+          "ref": null
+        }
+      ],
+      "effort_estimate": "medium",
+      "next_steps": [
+        "Grow iron-oxide photocatalysts in delignified wood blocks",
+        "Test magnetic recovery and activity over several PFAS cycles"
+      ]
+    },
+    {
+      "kind": "synergy",
+      "title": "Conductive wood electrodes for electrochemical PFAS oxidation",
+      "one_line": "Conductive wood could be a low-cost electrode for the PFAS oxidation you studied on boron-doped diamond.",
+      "cluster_ids": [
+        "k1",
+        "k3"
+      ],
+      "claims": [
+        {
+          "text": "Conductive wood has been made as a structural material with a load-bearing function.",
+          "section": "rationale",
+          "evidence_refs": [
+            {
+              "type": "work",
+              "id": "W3026932531",
+              "quote": "Here, we develop a conductive wood as a new type of structural electromagnetic interference (EMI) shielding material with combined load-bearing function"
+            }
+          ]
+        },
+        {
+          "text": "Metals and carbon-based compounds are the traditional conductor choices for shielding, flexible electronics and energy storage.",
+          "section": "rationale",
+          "evidence_refs": [
+            {
+              "type": "work",
+              "id": "W3026932531",
+              "quote": "Electric conductors are ubiquitously used for electromagnetic shielding, flexible electronics, and energy storage, with metals and carbon-based compounds as traditional choices for these applications."
+            }
+          ]
+        },
+        {
+          "text": "You have studied the structural dependence of PFAS oxidation in a boron-doped diamond electrochemical system.",
+          "section": "rationale",
+          "evidence_refs": [
+            {
+              "type": "work",
+              "id": "W4390531961",
+              "quote": "Structural dependence of PFAS oxidation in a boron doped diamond-electrochemical system"
+            }
+          ]
+        }
+      ],
+      "readiness_checklist": [
+        {
+          "item": "Electrochemical PFAS oxidation cell",
+          "present_in_vault": false,
+          "ref": null
+        }
+      ],
+      "effort_estimate": "high",
+      "next_steps": [
+        "Prepare conductive wood electrodes and test their stability under anodic polarisation",
+        "Compare PFOA oxidation rates with the boron-doped diamond baseline"
+      ]
+    },
+    {
+      "kind": "white_spot",
+      "title": "Granular activated carbon adsorption of PFAS from drinking water",
+      "one_line": "Adsorption on activated carbon is the common PFAS removal route.",
+      "cluster_ids": [
+        "k1"
+      ],
+      "claims": [
+        {
+          "text": "PFAS adsorb to surfaces during sampling and experiments, a known source of error in PFAS analysis.",
+          "section": "rationale",
+          "evidence_refs": [
+            {
+              "type": "work",
+              "id": "W4286511477",
+              "quote": "Mass transfer of per- and polyfluoroalkyl substances (PFAS) to container walls during sample collection and storage or experimentation is an important source of error in PFAS analysis."
+            }
+          ]
+        },
+        {
+          "text": "You have studied PFAS oxidation in a boron-doped diamond electrochemical system.",
+          "section": "rationale",
+          "evidence_refs": [
+            {
+              "type": "work",
+              "id": "W4390531961",
+              "quote": "Structural dependence of PFAS oxidation in a boron doped diamond-electrochemical system"
+            }
+          ]
+        }
+      ],
+      "readiness_checklist": [],
+      "effort_estimate": "low",
+      "next_steps": [
+        "Compare activated carbon grades for short-chain PFAS"
+      ]
+    }
+  ]
+}

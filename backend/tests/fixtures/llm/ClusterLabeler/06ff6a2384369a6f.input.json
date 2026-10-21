@@ -1,0 +1,22 @@
+{
+  "cluster_id": "k4",
+  "openalex_topics": [
+    {
+      "id": "T10610",
+      "name": "Advanced Cellulose Research Studies"
+    },
+    {
+      "id": "T10729",
+      "name": "Electrospun Nanofibers in Biomedical Applications"
+    },
+    {
+      "id": "T11208",
+      "name": "Lignin and Wood Chemistry"
+    }
+  ],
+  "sample_titles": [
+    "A review on fabrication methods of nanofibers and a special focus on application of cellulose nanofibers",
+    "Cellulose Nanofibers: Recent Progress and Future Prospects",
+    "Impact of cellulose nanofibers on cellulose acetate membrane performance"
+  ]
+}

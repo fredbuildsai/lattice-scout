@@ -1,0 +1,357 @@
+{
+  "field": {
+    "keywords": [
+      "lignin",
+      "cellulose",
+      "nanocellulose",
+      "biopolymer",
+      "bio-based foam",
+      "biocomposite",
+      "wood",
+      "PFAS",
+      "membrane"
+    ],
+    "name": "Bio-based materials",
+    "openalex_topic_ids": [
+      "T10610",
+      "T11208",
+      "T10513",
+      "T10488",
+      "T12628"
+    ]
+  },
+  "insights": [
+    {
+      "insight_ref": "d1.aims[0]",
+      "section": "aims",
+      "text": "Formulate flexible polyurethane foams with 30 % bio-content using fractionated kraft and organosolv lignin."
+    },
+    {
+      "insight_ref": "d1.aims[1]",
+      "section": "aims",
+      "text": "Relate lignin type and hydroxyl content to foaming dynamics and cell structure."
+    },
+    {
+      "insight_ref": "d1.aims[2]",
+      "section": "aims",
+      "text": "Demonstrate durability of lignin-rich foams under cyclic compression for upholstery use."
+    },
+    {
+      "insight_ref": "d1.findings[0]",
+      "section": "findings",
+      "text": "Preliminary foams with 15 % lignin reached a compression set below 10 %."
+    },
+    {
+      "insight_ref": "d1.open_questions[0]",
+      "section": "open_questions",
+      "text": "Can foams with 30 % lignin bio-content pass the EN 13501 fire-safety standard?"
+    },
+    {
+      "insight_ref": "d1.open_questions[1]",
+      "section": "open_questions",
+      "text": "How do lignin-rich foams compare with commercial petroleum-based foams over at least 50,000 compression cycles?"
+    },
+    {
+      "insight_ref": "d1.methods[0]",
+      "section": "methods",
+      "text": "31P NMR and GPC - Characterisation of the lignin fractions."
+    },
+    {
+      "insight_ref": "d1.methods[1]",
+      "section": "methods",
+      "text": "Free-rise foaming - Foam production route."
+    },
+    {
+      "insight_ref": "d1.methods[2]",
+      "section": "methods",
+      "text": "SEM, compression testing and dynamic mechanical analysis - Analysis of foam structure and mechanical behaviour."
+    },
+    {
+      "insight_ref": "d1.datasets[0]",
+      "section": "datasets",
+      "text": "Dataset linking lignin structure to foam properties"
+    },
+    {
+      "insight_ref": "d1.reviewer_objections[0]",
+      "section": "reviewer_objections",
+      "text": "Fire-safety compliance (EN 13501) at the proposed bio-content is not shown."
+    },
+    {
+      "insight_ref": "d1.reviewer_objections[1]",
+      "section": "reviewer_objections",
+      "text": "Durability is not benchmarked against commercial petroleum-based foams over 50,000 cycles."
+    },
+    {
+      "insight_ref": "d1.reviewer_objections[2]",
+      "section": "reviewer_objections",
+      "text": "The panel wants fire behaviour and long-term durability addressed before funding."
+    },
+    {
+      "insight_ref": "d2.aims[0]",
+      "section": "aims",
+      "text": "Evaluate the long-term cycling stability of the sulfonated CNF membrane in zinc–iodine flow cells."
+    },
+    {
+      "insight_ref": "d2.findings[0]",
+      "section": "findings",
+      "text": "The sulfonated CNF membrane completed 500 hours of cycling at 20 mA cm-2 with coulombic efficiency above 98 %."
+    },
+    {
+      "insight_ref": "d2.findings[1]",
+      "section": "findings",
+      "text": "Iodide crossover stayed below the UV-vis detection limit after 300 hours."
+    },
+    {
+      "insight_ref": "d2.findings[2]",
+      "section": "findings",
+      "text": "Membrane swelling in the electrolyte stabilised at 18 % after the first 24 hours."
+    },
+    {
+      "insight_ref": "d2.open_questions[0]",
+      "section": "open_questions",
+      "text": "Does the membrane remain stable beyond 1,000 hours?"
+    },
+    {
+      "insight_ref": "d2.open_questions[1]",
+      "section": "open_questions",
+      "text": "Can the sulfonation degree be reduced without increasing crossover?"
+    },
+    {
+      "insight_ref": "d2.methods[0]",
+      "section": "methods",
+      "text": "Flow-cell cycling at 20 mA cm-2 - Long-term stability test over 500 hours."
+    },
+    {
+      "insight_ref": "d2.methods[1]",
+      "section": "methods",
+      "text": "UV-vis spectroscopy - Detection of iodide crossover."
+    },
+    {
+      "insight_ref": "d2.methods[2]",
+      "section": "methods",
+      "text": "Impedance spectroscopy - Spectra at 0, 100, 300 and 500 hours."
+    },
+    {
+      "insight_ref": "d2.methods[3]",
+      "section": "methods",
+      "text": "SEM - Imaging of the membrane surface after cycling."
+    },
+    {
+      "insight_ref": "d2.datasets[0]",
+      "section": "datasets",
+      "text": "Cycling curves"
+    },
+    {
+      "insight_ref": "d2.datasets[1]",
+      "section": "datasets",
+      "text": "Impedance spectra at 0, 100, 300 and 500 hours"
+    },
+    {
+      "insight_ref": "d2.datasets[2]",
+      "section": "datasets",
+      "text": "SEM images of the membrane surface after cycling"
+    },
+    {
+      "insight_ref": "d3.aims[0]",
+      "section": "aims",
+      "text": "Regenerate fungal-derived adsorption membranes after PFAS capture without the solvent waste of methanol washing."
+    },
+    {
+      "insight_ref": "d3.aims[1]",
+      "section": "aims",
+      "text": "Degrade captured PFAS directly on the membrane with a visible-light photocatalyst that does not damage the fungal matrix."
+    },
+    {
+      "insight_ref": "d3.findings[0]",
+      "section": "findings",
+      "text": "Fungal-derived membranes captured more than 90 % of PFOA from spiked tap water in batch tests."
+    },
+    {
+      "insight_ref": "d3.findings[1]",
+      "section": "findings",
+      "text": "Methanol regeneration recovered only 60 % of the capacity after three cycles."
+    },
+    {
+      "insight_ref": "d3.open_questions[0]",
+      "section": "open_questions",
+      "text": "Which visible-light photocatalyst degrades captured PFAS without damaging the fungal matrix?"
+    },
+    {
+      "insight_ref": "d3.open_questions[1]",
+      "section": "open_questions",
+      "text": "Is the membrane thermally stable up to 80 °C?"
+    },
+    {
+      "insight_ref": "d3.open_questions[2]",
+      "section": "open_questions",
+      "text": "Which partners with visible-LED photocatalysis experience for persistent organic pollutants could join?"
+    },
+    {
+      "insight_ref": "d3.methods[0]",
+      "section": "methods",
+      "text": "Batch adsorption tests - PFOA-spiked tap water at 1 µg L-1."
+    },
+    {
+      "insight_ref": "d3.methods[1]",
+      "section": "methods",
+      "text": "Methanol regeneration - Solvent wash over three cycles."
+    }
+  ],
+  "keywords": [
+    "lignin",
+    "flexible polyurethane foam",
+    "kraft lignin",
+    "organosolv lignin",
+    "bio-based polyol",
+    "upholstery",
+    "fire safety",
+    "EN 13501",
+    "31P NMR",
+    "compression set",
+    "cyclic compression",
+    "sulfonated cellulose nanofiber",
+    "CNF membrane",
+    "zinc–iodine flow cell",
+    "flow cell separator",
+    "iodide crossover",
+    "coulombic efficiency",
+    "membrane swelling",
+    "long-term cycling",
+    "sulfonation degree",
+    "impedance spectroscopy",
+    "PFAS",
+    "PFOA",
+    "fungal-derived membrane",
+    "adsorption membrane",
+    "membrane regeneration",
+    "visible-light photocatalysis",
+    "on-membrane degradation",
+    "water treatment",
+    "persistent organic pollutants"
+  ],
+  "recent_titles": [
+    "Sustainable Synthesis of Bio‐Based Magnetic and Conductive Wood for Electromagnetic Interference Shielding Applications",
+    "Lignin Type and Content Influence the Foaming Dynamics and Properties of Flexible Polyurethane Foams",
+    "The AP-1 adaptor complex is required for cell surface modifications and the survival of Cryptococcus neoformans in phagocytic cells",
+    "Disruption of Lignin-Emissive Domains: Deciphering Fiber–Cement Interfacial Reactions by EEM Fluorescence and DUV Raman Spectroscopy",
+    "Engineering low-carbon fiber cement with biochar: understanding its physicochemical properties and their impact on the composite performance and carbon footprint",
+    "Advanced chitosan hybrid dye labels for dynamic monitoring of shrimp and milk freshness",
+    "Bioinspired waterproof, breathable materials: How does nature transport water across its surfaces and through its membranes?",
+    "Development of a robust ion-selective membrane from sulfonated cellulose nanofibers for zinc–iodine redox flow batteries",
+    "Polyphosphatases have a polyphosphate-independent influence on the virulence of Cryptococcus neoformans",
+    "Droplet-templating soft materials into structured bead-based aerogels with compartmentalized or welded configurations",
+    "Improving yield and colloidal stability of cellulose nanocrystals isolated via assisted subcritical water hydrolysis: influence of mechanical pretreatments and esterifying agents on cellulose hydrolys",
+    "Artificial substitutes for Descemet's membrane - corneal endothelium complex: state of the art",
+    "Structural dependence of PFAS oxidation in a boron doped diamond-electrochemical system",
+    "Hybrid graphenic and iron oxide photocatalysts for the decomposition of synthetic chemicals",
+    "Development of a pH-responsive intelligent label using low molecular weight chitosan grafted with phenol red for food packaging applications",
+    "Fungal-derived adsorption membrane to capture potentially toxic elements",
+    "Proton Exchange Membranes from Sulfonated Lignin Nanocomposites for Redox Flow Battery Applications",
+    "Alternative proton exchange membrane based on a bicomponent anionic nanocellulose system",
+    "Hydrophobized lignin nanoparticle-stabilized Pickering foams: building blocks for sustainable lightweight porous materials",
+    "Green and sustainable fabrication of DES-pretreated high-strength densified wood"
+  ],
+  "topics": [
+    {
+      "id": "T10610",
+      "name": "Advanced Cellulose Research Studies",
+      "weight": 1.0
+    },
+    {
+      "id": "T10488",
+      "name": "Nanocomposite Films for Food Packaging",
+      "weight": 0.349
+    },
+    {
+      "id": "T11208",
+      "name": "Lignin and Wood Chemistry",
+      "weight": 0.253
+    },
+    {
+      "id": "T10513",
+      "name": "Natural Fiber Reinforced Composites",
+      "weight": 0.211
+    },
+    {
+      "id": "T10869",
+      "name": "Polysaccharides and Plant Cell Walls",
+      "weight": 0.161
+    },
+    {
+      "id": "T10306",
+      "name": "Liquid Crystal Research Advancements",
+      "weight": 0.144
+    },
+    {
+      "id": "T10501",
+      "name": "Polymer Nanocomposites and Properties",
+      "weight": 0.129
+    },
+    {
+      "id": "T10810",
+      "name": "Polymer composites and self-healing",
+      "weight": 0.121
+    },
+    {
+      "id": "T11737",
+      "name": "Advanced Materials and Mechanics",
+      "weight": 0.113
+    },
+    {
+      "id": "T11419",
+      "name": "Supramolecular Self-Assembly in Materials",
+      "weight": 0.11
+    },
+    {
+      "id": "T10343",
+      "name": "Hydrogels: synthesis, properties, applications",
+      "weight": 0.102
+    },
+    {
+      "id": "T11298",
+      "name": "Synthesis and Properties of Aromatic Compounds",
+      "weight": 0.095
+    },
+    {
+      "id": "T10389",
+      "name": "Polymer crystallization and properties",
+      "weight": 0.089
+    },
+    {
+      "id": "T11511",
+      "name": "Dyeing and Modifying Textile Fibers",
+      "weight": 0.079
+    },
+    {
+      "id": "T10661",
+      "name": "biodegradable polymer synthesis and properties",
+      "weight": 0.076
+    },
+    {
+      "id": "T10903",
+      "name": "Porphyrin and Phthalocyanine Chemistry",
+      "weight": 0.065
+    },
+    {
+      "id": "T10484",
+      "name": "Wood Treatment and Properties",
+      "weight": 0.058
+    },
+    {
+      "id": "T10729",
+      "name": "Electrospun Nanofibers in Biomedical Applications",
+      "weight": 0.049
+    },
+    {
+      "id": "T12195",
+      "name": "Aerogels and thermal insulation",
+      "weight": 0.048
+    },
+    {
+      "id": "T10313",
+      "name": "Surface Modification and Superhydrophobicity",
+      "weight": 0.047
+    }
+  ],
+  "year_from": 2020
+}

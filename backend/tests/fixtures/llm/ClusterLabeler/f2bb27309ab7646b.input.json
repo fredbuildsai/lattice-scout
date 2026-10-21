@@ -1,0 +1,28 @@
+{
+  "cluster_id": "k2",
+  "openalex_topics": [
+    {
+      "id": "T11208",
+      "name": "Lignin and Wood Chemistry"
+    },
+    {
+      "id": "T12628",
+      "name": "Polymer Foaming and Composites"
+    },
+    {
+      "id": "T10033",
+      "name": "Concrete and Cement Materials Research"
+    },
+    {
+      "id": "T10661",
+      "name": "biodegradable polymer synthesis and properties"
+    }
+  ],
+  "sample_titles": [
+    "Antimicrobial Lignin-Based Polyurethane/Ag Composite Foams for Improving Wound Healing",
+    "Chemical recycling of a lignin-based non-isocyanate polyurethane foam",
+    "Green co-solvent-assisted one-pot synthesis of high-performance flexible lignin polyurethane foam",
+    "High-Lignin Polyurethane Foams via a Eutectic-Like Polyol Strategy: Enabling Scalable Processing and Enhanced Structural Performance",
+    "Disruption of Lignin-Emissive Domains: Deciphering Fiber–Cement Interfacial Reactions by EEM Fluorescence and DUV Raman Spectroscopy"
+  ]
+}

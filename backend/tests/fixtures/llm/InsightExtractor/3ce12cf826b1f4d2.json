@@ -1,0 +1,113 @@
+{
+  "kind": "unpublished_results",
+  "kind_reason": "The title marks the document as unpublished results and it reports new cycling data.",
+  "title": "Cycling of sulfonated cellulose nanofiber separators in zinc–iodine flow cells (unpublished results)",
+  "aims": [
+    {
+      "summary": "Evaluate the long-term cycling stability of the sulfonated CNF membrane in zinc–iodine flow cells.",
+      "chunk_ids": [
+        "c0"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "summary": "The sulfonated CNF membrane completed 500 hours of cycling at 20 mA cm-2 with coulombic efficiency above 98 %.",
+      "chunk_ids": [
+        "c0"
+      ]
+    },
+    {
+      "summary": "Iodide crossover stayed below the UV-vis detection limit after 300 hours.",
+      "chunk_ids": [
+        "c0"
+      ]
+    },
+    {
+      "summary": "Membrane swelling in the electrolyte stabilised at 18 % after the first 24 hours.",
+      "chunk_ids": [
+        "c0"
+      ]
+    }
+  ],
+  "methods": [
+    {
+      "name": "Flow-cell cycling at 20 mA cm-2",
+      "detail": "Long-term stability test over 500 hours.",
+      "chunk_ids": [
+        "c0"
+      ]
+    },
+    {
+      "name": "UV-vis spectroscopy",
+      "detail": "Detection of iodide crossover.",
+      "chunk_ids": [
+        "c0"
+      ]
+    },
+    {
+      "name": "Impedance spectroscopy",
+      "detail": "Spectra at 0, 100, 300 and 500 hours.",
+      "chunk_ids": [
+        "c0"
+      ]
+    },
+    {
+      "name": "SEM",
+      "detail": "Imaging of the membrane surface after cycling.",
+      "chunk_ids": [
+        "c0"
+      ]
+    }
+  ],
+  "datasets": [
+    {
+      "name": "Cycling curves",
+      "status": "available",
+      "chunk_ids": [
+        "c0"
+      ]
+    },
+    {
+      "name": "Impedance spectra at 0, 100, 300 and 500 hours",
+      "status": "available",
+      "chunk_ids": [
+        "c0"
+      ]
+    },
+    {
+      "name": "SEM images of the membrane surface after cycling",
+      "status": "available",
+      "chunk_ids": [
+        "c0"
+      ]
+    }
+  ],
+  "reviewer_objections": [],
+  "open_questions": [
+    {
+      "summary": "Does the membrane remain stable beyond 1,000 hours?",
+      "chunk_ids": [
+        "c0"
+      ]
+    },
+    {
+      "summary": "Can the sulfonation degree be reduced without increasing crossover?",
+      "chunk_ids": [
+        "c0"
+      ]
+    }
+  ],
+  "keywords": [
+    "sulfonated cellulose nanofiber",
+    "CNF membrane",
+    "zinc–iodine flow cell",
+    "flow cell separator",
+    "iodide crossover",
+    "coulombic efficiency",
+    "membrane swelling",
+    "long-term cycling",
+    "sulfonation degree",
+    "impedance spectroscopy"
+  ]
+}

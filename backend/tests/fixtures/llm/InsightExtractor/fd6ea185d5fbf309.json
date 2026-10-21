@@ -1,0 +1,115 @@
+{
+  "kind": "declined_grant",
+  "kind_reason": "The title marks the proposal as declined and it ends with a panel summary and reviewer comments.",
+  "title": "Lignin-rich flexible polyurethane foams for upholstery (proposal, declined)",
+  "aims": [
+    {
+      "summary": "Formulate flexible polyurethane foams with 30 % bio-content using fractionated kraft and organosolv lignin.",
+      "chunk_ids": [
+        "c0"
+      ]
+    },
+    {
+      "summary": "Relate lignin type and hydroxyl content to foaming dynamics and cell structure.",
+      "chunk_ids": [
+        "c0"
+      ]
+    },
+    {
+      "summary": "Demonstrate durability of lignin-rich foams under cyclic compression for upholstery use.",
+      "chunk_ids": [
+        "c0"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "summary": "Preliminary foams with 15 % lignin reached a compression set below 10 %.",
+      "chunk_ids": [
+        "c0"
+      ]
+    }
+  ],
+  "methods": [
+    {
+      "name": "31P NMR and GPC",
+      "detail": "Characterisation of the lignin fractions.",
+      "chunk_ids": [
+        "c0"
+      ]
+    },
+    {
+      "name": "Free-rise foaming",
+      "detail": "Foam production route.",
+      "chunk_ids": [
+        "c0"
+      ]
+    },
+    {
+      "name": "SEM, compression testing and dynamic mechanical analysis",
+      "detail": "Analysis of foam structure and mechanical behaviour.",
+      "chunk_ids": [
+        "c0"
+      ]
+    }
+  ],
+  "datasets": [
+    {
+      "name": "Dataset linking lignin structure to foam properties",
+      "status": "planned",
+      "chunk_ids": [
+        "c0"
+      ]
+    }
+  ],
+  "reviewer_objections": [
+    {
+      "quote": "The applicants do not demonstrate that the foams meet fire-safety standard EN 13501 at the proposed bio-content.",
+      "summary": "Fire-safety compliance (EN 13501) at the proposed bio-content is not shown.",
+      "chunk_ids": [
+        "c0"
+      ]
+    },
+    {
+      "quote": "The durability plan lacks a comparison with commercial petroleum-based foams over at least 50,000 compression cycles.",
+      "summary": "Durability is not benchmarked against commercial petroleum-based foams over 50,000 cycles.",
+      "chunk_ids": [
+        "c0"
+      ]
+    },
+    {
+      "quote": "Strong science, but the application case is not yet convincing; fire behaviour and long-term durability must be addressed before funding.",
+      "summary": "The panel wants fire behaviour and long-term durability addressed before funding.",
+      "chunk_ids": [
+        "c0"
+      ]
+    }
+  ],
+  "open_questions": [
+    {
+      "summary": "Can foams with 30 % lignin bio-content pass the EN 13501 fire-safety standard?",
+      "chunk_ids": [
+        "c0"
+      ]
+    },
+    {
+      "summary": "How do lignin-rich foams compare with commercial petroleum-based foams over at least 50,000 compression cycles?",
+      "chunk_ids": [
+        "c0"
+      ]
+    }
+  ],
+  "keywords": [
+    "lignin",
+    "flexible polyurethane foam",
+    "kraft lignin",
+    "organosolv lignin",
+    "bio-based polyol",
+    "upholstery",
+    "fire safety",
+    "EN 13501",
+    "31P NMR",
+    "compression set",
+    "cyclic compression"
+  ]
+}

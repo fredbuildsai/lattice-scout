@@ -40,7 +40,7 @@ MVP column: ✅ build in the MVP · ◐ build partly (see notes) · ⏳ roadmap,
 | W7 | `web/W7-matches.png` | `/matches` | ✅ | M5 | `/matches`, `/matches/{id}/decision`, `/matches/{id}/rating` | Anonymous card → waiting → mutual reveal with contact + joint ideas → rating. A decline is never shown to the other side. |
 | W8 | `web/W8-reach.png` | `/reach` | ⏳ | — | — | World map and network graph: after the MVP. Keep the menu entry hidden behind a flag. |
 | W9 | `web/W9-ask-scout.png` | (panel) | ⏳ | — | — | Chat, voice, photo: after the MVP. M0 adds only a FAB placeholder. |
-| W10 | `web/W10-profile-privacy.png` | `/profile` | ◐ | M1 (profile), M6 (privacy, notifications) | `GET /profile`, `PATCH /me/consent`, `DELETE /me` | Sources (OpenAlex), consents, delete vault, delete account. |
+| W10 | `web/W10-profile-privacy.png` | `/settings/privacy` (M0 shell; profile summary may live at `/profile`) | ◐ | M1 (profile), M6 (privacy, notifications) | `GET /profile`, `PATCH /me/consent`, `DELETE /me` | Sources (OpenAlex), consents, delete vault, delete account. |
 | W11 | `web/W11-menu.png` | (component) | ✅ | M0 | — | Burger menu in every header, `current` highlights the active page. Hide roadmap entries. |
 
 ### Mobile (390 px; the responsive web app at phone width, PWA)

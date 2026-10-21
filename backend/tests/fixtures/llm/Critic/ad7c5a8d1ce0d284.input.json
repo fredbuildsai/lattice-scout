@@ -1,0 +1,80 @@
+{
+  "draft": {
+    "claims": [
+      {
+        "check_status": "passed",
+        "evidence": [
+          "W3026932531"
+        ],
+        "index": 0,
+        "text": "Conductive wood has been made as a structural material with a load-bearing function."
+      },
+      {
+        "check_status": "passed",
+        "evidence": [
+          "W3026932531"
+        ],
+        "index": 1,
+        "text": "Metals and carbon-based compounds are the traditional conductor choices for shielding, flexible electronics and energy storage."
+      },
+      {
+        "check_status": "passed",
+        "evidence": [
+          "W4390531961"
+        ],
+        "index": 2,
+        "text": "You have studied the structural dependence of PFAS oxidation in a boron-doped diamond electrochemical system."
+      }
+    ],
+    "kind": "synergy",
+    "title": "Conductive wood electrodes for electrochemical PFAS oxidation"
+  },
+  "evidence_texts": [
+    {
+      "ref_id": "W3026932531",
+      "text": "Electric conductors are ubiquitously used for electromagnetic shielding, flexible electronics, and energy storage, with metals and carbon-based compounds as traditional choices for these applications. Here, we develop a conductive wood as a new type of structural electromagnetic interference (EMI) shielding material with combined load-bearing function via delignification and subsequent in situ chemical vapor depositi",
+      "title": "Conductive Wood for High-Performance Structural Electromagnetic Interference Shielding",
+      "type": "work",
+      "year": null
+    },
+    {
+      "ref_id": "W4390531961",
+      "text": "Structural dependence of PFAS oxidation in a boron doped diamond-electrochemical system",
+      "title": "Structural dependence of PFAS oxidation in a boron doped diamond-electrochemical system",
+      "type": "work",
+      "year": null
+    }
+  ],
+  "similar_papers": [
+    {
+      "abstract": "",
+      "title": "Structural dependence of PFAS oxidation in a boron doped diamond-electrochemical system",
+      "work_id": "W4390531961",
+      "year": 2024
+    },
+    {
+      "abstract": "Electric conductors are ubiquitously used for electromagnetic shielding, flexible electronics, and energy storage, with metals and carbon-based compounds as traditional choices for these applications. Here, we develop a conductive wood as a new type of structural electromagnetic interference (EMI) shielding material with combined load-bearing function via delignification and subsequent in situ chemical vapor depositi",
+      "title": "Conductive Wood for High-Performance Structural Electromagnetic Interference Shielding",
+      "work_id": "W3026932531",
+      "year": 2020
+    },
+    {
+      "abstract": "Mass transfer of per- and polyfluoroalkyl substances (PFAS) to container walls during sample collection and storage or experimentation is an important source of error in PFAS analysis. To minimize this error, high-density polyethylene (HDPE) and polypropylene containers are widely used for PFAS studies. However, there is sparse data to justify these container polymer choices. In this study, we investigated the adsorp",
+      "title": "Adsorption of per- and polyfluoroalkyl substances (PFAS) to containers",
+      "work_id": "W4286511477",
+      "year": 2022
+    },
+    {
+      "abstract": "Currently, due to the rapid development of communication technology, electromagnetic interference (EMI) and irradiation have become an emerging environmental pollutant. Herein, hierarchical and porous structured wood is used as the lightweight three‐dimensional organic scaffold for the incorporation of magnetic iron oxide nanoparticles through an in situ mineralization process that endows the woodblock with favorable",
+      "title": "Lightweight and Construable Magnetic Wood for Electromagnetic Interference Shielding",
+      "work_id": "W3033851578",
+      "year": 2020
+    },
+    {
+      "abstract": "Removal of perfluoroalkyl and polyfluoroalkyl substances (PFAS) by nanofiltration (NF) membranes has been well-documented, but the impact of PFAS interaction with the NF separation layer on the permselectivity of layer-by-layer (LBL) NF membranes has yet to be explored. The work reported two different LBL membranes prepared with pairs of long-chain polyelectrolytes (PVAm/PSS, L/L) and short-chain polyelectrolytes (S/",
+      "title": "Interaction of Layer-by-Layer Nanofiltration Membranes and PFAS: Filtration after Adsorption",
+      "work_id": "W4412487818",
+      "year": 2025
+    }
+  ]
+}

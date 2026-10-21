@@ -1,0 +1,26 @@
+{
+  "cluster_id": "k5",
+  "openalex_topics": [
+    {
+      "id": "T10033",
+      "name": "Concrete and Cement Materials Research"
+    },
+    {
+      "id": "T10687",
+      "name": "Innovative concrete reinforcement materials"
+    },
+    {
+      "id": "T10513",
+      "name": "Natural Fiber Reinforced Composites"
+    },
+    {
+      "id": "T11208",
+      "name": "Lignin and Wood Chemistry"
+    }
+  ],
+  "sample_titles": [
+    "Coconut fibers and quartzite wastes for fiber-cement production by extrusion",
+    "Impact of miscanthus lignin and arabinoxylan on Portland cement",
+    "Lignin fiber reinforced gypsum-cement composite materials: Investigation of fracture properties and freeze–thaw behaviors"
+  ]
+}

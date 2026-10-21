@@ -1,0 +1,252 @@
+{
+  "tags": [
+    {
+      "insight_ref": "d1.aims[0]",
+      "cluster_ids": [
+        "k3"
+      ],
+      "strength": "core",
+      "reason": "Lignin-based polyurethane foam formulation or testing."
+    },
+    {
+      "insight_ref": "d1.aims[1]",
+      "cluster_ids": [
+        "k3"
+      ],
+      "strength": "core",
+      "reason": "Lignin-based polyurethane foam formulation or testing."
+    },
+    {
+      "insight_ref": "d1.aims[2]",
+      "cluster_ids": [
+        "k3"
+      ],
+      "strength": "core",
+      "reason": "Lignin-based polyurethane foam formulation or testing."
+    },
+    {
+      "insight_ref": "d1.findings[0]",
+      "cluster_ids": [
+        "k3"
+      ],
+      "strength": "core",
+      "reason": "Lignin-based polyurethane foam formulation or testing."
+    },
+    {
+      "insight_ref": "d1.open_questions[0]",
+      "cluster_ids": [
+        "k3"
+      ],
+      "strength": "core",
+      "reason": "Lignin-based polyurethane foam formulation or testing."
+    },
+    {
+      "insight_ref": "d1.open_questions[1]",
+      "cluster_ids": [
+        "k3"
+      ],
+      "strength": "core",
+      "reason": "Lignin-based polyurethane foam formulation or testing."
+    },
+    {
+      "insight_ref": "d1.methods[0]",
+      "cluster_ids": [
+        "k3"
+      ],
+      "strength": "partial",
+      "reason": "Lignin-based polyurethane foam formulation or testing."
+    },
+    {
+      "insight_ref": "d1.methods[1]",
+      "cluster_ids": [
+        "k3"
+      ],
+      "strength": "core",
+      "reason": "Lignin-based polyurethane foam formulation or testing."
+    },
+    {
+      "insight_ref": "d1.methods[2]",
+      "cluster_ids": [
+        "k3"
+      ],
+      "strength": "core",
+      "reason": "Lignin-based polyurethane foam formulation or testing."
+    },
+    {
+      "insight_ref": "d1.datasets[0]",
+      "cluster_ids": [
+        "k3"
+      ],
+      "strength": "core",
+      "reason": "Lignin-based polyurethane foam formulation or testing."
+    },
+    {
+      "insight_ref": "d1.reviewer_objections[1]",
+      "cluster_ids": [
+        "k3"
+      ],
+      "strength": "core",
+      "reason": "Lignin-based polyurethane foam formulation or testing."
+    },
+    {
+      "insight_ref": "d2.aims[0]",
+      "cluster_ids": [
+        "k4"
+      ],
+      "strength": "core",
+      "reason": "Sulfonated cellulose nanofibre membrane work."
+    },
+    {
+      "insight_ref": "d2.findings[0]",
+      "cluster_ids": [
+        "k4"
+      ],
+      "strength": "core",
+      "reason": "Sulfonated cellulose nanofibre membrane work."
+    },
+    {
+      "insight_ref": "d2.findings[1]",
+      "cluster_ids": [
+        "k4"
+      ],
+      "strength": "partial",
+      "reason": "Sulfonated cellulose nanofibre membrane work."
+    },
+    {
+      "insight_ref": "d2.findings[2]",
+      "cluster_ids": [
+        "k4"
+      ],
+      "strength": "partial",
+      "reason": "Sulfonated cellulose nanofibre membrane work."
+    },
+    {
+      "insight_ref": "d2.open_questions[1]",
+      "cluster_ids": [
+        "k4"
+      ],
+      "strength": "partial",
+      "reason": "Sulfonated cellulose nanofibre membrane work."
+    },
+    {
+      "insight_ref": "d2.methods[0]",
+      "cluster_ids": [
+        "k4"
+      ],
+      "strength": "core",
+      "reason": "Sulfonated cellulose nanofibre membrane work."
+    },
+    {
+      "insight_ref": "d2.methods[1]",
+      "cluster_ids": [
+        "k4"
+      ],
+      "strength": "partial",
+      "reason": "Sulfonated cellulose nanofibre membrane work."
+    },
+    {
+      "insight_ref": "d2.methods[2]",
+      "cluster_ids": [
+        "k4"
+      ],
+      "strength": "partial",
+      "reason": "Sulfonated cellulose nanofibre membrane work."
+    },
+    {
+      "insight_ref": "d2.methods[3]",
+      "cluster_ids": [
+        "k4"
+      ],
+      "strength": "partial",
+      "reason": "Sulfonated cellulose nanofibre membrane work."
+    },
+    {
+      "insight_ref": "d2.datasets[0]",
+      "cluster_ids": [
+        "k4"
+      ],
+      "strength": "partial",
+      "reason": "Sulfonated cellulose nanofibre membrane work."
+    },
+    {
+      "insight_ref": "d2.datasets[1]",
+      "cluster_ids": [
+        "k4"
+      ],
+      "strength": "partial",
+      "reason": "Sulfonated cellulose nanofibre membrane work."
+    },
+    {
+      "insight_ref": "d2.datasets[2]",
+      "cluster_ids": [
+        "k4"
+      ],
+      "strength": "partial",
+      "reason": "Sulfonated cellulose nanofibre membrane work."
+    },
+    {
+      "insight_ref": "d3.aims[0]",
+      "cluster_ids": [
+        "k1"
+      ],
+      "strength": "core",
+      "reason": "PFAS capture, regeneration or photocatalytic degradation."
+    },
+    {
+      "insight_ref": "d3.aims[1]",
+      "cluster_ids": [
+        "k1"
+      ],
+      "strength": "core",
+      "reason": "PFAS capture, regeneration or photocatalytic degradation."
+    },
+    {
+      "insight_ref": "d3.findings[0]",
+      "cluster_ids": [
+        "k1"
+      ],
+      "strength": "core",
+      "reason": "PFAS capture, regeneration or photocatalytic degradation."
+    },
+    {
+      "insight_ref": "d3.findings[1]",
+      "cluster_ids": [
+        "k1"
+      ],
+      "strength": "partial",
+      "reason": "PFAS capture, regeneration or photocatalytic degradation."
+    },
+    {
+      "insight_ref": "d3.open_questions[0]",
+      "cluster_ids": [
+        "k1"
+      ],
+      "strength": "core",
+      "reason": "PFAS capture, regeneration or photocatalytic degradation."
+    },
+    {
+      "insight_ref": "d3.open_questions[2]",
+      "cluster_ids": [
+        "k1"
+      ],
+      "strength": "partial",
+      "reason": "PFAS capture, regeneration or photocatalytic degradation."
+    },
+    {
+      "insight_ref": "d3.methods[0]",
+      "cluster_ids": [
+        "k1"
+      ],
+      "strength": "core",
+      "reason": "PFAS capture, regeneration or photocatalytic degradation."
+    },
+    {
+      "insight_ref": "d3.methods[1]",
+      "cluster_ids": [
+        "k1"
+      ],
+      "strength": "partial",
+      "reason": "PFAS capture, regeneration or photocatalytic degradation."
+    }
+  ]
+}

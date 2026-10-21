@@ -1,0 +1,170 @@
+[project]
+name = "scout"
+version = "0.1.0"
+description = "Lattice Scout backend"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.30",
+  "pydantic>=2.8",
+  "pydantic-settings>=2.4",
+  "sqlmodel>=0.0.22",
+  "sqlalchemy[asyncio]>=2.0.30,<2.1",
+  "alembic>=1.13",
+  "psycopg[binary,pool]>=3.2",
+  "httpx>=0.27",
+  "structlog>=24.4",
+  "pyyaml>=6.0",
+  "pyjwt[crypto]>=2.9",
+  "opentelemetry-api>=1.27",
+  "opentelemetry-sdk>=1.27",
+  "opentelemetry-exporter-otlp-proto-http>=1.27",
+  "opentelemetry-instrumentation-fastapi>=0.48b0",
+  "opentelemetry-instrumentation-httpx>=0.48b0",
+  "opentelemetry-instrumentation-sqlalchemy>=0.48b0",
+  "pypdf>=6.21.1",
+  "pdfplumber>=0.11.10",
+  "python-docx>=1.2.0",
+  "python-multipart>=0.0.32",
+]
+
+[project.optional-dependencies]
+# Real LLM adapters (not needed for tests; LLM_BACKEND=fake by default)
+llm = ["openai-agents>=0.2"]
+
+[dependency-groups]
+dev = [
+  "pytest>=8.2",
+  "pytest-asyncio>=0.24",
+  "pytest-cov>=5",
+  "ruff>=0.6",
+  "mypy>=1.11",
+  "import-linter>=2.0",
+  "interrogate>=1.7",
+  "types-pyyaml",
+  "hypothesis>=6.100",
+  "mkdocs-material>=9.5",
+  "reportlab>=5.0.1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/scout"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = "-ra -m 'not needs_network and not needs_supabase'"
+pythonpath = ["."]
+markers = [
+  "integration: needs the VM's PostgreSQL 16",
+  "needs_network: live external calls (skipped by default)",
+  "needs_supabase: needs Supabase credentials (skipped by default)",
+]
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "ASYNC", "S", "RUF"]
+ignore = ["S101", "RUF012", "RUF028", "E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"src/scout/adapters/**" = ["E501"]
+"tests/**" = ["E501", "S105", "S106", "S311", "S603", "S607"]
+
+[tool.mypy]
+python_version = "3.12"
+mypy_path = "src"
+plugins = ["pydantic.mypy"]
+warn_unused_ignores = true
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["scout.shared.*", "scout.ports.*", "scout.settings", "scout.bootstrap", "scout.*.domain.*", "scout.*.application.*", "scout.*.ports.*"]
+strict = true
+
+[tool.interrogate]
+fail-under = 95
+ignore-init-method = true
+ignore-init-module = true
+ignore-magic = true
+ignore-semiprivate = true
+ignore-private = true
+exclude = ["tests", "migrations"]
+
+[tool.importlinter]
+root_package = "scout"
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "domain depends on nothing outside stdlib and pydantic"
+type = "forbidden"
+source_modules = ["scout.shared", "scout.identity.domain", "scout.profile.domain", "scout.vault.domain", "scout.discovery.domain", "scout.matching.domain", "scout.feedback.domain", "scout.notifications.domain"]
+forbidden_modules = ["scout.adapters", "scout.identity.adapters", "scout.profile.adapters", "scout.vault.adapters", "scout.discovery.adapters", "scout.matching.adapters", "scout.feedback.adapters", "scout.notifications.adapters", "scout.identity.application", "scout.profile.application", "scout.vault.application", "scout.discovery.application", "scout.matching.application", "scout.feedback.application", "scout.notifications.application", "scout.identity.ports", "scout.profile.ports", "scout.vault.ports", "scout.discovery.ports", "scout.matching.ports", "scout.feedback.ports", "scout.notifications.ports", "scout.ports", "scout.api", "scout.worker", "scout.bootstrap", "scout.settings", "fastapi", "sqlmodel", "sqlalchemy", "httpx", "openai", "agents", "llmrouter_free", "psycopg", "litellm", "pydantic_settings", "pypdf", "pdfplumber", "pdfminer", "docx", "yaml"]
+
+[[tool.importlinter.contracts]]
+name = "application and ports never import adapters or frameworks"
+type = "forbidden"
+source_modules = ["scout.ports", "scout.identity.application", "scout.profile.application", "scout.vault.application", "scout.discovery.application", "scout.matching.application", "scout.feedback.application", "scout.notifications.application", "scout.identity.ports", "scout.profile.ports", "scout.vault.ports", "scout.discovery.ports", "scout.matching.ports", "scout.feedback.ports", "scout.notifications.ports"]
+forbidden_modules = ["scout.adapters", "scout.identity.adapters", "scout.profile.adapters", "scout.vault.adapters", "scout.discovery.adapters", "scout.matching.adapters", "scout.feedback.adapters", "scout.notifications.adapters", "scout.api", "scout.worker", "scout.bootstrap", "scout.settings", "fastapi", "sqlmodel", "sqlalchemy", "httpx", "openai", "agents", "llmrouter_free", "psycopg", "litellm", "pydantic_settings", "pypdf", "pdfplumber", "pdfminer", "docx"]
+
+[[tool.importlinter.contracts]]
+name = "discovery never imports other contexts except through its anti-corruption layer"
+type = "forbidden"
+source_modules = ["scout.discovery.domain", "scout.discovery.ports", "scout.discovery.application", "scout.discovery.adapters"]
+forbidden_modules = ["scout.vault", "scout.profile", "scout.identity"]
+ignore_imports = ["scout.discovery.application.sources -> scout.vault.**", "scout.discovery.application.sources -> scout.profile.**"]
+
+[[tool.importlinter.contracts]]
+name = "adapters never import application services"
+type = "forbidden"
+source_modules = ["scout.adapters", "scout.identity.adapters", "scout.profile.adapters", "scout.vault.adapters", "scout.discovery.adapters", "scout.matching.adapters", "scout.feedback.adapters", "scout.notifications.adapters"]
+forbidden_modules = ["scout.identity.application", "scout.profile.application", "scout.vault.application", "scout.discovery.application", "scout.matching.application", "scout.feedback.application", "scout.notifications.application"]
+
+[[tool.importlinter.contracts]]
+name = "identity domain is independent of other contexts' domains"
+type = "forbidden"
+source_modules = ["scout.identity.domain"]
+forbidden_modules = ["scout.profile.domain", "scout.vault.domain", "scout.discovery.domain", "scout.matching.domain", "scout.feedback.domain", "scout.notifications.domain"]
+
+[[tool.importlinter.contracts]]
+name = "profile domain is independent of other contexts' domains"
+type = "forbidden"
+source_modules = ["scout.profile.domain"]
+forbidden_modules = ["scout.identity.domain", "scout.vault.domain", "scout.discovery.domain", "scout.matching.domain", "scout.feedback.domain", "scout.notifications.domain"]
+
+[[tool.importlinter.contracts]]
+name = "vault domain is independent of other contexts' domains"
+type = "forbidden"
+source_modules = ["scout.vault.domain"]
+forbidden_modules = ["scout.identity.domain", "scout.profile.domain", "scout.discovery.domain", "scout.matching.domain", "scout.feedback.domain", "scout.notifications.domain"]
+
+[[tool.importlinter.contracts]]
+name = "discovery domain is independent of other contexts' domains"
+type = "forbidden"
+source_modules = ["scout.discovery.domain"]
+forbidden_modules = ["scout.identity.domain", "scout.profile.domain", "scout.vault.domain", "scout.matching.domain", "scout.feedback.domain", "scout.notifications.domain"]
+
+[[tool.importlinter.contracts]]
+name = "matching domain is independent of other contexts' domains"
+type = "forbidden"
+source_modules = ["scout.matching.domain"]
+forbidden_modules = ["scout.identity.domain", "scout.profile.domain", "scout.vault.domain", "scout.discovery.domain", "scout.feedback.domain", "scout.notifications.domain"]
+
+[[tool.importlinter.contracts]]
+name = "feedback domain is independent of other contexts' domains"
+type = "forbidden"
+source_modules = ["scout.feedback.domain"]
+forbidden_modules = ["scout.identity.domain", "scout.profile.domain", "scout.vault.domain", "scout.discovery.domain", "scout.matching.domain", "scout.notifications.domain"]
+
+[[tool.importlinter.contracts]]
+name = "notifications domain is independent of other contexts' domains"
+type = "forbidden"
+source_modules = ["scout.notifications.domain"]
+forbidden_modules = ["scout.identity.domain", "scout.profile.domain", "scout.vault.domain", "scout.discovery.domain", "scout.matching.domain", "scout.feedback.domain"]

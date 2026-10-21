@@ -1,0 +1,4164 @@
+{
+  "components": {
+    "schemas": {
+      "AdminClaimListOut": {
+        "description": "A page of claims.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AdminClaimOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "AdminClaimListOut",
+        "type": "object"
+      },
+      "AdminClaimOut": {
+        "description": "Claim row of the quality review (any status).",
+        "properties": {
+          "agent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agent"
+          },
+          "claim_id": {
+            "format": "uuid",
+            "title": "Claim Id",
+            "type": "string"
+          },
+          "critic_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Critic Reason"
+          },
+          "critic_verdict": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Critic Verdict"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/AdminEvidenceOut"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "opportunity_id": {
+            "format": "uuid",
+            "title": "Opportunity Id",
+            "type": "string"
+          },
+          "opportunity_status": {
+            "title": "Opportunity Status",
+            "type": "string"
+          },
+          "prompt_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prompt Version"
+          },
+          "run_id": {
+            "format": "uuid",
+            "title": "Run Id",
+            "type": "string"
+          },
+          "section": {
+            "title": "Section",
+            "type": "string"
+          },
+          "set_by": {
+            "title": "Set By",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "status_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status Reason"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "claim_id",
+          "opportunity_id",
+          "run_id",
+          "section",
+          "text",
+          "status",
+          "status_reason",
+          "set_by",
+          "agent",
+          "prompt_version",
+          "model",
+          "critic_verdict",
+          "critic_reason",
+          "opportunity_status",
+          "evidence"
+        ],
+        "title": "AdminClaimOut",
+        "type": "object"
+      },
+      "AdminEvidenceOut": {
+        "description": "Evidence row of the quality review.",
+        "properties": {
+          "check": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Check"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "quote": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quote"
+          },
+          "ref": {
+            "title": "Ref",
+            "type": "string"
+          },
+          "source_type": {
+            "title": "Source Type",
+            "type": "string"
+          },
+          "verified": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verified"
+          }
+        },
+        "required": [
+          "source_type",
+          "label",
+          "ref",
+          "verified",
+          "check",
+          "quote"
+        ],
+        "title": "AdminEvidenceOut",
+        "type": "object"
+      },
+      "Body_upload_document_api_v1_documents_post": {
+        "properties": {
+          "file": {
+            "contentMediaType": "application/octet-stream",
+            "description": "PDF or DOCX, at most 25 MB.",
+            "title": "File",
+            "type": "string"
+          },
+          "keep_original": {
+            "default": false,
+            "description": "Keep the original file (honoured when the policy allows).",
+            "title": "Keep Original",
+            "type": "boolean"
+          },
+          "kind": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DocKind"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional classification hint."
+          }
+        },
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_document_api_v1_documents_post",
+        "type": "object"
+      },
+      "CandidateGroupOut": {
+        "description": "A candidate profile: merged records plus weakly linked ones the user may add.",
+        "properties": {
+          "cited_by_count": {
+            "description": "Sum of citations over merged records.",
+            "title": "Cited By Count",
+            "type": "integer"
+          },
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Country code of the primary record.",
+            "title": "Country"
+          },
+          "group_id": {
+            "description": "Id of the primary record.",
+            "title": "Group Id",
+            "type": "string"
+          },
+          "includes_records": {
+            "description": "Number of merged records.",
+            "title": "Includes Records",
+            "type": "integer"
+          },
+          "institutions": {
+            "description": "Institutions across merged records.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Institutions",
+            "type": "array"
+          },
+          "orcid": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "ORCID of the primary record.",
+            "title": "Orcid"
+          },
+          "possible": {
+            "description": "Possible further records; shown unticked, never merged automatically.",
+            "items": {
+              "$ref": "#/components/schemas/RecordOut"
+            },
+            "title": "Possible",
+            "type": "array"
+          },
+          "primary": {
+            "$ref": "#/components/schemas/RecordOut",
+            "description": "The record with the most works."
+          },
+          "records": {
+            "description": "Merged records (shared ORCID), primary first.",
+            "items": {
+              "$ref": "#/components/schemas/RecordOut"
+            },
+            "title": "Records",
+            "type": "array"
+          },
+          "top_topics": {
+            "description": "Strongest topics across merged records.",
+            "items": {
+              "$ref": "#/components/schemas/TopicOut"
+            },
+            "title": "Top Topics",
+            "type": "array"
+          },
+          "works_count": {
+            "description": "Sum of works over merged records.",
+            "title": "Works Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "group_id",
+          "primary",
+          "records",
+          "possible",
+          "includes_records",
+          "works_count",
+          "cited_by_count",
+          "institutions",
+          "top_topics"
+        ],
+        "title": "CandidateGroupOut",
+        "type": "object"
+      },
+      "CandidatesOut": {
+        "description": "Result of a candidate search.",
+        "properties": {
+          "groups": {
+            "description": "Candidate profiles, best match first.",
+            "items": {
+              "$ref": "#/components/schemas/CandidateGroupOut"
+            },
+            "title": "Groups",
+            "type": "array"
+          }
+        },
+        "required": [
+          "groups"
+        ],
+        "title": "CandidatesOut",
+        "type": "object"
+      },
+      "ChecklistItemOut": {
+        "description": "A readiness item.",
+        "properties": {
+          "item": {
+            "title": "Item",
+            "type": "string"
+          },
+          "present": {
+            "title": "Present",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "item",
+          "present"
+        ],
+        "title": "ChecklistItemOut",
+        "type": "object"
+      },
+      "ClaimIn": {
+        "additionalProperties": false,
+        "description": "Claim one or more OpenAlex records as your profile.",
+        "properties": {
+          "author_ids": {
+            "description": "OpenAlex author ids to merge.",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "minItems": 1,
+            "title": "Author Ids",
+            "type": "array"
+          },
+          "primary_author_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Primary record; defaults to the first id.",
+            "title": "Primary Author Id"
+          }
+        },
+        "required": [
+          "author_ids"
+        ],
+        "title": "ClaimIn",
+        "type": "object"
+      },
+      "ClaimOut": {
+        "description": "A verified claim and the citations that carry it.",
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "markers": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceOut"
+            },
+            "title": "Markers",
+            "type": "array"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "text",
+          "markers"
+        ],
+        "title": "ClaimOut",
+        "type": "object"
+      },
+      "ClaimStatus": {
+        "description": "Claim status. Only ``verified`` claims are ever visible to users.",
+        "enum": [
+          "pending",
+          "verified",
+          "unverified",
+          "contradicted",
+          "rejected_by_critic"
+        ],
+        "title": "ClaimStatus",
+        "type": "string"
+      },
+      "ConsentIn": {
+        "additionalProperties": false,
+        "description": "Partial update of consents.",
+        "properties": {
+          "consent_matching": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Agree to be matched with other researchers.",
+            "title": "Consent Matching"
+          },
+          "consent_vault_signals": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Allow vault-derived signals in matching.",
+            "title": "Consent Vault Signals"
+          }
+        },
+        "title": "ConsentIn",
+        "type": "object"
+      },
+      "DatasetOut": {
+        "description": "A dataset the document mentions.",
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "refs": {
+            "items": {
+              "$ref": "#/components/schemas/RefOut"
+            },
+            "title": "Refs",
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "available",
+              "planned",
+              "partial"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "status",
+          "refs"
+        ],
+        "title": "DatasetOut",
+        "type": "object"
+      },
+      "DegradedOut": {
+        "description": "A step that finished with less than full output.",
+        "properties": {
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          },
+          "step": {
+            "title": "Step",
+            "type": "string"
+          }
+        },
+        "required": [
+          "step",
+          "reason"
+        ],
+        "title": "DegradedOut",
+        "type": "object"
+      },
+      "DevLoginRequest": {
+        "description": "Body of the dev login.",
+        "properties": {
+          "email": {
+            "description": "Any e-mail address.",
+            "maxLength": 254,
+            "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+            "title": "Email",
+            "type": "string"
+          }
+        },
+        "required": [
+          "email"
+        ],
+        "title": "DevLoginRequest",
+        "type": "object"
+      },
+      "DevLoginResponse": {
+        "description": "Access token for the dev auth mode.",
+        "properties": {
+          "access_token": {
+            "description": "ES256 JWT signed with the local dev key.",
+            "title": "Access Token",
+            "type": "string"
+          },
+          "expires_in": {
+            "description": "Seconds until the token expires.",
+            "title": "Expires In",
+            "type": "integer"
+          },
+          "token_type": {
+            "default": "bearer",
+            "description": "Always bearer.",
+            "title": "Token Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "access_token",
+          "expires_in"
+        ],
+        "title": "DevLoginResponse",
+        "type": "object"
+      },
+      "DocKind": {
+        "description": "What a document is (ARCHITECTURE \u00a74.2).",
+        "enum": [
+          "funded_grant",
+          "declined_grant",
+          "proposal",
+          "unpublished_results",
+          "raw_data_description",
+          "lab_notes",
+          "other"
+        ],
+        "title": "DocKind",
+        "type": "string"
+      },
+      "DocStatus": {
+        "description": "Document lifecycle (DECISIONS 41: ``analysing`` rather than ``analysing_insights``).",
+        "enum": [
+          "uploaded",
+          "extracting",
+          "extracted",
+          "analysing",
+          "ready",
+          "failed",
+          "rejected",
+          "deleting"
+        ],
+        "title": "DocStatus",
+        "type": "string"
+      },
+      "DocumentDetailOut": {
+        "description": "A document with its insights.",
+        "properties": {
+          "chunk_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chunk Count"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "failure_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Why a failed or rejected document stopped.",
+            "title": "Failure Code"
+          },
+          "filename": {
+            "title": "Filename",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "insights": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InsightsOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "kind": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DocKind"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Your classification, otherwise Scout's suggestion."
+          },
+          "kind_source": {
+            "anyOf": [
+              {
+                "enum": [
+                  "user",
+                  "scout"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kind Source"
+          },
+          "kind_suggested": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DocKind"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "mime": {
+            "$ref": "#/components/schemas/DocumentMime"
+          },
+          "original_available": {
+            "title": "Original Available",
+            "type": "boolean"
+          },
+          "pages": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pages"
+          },
+          "ready_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ready At"
+          },
+          "retention": {
+            "$ref": "#/components/schemas/Retention",
+            "description": "keep: the original is stored; discard: only extracted content is kept."
+          },
+          "size_bytes": {
+            "title": "Size Bytes",
+            "type": "integer"
+          },
+          "status": {
+            "$ref": "#/components/schemas/DocStatus",
+            "description": "uploaded, extracting, extracted, analysing, ready, failed or rejected."
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "filename",
+          "mime",
+          "size_bytes",
+          "status",
+          "retention",
+          "original_available",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "DocumentDetailOut",
+        "type": "object"
+      },
+      "DocumentListOut": {
+        "description": "All documents of the vault, newest first.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/DocumentOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Reserved for paging; always null for now.",
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "DocumentListOut",
+        "type": "object"
+      },
+      "DocumentMime": {
+        "description": "Accepted file types.",
+        "enum": [
+          "application/pdf",
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ],
+        "title": "DocumentMime",
+        "type": "string"
+      },
+      "DocumentOut": {
+        "description": "A document in the vault.",
+        "properties": {
+          "chunk_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chunk Count"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "failure_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Why a failed or rejected document stopped.",
+            "title": "Failure Code"
+          },
+          "filename": {
+            "title": "Filename",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DocKind"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Your classification, otherwise Scout's suggestion."
+          },
+          "kind_source": {
+            "anyOf": [
+              {
+                "enum": [
+                  "user",
+                  "scout"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kind Source"
+          },
+          "kind_suggested": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DocKind"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "mime": {
+            "$ref": "#/components/schemas/DocumentMime"
+          },
+          "original_available": {
+            "title": "Original Available",
+            "type": "boolean"
+          },
+          "pages": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pages"
+          },
+          "ready_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ready At"
+          },
+          "retention": {
+            "$ref": "#/components/schemas/Retention",
+            "description": "keep: the original is stored; discard: only extracted content is kept."
+          },
+          "size_bytes": {
+            "title": "Size Bytes",
+            "type": "integer"
+          },
+          "status": {
+            "$ref": "#/components/schemas/DocStatus",
+            "description": "uploaded, extracting, extracted, analysing, ready, failed or rejected."
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "filename",
+          "mime",
+          "size_bytes",
+          "status",
+          "retention",
+          "original_available",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "DocumentOut",
+        "type": "object"
+      },
+      "DocumentPatchIn": {
+        "additionalProperties": false,
+        "description": "Change the classification.",
+        "properties": {
+          "kind": {
+            "$ref": "#/components/schemas/DocKind"
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "title": "DocumentPatchIn",
+        "type": "object"
+      },
+      "EventsAccepted": {
+        "description": "Result of ingestion. Writing happens asynchronously.",
+        "properties": {
+          "accepted": {
+            "description": "Number of events queued for storage.",
+            "title": "Accepted",
+            "type": "integer"
+          },
+          "rejected": {
+            "description": "Events that failed catalogue validation.",
+            "items": {
+              "$ref": "#/components/schemas/Rejection"
+            },
+            "title": "Rejected",
+            "type": "array"
+          }
+        },
+        "required": [
+          "accepted",
+          "rejected"
+        ],
+        "title": "EventsAccepted",
+        "type": "object"
+      },
+      "EvidenceOpenOut": {
+        "description": "The source behind a citation, resolved live.",
+        "properties": {
+          "abstract": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Abstract"
+          },
+          "count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Count"
+          },
+          "document_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Document Id"
+          },
+          "doi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Doi"
+          },
+          "filename": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Filename"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "literature",
+              "profile",
+              "vault",
+              "count"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "original_available": {
+            "default": false,
+            "title": "Original Available",
+            "type": "boolean"
+          },
+          "page_from": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page From"
+          },
+          "page_to": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page To"
+          },
+          "passage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Passage"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Query"
+          },
+          "quote": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quote"
+          },
+          "since_year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Since Year"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "work_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Work Id"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          }
+        },
+        "required": [
+          "kind",
+          "id"
+        ],
+        "title": "EvidenceOpenOut",
+        "type": "object"
+      },
+      "EvidenceOut": {
+        "description": "A verified citation. ``source_type`` says which fields are set.",
+        "properties": {
+          "authors": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Authors",
+            "type": "array"
+          },
+          "count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Count"
+          },
+          "document_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Document Id"
+          },
+          "doi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Doi"
+          },
+          "filename": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Filename"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "original_available": {
+            "default": false,
+            "title": "Original Available",
+            "type": "boolean"
+          },
+          "page_from": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page From"
+          },
+          "page_to": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page To"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Query"
+          },
+          "quote": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quote"
+          },
+          "since_year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Since Year"
+          },
+          "source_type": {
+            "enum": [
+              "literature",
+              "profile",
+              "vault",
+              "count"
+            ],
+            "title": "Source Type",
+            "type": "string"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "work_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Work Id"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          }
+        },
+        "required": [
+          "id",
+          "source_type"
+        ],
+        "title": "EvidenceOut",
+        "type": "object"
+      },
+      "FeedbackIn": {
+        "description": "A rating. Rating the same target again replaces the earlier one.",
+        "properties": {
+          "comment": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comment"
+          },
+          "rating": {
+            "enum": [
+              "up",
+              "down"
+            ],
+            "title": "Rating",
+            "type": "string"
+          },
+          "reasons": {
+            "items": {
+              "enum": [
+                "spot_on",
+                "already_knew",
+                "not_feasible",
+                "wrong_field",
+                "too_vague"
+              ],
+              "type": "string"
+            },
+            "maxItems": 5,
+            "title": "Reasons",
+            "type": "array"
+          },
+          "target_id": {
+            "format": "uuid",
+            "title": "Target Id",
+            "type": "string"
+          },
+          "target_type": {
+            "enum": [
+              "opportunity",
+              "match"
+            ],
+            "title": "Target Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "target_type",
+          "target_id",
+          "rating"
+        ],
+        "title": "FeedbackIn",
+        "type": "object"
+      },
+      "FeedbackOut": {
+        "description": "The stored rating.",
+        "properties": {
+          "comment": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comment"
+          },
+          "rating": {
+            "enum": [
+              "up",
+              "down"
+            ],
+            "title": "Rating",
+            "type": "string"
+          },
+          "reasons": {
+            "items": {
+              "enum": [
+                "spot_on",
+                "already_knew",
+                "not_feasible",
+                "wrong_field",
+                "too_vague"
+              ],
+              "type": "string"
+            },
+            "title": "Reasons",
+            "type": "array"
+          },
+          "target_id": {
+            "format": "uuid",
+            "title": "Target Id",
+            "type": "string"
+          },
+          "target_type": {
+            "enum": [
+              "opportunity",
+              "match"
+            ],
+            "title": "Target Type",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "target_type",
+          "target_id",
+          "rating",
+          "reasons",
+          "comment",
+          "updated_at"
+        ],
+        "title": "FeedbackOut",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "ImportOut": {
+        "description": "State of the works import.",
+        "properties": {
+          "error_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Set when status is failed.",
+            "title": "Error Code"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "When the import finished.",
+            "title": "Finished At"
+          },
+          "generation": {
+            "description": "Increases with every new claim.",
+            "title": "Generation",
+            "type": "integer"
+          },
+          "requested_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "When the import was requested.",
+            "title": "Requested At"
+          },
+          "status": {
+            "description": "queued, importing, done or failed.",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "generation"
+        ],
+        "title": "ImportOut",
+        "type": "object"
+      },
+      "InsightsOut": {
+        "description": "What Scout extracted from a document (verified items only).",
+        "properties": {
+          "aims": {
+            "items": {
+              "$ref": "#/components/schemas/ItemOut"
+            },
+            "title": "Aims",
+            "type": "array"
+          },
+          "datasets": {
+            "items": {
+              "$ref": "#/components/schemas/DatasetOut"
+            },
+            "title": "Datasets",
+            "type": "array"
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/ItemOut"
+            },
+            "title": "Findings",
+            "type": "array"
+          },
+          "keywords": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Keywords",
+            "type": "array"
+          },
+          "methods": {
+            "items": {
+              "$ref": "#/components/schemas/MethodOut"
+            },
+            "title": "Methods",
+            "type": "array"
+          },
+          "open_questions": {
+            "items": {
+              "$ref": "#/components/schemas/ItemOut"
+            },
+            "title": "Open Questions",
+            "type": "array"
+          },
+          "prompt_version": {
+            "title": "Prompt Version",
+            "type": "string"
+          },
+          "reviewer_objections": {
+            "items": {
+              "$ref": "#/components/schemas/ObjectionOut"
+            },
+            "title": "Reviewer Objections",
+            "type": "array"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "required": [
+          "aims",
+          "findings",
+          "open_questions",
+          "methods",
+          "datasets",
+          "reviewer_objections",
+          "keywords",
+          "prompt_version"
+        ],
+        "title": "InsightsOut",
+        "type": "object"
+      },
+      "ItemOut": {
+        "description": "A statement with its sources.",
+        "properties": {
+          "refs": {
+            "items": {
+              "$ref": "#/components/schemas/RefOut"
+            },
+            "title": "Refs",
+            "type": "array"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          }
+        },
+        "required": [
+          "summary",
+          "refs"
+        ],
+        "title": "ItemOut",
+        "type": "object"
+      },
+      "MeOut": {
+        "description": "The signed-in account.",
+        "properties": {
+          "account_id": {
+            "description": "Account id (= auth user id).",
+            "format": "uuid",
+            "title": "Account Id",
+            "type": "string"
+          },
+          "consent_matching": {
+            "description": "Whether the user agreed to be matched.",
+            "title": "Consent Matching",
+            "type": "boolean"
+          },
+          "consent_vault_signals": {
+            "description": "Whether vault-derived signals may be used for matching.",
+            "title": "Consent Vault Signals",
+            "type": "boolean"
+          },
+          "created_at": {
+            "description": "Account creation time.",
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "email": {
+            "description": "E-mail address.",
+            "title": "Email",
+            "type": "string"
+          },
+          "launch_field": {
+            "description": "Launch field of the pilot.",
+            "title": "Launch Field",
+            "type": "string"
+          },
+          "researcher": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ResearcherSummaryOut"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Profile summary, if claimed."
+          },
+          "role": {
+            "description": "user or admin.",
+            "title": "Role",
+            "type": "string"
+          }
+        },
+        "required": [
+          "account_id",
+          "email",
+          "role",
+          "launch_field",
+          "consent_matching",
+          "consent_vault_signals",
+          "created_at"
+        ],
+        "title": "MeOut",
+        "type": "object"
+      },
+      "MethodOut": {
+        "description": "A method or technique.",
+        "properties": {
+          "detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "refs": {
+            "items": {
+              "$ref": "#/components/schemas/RefOut"
+            },
+            "title": "Refs",
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "refs"
+        ],
+        "title": "MethodOut",
+        "type": "object"
+      },
+      "NoveltyOut": {
+        "description": "The measured count behind the novelty score.",
+        "properties": {
+          "band": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Band"
+          },
+          "count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Count"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Query"
+          },
+          "since_year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Since Year"
+          }
+        },
+        "required": [
+          "count",
+          "since_year",
+          "query",
+          "band"
+        ],
+        "title": "NoveltyOut",
+        "type": "object"
+      },
+      "ObjectionOut": {
+        "description": "A reviewer objection: ``quote`` is verbatim from the document.",
+        "properties": {
+          "quote": {
+            "title": "Quote",
+            "type": "string"
+          },
+          "refs": {
+            "items": {
+              "$ref": "#/components/schemas/RefOut"
+            },
+            "title": "Refs",
+            "type": "array"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          }
+        },
+        "required": [
+          "quote",
+          "summary",
+          "refs"
+        ],
+        "title": "ObjectionOut",
+        "type": "object"
+      },
+      "OpenAlexIdOut": {
+        "description": "A claimed OpenAlex record.",
+        "properties": {
+          "author_id": {
+            "description": "OpenAlex author id.",
+            "title": "Author Id",
+            "type": "string"
+          },
+          "basis": {
+            "description": "primary, orcid, institution_name or manual.",
+            "title": "Basis",
+            "type": "string"
+          },
+          "merged": {
+            "description": "True for non-primary records.",
+            "title": "Merged",
+            "type": "boolean"
+          },
+          "works_count": {
+            "description": "Works attributed to this record.",
+            "title": "Works Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "author_id",
+          "merged",
+          "basis",
+          "works_count"
+        ],
+        "title": "OpenAlexIdOut",
+        "type": "object"
+      },
+      "OpportunityCardOut": {
+        "description": "List item.",
+        "properties": {
+          "clusters": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Clusters",
+            "type": "array"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "white_spot",
+              "synergy",
+              "resubmission"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "novelty": {
+            "$ref": "#/components/schemas/NoveltyOut"
+          },
+          "run_id": {
+            "format": "uuid",
+            "title": "Run Id",
+            "type": "string"
+          },
+          "scores": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScoresOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "enum": [
+              "shown",
+              "saved",
+              "dismissed"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "verified_sources": {
+            "title": "Verified Sources",
+            "type": "integer"
+          },
+          "why": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ClaimOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "run_id",
+          "kind",
+          "title",
+          "why",
+          "scores",
+          "novelty",
+          "status",
+          "verified_sources",
+          "clusters",
+          "created_at"
+        ],
+        "title": "OpportunityCardOut",
+        "type": "object"
+      },
+      "OpportunityDetailOut": {
+        "description": "Detail page.",
+        "properties": {
+          "clusters": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Clusters",
+            "type": "array"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "effort_estimate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effort Estimate"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "white_spot",
+              "synergy",
+              "resubmission"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "next_steps": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Next Steps",
+            "type": "array"
+          },
+          "novelty": {
+            "$ref": "#/components/schemas/NoveltyOut"
+          },
+          "objection": {
+            "items": {
+              "$ref": "#/components/schemas/ClaimOut"
+            },
+            "title": "Objection",
+            "type": "array"
+          },
+          "rationale": {
+            "items": {
+              "$ref": "#/components/schemas/ClaimOut"
+            },
+            "title": "Rationale",
+            "type": "array"
+          },
+          "readiness": {
+            "items": {
+              "$ref": "#/components/schemas/ChecklistItemOut"
+            },
+            "title": "Readiness",
+            "type": "array"
+          },
+          "run_id": {
+            "format": "uuid",
+            "title": "Run Id",
+            "type": "string"
+          },
+          "score_claims": {
+            "items": {
+              "$ref": "#/components/schemas/ClaimOut"
+            },
+            "title": "Score Claims",
+            "type": "array"
+          },
+          "scores": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScoresOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "enum": [
+              "shown",
+              "saved",
+              "dismissed"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "verified_sources": {
+            "title": "Verified Sources",
+            "type": "integer"
+          },
+          "why": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ClaimOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "run_id",
+          "kind",
+          "title",
+          "why",
+          "scores",
+          "novelty",
+          "status",
+          "verified_sources",
+          "clusters",
+          "created_at",
+          "rationale",
+          "objection",
+          "score_claims",
+          "next_steps",
+          "readiness",
+          "effort_estimate"
+        ],
+        "title": "OpportunityDetailOut",
+        "type": "object"
+      },
+      "OpportunityListOut": {
+        "description": "A page of opportunity cards.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/OpportunityCardOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "OpportunityListOut",
+        "type": "object"
+      },
+      "OpportunityPatchIn": {
+        "description": "The owner's choice.",
+        "properties": {
+          "status": {
+            "enum": [
+              "shown",
+              "saved",
+              "dismissed"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "OpportunityPatchIn",
+        "type": "object"
+      },
+      "ProfileOut": {
+        "description": "The caller's researcher profile.",
+        "properties": {
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Country code (after import).",
+            "title": "Country"
+          },
+          "display_name": {
+            "description": "Name of the primary record.",
+            "title": "Display Name",
+            "type": "string"
+          },
+          "import": {
+            "$ref": "#/components/schemas/ImportOut",
+            "description": "Import state; poll while queued or importing."
+          },
+          "institution": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Institution (after import).",
+            "title": "Institution"
+          },
+          "openalex_ids": {
+            "description": "Claimed OpenAlex records.",
+            "items": {
+              "$ref": "#/components/schemas/OpenAlexIdOut"
+            },
+            "title": "Openalex Ids",
+            "type": "array"
+          },
+          "orcid": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "ORCID of the primary record.",
+            "title": "Orcid"
+          },
+          "researcher_id": {
+            "description": "Researcher id.",
+            "format": "uuid",
+            "title": "Researcher Id",
+            "type": "string"
+          },
+          "topics": {
+            "description": "Topics computed from included works.",
+            "items": {
+              "$ref": "#/components/schemas/TopicOut"
+            },
+            "title": "Topics",
+            "type": "array"
+          },
+          "verified_level": {
+            "description": "self_claimed or orcid_matched (conflicts are never shown).",
+            "title": "Verified Level",
+            "type": "string"
+          },
+          "works": {
+            "description": "Claimed works, newest first.",
+            "items": {
+              "$ref": "#/components/schemas/WorkOut"
+            },
+            "title": "Works",
+            "type": "array"
+          },
+          "works_summary": {
+            "$ref": "#/components/schemas/WorksSummaryOut"
+          }
+        },
+        "required": [
+          "researcher_id",
+          "display_name",
+          "verified_level",
+          "import",
+          "openalex_ids",
+          "topics",
+          "works_summary",
+          "works"
+        ],
+        "title": "ProfileOut",
+        "type": "object"
+      },
+      "RecordOut": {
+        "description": "One OpenAlex author record inside a candidate group.",
+        "properties": {
+          "author_id": {
+            "description": "OpenAlex author id, e.g. A5059588273.",
+            "title": "Author Id",
+            "type": "string"
+          },
+          "basis": {
+            "description": "Why the record is in the group: primary, orcid or institution_name.",
+            "title": "Basis",
+            "type": "string"
+          },
+          "display_name": {
+            "description": "Name as recorded in OpenAlex.",
+            "title": "Display Name",
+            "type": "string"
+          },
+          "institutions": {
+            "description": "Last known institutions.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Institutions",
+            "type": "array"
+          },
+          "orcid": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Bare ORCID.",
+            "title": "Orcid"
+          },
+          "works_count": {
+            "description": "Works attributed to this record.",
+            "title": "Works Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "author_id",
+          "display_name",
+          "works_count",
+          "institutions",
+          "basis"
+        ],
+        "title": "RecordOut",
+        "type": "object"
+      },
+      "RefOut": {
+        "description": "Where in the document an item is stated.",
+        "properties": {
+          "chunk_id": {
+            "description": "Stable chunk id (also used as evidence reference).",
+            "format": "uuid",
+            "title": "Chunk Id",
+            "type": "string"
+          },
+          "page_from": {
+            "description": "First page (or section, when the file has no page numbers).",
+            "title": "Page From",
+            "type": "integer"
+          },
+          "page_to": {
+            "description": "Last page.",
+            "title": "Page To",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "chunk_id",
+          "page_from",
+          "page_to"
+        ],
+        "title": "RefOut",
+        "type": "object"
+      },
+      "Rejection": {
+        "description": "Why an event was not accepted.",
+        "properties": {
+          "index": {
+            "description": "Position of the rejected event in the submitted batch.",
+            "title": "Index",
+            "type": "integer"
+          },
+          "reason": {
+            "description": "Why the event was refused (unknown name or property, too long, not scalar).",
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "index",
+          "reason"
+        ],
+        "title": "Rejection",
+        "type": "object"
+      },
+      "ResearcherSummaryOut": {
+        "description": "Short researcher summary for ``GET /me``.",
+        "properties": {
+          "display_name": {
+            "description": "Name of the primary record.",
+            "title": "Display Name",
+            "type": "string"
+          },
+          "import_status": {
+            "description": "queued, importing, done or failed.",
+            "title": "Import Status",
+            "type": "string"
+          },
+          "researcher_id": {
+            "description": "Researcher id.",
+            "format": "uuid",
+            "title": "Researcher Id",
+            "type": "string"
+          },
+          "verified_level": {
+            "description": "self_claimed or orcid_matched (conflicts are never shown).",
+            "title": "Verified Level",
+            "type": "string"
+          }
+        },
+        "required": [
+          "researcher_id",
+          "display_name",
+          "verified_level",
+          "import_status"
+        ],
+        "title": "ResearcherSummaryOut",
+        "type": "object"
+      },
+      "Retention": {
+        "description": "What happens to one document's original bytes and chunk text.",
+        "enum": [
+          "keep",
+          "discard"
+        ],
+        "title": "Retention",
+        "type": "string"
+      },
+      "RunCountsOut": {
+        "description": "What the run found so far.",
+        "properties": {
+          "candidates": {
+            "title": "Candidates",
+            "type": "integer"
+          },
+          "clusters": {
+            "title": "Clusters",
+            "type": "integer"
+          },
+          "corpus": {
+            "title": "Corpus",
+            "type": "integer"
+          },
+          "drafts": {
+            "title": "Drafts",
+            "type": "integer"
+          },
+          "shown": {
+            "title": "Shown",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "corpus",
+          "clusters",
+          "candidates",
+          "drafts",
+          "shown"
+        ],
+        "title": "RunCountsOut",
+        "type": "object"
+      },
+      "RunIn": {
+        "description": "Start a run.",
+        "properties": {
+          "document_ids": {
+            "description": "Vault documents to include.",
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Document Ids",
+            "type": "array"
+          }
+        },
+        "title": "RunIn",
+        "type": "object"
+      },
+      "RunListOut": {
+        "description": "Latest runs.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RunOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "RunListOut",
+        "type": "object"
+      },
+      "RunOut": {
+        "description": "A run. Poll it every 3 seconds while ``status`` is ``queued`` or ``running``.",
+        "properties": {
+          "budget_usd": {
+            "title": "Budget Usd",
+            "type": "string"
+          },
+          "cost_usd": {
+            "title": "Cost Usd",
+            "type": "string"
+          },
+          "counts": {
+            "$ref": "#/components/schemas/RunCountsOut"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "degraded": {
+            "items": {
+              "$ref": "#/components/schemas/DegradedOut"
+            },
+            "title": "Degraded",
+            "type": "array"
+          },
+          "document_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Document Ids",
+            "type": "array"
+          },
+          "error_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Code"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "openalex_calls": {
+            "title": "Openalex Calls",
+            "type": "integer"
+          },
+          "openalex_cap": {
+            "title": "Openalex Cap",
+            "type": "integer"
+          },
+          "partial": {
+            "title": "Partial",
+            "type": "boolean"
+          },
+          "percent": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Percent",
+            "type": "integer"
+          },
+          "phase": {
+            "title": "Phase",
+            "type": "string"
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At"
+          },
+          "status": {
+            "enum": [
+              "queued",
+              "running",
+              "done",
+              "failed",
+              "cancelled"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "step": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Step"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/StepOut"
+            },
+            "title": "Steps",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "phase",
+          "step",
+          "steps",
+          "percent",
+          "partial",
+          "degraded",
+          "error_code",
+          "document_ids",
+          "cost_usd",
+          "budget_usd",
+          "openalex_calls",
+          "openalex_cap",
+          "counts",
+          "created_at",
+          "started_at",
+          "finished_at"
+        ],
+        "title": "RunOut",
+        "type": "object"
+      },
+      "ScoresOut": {
+        "description": "Opportunity scores in [0, 1].",
+        "properties": {
+          "effort": {
+            "title": "Effort",
+            "type": "number"
+          },
+          "fit": {
+            "title": "Fit",
+            "type": "number"
+          },
+          "novelty": {
+            "title": "Novelty",
+            "type": "number"
+          },
+          "readiness": {
+            "title": "Readiness",
+            "type": "number"
+          }
+        },
+        "required": [
+          "fit",
+          "novelty",
+          "readiness",
+          "effort"
+        ],
+        "title": "ScoresOut",
+        "type": "object"
+      },
+      "Status": {
+        "description": "Simple status body.",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "Status",
+        "type": "object"
+      },
+      "StepOut": {
+        "description": "One step of the progress list.",
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "progress": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Progress",
+            "type": "number"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "running",
+              "done",
+              "degraded"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "status",
+          "progress"
+        ],
+        "title": "StepOut",
+        "type": "object"
+      },
+      "TopicOut": {
+        "description": "A topic with a weight between 0 and 1.",
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Topic name.",
+            "title": "Name"
+          },
+          "subfield": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Subfield name.",
+            "title": "Subfield"
+          },
+          "topic_id": {
+            "description": "OpenAlex topic id, e.g. T10610.",
+            "title": "Topic Id",
+            "type": "string"
+          },
+          "weight": {
+            "description": "Relative weight; the largest topic is 1.",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Weight",
+            "type": "number"
+          }
+        },
+        "required": [
+          "topic_id",
+          "weight"
+        ],
+        "title": "TopicOut",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      },
+      "WorkOut": {
+        "description": "A work attributed to the researcher.",
+        "properties": {
+          "cited_by": {
+            "description": "Citation count.",
+            "title": "Cited By",
+            "type": "integer"
+          },
+          "doi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Bare DOI.",
+            "title": "Doi"
+          },
+          "id": {
+            "description": "Id of the claimed work.",
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "included": {
+            "description": "Whether the work counts for gap analysis and matching.",
+            "title": "Included",
+            "type": "boolean"
+          },
+          "included_by_user": {
+            "description": "True if the user ticked or unticked it.",
+            "title": "Included By User",
+            "type": "boolean"
+          },
+          "openalex_work_id": {
+            "description": "OpenAlex work id.",
+            "title": "Openalex Work Id",
+            "type": "string"
+          },
+          "title": {
+            "description": "Title.",
+            "title": "Title",
+            "type": "string"
+          },
+          "type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "OpenAlex work type.",
+            "title": "Type"
+          },
+          "uncertain_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Why the work started unticked.",
+            "title": "Uncertain Reason"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Publication year.",
+            "title": "Year"
+          }
+        },
+        "required": [
+          "id",
+          "openalex_work_id",
+          "title",
+          "cited_by",
+          "included",
+          "included_by_user"
+        ],
+        "title": "WorkOut",
+        "type": "object"
+      },
+      "WorkPatchIn": {
+        "additionalProperties": false,
+        "description": "Include or exclude a work.",
+        "properties": {
+          "included": {
+            "description": "True to include the work.",
+            "title": "Included",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "included"
+        ],
+        "title": "WorkPatchIn",
+        "type": "object"
+      },
+      "WorksSummaryOut": {
+        "description": "Counts of works.",
+        "properties": {
+          "included": {
+            "description": "Included works.",
+            "title": "Included",
+            "type": "integer"
+          },
+          "total": {
+            "description": "All claimed works.",
+            "title": "Total",
+            "type": "integer"
+          },
+          "uncertain": {
+            "description": "Works that started unticked.",
+            "title": "Uncertain",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total",
+          "included",
+          "uncertain"
+        ],
+        "title": "WorksSummaryOut",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "title": "Lattice Scout API",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/v1/admin/claims": {
+      "get": {
+        "description": "Vault quotes are hidden unless `ADMIN_CLAIMS_SHOW_VAULT_QUOTES=true`. Each call is audited.",
+        "operationId": "list_claims_api_v1_admin_claims_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/ClaimStatus"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "reason",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Reason"
+            }
+          },
+          {
+            "in": "query",
+            "name": "agent",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Agent"
+            }
+          },
+          {
+            "in": "query",
+            "name": "prompt_version",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Prompt Version"
+            }
+          },
+          {
+            "in": "query",
+            "name": "model",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Model"
+            }
+          },
+          {
+            "in": "query",
+            "name": "run_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Run Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 50,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminClaimListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "description": "Admin role required."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Review claims of every status",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/v1/dev/login": {
+      "post": {
+        "description": "Return a token without any credential check. Refused at startup when APP_ENV=prod.",
+        "operationId": "dev_login_api_v1_dev_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DevLoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DevLoginResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Dev login: issue an access token for an e-mail (AUTH_MODE=dev only)",
+        "tags": [
+          "dev"
+        ]
+      }
+    },
+    "/api/v1/documents": {
+      "get": {
+        "description": "Poll this every couple of seconds while a document is between ``uploaded`` and ``analysing``.",
+        "operationId": "list_documents_api_v1_documents_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List your documents",
+        "tags": [
+          "vault"
+        ]
+      },
+      "post": {
+        "description": "The type is detected from the content. Re-uploading the same bytes returns the existing document (200).",
+        "operationId": "upload_document_api_v1_documents_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_document_api_v1_documents_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The same file is already in your vault; nothing was created."
+          },
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Missing or invalid token (checked before the body is read)."
+          },
+          "409": {
+            "description": "`vault_limit_reached`: delete a document first."
+          },
+          "413": {
+            "description": "`file_too_large` (the limit is 25 MB)."
+          },
+          "415": {
+            "description": "`unsupported_file_type`: only PDF and DOCX."
+          },
+          "422": {
+            "description": "`file_rejected` (empty, damaged or an unsafe archive) or `validation_failed`."
+          }
+        },
+        "summary": "Upload a PDF or DOCX to your private vault",
+        "tags": [
+          "vault"
+        ]
+      }
+    },
+    "/api/v1/documents/{document_id}": {
+      "delete": {
+        "description": "Extracted text and insights are removed immediately; the stored file is removed right after.",
+        "operationId": "delete_document_api_v1_documents__document_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete a document and everything extracted from it",
+        "tags": [
+          "vault"
+        ]
+      },
+      "get": {
+        "description": "Only verified insight items are returned. Another user's document answers 404.",
+        "operationId": "get_document_api_v1_documents__document_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentDetailOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "One document with its extracted insights",
+        "tags": [
+          "vault"
+        ]
+      },
+      "patch": {
+        "description": "Your choice overrides Scout's suggestion.",
+        "operationId": "patch_document_api_v1_documents__document_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentPatchIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set what kind of document this is",
+        "tags": [
+          "vault"
+        ]
+      }
+    },
+    "/api/v1/events": {
+      "post": {
+        "description": "Accepts up to 100 events. Accepts `application/json` or `text/plain` containing JSON (navigator.sendBeacon cannot set headers). Unknown event names or property keys are rejected per event. Returns 202 without waiting for the database.",
+        "operationId": "post_events_api_v1_events_post",
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventsAccepted"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Ingest a batch of product-analytics events",
+        "tags": [
+          "analytics"
+        ]
+      }
+    },
+    "/api/v1/evidence/{evidence_id}/open": {
+      "get": {
+        "description": "Vault passages are read live: a deleted document answers 404; under `discard` only the quote is returned.",
+        "operationId": "open_evidence_api_v1_evidence__evidence_id__open_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "evidence_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Evidence Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvidenceOpenOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not yours, not visible, or the source is gone."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Open the source behind a citation",
+        "tags": [
+          "discovery"
+        ]
+      }
+    },
+    "/api/v1/feedback": {
+      "get": {
+        "description": "What you rated earlier, so the thumbs show their state.",
+        "operationId": "my_feedback_api_v1_feedback_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "target_type",
+            "required": true,
+            "schema": {
+              "enum": [
+                "opportunity",
+                "match"
+              ],
+              "title": "Target Type",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "target_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Target Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "No rating yet."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Your rating of a target",
+        "tags": [
+          "feedback"
+        ]
+      },
+      "post": {
+        "description": "Thumbs up or down with optional reason chips and a short comment; the latest rating replaces the earlier one.",
+        "operationId": "give_feedback_api_v1_feedback_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeedbackIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not yours, not visible, or not rateable yet."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Rate an opportunity",
+        "tags": [
+          "feedback"
+        ]
+      }
+    },
+    "/api/v1/me": {
+      "get": {
+        "description": "Return the signed-in account; creates it on the first call.",
+        "operationId": "get_me_api_v1_me_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Current account, consents and profile summary",
+        "tags": [
+          "identity"
+        ]
+      }
+    },
+    "/api/v1/me/consent": {
+      "patch": {
+        "description": "Turning matching off also turns vault signals off; vault signals need matching.",
+        "operationId": "patch_consent_api_v1_me_consent_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConsentIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update matching and vault-signal consents",
+        "tags": [
+          "identity"
+        ]
+      }
+    },
+    "/api/v1/opportunities": {
+      "get": {
+        "description": "Shown and saved by default, best rank first. Dismissed ones only with `status=dismissed`.",
+        "operationId": "list_opportunities_api_v1_opportunities_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "run_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Run Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "shown",
+                    "saved",
+                    "dismissed"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "kind",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "white_spot",
+                    "synergy",
+                    "resubmission"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kind"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 50,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpportunityListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not your run."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Your opportunities",
+        "tags": [
+          "discovery"
+        ]
+      }
+    },
+    "/api/v1/opportunities/{opportunity_id}": {
+      "get": {
+        "description": "Verified claims only, each with its verified citations.",
+        "operationId": "get_opportunity_api_v1_opportunities__opportunity_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "opportunity_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Opportunity Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpportunityDetailOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not yours, or not visible."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "One opportunity with its evidence",
+        "tags": [
+          "discovery"
+        ]
+      },
+      "patch": {
+        "description": "Any order among `shown`, `saved` and `dismissed`.",
+        "operationId": "patch_opportunity_api_v1_opportunities__opportunity_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "opportunity_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Opportunity Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpportunityPatchIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpportunityCardOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not yours, or not visible."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Save, dismiss or restore an opportunity",
+        "tags": [
+          "discovery"
+        ]
+      }
+    },
+    "/api/v1/profile": {
+      "get": {
+        "description": "Poll this while ``import.status`` is queued or importing.",
+        "operationId": "get_profile_api_v1_profile_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Your researcher profile, claimed works and import state",
+        "tags": [
+          "profile"
+        ]
+      }
+    },
+    "/api/v1/profile/candidates": {
+      "get": {
+        "description": "Search OpenAlex; records sharing an ORCID are returned as one card (\"includes N records\").",
+        "operationId": "candidates_api_v1_profile_candidates_get",
+        "parameters": [
+          {
+            "description": "Researcher name.",
+            "in": "query",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "description": "Researcher name.",
+              "maxLength": 200,
+              "minLength": 2,
+              "title": "Name",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Institution hint.",
+            "in": "query",
+            "name": "affiliation",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 200,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Institution hint.",
+              "title": "Affiliation"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CandidatesOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Find OpenAlex author records for a name (split profiles grouped)",
+        "tags": [
+          "profile"
+        ]
+      }
+    },
+    "/api/v1/profile/claim": {
+      "post": {
+        "description": "Idempotent: claiming the same records again returns the same import generation.",
+        "operationId": "claim_api_v1_profile_claim_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClaimIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Claim OpenAlex records as your profile and start the import",
+        "tags": [
+          "profile"
+        ]
+      }
+    },
+    "/api/v1/profile/works/{work_id}": {
+      "patch": {
+        "description": "Another user's work id answers 404.",
+        "operationId": "patch_work_api_v1_profile_works__work_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "work_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Work Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkPatchIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Include or exclude one of your works",
+        "tags": [
+          "profile"
+        ]
+      }
+    },
+    "/api/v1/runs": {
+      "get": {
+        "description": "Newest first, at most 20.",
+        "operationId": "list_runs_api_v1_runs_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Your latest runs",
+        "tags": [
+          "discovery"
+        ]
+      },
+      "post": {
+        "description": "The run is queued at once; poll `GET /runs/{id}` every few seconds.",
+        "operationId": "start_run_api_v1_runs_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "A document is not yours."
+          },
+          "409": {
+            "description": "`run_in_progress` or `profile_required`."
+          },
+          "422": {
+            "description": "`document_not_ready` or `validation_failed` (at most 10 different documents)."
+          },
+          "429": {
+            "description": "`run_limit_reached` or `daily_budget_reached`."
+          }
+        },
+        "summary": "Start a gap-analysis run",
+        "tags": [
+          "discovery"
+        ]
+      }
+    },
+    "/api/v1/runs/{run_id}": {
+      "get": {
+        "description": "Status, phase, per-step progress, degradations and counts.",
+        "operationId": "get_run_api_v1_runs__run_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not your run."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "One run with its progress",
+        "tags": [
+          "discovery"
+        ]
+      }
+    },
+    "/api/v1/runs/{run_id}/cancel": {
+      "post": {
+        "description": "A queued run is cancelled at once; a running one stops at its next step or model call.",
+        "operationId": "cancel_run_api_v1_runs__run_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not your run."
+          },
+          "409": {
+            "description": "The run already ended."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Stop a run",
+        "tags": [
+          "discovery"
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "description": "Return 200 while the process is up.",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Liveness probe",
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/ready": {
+      "get": {
+        "description": "Return 200 when the database answers, 503 otherwise.",
+        "operationId": "ready_ready_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Readiness probe (pings the database)",
+        "tags": [
+          "health"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "kind": "lab_notes",
+  "kind_reason": "The title says lab notes and the entries are organised by week.",
+  "title": "Lab notes: regenerating fungal-derived adsorption membranes after PFAS capture",
+  "aims": [
+    {
+      "summary": "Regenerate fungal-derived adsorption membranes after PFAS capture without the solvent waste of methanol washing.",
+      "chunk_ids": [
+        "c0"
+      ]
+    },
+    {
+      "summary": "Degrade captured PFAS directly on the membrane with a visible-light photocatalyst that does not damage the fungal matrix.",
+      "chunk_ids": [
+        "c0"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "summary": "Fungal-derived membranes captured more than 90 % of PFOA from spiked tap water in batch tests.",
+      "chunk_ids": [
+        "c0"
+      ]
+    },
+    {
+      "summary": "Methanol regeneration recovered only 60 % of the capacity after three cycles.",
+      "chunk_ids": [
+        "c0"
+      ]
+    }
+  ],
+  "methods": [
+    {
+      "name": "Batch adsorption tests",
+      "detail": "PFOA-spiked tap water at 1 µg L-1.",
+      "chunk_ids": [
+        "c0"
+      ]
+    },
+    {
+      "name": "Methanol regeneration",
+      "detail": "Solvent wash over three cycles.",
+      "chunk_ids": [
+        "c0"
+      ]
+    }
+  ],
+  "datasets": [],
+  "reviewer_objections": [],
+  "open_questions": [
+    {
+      "summary": "Which visible-light photocatalyst degrades captured PFAS without damaging the fungal matrix?",
+      "chunk_ids": [
+        "c0"
+      ]
+    },
+    {
+      "summary": "Is the membrane thermally stable up to 80 °C?",
+      "chunk_ids": [
+        "c0"
+      ]
+    },
+    {
+      "summary": "Which partners with visible-LED photocatalysis experience for persistent organic pollutants could join?",
+      "chunk_ids": [
+        "c0"
+      ]
+    }
+  ],
+  "keywords": [
+    "PFAS",
+    "PFOA",
+    "fungal-derived membrane",
+    "adsorption membrane",
+    "membrane regeneration",
+    "visible-light photocatalysis",
+    "on-membrane degradation",
+    "water treatment",
+    "persistent organic pollutants"
+  ]
+}

@@ -1,0 +1,15 @@
+# Eval case: Raphaell Moreira, profile-only run (public OpenAlex record, no vault documents).
+# Same format as foster.yaml. A profile-only run is allowed (design Q3); no document, not even a fictional sample, is
+# attached to this researcher.
+#
+# FakeLLM fixtures for this exact case come from scripts/make_discovery_fixtures.py; changing anything here changes the
+# agents' inputs, so re-run that script.
+id: moreira
+author_ids: [A5033675494]
+documents: []
+expected_themes:
+  - [pfas, photocatalyt]
+  - [pfas, membrane]
+  - [iron oxide]
+min_shown: 3
+max_shown: 10

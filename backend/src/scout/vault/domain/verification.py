@@ -1,0 +1,84 @@
+"""Deterministic checks on LLM insights: chunk references, verbatim quotes, personal data."""
+
+from __future__ import annotations
+
+import re
+from collections.abc import Mapping
+from typing import Any
+
+from scout.shared.text import norm
+from scout.vault.domain.chunking import Chunk
+from scout.vault.domain.insights import (
+    DocumentInsights,
+    InsightItem,
+    ItemStatus,
+    Section,
+    Stage,
+    UnverifiedReason,
+)
+
+MIN_QUOTE_CHARS = 15
+MAX_QUOTE_CHARS = 300
+__all__ = ["EMAIL", "MAX_QUOTE_CHARS", "MIN_QUOTE_CHARS", "norm", "verify"]
+EMAIL = re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]+")
+
+
+def _haystacks(cited: list[Chunk]) -> list[str]:
+    """Texts a quote may come from: each run of consecutive chunks joined, so a passage cannot be stitched from
+    the end of one chunk and the start of a distant one."""
+    runs: list[list[Chunk]] = []
+    for c in sorted(cited, key=lambda c: c.ord):
+        if runs and runs[-1][-1].ord + 1 == c.ord:
+            runs[-1].append(c)
+        else:
+            runs.append([c])
+    return [norm(" ".join(c.text for c in run)) for run in runs]
+
+
+def _strings(data: Mapping[str, Any]) -> list[str]:
+    return [v for v in data.values() if isinstance(v, str)]
+
+
+def _item(
+    section: Section, data: dict[str, Any], labels: list[str], by_label: Mapping[str, Chunk], stage: Stage
+) -> InsightItem:
+    reason: UnverifiedReason | None = None
+    cited = [by_label[x] for x in labels if x in by_label]
+    if not labels:
+        reason = UnverifiedReason.NO_CHUNK_REF
+    elif len(cited) != len(labels):
+        reason = UnverifiedReason.UNKNOWN_CHUNK
+    elif any(EMAIL.search(s) for s in _strings(data)):
+        reason = UnverifiedReason.PERSONAL_DATA
+    elif section is Section.REVIEWER_OBJECTIONS:
+        quote = norm(str(data.get("quote", "")))
+        if len(quote) < MIN_QUOTE_CHARS:
+            reason = UnverifiedReason.QUOTE_TOO_SHORT
+        elif len(quote) > MAX_QUOTE_CHARS:
+            reason = UnverifiedReason.QUOTE_TOO_LONG
+        elif not any(quote in h for h in _haystacks(cited)):
+            reason = UnverifiedReason.QUOTE_NOT_FOUND
+    return InsightItem(
+        section=section, data=data, chunk_labels=tuple(labels), chunk_ids=tuple(c.id for c in cited),
+        status=ItemStatus.VERIFIED if reason is None else ItemStatus.UNVERIFIED, reason=reason, stage=stage,
+    )  # fmt: skip
+
+
+def verify(raw: DocumentInsights, chunks_by_label: Mapping[str, Chunk], stage: Stage) -> list[InsightItem]:
+    """Turn raw LLM output into stored items, marking every item verified or unverified with a reason."""
+    items: list[InsightItem] = []
+    for section in (Section.AIMS, Section.FINDINGS, Section.OPEN_QUESTIONS):
+        for it in getattr(raw, section.value):
+            items.append(_item(section, {"summary": it.summary}, it.chunk_ids, chunks_by_label, stage))
+    for m in raw.methods:
+        items.append(
+            _item(Section.METHODS, {"name": m.name, "detail": m.detail}, m.chunk_ids, chunks_by_label, stage)
+        )
+    for d in raw.datasets:
+        items.append(
+            _item(Section.DATASETS, {"name": d.name, "status": d.status}, d.chunk_ids, chunks_by_label, stage)
+        )
+    for o in raw.reviewer_objections:
+        data = {"quote": o.quote, "summary": o.summary}
+        items.append(_item(Section.REVIEWER_OBJECTIONS, data, o.chunk_ids, chunks_by_label, stage))
+    return items

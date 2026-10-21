@@ -1,0 +1,40 @@
+{
+  "cluster_id": "k1",
+  "openalex_topics": [
+    {
+      "id": "T11869",
+      "name": "Per- and polyfluoroalkyl substances research"
+    },
+    {
+      "id": "T10210",
+      "name": "Advanced oxidation water treatment"
+    },
+    {
+      "id": "T10197",
+      "name": "Membrane Separation Technologies"
+    },
+    {
+      "id": "T10016",
+      "name": "Adsorption and biosorption for pollutant removal"
+    },
+    {
+      "id": "T10078",
+      "name": "Advanced Photocatalysis Techniques"
+    },
+    {
+      "id": "T12078",
+      "name": "Environmental remediation with nanomaterials"
+    }
+  ],
+  "sample_titles": [
+    "Perfluoroalkyl substances (PFAS) adsorption in drinking water by granular activated carbon: Influence of activated carbon and PFAS characteristics",
+    "High-pressure membrane filtration processes for separation of Per- and polyfluoroalkyl substances (PFAS)",
+    "Adsorption of per- and polyfluoroalkyl substances (PFAS) to containers",
+    "Progress and perspectives on carbon-based materials for adsorptive removal and photocatalytic degradation of perfluoroalkyl and polyfluoroalkyl substances (PFAS)",
+    "Demonstration of Photocatalytic Degradation of Per- and Polyfluoroalkyl Substances (PFAS) in Landfill Leachate Using 3D Printed TiO2 Composite Tiles",
+    "Photocatalytic degradation of PFAS under field water matrix conditions using an adsorptive photocatalyst",
+    "Integrated adsorption-membrane separation for PFAS removal from complex wastewater",
+    "Insights into development trends for photocatalytic degradation of PFAS: A bibliometric time-series perspective",
+    "Oxidative and reductive mechanisms for the photocatalytic degradation of per- and polyfluoroalkyl substances (PFAS): A critical review"
+  ]
+}

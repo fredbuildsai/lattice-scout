@@ -1,0 +1,171 @@
+{
+  "clusters": [
+    {
+      "cluster_id": "k1",
+      "description": "Removal of PFAS from water by adsorbents and membranes, and its photocatalytic destruction.",
+      "label": "PFAS adsorption and photocatalytic degradation"
+    },
+    {
+      "cluster_id": "k2",
+      "description": "Conductive and magnetic wood-based composites that block or absorb electromagnetic interference.",
+      "label": "Wood composites for EMI shielding"
+    },
+    {
+      "cluster_id": "k3",
+      "description": "Flexible polyurethane foams made with lignin polyols, including recyclable and antimicrobial foams.",
+      "label": "Lignin polyurethane foams"
+    },
+    {
+      "cluster_id": "k4",
+      "description": "Cellulose nanofibre production and its use as membrane reinforcement and separator material.",
+      "label": "Cellulose nanofibre membranes"
+    },
+    {
+      "cluster_id": "k5",
+      "description": "Lignin and natural fibres in cement and gypsum composites, and their fibre-matrix interfaces.",
+      "label": "Lignin in fibre-cement composites"
+    }
+  ],
+  "insights": [
+    {
+      "insight_ref": "d1.aims[0]",
+      "text": "Formulate flexible polyurethane foams with 30 % bio-content using fractionated kraft and organosolv lignin."
+    },
+    {
+      "insight_ref": "d1.aims[1]",
+      "text": "Relate lignin type and hydroxyl content to foaming dynamics and cell structure."
+    },
+    {
+      "insight_ref": "d1.aims[2]",
+      "text": "Demonstrate durability of lignin-rich foams under cyclic compression for upholstery use."
+    },
+    {
+      "insight_ref": "d1.findings[0]",
+      "text": "Preliminary foams with 15 % lignin reached a compression set below 10 %."
+    },
+    {
+      "insight_ref": "d1.open_questions[0]",
+      "text": "Can foams with 30 % lignin bio-content pass the EN 13501 fire-safety standard?"
+    },
+    {
+      "insight_ref": "d1.open_questions[1]",
+      "text": "How do lignin-rich foams compare with commercial petroleum-based foams over at least 50,000 compression cycles?"
+    },
+    {
+      "insight_ref": "d1.methods[0]",
+      "text": "31P NMR and GPC - Characterisation of the lignin fractions."
+    },
+    {
+      "insight_ref": "d1.methods[1]",
+      "text": "Free-rise foaming - Foam production route."
+    },
+    {
+      "insight_ref": "d1.methods[2]",
+      "text": "SEM, compression testing and dynamic mechanical analysis - Analysis of foam structure and mechanical behaviour."
+    },
+    {
+      "insight_ref": "d1.datasets[0]",
+      "text": "Dataset linking lignin structure to foam properties"
+    },
+    {
+      "insight_ref": "d1.reviewer_objections[0]",
+      "text": "Fire-safety compliance (EN 13501) at the proposed bio-content is not shown."
+    },
+    {
+      "insight_ref": "d1.reviewer_objections[1]",
+      "text": "Durability is not benchmarked against commercial petroleum-based foams over 50,000 cycles."
+    },
+    {
+      "insight_ref": "d1.reviewer_objections[2]",
+      "text": "The panel wants fire behaviour and long-term durability addressed before funding."
+    },
+    {
+      "insight_ref": "d2.aims[0]",
+      "text": "Evaluate the long-term cycling stability of the sulfonated CNF membrane in zinc–iodine flow cells."
+    },
+    {
+      "insight_ref": "d2.findings[0]",
+      "text": "The sulfonated CNF membrane completed 500 hours of cycling at 20 mA cm-2 with coulombic efficiency above 98 %."
+    },
+    {
+      "insight_ref": "d2.findings[1]",
+      "text": "Iodide crossover stayed below the UV-vis detection limit after 300 hours."
+    },
+    {
+      "insight_ref": "d2.findings[2]",
+      "text": "Membrane swelling in the electrolyte stabilised at 18 % after the first 24 hours."
+    },
+    {
+      "insight_ref": "d2.open_questions[0]",
+      "text": "Does the membrane remain stable beyond 1,000 hours?"
+    },
+    {
+      "insight_ref": "d2.open_questions[1]",
+      "text": "Can the sulfonation degree be reduced without increasing crossover?"
+    },
+    {
+      "insight_ref": "d2.methods[0]",
+      "text": "Flow-cell cycling at 20 mA cm-2 - Long-term stability test over 500 hours."
+    },
+    {
+      "insight_ref": "d2.methods[1]",
+      "text": "UV-vis spectroscopy - Detection of iodide crossover."
+    },
+    {
+      "insight_ref": "d2.methods[2]",
+      "text": "Impedance spectroscopy - Spectra at 0, 100, 300 and 500 hours."
+    },
+    {
+      "insight_ref": "d2.methods[3]",
+      "text": "SEM - Imaging of the membrane surface after cycling."
+    },
+    {
+      "insight_ref": "d2.datasets[0]",
+      "text": "Cycling curves"
+    },
+    {
+      "insight_ref": "d2.datasets[1]",
+      "text": "Impedance spectra at 0, 100, 300 and 500 hours"
+    },
+    {
+      "insight_ref": "d2.datasets[2]",
+      "text": "SEM images of the membrane surface after cycling"
+    },
+    {
+      "insight_ref": "d3.aims[0]",
+      "text": "Regenerate fungal-derived adsorption membranes after PFAS capture without the solvent waste of methanol washing."
+    },
+    {
+      "insight_ref": "d3.aims[1]",
+      "text": "Degrade captured PFAS directly on the membrane with a visible-light photocatalyst that does not damage the fungal matrix."
+    },
+    {
+      "insight_ref": "d3.findings[0]",
+      "text": "Fungal-derived membranes captured more than 90 % of PFOA from spiked tap water in batch tests."
+    },
+    {
+      "insight_ref": "d3.findings[1]",
+      "text": "Methanol regeneration recovered only 60 % of the capacity after three cycles."
+    },
+    {
+      "insight_ref": "d3.open_questions[0]",
+      "text": "Which visible-light photocatalyst degrades captured PFAS without damaging the fungal matrix?"
+    },
+    {
+      "insight_ref": "d3.open_questions[1]",
+      "text": "Is the membrane thermally stable up to 80 °C?"
+    },
+    {
+      "insight_ref": "d3.open_questions[2]",
+      "text": "Which partners with visible-LED photocatalysis experience for persistent organic pollutants could join?"
+    },
+    {
+      "insight_ref": "d3.methods[0]",
+      "text": "Batch adsorption tests - PFOA-spiked tap water at 1 µg L-1."
+    },
+    {
+      "insight_ref": "d3.methods[1]",
+      "text": "Methanol regeneration - Solvent wash over three cycles."
+    }
+  ]
+}

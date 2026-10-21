@@ -1,0 +1,18 @@
+# Launch fields (D14). One entry per field Scout supports; the launch field is chosen by LAUNCH_FIELD.
+# M7: a domain expert reviews topic ids, keywords and the novelty bands.
+bio-based-materials:
+  label: Bio-based materials
+  # OpenAlex topic ids seen in the recorded fixtures (tests/fixtures/openalex/topics.json)
+  openalex_topic_ids: [T10610, T11208, T10513, T10488, T12628]
+  keywords: [lignin, cellulose, nanocellulose, biopolymer, bio-based foam, biocomposite, wood, PFAS, membrane]
+  query:
+    years_back: 6        # from_publication_date = Jan 1 of (current year - years_back)
+    type: article
+  novelty:
+    years_back: 5
+    saturation_count: 5000   # counts at or above this give novelty 0
+    bands: {very_thin: 50, thin: 300, moderate: 1500}   # labels only: very thin < 50 <= thin < 300 <= moderate < 1500 <= crowded
+  clusters:
+    min_size: 3
+    max_size: 150
+    max_labelled: 30
