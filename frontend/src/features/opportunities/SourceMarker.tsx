@@ -54,6 +54,8 @@ export function SourceMarker({ evidence, index, opportunityId, claimId }: { evid
   const isWork = e.source_type === 'literature' || e.source_type === 'profile'
   const heading = e.source_type === 'count' ? 'Measured in OpenAlex' : e.source_type === 'vault' ? 'Your private vault' : e.source_type === 'profile' ? 'Your published work' : 'Literature'
   const d = detail.data
+  const list = e.authors ?? []
+  const authors = list.slice(0, 4).join(', ') + (list.length > 4 ? ' et al.' : '')
 
   return (
     <span ref={root} className="relative inline-block align-baseline">
@@ -80,7 +82,7 @@ export function SourceMarker({ evidence, index, opportunityId, claimId }: { evid
               <p id={titleId} className="mt-1 font-semibold">
                 {e.title ?? 'Untitled work'}
               </p>
-              <p className="text-xs text-ink-3">{[e.authors.slice(0, 4).join(', ') + (e.authors.length > 4 ? ' et al.' : ''), e.year].filter(Boolean).join(' · ')}</p>
+              <p className="text-xs text-ink-3">{[authors, e.year].filter(Boolean).join(' · ')}</p>
               {e.quote && <blockquote className="mt-2 border-l-2 border-scout pl-3 font-serif italic text-ink-2">“{e.quote}”</blockquote>}
               <div className="mt-3 flex flex-wrap gap-2">
                 {e.doi && (

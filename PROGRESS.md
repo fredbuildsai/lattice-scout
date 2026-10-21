@@ -69,6 +69,8 @@ Last session: 2026-10-20 s01 — M0, M1 and M2 built; M2 done and approved by th
 - [2026-10-20 s01](docs/journal/2026-10-20-s01.md)
 
 ## Notes for next session
+
+- **Reviewer policy (user, 2026-10-22):** from M5 on, skip the `reviewer` agent to save cost; the user runs it later. Record each milestone as "review pending" here and in the journal. Pro plan: work in slices that end at a pushed commit.
 - llmrouter-free is installed out of band: `cd backend && uv pip install -e ../../llmrouter-free` (`uv sync` removes it; router adapter tests skip without it). `uv sync --extra llm` for the OpenAI Agents SDK.
 - Run `make check` (needs network for markdownlint via npx and Playwright is separate: `make e2e` with API + `pnpm dev` running).
 - Review `docs/reviews/M0.md` round 1 fixed; known gap: API p95 at stress load (DECISIONS 24).
