@@ -28,6 +28,8 @@ class Settings(BaseSettings):
     dev_keys_dir: Path = Path("var/dev-keys")
     dev_issuer: str = "http://localhost:8000/dev-auth"
     local_storage_dir: Path = Path("var/storage")
+    audit_hash_key: SecretStr = SecretStr("dev-audit-hash-key-change-me")  # pseudonymises erased accounts
+    erasure_second_pass_minutes: int = 15
 
     supabase_url: str | None = None
     supabase_publishable_key: str | None = None
@@ -137,6 +139,8 @@ class Settings(BaseSettings):
                 problems.append("EMAIL_PROVIDER=console is refused when APP_ENV=prod")
             if self.storage_backend == "local":
                 problems.append("STORAGE_BACKEND=local is refused when APP_ENV=prod")
+            if self.audit_hash_key.get_secret_value() == "dev-audit-hash-key-change-me":
+                problems.append("AUDIT_HASH_KEY must be set when APP_ENV=prod")
         if self.storage_backend == "supabase" and not (self.supabase_url and self.supabase_service_role_key):
             problems.append("STORAGE_BACKEND=supabase needs SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY")
         if self.auth_mode == "supabase" and not (self.jwks_url and self.supabase_url):

@@ -18,6 +18,12 @@ from scout.adapters.observability.analytics import BufferedAnalytics, NullAnalyt
 from scout.adapters.observability.prices import load_price_table, resolve_path
 from scout.adapters.observability.usage_meter import BufferedUsageMeter
 from scout.adapters.persistence.db import Database
+from scout.adapters.persistence.erasure import (
+    SqlAccountFinalizer,
+    SqlObservabilityErasure,
+    SqlStuckErasures,
+    SqlSubjectInventory,
+)
 from scout.adapters.queue.postgres import PostgresJobQueue
 from scout.adapters.storage.local import LocalFileStorage
 from scout.discovery.adapters.agents import AgentsDiscovery
@@ -32,9 +38,11 @@ from scout.discovery.ports.repos import DiscoveryUnitOfWork
 from scout.discovery.ports.sources import VaultSource
 from scout.feedback.adapters.sql import SqlFeedbackUnitOfWork
 from scout.feedback.application.give_feedback import GiveFeedback
+from scout.identity.adapters.auth_admin import DevAuthAdmin, SupabaseAuthAdmin
 from scout.identity.adapters.dev_auth import DevKeyPair, DevTokenIssuer, DevVerifier
 from scout.identity.adapters.jwks import HttpJwksFetcher, SupabaseJwksVerifier
 from scout.identity.adapters.sql import SqlIdentityUnitOfWork
+from scout.identity.application.erasure import DeleteAccountJob, SweepErasures
 from scout.identity.application.service import IdentityService
 from scout.identity.ports.auth import AuthTokenVerifier
 from scout.matching.adapters.agents import AgentsMatching
@@ -43,6 +51,7 @@ from scout.matching.adapters.sql import SqlMatchUnitOfWork
 from scout.matching.adapters.vocabulary import load_vocabulary
 from scout.matching.application.compute import ComputeMatches
 from scout.matching.application.config import MatchConfig
+from scout.matching.application.erasure import MatchErasure
 from scout.matching.application.profile_job import ComputeResearcherProfile
 from scout.matching.application.reveal_job import MatchingNightly, RevealMatch
 from scout.matching.application.service import DecideOnMatch, MatchingService
@@ -100,6 +109,8 @@ class Container:
     literature: LiteraturePort
     job_queue: JobQueuePort
     identity: IdentityService
+    delete_account: DeleteAccountJob
+    sweep_erasures: SweepErasures
     profile: ProfileService
     import_profile: ImportProfile
     storage: FileStoragePort
@@ -217,6 +228,18 @@ def _select_auth(s: Settings, clock: Clock) -> tuple[AuthTokenVerifier, DevToken
             assert_never(unreachable)
 
 
+def _select_auth_admin(s: Settings) -> DevAuthAdmin | SupabaseAuthAdmin:
+    if (
+        s.auth_mode == "supabase" and s.supabase_url and s.supabase_service_role_key
+    ):  # prod needs both (storage)
+        import httpx
+
+        return SupabaseAuthAdmin(
+            httpx.AsyncClient(), s.supabase_url, s.supabase_service_role_key.get_secret_value()
+        )
+    return DevAuthAdmin()
+
+
 def build_container(
     settings: Settings, *, clock: Clock | None = None, ids: IdGenerator | None = None
 ) -> Container:
@@ -269,7 +292,16 @@ def build_container(
         exclude_same_group=settings.match_exclude_same_group, max_explains_per_run=settings.match_max_explains_per_run,
         nightly_utc_hour=settings.match_nightly_utc_hour,
     )  # fmt: skip
-    identity_service = IdentityService(lambda: SqlIdentityUnitOfWork(db), clock, ids, settings.launch_field)
+    audit_key = settings.audit_hash_key.get_secret_value()
+    identity_service = IdentityService(
+        lambda: SqlIdentityUnitOfWork(db), clock, ids, settings.launch_field, queue, audit_key
+    )
+    delete_account = DeleteAccountJob(
+        inventory=SqlSubjectInventory(db, audit_key), matching=MatchErasure(match_uow), storage=storage,
+        auth_admin=_select_auth_admin(settings), observability=SqlObservabilityErasure(db),
+        finalizer=SqlAccountFinalizer(db), jobs=queue, clock=clock, ids=ids, audit_key=audit_key,
+        second_pass_minutes=settings.erasure_second_pass_minutes,
+    )  # fmt: skip
     match_agents, match_notifier = AgentsMatching(agents), LoggingMatchNotifier()
     consent_source, match_profile_source = (
         ConsentSourceAdapter(identity_service),
@@ -328,6 +360,8 @@ def build_container(
         literature=literature,
         job_queue=queue,
         identity=identity_service,
+        delete_account=delete_account,
+        sweep_erasures=SweepErasures(SqlStuckErasures(db), queue, clock, audit_key),
         profile=profile_service,
         import_profile=ImportProfile(lambda: SqlProfileUnitOfWork(db), literature, clock, ids, cfg),
         settings=settings, clock=clock, ids=ids, db=db, prices=prices, usage_meter=usage, analytics=analytics,

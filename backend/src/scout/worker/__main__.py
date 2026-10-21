@@ -33,6 +33,7 @@ async def main() -> None:
     await c.sweep_vault.ensure_scheduled()
     await c.sweep_runs.ensure_scheduled()
     await c.match_nightly.ensure_scheduled()
+    await c.sweep_erasures.ensure_scheduled()
     handlers = build_handlers(c)
     stop = asyncio.Event()
     loop = asyncio.get_running_loop()

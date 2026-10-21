@@ -61,6 +61,18 @@ class MatchRepo(Protocol):
         """Worker side: any participant, optionally locked."""
         ...
 
+    async def involving_for_update(self, account: AccountId) -> list[MatchProposal]:
+        """Every proposal ``account`` takes part in, locked (account erasure)."""
+        ...
+
+    async def delete(self, match_ids: Sequence[UUID]) -> None:
+        """Remove proposals (their joint ideas go with them)."""
+        ...
+
+    async def purge_detached(self, closed_before: datetime) -> int:
+        """Delete detached proposals whose deadline passed before ``closed_before``; return how many."""
+        ...
+
 
 class MatchProfileRepo(Protocol):
     """Matching profiles."""

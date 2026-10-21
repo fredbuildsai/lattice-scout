@@ -30,4 +30,6 @@ async def current_principal(request: Request) -> AuthPrincipal:
 async def current_account(request: Request) -> Account:
     """Authenticated principal -> account (created on the first call, e-mail synced)."""
     principal = await current_principal(request)
-    return await get_container(request).identity.ensure_account(principal.sub, principal.email)
+    return await get_container(request).identity.ensure_account(
+        principal.sub, principal.email, principal.issued_at
+    )

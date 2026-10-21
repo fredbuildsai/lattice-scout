@@ -58,6 +58,7 @@ class CloseReason(StrEnum):
 
     DECLINED = "declined"
     CONSENT_WITHDRAWN = "consent_withdrawn"
+    ACCOUNT_DELETED = "account_deleted"
 
 
 class IdeasStatus(StrEnum):

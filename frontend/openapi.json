@@ -605,6 +605,38 @@
         "title": "ClaimStatus",
         "type": "string"
       },
+      "ClearVaultIn": {
+        "additionalProperties": false,
+        "description": "Typed confirmation for deleting the whole vault.",
+        "properties": {
+          "confirm": {
+            "description": "The word ``DELETE``.",
+            "maxLength": 20,
+            "title": "Confirm",
+            "type": "string"
+          }
+        },
+        "required": [
+          "confirm"
+        ],
+        "title": "ClearVaultIn",
+        "type": "object"
+      },
+      "ClearedOut": {
+        "description": "How many documents were marked for deletion by this call.",
+        "properties": {
+          "deleting": {
+            "description": "Documents newly marked for deletion (0 on a repeat call).",
+            "title": "Deleting",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "deleting"
+        ],
+        "title": "ClearedOut",
+        "type": "object"
+      },
       "ConsentIn": {
         "additionalProperties": false,
         "description": "Partial update of consents.",
@@ -778,6 +810,36 @@
           "reason"
         ],
         "title": "DegradedOut",
+        "type": "object"
+      },
+      "DeleteAccountIn": {
+        "additionalProperties": false,
+        "description": "Typed confirmation for account deletion.",
+        "properties": {
+          "confirm_email": {
+            "description": "The account e-mail address, typed again.",
+            "maxLength": 320,
+            "title": "Confirm Email",
+            "type": "string"
+          }
+        },
+        "required": [
+          "confirm_email"
+        ],
+        "title": "DeleteAccountIn",
+        "type": "object"
+      },
+      "DeletingOut": {
+        "description": "Deletion accepted.",
+        "properties": {
+          "status": {
+            "default": "deleting",
+            "description": "Always ``deleting``: erasure runs in the background.",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "title": "DeletingOut",
         "type": "object"
       },
       "DevLoginRequest": {
@@ -3733,6 +3795,48 @@
         ]
       }
     },
+    "/api/v1/documents/delete-all": {
+      "post": {
+        "description": "Needs the typed word ``DELETE``. Extracted text and insights go at once, stored files right after.",
+        "operationId": "delete_all_documents_api_v1_documents_delete_all_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClearVaultIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClearedOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete every document in the vault",
+        "tags": [
+          "vault"
+        ]
+      }
+    },
     "/api/v1/documents/{document_id}": {
       "delete": {
         "description": "Extracted text and insights are removed immediately; the stored file is removed right after.",
@@ -4351,6 +4455,48 @@
           }
         },
         "summary": "Update matching and vault-signal consents",
+        "tags": [
+          "identity"
+        ]
+      }
+    },
+    "/api/v1/me/delete": {
+      "post": {
+        "description": "Block the account at once and erase it in the background (files, rows, sign-in). No undo.",
+        "operationId": "delete_me_api_v1_me_delete_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteAccountIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeletingOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete the account and everything it owns",
         "tags": [
           "identity"
         ]

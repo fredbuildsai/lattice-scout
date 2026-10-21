@@ -5,6 +5,12 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 ## [Unreleased]
 
 ### Added
+- M6 slice A, account and vault deletion (backend):
+  - `POST /api/v1/me/delete` (typed e-mail confirmation, 202) blocks the account at once and queues the job `account.delete`. The job detaches pending matches, deletes mutual ones, purges the storage prefix `vault/{id}` and the sign-in record, removes analytics, anonymises cost rows, and deletes the account with everything it owns. A second pass 15 minutes later sweeps late writers. Only an HMAC tombstone (`account.deleted`) stays in the audit log.
+  - The other person in a pending match sees the same thing as after a consent withdrawal: the card expires. Detached proposals are purged 30 days after they expire.
+  - `POST /api/v1/documents/delete-all` (typed `DELETE`, 202) deletes every document of the vault and refreshes the matching profile.
+  - Stale tokens of an erased account get 403; a new login after the erasure creates a new account. New settings `AUDIT_HASH_KEY` (required in production) and `ERASURE_SECOND_PASS_MINUTES`; migration 0011.
+  - Test that scans every table and the bucket for the user's ids, e-mail, name and ORCID, plus a guard that fails when a new table holds no seeded row.
 - M5 matching (backend, Matches screen, documentation):
   - Matching profiles from the imported works and, with consent, the verified methods signals of the vault. Topics are weighted by recency and citations. Methods are mapped to a 44-entry controlled vocabulary (`config/methods.yaml`). Jobs `matching.profile` and `matching.compute` run after an import and after a consent change.
   - Complementarity proposals: a pair is scored from topic overlap and method difference. Co-authors and researchers at the same institution are excluded by default, a pair waits 180 days after its last proposal, and each person receives at most three new proposals in seven days. The nightly job `matching.nightly` runs at 02:00 UTC.

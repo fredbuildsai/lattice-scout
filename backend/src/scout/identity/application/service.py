@@ -3,13 +3,16 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from datetime import datetime
 from uuid import UUID
 
 from pydantic import JsonValue
 
-from scout.identity.domain.account import Account, ConsentChanged
+from scout.identity.domain.account import Account, AccountDeleted, ConsentChanged
+from scout.identity.domain.erasure import subject_hash
 from scout.identity.ports.repos import IdentityUnitOfWork
 from scout.ports.audit import AuditEntry
+from scout.ports.jobs import JobQueuePort, JobSpec
 from scout.shared import (
     AccountId,
     Clock,
@@ -28,13 +31,22 @@ class EmailRequired(Unauthenticated):
     title = "E-mail address required"
 
 
+class ConfirmationMismatch(ValidationFailed):
+    """The typed confirmation does not match."""
+
+    code = "confirmation_mismatch"
+    title = "Confirmation does not match"
+
+
 class IdentityService:
     """Application service of the identity context."""
 
     def __init__(
-        self, uow: Callable[[], IdentityUnitOfWork], clock: Clock, ids: IdGenerator, launch_field: str
-    ) -> None:
+        self, uow: Callable[[], IdentityUnitOfWork], clock: Clock, ids: IdGenerator, launch_field: str,
+        jobs: JobQueuePort | None = None, audit_key: str = "dev-audit-key",
+    ) -> None:  # fmt: skip
         self._uow, self._clock, self._ids, self._launch_field = uow, clock, ids, launch_field
+        self._jobs, self._audit_key = jobs, audit_key
 
     async def _audit(
         self,
@@ -55,8 +67,14 @@ class IdentityService:
             )
         )
 
-    async def ensure_account(self, sub: UUID, email: str | None) -> Account:
-        """Return the account for ``sub``, creating it on the first call and syncing the e-mail."""
+    async def ensure_account(
+        self, sub: UUID, email: str | None, issued_at: datetime | None = None
+    ) -> Account:
+        """Return the account for ``sub``, creating it on the first call and syncing the e-mail.
+
+        Raises:
+            AccountDeleted: the account was erased and the token predates (or does not date) the erasure.
+        """
         if not email:
             raise EmailRequired()
         account_id = AccountId(sub)
@@ -64,6 +82,9 @@ class IdentityService:
         async with self._uow() as uow:
             account = await uow.accounts.get(account_id)
             if account is None:
+                erased_at = await uow.accounts.deleted_at_for(subject_hash(self._audit_key, account_id))
+                if erased_at is not None and (issued_at is None or issued_at <= erased_at):
+                    raise AccountDeleted()
                 account = Account.create(account_id, email, self._launch_field, now)
                 if await uow.accounts.add_if_absent(account):
                     account.pull_events()
@@ -119,3 +140,33 @@ class IdentityService:
                         )  # fmt: skip
                 await uow.commit()
         return account
+
+    async def request_deletion(self, sub: UUID, confirm_email: str) -> None:
+        """Soft-delete the account now and queue the erasure job.
+
+        An unknown or already deleting account is answered the same way (the job is enqueued again, deduped).
+
+        Raises:
+            ConfirmationMismatch: ``confirm_email`` is not the account e-mail.
+        """
+        account_id = AccountId(sub)
+        async with self._uow() as uow:
+            account = await uow.accounts.get_for_update(account_id)
+            if account is not None:
+                if confirm_email.strip().lower() != account.email:
+                    raise ConfirmationMismatch()
+                if account.request_deletion(self._clock.now()):
+                    account.pull_events()
+                    await uow.accounts.save(account)
+                    await self._audit(uow, sub, "account.deletion_requested", str(sub), {})
+                    await uow.commit()
+        if self._jobs is not None:
+            h = subject_hash(self._audit_key, account_id)
+            await self._jobs.enqueue(
+                JobSpec(
+                    kind="account.delete",
+                    payload={"subject_id": str(sub), "pass": 1, "feature": "account.delete"},
+                    dedupe_key=f"erase:{h}:1",
+                    max_attempts=10,
+                )
+            )

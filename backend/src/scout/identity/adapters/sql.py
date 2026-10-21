@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from datetime import datetime
+
 from sqlalchemy import select, update
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.exc import IntegrityError
@@ -9,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from scout.adapters.persistence.audit import SqlAuditLog
 from scout.adapters.persistence.models import account as t
+from scout.adapters.persistence.models import audit_log
 from scout.adapters.persistence.uow import SqlUnitOfWork
 from scout.identity.domain.account import Account, AccountRole, EmailInUse
 from scout.ports.audit import AuditLog
@@ -42,6 +45,18 @@ class SqlAccountRepo:
         """Account by id."""
         row = (await self._s.execute(select(t).where(t.c.id == account_id))).first()
         return _to_entity(row) if row else None
+
+    async def get_for_update(self, account_id: AccountId) -> Account | None:
+        """Account by id with ``FOR UPDATE``."""
+        row = (await self._s.execute(select(t).where(t.c.id == account_id).with_for_update())).first()
+        return _to_entity(row) if row else None
+
+    async def deleted_at_for(self, subject_hash: str) -> datetime | None:
+        """Deletion time of an erased account, read from its tombstone audit row."""
+        q = select(audit_log.c.at).where(
+            audit_log.c.action == "account.deleted", audit_log.c.meta["subject_hash"].astext == subject_hash
+        )
+        return (await self._s.execute(q)).scalar()
 
     async def add_if_absent(self, account: Account) -> bool:
         """INSERT ... ON CONFLICT (id) DO NOTHING; another id with the same e-mail raises ``EmailInUse``."""

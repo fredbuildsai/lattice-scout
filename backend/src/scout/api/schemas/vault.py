@@ -64,6 +64,20 @@ class InsightsOut(BaseModel):
     prompt_version: str
 
 
+class ClearVaultIn(BaseModel):
+    """Typed confirmation for deleting the whole vault."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    confirm: str = Field(max_length=20, description="The word ``DELETE``.")
+
+
+class ClearedOut(BaseModel):
+    """How many documents were marked for deletion by this call."""
+
+    deleting: int = Field(description="Documents newly marked for deletion (0 on a repeat call).")
+
+
 class DocumentOut(BaseModel):
     """A document in the vault."""
 

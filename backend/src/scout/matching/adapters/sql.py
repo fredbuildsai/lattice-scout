@@ -7,7 +7,7 @@ from datetime import datetime
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import func, insert, or_, select, text, update
+from sqlalchemy import delete, func, insert, or_, select, text, update
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -40,7 +40,7 @@ def _side(v: str | None) -> Side | None:
 
 def _proposal(r: Any) -> MatchProposal:
     return MatchProposal(
-        id=r.id, a_id=AccountId(r.a_id), b_id=AccountId(r.b_id), field=r.field, score=r.score,
+        id=r.id, a_id=AccountId(r.a_id) if r.a_id else None, b_id=AccountId(r.b_id) if r.b_id else None, field=r.field, score=r.score,
         score_basis=ScoreBasis.model_validate(r.score_basis), rationale=StoredRationale.model_validate(r.rationale),
         a_public=PublicFacet.model_validate(r.a_public), b_public=PublicFacet.model_validate(r.b_public),
         created_at=r.created_at, expires_at=r.expires_at, state=MatchState(r.state),
@@ -99,12 +99,9 @@ class SqlMatchRepo:
         v = _values(proposal)
         for k in (
             "id",
-            "a_id",
-            "b_id",
             "field",
             "score",
             "score_basis",
-            "rationale",
             "a_public",
             "b_public",
             "created_at",
@@ -112,6 +109,25 @@ class SqlMatchRepo:
             v.pop(k)
         v["updated_at"] = func.now()
         await self._s.execute(update(t).where(t.c.id == proposal.id).values(**v))
+
+    async def involving_for_update(self, account: AccountId) -> list[MatchProposal]:
+        """Every proposal of ``account``, row-locked."""
+        t = m.match_proposal
+        q = select(t).where(or_(t.c.a_id == account, t.c.b_id == account)).order_by(t.c.id).with_for_update()
+        return [_proposal(r) for r in await self._s.execute(q)]
+
+    async def delete(self, match_ids: Sequence[UUID]) -> None:
+        """Delete proposals; ``joint_idea`` cascades."""
+        if match_ids:
+            await self._s.execute(delete(m.match_proposal).where(m.match_proposal.c.id.in_(list(match_ids))))
+
+    async def purge_detached(self, closed_before: datetime) -> int:
+        """Delete detached proposals that expired before ``closed_before``."""
+        t = m.match_proposal
+        res = await self._s.execute(
+            delete(t).where(or_(t.c.a_id.is_(None), t.c.b_id.is_(None)), t.c.expires_at < closed_before)
+        )
+        return int(res.rowcount or 0)  # type: ignore[attr-defined]
 
     async def list_for(self, viewer: AccountId, limit: int, offset: int) -> list[MatchProposal]:
         """Newest first."""

@@ -100,6 +100,8 @@ class RevealMatch:
                 return {"status": "skipped"}
             if p.ideas_status is IdeasStatus.READY:
                 return {"status": "ready"}
+            if p.a_id is None or p.b_id is None:  # mutual proposals are deleted, never detached
+                return {"status": "skipped"}
             prof = await uow.profiles.get_many([p.a_id, p.b_id])
         pa, pb = prof.get(p.a_id), prof.get(p.b_id)
         topics = _topics
@@ -139,6 +141,9 @@ class RevealMatch:
             p.ideas_status = status
             await uow.matches.save(p)
             await uow.commit()
+
+
+DETACHED_KEEP_DAYS = 30  # detached proposals are invisible to the counterpart long before this
 
 
 class MatchingNightly:
@@ -184,6 +189,7 @@ class MatchingNightly:
                 if p is not None:
                     await self._close_departed(uow, p, now)
                     closed += 1
+            purged = await uow.matches.purge_detached(now - timedelta(days=DETACHED_KEEP_DAYS))
             stale = await uow.matches.ideas_pending_before(
                 now - timedelta(minutes=self._cfg.reveal_retry_minutes), 100
             )
@@ -202,9 +208,17 @@ class MatchingNightly:
         for acc in accounts:
             await self._profile.execute(acc)
         result = await self._compute.execute(None)
-        return {"expired": expired, "closed": closed, "reveal_retried": retried, **result}
+        return {
+            "expired": expired,
+            "closed": closed,
+            "reveal_retried": retried,
+            "detached_purged": purged,
+            **result,
+        }
 
     async def _close_departed(self, uow: MatchUnitOfWork, p: MatchProposal, now: Any) -> None:
+        if p.a_id is None or p.b_id is None:
+            return
         pool = await uow.profiles.get_many([p.a_id, p.b_id])
         for side, acc in ((Side.A, p.a_id), (Side.B, p.b_id)):
             pr = pool.get(acc)

@@ -35,6 +35,13 @@ class ConsentChanged(DomainEvent):
     value: bool
 
 
+class AccountDeletionRequested(DomainEvent):
+    """The owner asked for the account to be erased."""
+
+    name: ClassVar[str] = "identity.account_deletion_requested"
+    account_id: AccountId
+
+
 class ConsentRequiresMatching(InvariantViolation):
     """Vault signals cannot be shared without matching consent."""
 
@@ -119,6 +126,17 @@ class Account(AggregateRoot):
         if email == self.email:
             return False
         self.email, self.updated_at = email, now
+        return True
+
+    def request_deletion(self, now: datetime) -> bool:
+        """Soft-delete: block the account and switch both consents off. False if already requested."""
+        if self.deleted_at is not None:
+            return False
+        self.deleted_at, self.updated_at = now, now
+        self.consent_matching = self.consent_vault_signals = False
+        self.record_event(
+            AccountDeletionRequested(event_id=UuidGenerator().new(), occurred_at=now, account_id=self.id)
+        )
         return True
 
     def ensure_active(self) -> None:

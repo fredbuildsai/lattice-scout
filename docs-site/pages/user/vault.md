@@ -113,3 +113,7 @@ Deleting removes:
 The document disappears from your list straight away. The stored file is removed by a background job. If storage is slow, the job tries again.
 
 **Deleting cannot be undone.** To get the document back, upload the file again.
+
+## Delete everything
+
+The privacy tab will offer "Delete my vault". It removes every document you uploaded, the text and insights taken from them, and the stored files. Your profile, past runs and matches stay. Deleting your whole account removes those too.

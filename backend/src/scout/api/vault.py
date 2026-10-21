@@ -8,6 +8,8 @@ from fastapi import APIRouter, Depends, File, Form, Request, Response, UploadFil
 
 from scout.api.deps import current_account, get_container
 from scout.api.schemas.vault import (
+    ClearedOut,
+    ClearVaultIn,
     DatasetOut,
     DocumentDetailOut,
     DocumentListOut,
@@ -19,6 +21,7 @@ from scout.api.schemas.vault import (
     ObjectionOut,
     RefOut,
 )
+from scout.identity.application.service import ConfirmationMismatch
 from scout.identity.domain.account import Account
 from scout.shared.context import get_context
 from scout.vault.application.service import DocumentDetail
@@ -142,6 +145,20 @@ async def patch_document(
     """Your choice overrides Scout's suggestion."""
     doc = await get_container(request).vault.set_kind(account.id, document_id, body.kind)
     return _doc_out(doc)
+
+
+@router.post(
+    "/delete-all", summary="Delete every document in the vault", status_code=202, response_model=ClearedOut
+)
+async def delete_all_documents(
+    body: ClearVaultIn,
+    request: Request,
+    account: Account = Depends(current_account),  # noqa: B008
+) -> ClearedOut:
+    """Needs the typed word ``DELETE``. Extracted text and insights go at once, stored files right after."""
+    if body.confirm != "DELETE":
+        raise ConfirmationMismatch()
+    return ClearedOut(deleting=await get_container(request).vault.delete_all(account.id))
 
 
 @router.delete(

@@ -20,6 +20,7 @@ class AuthPrincipal(BaseModel):
     role: str = "authenticated"
     app_role: str = "user"
     exp: AwareDatetime
+    issued_at: AwareDatetime | None = None
 
 
 class InvalidToken(Unauthenticated):

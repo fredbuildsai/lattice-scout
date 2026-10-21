@@ -66,6 +66,22 @@ class FakeMatchRepo:
     async def get_for_update(self, match_id: UUID, viewer: AccountId) -> MatchProposal | None:
         return await self.get(match_id, viewer)
 
+    async def involving_for_update(self, account: AccountId) -> list[MatchProposal]:
+        return [copy.deepcopy(m) for m in self.s.matches.values() if account in (m.a_id, m.b_id)]
+
+    async def delete(self, match_ids: Sequence[UUID]) -> None:
+        for mid in match_ids:
+            self.s.matches.pop(mid, None)
+            self.s.ideas.pop(mid, None)
+
+    async def purge_detached(self, closed_before: datetime) -> int:
+        gone = [
+            i for i, m in self.s.matches.items()
+            if (m.a_id is None or m.b_id is None) and m.expires_at < closed_before
+        ]  # fmt: skip
+        await self.delete(gone)
+        return len(gone)
+
     async def get_any(self, match_id: UUID, lock: bool = False) -> MatchProposal | None:
         m = self.s.matches.get(match_id)
         return copy.deepcopy(m) if m else None
@@ -117,7 +133,7 @@ class FakeRevealRepo:
         if m is None or m.state is not MatchState.MUTUAL:
             return None
         other = m.b_id if viewer == m.a_id else m.a_id
-        return self.s.contacts.get(other)
+        return self.s.contacts.get(other) if other is not None else None
 
 
 class FakeBlockRepo:

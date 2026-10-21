@@ -246,8 +246,8 @@ feedback = Table(
 match_proposal = Table(
     "match_proposal", metadata,
     Column("id", UUID(as_uuid=True), primary_key=True),
-    Column("a_id", UUID(as_uuid=True), ForeignKey("account.id"), nullable=False),
-    Column("b_id", UUID(as_uuid=True), ForeignKey("account.id"), nullable=False),
+    Column("a_id", UUID(as_uuid=True), ForeignKey("account.id")),
+    Column("b_id", UUID(as_uuid=True), ForeignKey("account.id")),
     Column("field", Text, nullable=False), Column("score", Float, nullable=False),
     Column("score_basis", JSONB, nullable=False), Column("rationale", JSONB, nullable=False),
     Column("a_public", JSONB, nullable=False), Column("b_public", JSONB, nullable=False),

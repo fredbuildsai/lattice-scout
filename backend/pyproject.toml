@@ -90,7 +90,7 @@ module = ["scout.shared.*", "scout.ports.*", "scout.settings", "scout.bootstrap"
 strict = true
 
 [[tool.mypy.overrides]]
-module = ["tests.unit.matching.*", "tests.integration.test_matching_reveal_pg", "tests.integration.test_matching_repos_pg", "tests.integration.test_matching_candidates_pg"]
+module = ["tests.unit.matching.*", "tests.fakes.erasure", "tests.unit.identity.test_delete_account_job", "tests.integration.erasure_seed", "tests.integration.test_account_erasure_pg", "tests.integration.test_matching_reveal_pg", "tests.integration.test_matching_repos_pg", "tests.integration.test_matching_candidates_pg"]
 disallow_untyped_defs = false
 disallow_untyped_calls = false
 disallow_incomplete_defs = false

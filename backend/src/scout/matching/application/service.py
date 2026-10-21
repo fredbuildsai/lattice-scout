@@ -152,7 +152,8 @@ class DecideOnMatch:
                     p.ideas_status = IdeasStatus.PENDING
                 if never_similar and p.never_similar_by is not None:
                     other = p.b_id if viewer == p.a_id else p.a_id
-                    await uow.blocks.add(viewer, other, p.id, now)
+                    if other is not None:  # a detached counterpart (erased account) has nothing to block
+                        await uow.blocks.add(viewer, other, p.id, now)
             await uow.matches.save(p)
             await uow.commit()
             card = None if expired else await card_for(uow, p, viewer, now, self._cfg.field.replace("-", " "))
@@ -167,7 +168,7 @@ class DecideOnMatch:
                     max_attempts=3,
                 )
             )
-            for who in (p.a_id, p.b_id):
+            for who in (w for w in (p.a_id, p.b_id) if w is not None):
                 try:
                     await self._notifier.mutual(who, match_id)
                 except Exception:  # noqa: S110 - best effort

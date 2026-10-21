@@ -15,7 +15,7 @@ class InMemoryFileStorage:
         self._failures: dict[str, int] = {}
 
     def fail_next(self, op: str, n: int = 1) -> None:
-        """Make the next ``n`` calls of ``op`` (put/get/delete/delete_prefix/exists) raise."""
+        """Make the next ``n`` calls of ``op`` (put/get/delete/delete_prefix/list_prefix/exists) raise."""
         self._failures[op] = n
 
     def _maybe_fail(self, op: str) -> None:
@@ -50,6 +50,12 @@ class InMemoryFileStorage:
         for k in gone:
             del self.objects[k]
         return len(gone)
+
+    async def list_prefix(self, prefix: str) -> list[str]:
+        """Sorted keys under ``prefix + '/'`` (M6 port extension, design M6-deletion.md section 2)."""
+        self._maybe_fail("list_prefix")
+        validate_key(prefix)
+        return sorted(k for k in self.objects if k.startswith(prefix + "/"))
 
     async def exists(self, key: str) -> bool:
         """Whether present."""

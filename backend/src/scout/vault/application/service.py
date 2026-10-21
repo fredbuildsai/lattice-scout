@@ -12,7 +12,7 @@ from scout.ports.audit import AuditEntry
 from scout.ports.jobs import JobQueuePort, JobSpec
 from scout.shared import AccountId, Clock, IdGenerator, NotFound
 from scout.vault.domain.document import Document
-from scout.vault.domain.enums import DocKind, Retention
+from scout.vault.domain.enums import DocKind, DocStatus, Retention
 from scout.vault.domain.ids import ChunkId
 from scout.vault.domain.insights import StoredInsights
 from scout.vault.ports.repos import VaultUnitOfWork
@@ -150,6 +150,48 @@ class VaultService:
                 )  # fmt: skip
             )
             await uow.commit()
+        await self._enqueue_delete(owner_id, document_id)
+        await self._refresh_matching_profile(owner_id)
+
+    async def delete_all(self, owner_id: AccountId) -> int:
+        """Delete every document of the owner (privacy tab). Returns how many were newly marked for deletion.
+
+        Content goes at commit; ``vault.delete`` jobs remove the stored files. A second call returns 0.
+        """
+        now = self._clock.now()
+        marked: list[UUID] = []
+        originals = 0
+        async with self._uow() as uow:
+            for listed in await uow.documents.list_for_owner(owner_id):
+                if listed.status is DocStatus.DELETING:
+                    continue
+                doc = await uow.documents.get_for_update(listed.id)
+                if doc is None or not doc.request_deletion(now):
+                    continue
+                originals += doc.original_deleted_at is None
+                await uow.documents.save(doc)
+                await uow.chunks.delete_all(doc.id)
+                await uow.insights.delete(doc.id)
+                marked.append(doc.id)
+            if marked:
+                await uow.audit.add(
+                    AuditEntry(
+                        id=self._ids.new(),
+                        actor_id=owner_id,
+                        action="vault.cleared",
+                        target=str(owner_id),
+                        at=now,
+                        meta={"count": len(marked), "originals_present": originals},
+                    )  # fmt: skip
+                )
+            await uow.commit()
+        for document_id in marked:
+            await self._enqueue_delete(owner_id, document_id)
+        if marked:
+            await self._refresh_matching_profile(owner_id)
+        return len(marked)
+
+    async def _enqueue_delete(self, owner_id: AccountId, document_id: UUID) -> None:
         try:
             await self._jobs.enqueue(
                 JobSpec(
@@ -165,6 +207,20 @@ class VaultService:
             )
         except Exception:
             log.error("vault.enqueue_failed", document_id=str(document_id))
+
+    async def _refresh_matching_profile(self, owner_id: AccountId) -> None:
+        """Vault-sourced method signals change: recompute the matching profile (best effort)."""
+        try:
+            await self._jobs.enqueue(
+                JobSpec(
+                    kind="matching.profile",
+                    payload={"account_id": str(owner_id)},
+                    dedupe_key=f"profile:{owner_id}",
+                    max_attempts=3,
+                )
+            )
+        except Exception:
+            log.error("vault.profile_refresh_failed")
 
     async def material(self, owner_id: AccountId, document_id: UUID) -> DocumentMaterial:
         """Verified insights and the passages they cite, for analysis runs. Another owner's, deleting or unknown

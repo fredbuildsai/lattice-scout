@@ -68,6 +68,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/documents/delete-all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Delete every document in the vault
+         * @description Needs the typed word ``DELETE``. Extracted text and insights go at once, stored files right after.
+         */
+        post: operations["delete_all_documents_api_v1_documents_delete_all_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/documents/{document_id}": {
         parameters: {
             query?: never;
@@ -278,6 +298,26 @@ export interface paths {
          * @description Turning matching off also turns vault signals off; vault signals need matching.
          */
         patch: operations["patch_consent_api_v1_me_consent_patch"];
+        trace?: never;
+    };
+    "/api/v1/me/delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Delete the account and everything it owns
+         * @description Block the account at once and erase it in the background (files, rows, sign-in). No undo.
+         */
+        post: operations["delete_me_api_v1_me_delete_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/opportunities": {
@@ -784,6 +824,28 @@ export interface components {
          */
         ClaimStatus: "pending" | "verified" | "unverified" | "contradicted" | "rejected_by_critic";
         /**
+         * ClearVaultIn
+         * @description Typed confirmation for deleting the whole vault.
+         */
+        ClearVaultIn: {
+            /**
+             * Confirm
+             * @description The word ``DELETE``.
+             */
+            confirm: string;
+        };
+        /**
+         * ClearedOut
+         * @description How many documents were marked for deletion by this call.
+         */
+        ClearedOut: {
+            /**
+             * Deleting
+             * @description Documents newly marked for deletion (0 on a repeat call).
+             */
+            deleting: number;
+        };
+        /**
          * ConsentIn
          * @description Partial update of consents.
          */
@@ -863,6 +925,29 @@ export interface components {
             reason: string;
             /** Step */
             step: string;
+        };
+        /**
+         * DeleteAccountIn
+         * @description Typed confirmation for account deletion.
+         */
+        DeleteAccountIn: {
+            /**
+             * Confirm Email
+             * @description The account e-mail address, typed again.
+             */
+            confirm_email: string;
+        };
+        /**
+         * DeletingOut
+         * @description Deletion accepted.
+         */
+        DeletingOut: {
+            /**
+             * Status
+             * @description Always ``deleting``: erasure runs in the background.
+             * @default deleting
+             */
+            status: string;
         };
         /**
          * DevLoginRequest
@@ -2177,6 +2262,39 @@ export interface operations {
             };
         };
     };
+    delete_all_documents_api_v1_documents_delete_all_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ClearVaultIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClearedOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_document_api_v1_documents__document_id__get: {
         parameters: {
             query?: never;
@@ -2610,6 +2728,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_me_api_v1_me_delete_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteAccountIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeletingOut"];
                 };
             };
             /** @description Validation Error */

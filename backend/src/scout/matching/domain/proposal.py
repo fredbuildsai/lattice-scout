@@ -82,6 +82,13 @@ class StoredRationale(_Frozen):
     why: str = Field(default="", max_length=300)
     prompt_version: str | None = None
 
+    def without(self, side: Side) -> StoredRationale:
+        """Forget ``side``: its bring-list and the shared ``why`` go, and so does every ``source_refs``."""
+        keep = self.they_bring if side is Side.A else self.you_bring
+        keep = [BringItem(text=i.text) for i in keep]
+        you, they = ([], keep) if side is Side.A else (keep, [])
+        return self.model_copy(update={"you_bring": you, "they_bring": they, "why": ""})
+
 
 class ScoreBasis(_Frozen):
     """Numbers behind a score."""
@@ -131,8 +138,8 @@ class MatchProposal(AggregateRoot):
     """A proposed collaboration between two researchers (``a_id < b_id``)."""
 
     id: UUID
-    a_id: AccountId
-    b_id: AccountId
+    a_id: AccountId | None
+    b_id: AccountId | None
     field: str
     score: float
     score_basis: ScoreBasis
@@ -301,6 +308,27 @@ class MatchProposal(AggregateRoot):
         """A side withdrew its matching consent: decline a pending proposal. Looks like a decline to the other."""
         if self.state in PENDING:
             self._decline(side, now, False, CloseReason.CONSENT_WITHDRAWN)
+
+    def detach(self, side: Side, now: datetime) -> None:
+        """The account of ``side`` is being erased: close like a consent close, then forget the side.
+
+        The counterpart sees the same thing as after ``close_for_consent``. Mutual proposals are deleted by the
+        caller instead.
+
+        Raises:
+            InvariantViolation: the proposal is mutual.
+        """
+        if self.state is MatchState.MUTUAL:
+            raise InvariantViolation("detach_mutual")
+        if self.state in PENDING:
+            self._decline(side, now, False, CloseReason.ACCOUNT_DELETED)
+        if side is Side.A:
+            self.a_id, self.a_decision, self.a_decided_at = None, None, None
+        else:
+            self.b_id, self.b_decision, self.b_decided_at = None, None, None
+        if self.never_similar_by is side:
+            self.never_similar_by = None
+        self.rationale = self.rationale.without(side)
 
     # ---- read --------------------------------------------------------------------------------------------------
     def status_for(self, viewer: AccountId, now: datetime) -> ViewerStatus:
