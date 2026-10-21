@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { FEEDBACK_REASONS, useFeedback, useGiveFeedback } from './api'
-import { Thumbs } from './Thumbs'
+import { ThumbButtons } from './Thumbs'
 
 /**
  * "Was this a good find?": reason chips (multi-select) and thumbs, wired to POST /feedback.
@@ -44,7 +44,7 @@ export function FeedbackPanel({ opportunityId }: { opportunityId: string }) {
         ))}
       </div>
       <div className="mt-3">
-        <Thumbs opportunityId={opportunityId} rating={rating} reasons={reasons} />
+        <ThumbButtons id={opportunityId} rating={rating} pending={give.isPending} error={give.isError} onRate={(r) => give.mutate({ rating: r, reasons })} />
       </div>
       <p role="status" className="mt-2 text-xs text-ink-3">
         {give.isSuccess ? 'Thanks, your feedback is saved.' : rating ? 'You rated this idea. You can change it.' : 'Your feedback tunes what Scout looks for next time.'}

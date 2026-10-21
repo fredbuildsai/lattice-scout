@@ -30,9 +30,11 @@ afterEach(() => vi.unstubAllGlobals())
 describe('RunPage', () => {
   it('shows 8 steps, the progress bar and cancels', async () => {
     const calls: string[] = []
+    let cancelled = false
     vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => {
       calls.push(`${init?.method ?? 'GET'} ${url}`)
-      return new Response(JSON.stringify(init?.method === 'POST' ? run({ status: 'cancelled' }) : run()), { status: 200 })
+      if (init?.method === 'POST') cancelled = true
+      return new Response(JSON.stringify(cancelled ? run({ status: 'cancelled' }) : run()), { status: 200 })
     }))
     const user = userEvent.setup()
     renderPage()

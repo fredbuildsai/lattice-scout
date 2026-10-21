@@ -99,15 +99,16 @@ describe('app routing and token injection', () => {
     expect(input).toHaveValue('')
   })
 
-  it('shows Home with the profile summary for a claimed researcher', async () => {
+  it('shows Home with the greeting and briefing for a claimed researcher', async () => {
     mockApi({ '/api/v1/me': ME_WITH_RESEARCHER, '/api/v1/profile': PROFILE })
     render(
       <MemoryRouter initialEntries={['/signin']}>
         <App authClient={fakeAuthClient()} client={new QueryClient()} />
       </MemoryRouter>,
     )
-    expect(await screen.findByText('Ada Test')).toBeInTheDocument()
-    expect(screen.getByText(/of 4 works included/)).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Hello, Ada' })).toBeInTheDocument()
+    expect(screen.getByRole('region', { name: 'Scout’s briefing' })).toBeInTheDocument()
+    expect(screen.getByText('Matches arrive soon')).toBeInTheDocument()
   })
 
   it('dev sign-in form submits the e-mail', async () => {

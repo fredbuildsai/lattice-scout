@@ -10,29 +10,32 @@ function ThumbIcon({ down }: { down?: boolean }) {
   )
 }
 
-/** "Useful?" thumbs up/down (POST /feedback without reasons). `initial` is a known earlier rating. */
-export function Thumbs({ opportunityId, rating, onRated, reasons = [] }: { opportunityId: string; rating?: 'up' | 'down' | null; onRated?: (r: 'up' | 'down') => void; reasons?: string[] }) {
-  const give = useGiveFeedback(opportunityId)
-  const rate = (r: 'up' | 'down') =>
-    give.mutate({ rating: r, reasons }, { onSuccess: () => onRated?.(r) })
+/** Presentational "Useful?" thumbs; `rating` marks the pressed one. */
+export function ThumbButtons({ id, rating, pending, error, onRate }: { id: string; rating?: 'up' | 'down' | null; pending?: boolean; error?: boolean; onRate: (r: 'up' | 'down') => void }) {
   return (
     <div className="flex items-center gap-2">
-      <span className="text-xs text-ink-3" id={`useful-${opportunityId}`}>
+      <span className="text-xs text-ink-3" id={`useful-${id}`}>
         Useful?
       </span>
-      <div role="group" aria-labelledby={`useful-${opportunityId}`} className="flex gap-2">
-        <button type="button" className={BTN} aria-pressed={rating === 'up'} aria-label="Useful: thumbs up" disabled={give.isPending} onClick={() => rate('up')}>
+      <div role="group" aria-labelledby={`useful-${id}`} className="flex gap-2">
+        <button type="button" className={BTN} aria-pressed={rating === 'up'} aria-label="Useful: thumbs up" disabled={pending} onClick={() => onRate('up')}>
           <ThumbIcon />
         </button>
-        <button type="button" className={BTN} aria-pressed={rating === 'down'} aria-label="Not useful: thumbs down" disabled={give.isPending} onClick={() => rate('down')}>
+        <button type="button" className={BTN} aria-pressed={rating === 'down'} aria-label="Not useful: thumbs down" disabled={pending} onClick={() => onRate('down')}>
           <ThumbIcon down />
         </button>
       </div>
-      {give.isError && (
+      {error && (
         <span role="alert" className="text-xs text-warm">
           Could not save
         </span>
       )}
     </div>
   )
+}
+
+/** Thumbs for a list card: posts /feedback without reasons and remembers the choice. */
+export function Thumbs({ opportunityId, rating, onRated }: { opportunityId: string; rating?: 'up' | 'down' | null; onRated?: (r: 'up' | 'down') => void }) {
+  const give = useGiveFeedback(opportunityId)
+  return <ThumbButtons id={opportunityId} rating={rating} pending={give.isPending} error={give.isError} onRate={(r) => give.mutate({ rating: r, reasons: [] }, { onSuccess: () => onRated?.(r) })} />
 }

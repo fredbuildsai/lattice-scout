@@ -37,7 +37,11 @@ describe('SourceMarker', () => {
 
   it('shows the vault quote and loads the passage with the original-not-kept note', async () => {
     const user = userEvent.setup()
-    const fetchMock = vi.fn(async (_u: string) => new Response(JSON.stringify({ kind: 'vault', id: 'e2', passage: 'Full passage text', original_available: false }), { status: 200 }))
+    const urls: string[] = []
+    const fetchMock = vi.fn(async (url: string) => {
+      urls.push(url)
+      return new Response(JSON.stringify({ kind: 'vault', id: 'e2', passage: 'Full passage text', original_available: false }), { status: 200 })
+    })
     vi.stubGlobal('fetch', fetchMock)
     wrap(<SourceMarker evidence={vault} index={2} opportunityId="o1" claimId="c1" />)
     await user.click(screen.getByRole('button', { name: /Source 2: proposal.pdf/ }))
@@ -46,7 +50,7 @@ describe('SourceMarker', () => {
     await user.click(screen.getByRole('button', { name: 'Open passage' }))
     expect(await screen.findByText('Full passage text')).toBeInTheDocument()
     expect(screen.getByText('Original file not kept; showing the saved quote')).toBeInTheDocument()
-    expect(fetchMock.mock.calls[0]![0]).toContain('/api/v1/evidence/e2/open')
+    expect(urls[0]).toContain('/api/v1/evidence/e2/open')
     expect(track).toHaveBeenCalledWith('evidence_source_clicked', { opportunity_id: 'o1', evidence_id: 'e2', source_type: 'vault' })
   })
 
