@@ -86,6 +86,7 @@ def test_violations_are_detected_and_each_contract_reported_broken(tmp_path: Pat
     (root / "vault/adapters/bad.py").write_text("import scout.vault.application\n")
     (root / "vault/domain/bad.py").write_text("import scout.vault.application\n")
     (root / "matching/domain/bad.py").write_text("import scout.vault.domain\n")
+    (root / "discovery/domain/leak.py").write_text("import scout.vault.domain\n")
 
     config = tmp_path / "pyproject.toml"
     _write_config(config, cfg)
