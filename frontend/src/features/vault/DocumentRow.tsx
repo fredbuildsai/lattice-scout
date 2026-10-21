@@ -142,7 +142,7 @@ export function DeleteDialog({ doc, busy, error, onCancel, onConfirm }: { doc: V
 }
 
 /** A vault document: name, status chip, extracted summary with expandable details, kind selector and delete. */
-export function DocumentRow({ doc }: { doc: VaultDocument }) {
+export function DocumentRow({ doc, selected, onToggle }: { doc: VaultDocument; selected?: boolean; onToggle?: () => void }) {
   const ready = doc.status === 'ready'
   const detail = useDocumentDetail(doc.id, ready)
   const setKind = useSetKind()
@@ -156,6 +156,9 @@ export function DocumentRow({ doc }: { doc: VaultDocument }) {
   return (
     <li className="rounded-card border border-line bg-surface p-4" aria-label={doc.filename}>
       <div className="flex flex-wrap items-start justify-between gap-2">
+        {onToggle && ready && (
+          <input type="checkbox" checked={!!selected} onChange={onToggle} aria-label={`Select ${doc.filename} for analysis`} className="mt-1 h-5 w-5 shrink-0 accent-accent" />
+        )}
         <div className="min-w-0 flex-1">
           <p className="break-words font-semibold">{doc.filename}</p>
           <p className="text-xs text-ink-3">

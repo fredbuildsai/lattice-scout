@@ -1,5 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useStartRun } from '../runs/api'
+import { ApiError } from '../../api/client'
 import { track } from '../../analytics/client'
 import { Icon } from '../../ui/icons'
 import { DocumentRow } from './DocumentRow'
@@ -64,6 +67,17 @@ export function VaultPage({ upload = uploadDocument }: { upload?: Uploader }) {
   }
 
   const list = docs.data?.items ?? []
+  const ready = list.filter((d) => d.status === 'ready')
+  const navigate = useNavigate()
+  const start = useStartRun()
+  const [selected, setSelected] = useState<string[]>([])
+  const chosen = selected.filter((id) => ready.some((d) => d.id === id))
+  const toggle = (id: string) => setSelected((xs) => (xs.includes(id) ? xs.filter((x) => x !== id) : [...xs, id]))
+  const analyse = () => {
+    const ids = chosen.length > 0 ? chosen : ready.map((d) => d.id)
+    if (ids.length === 0) return
+    start.mutate(ids, { onSuccess: (run) => navigate(`/runs/${run.id}`) })
+  }
   return (
     <section aria-labelledby="page-title" className="mx-auto max-w-[1000px]">
       <div className="flex flex-wrap items-center gap-3">
@@ -119,10 +133,27 @@ export function VaultPage({ upload = uploadDocument }: { upload?: Uploader }) {
         </p>
       )}
       {docs.data && list.length === 0 && <p className="mt-3 text-ink-2">Nothing here yet. Add a proposal, a reviewer report or unpublished results to get started.</p>}
+      {ready.length > 0 && (
+        <div className="mt-3 rounded-card border border-scout-50 bg-scout-100 p-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <button type="button" disabled={start.isPending} onClick={analyse} className="inline-flex min-h-11 items-center gap-2 rounded-btn bg-scout px-4 text-sm font-semibold text-white hover:bg-scout-ink disabled:opacity-60">
+              <Icon name="sparkle" size={16} /> Analyse with Scout
+            </button>
+            <p className="text-sm text-ink-2">
+              {chosen.length > 0 ? `${chosen.length} selected` : `Tick documents to choose; otherwise all ${ready.length} ready ${ready.length === 1 ? 'document' : 'documents'} are used.`}
+            </p>
+          </div>
+          {start.isError && (
+            <p role="alert" className="mt-2 text-sm text-warm">
+              {start.error instanceof ApiError && start.error.detail ? start.error.detail : 'We could not start the analysis. Please try again.'}
+            </p>
+          )}
+        </div>
+      )}
       {list.length > 0 && (
         <ul aria-label="Documents" className="mt-3 space-y-3">
           {list.map((d) => (
-            <DocumentRow key={d.id} doc={d} />
+            <DocumentRow key={d.id} doc={d} selected={selected.includes(d.id)} onToggle={() => toggle(d.id)} />
           ))}
         </ul>
       )}
