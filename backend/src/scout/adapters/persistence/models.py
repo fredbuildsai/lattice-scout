@@ -242,3 +242,35 @@ feedback = Table(
     Column("rating", Text, nullable=False), Column("reasons", ARRAY(Text), nullable=False),
     Column("comment", Text), ts("created_at", nullable=False), ts("updated_at", nullable=False),
 )  # fmt: skip
+
+match_proposal = Table(
+    "match_proposal", metadata,
+    Column("id", UUID(as_uuid=True), primary_key=True),
+    Column("a_id", UUID(as_uuid=True), ForeignKey("account.id"), nullable=False),
+    Column("b_id", UUID(as_uuid=True), ForeignKey("account.id"), nullable=False),
+    Column("field", Text, nullable=False), Column("score", Float, nullable=False),
+    Column("score_basis", JSONB, nullable=False), Column("rationale", JSONB, nullable=False),
+    Column("a_public", JSONB, nullable=False), Column("b_public", JSONB, nullable=False),
+    Column("state", Text, nullable=False), Column("a_decision", Text), Column("b_decision", Text),
+    ts("a_decided_at"), ts("b_decided_at"), Column("declined_by", Text), Column("close_reason", Text),
+    Column("never_similar_by", Text), ts("created_at", nullable=False), ts("expires_at", nullable=False),
+    ts("revealed_at"), ts("closed_at"), Column("ideas_status", Text, nullable=False),
+    Column("ideas_prompt_version", Text), ts("updated_at", nullable=False),
+)  # fmt: skip
+
+joint_idea = Table(
+    "joint_idea", metadata,
+    Column("id", UUID(as_uuid=True), primary_key=True), Column("match_id", UUID(as_uuid=True), nullable=False),
+    Column("match_state", Text, nullable=False), Column("ord", Integer, nullable=False),
+    Column("title", Text, nullable=False), Column("question", Text, nullable=False),
+    Column("uses_from_a", JSONB, nullable=False), Column("uses_from_b", JSONB, nullable=False),
+    Column("first_step", Text, nullable=False), Column("possible_output", Text, nullable=False),
+    Column("prompt_version", Text), Column("model", Text), ts("created_at", nullable=False),
+)  # fmt: skip
+
+match_block = Table(
+    "match_block", metadata,
+    Column("account_id", UUID(as_uuid=True), ForeignKey("account.id"), primary_key=True),
+    Column("blocked_account_id", UUID(as_uuid=True), ForeignKey("account.id"), primary_key=True),
+    Column("match_id", UUID(as_uuid=True)), ts("created_at", nullable=False),
+)  # fmt: skip

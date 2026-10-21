@@ -89,6 +89,13 @@ ignore_missing_imports = true
 module = ["scout.shared.*", "scout.ports.*", "scout.settings", "scout.bootstrap", "scout.*.domain.*", "scout.*.application.*", "scout.*.ports.*"]
 strict = true
 
+[[tool.mypy.overrides]]
+module = ["tests.unit.matching.*", "tests.integration.test_matching_reveal_pg", "tests.integration.test_matching_repos_pg"]
+disallow_untyped_defs = false
+disallow_untyped_calls = false
+disallow_incomplete_defs = false
+disallow_any_generics = false
+
 [tool.interrogate]
 fail-under = 95
 ignore-init-method = true
