@@ -262,7 +262,7 @@ def test_request_cancel_on_a_running_run_only_records_the_request() -> None:
     assert run.status is S.RUNNING and run.cancel_requested_at == at(9) and run.finished_at is None
     assert run.step is RunStep.COVERAGE and run.phase == "clustering"
     run.cancel(gen, at(12))
-    assert run.status is S.CANCELLED and run.finished_at == at(12) and run.cancel_requested_at == at(9)
+    assert run.status.value == "cancelled" and run.finished_at == at(12) and run.cancel_requested_at == at(9)
 
 
 @pytest.mark.parametrize("build", [done_run, failed_run, cancelled_run])

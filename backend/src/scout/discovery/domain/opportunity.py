@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import datetime
 from typing import Any
 from uuid import UUID
@@ -20,6 +20,10 @@ from scout.shared import AccountId, AggregateRoot, InvalidStateTransition, Invar
 
 USER_STATUSES = frozenset({OppStatus.SHOWN, OppStatus.SAVED, OppStatus.DISMISSED})
 MIN_VERIFIED_EVIDENCE = 2
+_TARGET = {
+    SourceType.LITERATURE: "corpus_work_id", SourceType.PROFILE: "corpus_work_id",
+    SourceType.VAULT: "chunk_id", SourceType.COUNT: "probe_id",
+}  # fmt: skip
 
 
 @dataclass
@@ -47,11 +51,13 @@ class Evidence:
         Raises:
             InvariantViolation: the evidence does not point at anything in the run (no work, chunk or probe id).
         """
-        raise NotImplementedError
+        if getattr(self, _TARGET[self.source_type]) is None:
+            raise InvariantViolation(f"{self.source_type.value} evidence has no target to verify against")
+        self.verified, self.check, self.check_detail = True, CheckCode.OK, check_detail
 
     def mark_failed(self, check: CheckCode, detail: str | None = None) -> None:
         """Record a failed check. ``verified`` becomes ``False``."""
-        raise NotImplementedError
+        self.verified, self.check, self.check_detail = False, check, detail
 
 
 @dataclass
@@ -79,7 +85,14 @@ class Claim:
         Raises:
             InvalidStateTransition: any other change.
         """
-        raise NotImplementedError
+        allowed = (self.status is ClaimStatus.PENDING and status is not ClaimStatus.PENDING) or (
+            self.status is ClaimStatus.VERIFIED and status is ClaimStatus.REJECTED_BY_CRITIC
+        )
+        if not allowed:
+            raise InvalidStateTransition(
+                "claim_status", extra={"from": self.status.value, "to": status.value}
+            )
+        self.status, self.status_reason, self.set_by = status, reason, set_by
 
     def verified_evidence(self) -> list[Evidence]:
         """Evidence with ``verified is True``."""
@@ -134,7 +147,11 @@ class Opportunity(AggregateRoot):
 
     def visible_claims(self) -> list[Claim]:
         """Verified claims only, each with its verified evidence only. Nothing else ever reaches a user."""
-        raise NotImplementedError
+        return [
+            replace(c, evidence=c.verified_evidence())
+            for c in self.claims
+            if c.status is ClaimStatus.VERIFIED
+        ]
 
     def show_decision(self) -> tuple[bool, str]:
         """Whether the opportunity may be shown, and the reason when not (DECISIONS 59).
@@ -143,7 +160,22 @@ class Opportunity(AggregateRoot):
         rationale or objection claims, at least one of them external literature; and a measured novelty count
         (``scores.novelty`` plus a verified ``score`` claim with verified ``count`` evidence).
         """
-        raise NotImplementedError
+        items: set[tuple[SourceType, str]] = set()
+        measured = False
+        for c in self.claims:
+            if c.status is not ClaimStatus.VERIFIED:
+                continue
+            if c.section is ClaimSection.SCORE:
+                measured = measured or any(e.source_type is SourceType.COUNT for e in c.verified_evidence())
+            else:
+                items.update((e.source_type, e.ref) for e in c.verified_evidence())
+        if len(items) < MIN_VERIFIED_EVIDENCE:
+            return False, "insufficient_evidence"
+        if not any(t is SourceType.LITERATURE for t, _ in items):
+            return False, "no_literature"
+        if not (measured and self.scores is not None):
+            return False, "no_novelty_measure"
+        return True, "ok"
 
     def set_user_status(self, new: OppStatus) -> None:
         """The owner's choice among ``shown``, ``saved`` and ``dismissed`` (any order).
@@ -151,7 +183,11 @@ class Opportunity(AggregateRoot):
         Raises:
             InvalidStateTransition: the opportunity is not user-visible, or ``new`` is not a user status.
         """
-        raise NotImplementedError
+        if self.status not in USER_STATUSES or new not in USER_STATUSES:
+            raise InvalidStateTransition(
+                "opportunity_status", extra={"from": self.status.value, "to": new.value}
+            )
+        self.status = new
 
 
 __all__ = [

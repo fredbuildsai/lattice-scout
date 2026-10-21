@@ -15,11 +15,20 @@ from collections.abc import Sequence
 import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
+from tests.unit.discovery._builders import (
+    OTHER_OWNER,
+    OWNER,
+    discard_chunk,
+    index,
+    keep_chunk,
+    probe,
+    work,
+)
 
 from scout.discovery.domain.enums import CheckCode, CorpusOrigin
 from scout.discovery.domain.verification import (
-    ChunkMaterial,
     CheckResult,
+    ChunkMaterial,
     EvidenceRef,
     InsightMaterial,
     ProbeMaterial,
@@ -30,15 +39,6 @@ from scout.discovery.domain.verification import (
 )
 from scout.shared import InvariantViolation
 from scout.shared.text import norm
-from tests.unit.discovery._builders import (
-    OTHER_OWNER,
-    OWNER,
-    discard_chunk,
-    index,
-    keep_chunk,
-    probe,
-    work,
-)
 
 C = CheckCode
 ABSTRACT = "We study lignin based foams and report their thermal conductivity in detail."

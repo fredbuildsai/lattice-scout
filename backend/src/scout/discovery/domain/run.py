@@ -10,7 +10,7 @@ from uuid import UUID
 
 from scout.discovery.domain.budget import RunBudget, RunSpend
 from scout.discovery.domain.enums import RunFailure, RunStatus, RunStep, StepStatus
-from scout.shared import AccountId, AggregateRoot, Conflict, DomainError
+from scout.shared import AccountId, AggregateRoot, Conflict, DomainError, InvalidStateTransition
 
 STEP_ORDER: tuple[RunStep, ...] = tuple(RunStep)
 STEP_WEIGHTS: dict[RunStep, int] = {
@@ -44,6 +44,14 @@ class RunFailed(DomainError):
     def __init__(self, failure: RunFailure) -> None:
         super().__init__(failure.value, extra={"reason": failure.value})
         self.failure = failure
+
+
+_PHASES: dict[RunStep, str] = {
+    RunStep.PLAN_QUERIES: "retrieving", RunStep.RETRIEVE: "retrieving",
+    RunStep.GROUP_BY_TOPIC: "clustering", RunStep.COVERAGE: "clustering",
+    RunStep.MEASURE_NOVELTY: "analysing", RunStep.ANALYSE: "analysing",
+    RunStep.VERIFY: "verifying", RunStep.SCORE_PERSIST: "verifying",
+}  # fmt: skip
 
 
 @dataclass
@@ -125,10 +133,34 @@ class AnalysisRun(AggregateRoot):
     heartbeat_at: datetime | None = None
     updated_at: datetime | None = None
 
+    # ---- guards ------------------------------------------------------------------------------------------------
+    def _fence(self, generation: int) -> None:
+        if generation != self.generation:
+            raise Superseded("generation_changed", extra={"expected": self.generation, "got": generation})
+
+    def _need(self, *allowed: RunStatus) -> None:
+        if self.status not in allowed:
+            raise InvalidStateTransition(f"run_{self.status.value}", extra={"status": self.status.value})
+
+    def _record(self, step: RunStep) -> StepRecord:
+        return self.step_state.setdefault(step, StepRecord())
+
+    def _finish(self, status: RunStatus, now: datetime) -> None:
+        self.status, self.finished_at, self.updated_at = status, now, now
+
     # ---- transitions -------------------------------------------------------------------------------------------
     def begin_execution(self, now: datetime) -> int:
         """``queued|running`` -> ``running``; bumps the generation and returns it (the fencing token)."""
-        raise NotImplementedError
+        self._need(RunStatus.QUEUED, RunStatus.RUNNING)
+        if self.status is RunStatus.QUEUED:
+            self.status, self.step, self.started_at = RunStatus.RUNNING, STEP_ORDER[0], now
+        self.generation += 1
+        self.executions += 1
+        self.heartbeat_at = self.updated_at = now
+        rec = self._record(self.step or STEP_ORDER[0])
+        if rec.status is StepStatus.PENDING:
+            rec.status, rec.started_at = StepStatus.RUNNING, now
+        return self.generation
 
     def complete_step(
         self, step: RunStep, generation: int, summary: dict[str, int | str], now: datetime
@@ -139,37 +171,82 @@ class AnalysisRun(AggregateRoot):
             Superseded: ``generation`` is not the current one.
             InvalidStateTransition: the run is not running, or ``step`` is not the current step.
         """
-        raise NotImplementedError
+        self._fence(generation)
+        self._need(RunStatus.RUNNING)
+        if step is not self.step:
+            raise InvalidStateTransition("not_current_step", extra={"step": step.value})
+        rec = self._record(step)
+        degraded = any(d.step is step for d in self.degraded)
+        rec.status = StepStatus.DEGRADED if degraded else StepStatus.DONE
+        rec.finished_at, rec.summary = now, dict(summary)
+        self.updated_at = self.heartbeat_at = now
+        nxt = STEP_ORDER.index(step) + 1
+        if nxt >= len(STEP_ORDER):
+            self._finish(RunStatus.DONE, now)
+            return
+        self.step = STEP_ORDER[nxt]
+        nrec = self._record(self.step)
+        nrec.status, nrec.started_at = StepStatus.RUNNING, now
 
     def record_progress(self, step: RunStep, generation: int, done: int, total: int, now: datetime) -> None:
         """Update the progress counters of the current step (fenced)."""
-        raise NotImplementedError
+        self._fence(generation)
+        self._need(RunStatus.RUNNING)
+        if step is not self.step:
+            raise InvalidStateTransition("not_current_step", extra={"step": step.value})
+        rec = self._record(step)
+        rec.done, rec.total = done, total
+        self.heartbeat_at = self.updated_at = now
 
     def degrade(self, step: RunStep, reason: str, generation: int) -> None:
         """Remember that ``step`` produced less than full output; the run becomes ``partial``."""
-        raise NotImplementedError
+        self._fence(generation)
+        self._need(RunStatus.RUNNING)
+        self.degraded.append(Degradation(step, reason))
+        self.partial = True
 
     def fail(self, failure: RunFailure, step: RunStep | None, now: datetime) -> None:
         """``queued|running`` -> ``failed``."""
-        raise NotImplementedError
+        self._need(RunStatus.QUEUED, RunStatus.RUNNING)
+        self.error_code, self.error_step = failure.value, step
+        self._finish(RunStatus.FAILED, now)
 
     def request_cancel(self, now: datetime) -> None:
         """``queued`` -> ``cancelled`` at once; ``running`` only records the request."""
-        raise NotImplementedError
+        self._need(RunStatus.QUEUED, RunStatus.RUNNING)
+        self.cancel_requested_at = now
+        if self.status is RunStatus.QUEUED:
+            self._finish(RunStatus.CANCELLED, now)
+        else:
+            self.updated_at = now
 
     def cancel(self, generation: int, now: datetime) -> None:
         """``running`` -> ``cancelled`` (the execution noticed the request)."""
-        raise NotImplementedError
+        self._fence(generation)
+        self._need(RunStatus.RUNNING)
+        self._finish(RunStatus.CANCELLED, now)
 
     # ---- derived -----------------------------------------------------------------------------------------------
     @property
     def phase(self) -> str:
         """Plain-language phase for the progress UI."""
-        raise NotImplementedError
+        if self.status is RunStatus.QUEUED:
+            return "queued"
+        if self.status is not RunStatus.RUNNING or self.step is None:
+            return self.status.value
+        return _PHASES[self.step]
 
     def percent(self) -> int:
         """Progress 0-100 from the step weights; never decreases within a run."""
-        raise NotImplementedError
+        if self.status is RunStatus.DONE:
+            return 100
+        if self.step is None:
+            return 0
+        pct = sum(STEP_WEIGHTS[s] for s in STEP_ORDER[: STEP_ORDER.index(self.step)])
+        rec = self.step_state.get(self.step)
+        if rec is not None and rec.total > 0:
+            pct += STEP_WEIGHTS[self.step] * min(rec.done, rec.total) // rec.total
+        return min(pct, 99)
 
     @property
     def active(self) -> bool:

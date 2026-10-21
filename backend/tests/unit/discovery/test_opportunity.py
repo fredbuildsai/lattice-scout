@@ -14,6 +14,7 @@ from itertools import product
 import pytest
 from hypothesis import example, given, settings
 from hypothesis import strategies as st
+from tests.unit.discovery._builders import claim, ev, opp, scores, showable_claims, uid
 
 from scout.discovery.domain.enums import (
     CheckCode,
@@ -25,7 +26,6 @@ from scout.discovery.domain.enums import (
 )
 from scout.discovery.domain.opportunity import USER_STATUSES, Claim, Evidence, Opportunity, Scores
 from scout.shared import InvalidStateTransition, InvariantViolation
-from tests.unit.discovery._builders import claim, ev, opp, scores, showable_claims, uid
 
 S = SourceType
 CS = ClaimStatus
