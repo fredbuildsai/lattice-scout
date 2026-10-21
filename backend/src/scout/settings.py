@@ -87,6 +87,7 @@ class Settings(BaseSettings):
 
     email_api_key: SecretStr | None = None
     email_from: str | None = None
+    app_base_url: str = "http://localhost:5173"  # links in e-mails
     worker_poll_interval_ms: int = 1000
     job_lease_seconds: int = 300
 

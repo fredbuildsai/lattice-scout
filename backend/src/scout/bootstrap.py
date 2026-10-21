@@ -10,6 +10,7 @@ from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from typing import Protocol, assert_never, runtime_checkable
+from uuid import UUID
 
 from scout.adapters.literature.fixtures import FixtureLiterature
 from scout.adapters.llm.factory import AgentFactory
@@ -47,7 +48,6 @@ from scout.identity.application.erasure import DeleteAccountJob, SweepErasures
 from scout.identity.application.service import IdentityService
 from scout.identity.ports.auth import AuthTokenVerifier
 from scout.matching.adapters.agents import AgentsMatching
-from scout.matching.adapters.notifier import LoggingMatchNotifier
 from scout.matching.adapters.sql import SqlMatchUnitOfWork
 from scout.matching.adapters.vocabulary import load_vocabulary
 from scout.matching.application.compute import ComputeMatches
@@ -58,6 +58,10 @@ from scout.matching.application.reveal_job import MatchingNightly, RevealMatch
 from scout.matching.application.service import DecideOnMatch, MatchingService
 from scout.matching.application.sources import ConsentSourceAdapter, VaultSignalAdapter
 from scout.matching.application.sources import ProfileSourceAdapter as MatchProfileSource
+from scout.notifications.adapters.senders import ConsoleEmailSender, ResendEmailSender
+from scout.notifications.adapters.sql import SqlNotificationStore
+from scout.notifications.application.service import MatchMailNotifier, Notifications, WeeklyDigest
+from scout.notifications.domain.notification import Template
 from scout.ports.analytics import AnalyticsPort
 from scout.ports.budget import GlobalBudgetPort
 from scout.ports.jobs import JobQueuePort
@@ -113,6 +117,8 @@ class Container:
     identity: IdentityService
     delete_account: DeleteAccountJob
     global_budget: GlobalBudgetPort
+    notifications: Notifications
+    weekly_digest: WeeklyDigest
     sweep_erasures: SweepErasures
     profile: ProfileService
     import_profile: ImportProfile
@@ -231,6 +237,14 @@ def _select_auth(s: Settings, clock: Clock) -> tuple[AuthTokenVerifier, DevToken
             assert_never(unreachable)
 
 
+def _select_email(s: Settings) -> ConsoleEmailSender | ResendEmailSender:
+    if s.email_provider == "resend" and s.email_api_key and s.email_from:
+        import httpx
+
+        return ResendEmailSender(httpx.AsyncClient(), s.email_api_key.get_secret_value(), s.email_from)
+    return ConsoleEmailSender()
+
+
 def _select_auth_admin(s: Settings) -> DevAuthAdmin | SupabaseAuthAdmin:
     if (
         s.auth_mode == "supabase" and s.supabase_url and s.supabase_service_role_key
@@ -312,7 +326,9 @@ def build_container(
         finalizer=SqlAccountFinalizer(db), jobs=queue, clock=clock, ids=ids, audit_key=audit_key,
         second_pass_minutes=settings.erasure_second_pass_minutes,
     )  # fmt: skip
-    match_agents, match_notifier = AgentsMatching(agents), LoggingMatchNotifier()
+    notif_store = SqlNotificationStore(db)
+    notifications = Notifications(notif_store, _select_email(settings), queue, clock, settings.app_base_url)
+    match_agents, match_notifier = AgentsMatching(agents), MatchMailNotifier(notifications)
     consent_source, match_profile_source = (
         ConsentSourceAdapter(identity_service),
         MatchProfileSource(profile_service),
@@ -330,6 +346,10 @@ def build_container(
         match_cfg,
     )
     compute_matches = ComputeMatches(match_uow, match_agents, vocabulary, match_notifier, clock, match_cfg)
+
+    async def run_done(owner: UUID, run_id: UUID) -> None:
+        await notifications.notify(owner, Template.RUN_FINISHED, str(run_id))
+
     return Container(
         matching=MatchingService(match_uow, consent_source, clock, match_cfg),
         decide_match=DecideOnMatch(match_uow, consent_source, queue, match_notifier, clock, match_cfg),
@@ -354,6 +374,7 @@ def build_container(
                 max_resolve=settings.run_max_resolve,
             ),
             clock,
+            run_done,
         ),
         sweep_runs=SweepRuns(
             discovery_uow, queue, clock, stall_minutes=settings.run_stall_minutes,
@@ -372,6 +393,8 @@ def build_container(
         identity=identity_service,
         delete_account=delete_account,
         global_budget=global_budget,
+        notifications=notifications,
+        weekly_digest=WeeklyDigest(notif_store, notifications, queue, clock),
         sweep_erasures=SweepErasures(SqlStuckErasures(db), queue, clock, audit_key),
         profile=profile_service,
         import_profile=ImportProfile(lambda: SqlProfileUnitOfWork(db), literature, clock, ids, cfg),

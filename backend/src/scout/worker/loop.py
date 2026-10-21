@@ -149,6 +149,12 @@ def build_handlers(c: Container) -> dict[str, Handler]:
     async def identity_sweep(job: Job) -> dict[str, JsonValue]:
         return await c.sweep_erasures.handle(job.payload, last_attempt=last(job))
 
+    async def notification_send(job: Job) -> dict[str, JsonValue]:
+        return await c.notifications.deliver(job.payload)
+
+    async def notification_digest(job: Job) -> dict[str, JsonValue]:
+        return await c.weekly_digest.handle(job.payload, last_attempt=last(job))
+
     def last(job: Job) -> bool:
         return job.attempts >= job.max_attempts
 
@@ -181,5 +187,7 @@ def build_handlers(c: Container) -> dict[str, Handler]:
         "matching.reveal": matching_reveal,
         "matching.nightly": matching_nightly,
         "account.delete": account_delete,
+        "notification.send": notification_send,
+        "notification.digest": notification_digest,
         "identity.sweep": identity_sweep,
     }

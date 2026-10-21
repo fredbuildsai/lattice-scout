@@ -78,7 +78,9 @@ class RunAnalysis:
         field: FieldConfig,
         cfg: PipelineConfig,
         clock: Clock,
+        on_done: Callable[[UUID, UUID], Awaitable[None]] | None = None,
     ) -> None:
+        self._on_done = on_done
         self._uow, self._ledger, self._literature, self._agents = uow, ledger, literature, agents
         self._profiles, self._vault, self._field, self._cfg, self._clock = profiles, vault, field, cfg, clock
 
@@ -143,6 +145,8 @@ class RunAnalysis:
                 await self._fail(run_id, gen, failure_code(exc), step)
             raise
         final = await ctx.read()
+        if final.status is RunStatus.DONE and self._on_done is not None:
+            await self._on_done(owner, run_id)  # best effort: the callback never raises
         return {"status": final.status.value, "percent": final.percent(), "partial": final.partial}
 
     async def _fail(self, run_id: UUID, gen: int, failure: RunFailure, step: RunStep | None) -> None:

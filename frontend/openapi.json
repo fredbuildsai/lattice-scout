@@ -2232,6 +2232,74 @@
         "title": "MethodOut",
         "type": "object"
       },
+      "NotificationPrefsIn": {
+        "additionalProperties": false,
+        "description": "Partial update.",
+        "properties": {
+          "email_digest": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email Digest"
+          },
+          "email_matches": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email Matches"
+          },
+          "email_runs": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email Runs"
+          }
+        },
+        "title": "NotificationPrefsIn",
+        "type": "object"
+      },
+      "NotificationPrefsOut": {
+        "description": "What Scout may e-mail.",
+        "properties": {
+          "email_digest": {
+            "description": "A weekly summary (off by default).",
+            "title": "Email Digest",
+            "type": "boolean"
+          },
+          "email_matches": {
+            "description": "A mail for a new suggestion and for a mutual match.",
+            "title": "Email Matches",
+            "type": "boolean"
+          },
+          "email_runs": {
+            "description": "A mail when an analysis finishes.",
+            "title": "Email Runs",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "email_runs",
+          "email_matches",
+          "email_digest"
+        ],
+        "title": "NotificationPrefsOut",
+        "type": "object"
+      },
       "NoveltyOut": {
         "description": "The measured count behind the novelty score.",
         "properties": {
@@ -4526,6 +4594,68 @@
         "summary": "Delete the account and everything it owns",
         "tags": [
           "identity"
+        ]
+      }
+    },
+    "/api/v1/me/notifications": {
+      "get": {
+        "description": "Defaults: runs and matches on, digest off.",
+        "operationId": "get_prefs_api_v1_me_notifications_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationPrefsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "E-mail preferences",
+        "tags": [
+          "notifications"
+        ]
+      },
+      "patch": {
+        "description": "Only the fields you send change.",
+        "operationId": "patch_prefs_api_v1_me_notifications_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationPrefsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationPrefsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Change e-mail preferences",
+        "tags": [
+          "notifications"
         ]
       }
     },

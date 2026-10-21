@@ -320,6 +320,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/me/notifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * E-mail preferences
+         * @description Defaults: runs and matches on, digest off.
+         */
+        get: operations["get_prefs_api_v1_me_notifications_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Change e-mail preferences
+         * @description Only the fields you send change.
+         */
+        patch: operations["patch_prefs_api_v1_me_notifications_patch"];
+        trace?: never;
+    };
     "/api/v1/opportunities": {
         parameters: {
             query?: never;
@@ -1476,6 +1500,39 @@ export interface components {
             name: string;
             /** Refs */
             refs: components["schemas"]["RefOut"][];
+        };
+        /**
+         * NotificationPrefsIn
+         * @description Partial update.
+         */
+        NotificationPrefsIn: {
+            /** Email Digest */
+            email_digest?: boolean | null;
+            /** Email Matches */
+            email_matches?: boolean | null;
+            /** Email Runs */
+            email_runs?: boolean | null;
+        };
+        /**
+         * NotificationPrefsOut
+         * @description What Scout may e-mail.
+         */
+        NotificationPrefsOut: {
+            /**
+             * Email Digest
+             * @description A weekly summary (off by default).
+             */
+            email_digest: boolean;
+            /**
+             * Email Matches
+             * @description A mail for a new suggestion and for a mutual match.
+             */
+            email_matches: boolean;
+            /**
+             * Email Runs
+             * @description A mail when an analysis finishes.
+             */
+            email_runs: boolean;
         };
         /**
          * NoveltyOut
@@ -2797,6 +2854,59 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DeletingOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_prefs_api_v1_me_notifications_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotificationPrefsOut"];
+                };
+            };
+        };
+    };
+    patch_prefs_api_v1_me_notifications_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NotificationPrefsIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotificationPrefsOut"];
                 };
             };
             /** @description Validation Error */

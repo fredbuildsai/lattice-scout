@@ -18,6 +18,7 @@ from scout.api import (
     health,
     identity,
     matches,
+    notifications,
     opportunities,
     profile,
     runs,
@@ -78,6 +79,7 @@ def create_app(container: Container | None = None) -> FastAPI:
     app.include_router(matches.router)
     app.include_router(admin.router)
     app.include_router(system.router)
+    app.include_router(notifications.router)
     if (container.settings if container else get_settings()).auth_mode == "dev":
         app.include_router(dev_auth.router)
         structlog.get_logger().warning(

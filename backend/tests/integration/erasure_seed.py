@@ -255,6 +255,10 @@ def seed_world(conn: Connection, s: Seeded, storage_dir: Path) -> None:
               close_reason="declined", never_similar_by=d_side, closed_at=now)  # fmt: skip
     ins(conn, "match_block", account_id=s.d, blocked_account_id=a, match_id=s.declined, created_at=now)
 
+    # ---- notifications: preference row and a delivery-log row whose ref is A's run id
+    ins(conn, "notification_pref", account_id=a, email_runs=True, email_matches=True, email_digest=True)
+    ins(conn, "notification", id=uuid4(), account_id=a, template="run_finished", ref=str(s.run), sent_at=now)
+
     # ---- feedback: A on an opportunity and on the mutual match; C (counterpart) rates the mutual match
     ins(conn, "feedback", id=uuid4(), author_id=a, target_type="opportunity", target_id=s.opportunities[0],
         rating="up", reasons=[], created_at=now, updated_at=now)  # fmt: skip
