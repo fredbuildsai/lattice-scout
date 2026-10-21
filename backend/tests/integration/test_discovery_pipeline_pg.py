@@ -138,3 +138,30 @@ async def test_analytics_views_have_rows_after_a_run(db: Database) -> None:
         ).one()
     assert quality[0] >= 3 and 0 < quality[1] <= 1
     assert cost[0] == 1 and cost[1] > 0 and cost[2] > 0
+
+
+async def test_a2_resume_after_a_kill_during_analyse_repeats_nothing_completed(db: Database) -> None:
+    from tests.fakes.discovery import AgentKilled
+
+    await _account(db)
+    w = PgWorld(db)
+    run = await w.start()
+    w.agents.kill_on_call = 6  # the GapAnalyst call: steps 1-5 are committed
+    with pytest.raises(AgentKilled):
+        await w.run(run)
+    async with w.uow() as uow:
+        mid = await uow.runs.get(run.id, OWNER)
+    assert (
+        mid is not None
+        and mid.status is RunStatus.RUNNING
+        and mid.step is not None
+        and mid.step.value == "analyse"
+    )
+    calls_before = list(w.literature.calls)
+    w.agents.kill_on_call = None
+    assert (await w.run(run))["status"] == "done"
+    assert w.agents.count("QueryPlanner") == 1 and w.literature.calls == calls_before
+    async with w.uow() as uow:
+        final = await uow.runs.get(run.id, OWNER)
+    assert final is not None and final.generation == 2 and final.spend.llm_calls == 8
+    assert await _count(db, "opportunity") == 2

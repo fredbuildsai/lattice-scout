@@ -11,7 +11,7 @@
     {
       "cluster_id": "k4",
       "corpus_count": 3,
-      "density": 0.33333334,
+      "density": 0.333,
       "label": "Cellulose nanofibre membranes",
       "user_insights": 7.5,
       "user_works": 68
@@ -19,7 +19,7 @@
     {
       "cluster_id": "k3",
       "corpus_count": 4,
-      "density": 0.44444445,
+      "density": 0.444,
       "label": "Lignin polyurethane foams",
       "user_insights": 10.5,
       "user_works": 11
@@ -27,7 +27,7 @@
     {
       "cluster_id": "k5",
       "corpus_count": 3,
-      "density": 0.33333334,
+      "density": 0.333,
       "label": "Lignin in fibre-cement composites",
       "user_insights": 0.0,
       "user_works": 3
@@ -35,7 +35,7 @@
     {
       "cluster_id": "k2",
       "corpus_count": 5,
-      "density": 0.5555556,
+      "density": 0.556,
       "label": "Wood composites for EMI shielding",
       "user_insights": 0.0,
       "user_works": 9
@@ -339,6 +339,12 @@
       "year": 2022
     },
     {
+      "abstract": "Replacing petroleum-derived polyols with lignin in polyurethane foams is essential for increasing renewable carbon utilization but is hindered by lignin’s heterogeneity, poor solubility, and limited reactivity. Here, we report a hydrogen-bond-engineered, eutectic-like polyol platform based on polyethylene glycol (PEG) and salicylic acid (SA), with ethylene carbonate (EC) as a cosolvent, enabling high lignin",
+      "title": "High-Lignin Polyurethane Foams via a Eutectic-Like Polyol Strategy: Enabling Scalable Processing and Enhanced Structural Performance",
+      "work_id": "W7204036258",
+      "year": 2026
+    },
+    {
       "abstract": "",
       "title": "Chemical recycling of a lignin-based non-isocyanate polyurethane foam",
       "work_id": "W4313562066",
@@ -349,12 +355,6 @@
       "title": "Green co-solvent-assisted one-pot synthesis of high-performance flexible lignin polyurethane foam",
       "work_id": "W4402758757",
       "year": 2024
-    },
-    {
-      "abstract": "Replacing petroleum-derived polyols with lignin in polyurethane foams is essential for increasing renewable carbon utilization but is hindered by lignin’s heterogeneity, poor solubility, and limited reactivity. Here, we report a hydrogen-bond-engineered, eutectic-like polyol platform based on polyethylene glycol (PEG) and salicylic acid (SA), with ethylene carbonate (EC) as a cosolvent, enabling high lignin",
-      "title": "High-Lignin Polyurethane Foams via a Eutectic-Like Polyol Strategy: Enabling Scalable Processing and Enhanced Structural Performance",
-      "work_id": "W7204036258",
-      "year": 2026
     },
     {
       "abstract": "",
@@ -393,16 +393,16 @@
       "year": 2022
     },
     {
-      "abstract": "",
-      "title": "Highly anisotropic MXene@Wood composites for tunable electromagnetic interference shielding",
-      "work_id": "W4319766258",
-      "year": 2023
-    },
-    {
       "abstract": "Currently, due to the rapid development of communication technology, electromagnetic interference (EMI) and irradiation have become an emerging environmental pollutant. Herein, hierarchical and porous structured wood is used as the lightweight three‐dimensional organic scaffold for the incorporation of magnetic iron oxide nanoparticles through an in situ mineralization process that endows the woodblock with favorable",
       "title": "Lightweight and Construable Magnetic Wood for Electromagnetic Interference Shielding",
       "work_id": "W3033851578",
       "year": 2020
+    },
+    {
+      "abstract": "",
+      "title": "Highly anisotropic MXene@Wood composites for tunable electromagnetic interference shielding",
+      "work_id": "W4319766258",
+      "year": 2023
     }
   ],
   "profile_summary": {

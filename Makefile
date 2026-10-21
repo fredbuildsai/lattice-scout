@@ -54,7 +54,7 @@ docs:
 	cd docs-site && uv run --project ../backend mkdocs build --strict
 
 eval:          ## offline eval (fixtures); live eval is a manual workflow
-	@echo "eval harness arrives in M3"
+	cd backend && uv run python ../eval/run_eval.py
 
 e2e:           ## Playwright smoke test
 	cd frontend && pnpm e2e

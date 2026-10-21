@@ -374,6 +374,7 @@ async def coverage(c: StepContext) -> Summary:
     rec = run.step_state.get(step)
     tags: list[list[str]] | None = rec.data.get("tags") if rec else None
     degrade_tags = False
+    tagger_version: str | None = None
     if tags is None:
         tags = []
         real = [cl for cl in clusters if not cl.is_misc][:30]
@@ -394,6 +395,7 @@ async def coverage(c: StepContext) -> Summary:
                 except (BudgetExhausted, *_LLM_ERRORS):
                     degrade_tags = True
                     break
+                tagger_version = outcome.prompt_version
                 for tag in outcome.output.tags:
                     if tag.insight_ref in wanted:
                         tags.extend(
@@ -429,6 +431,8 @@ async def coverage(c: StepContext) -> Summary:
         await uow.clusters.upsert_many(updated)
         st = r.step_state[step]
         st.data["tags"] = tags
+        if tagger_version:
+            r.prompt_versions["InsightTopicTagger"] = tagger_version
         st.data["candidates"] = picked
         if degrade_tags:
             await _degrade(r, c, step, "tags_skipped")

@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, BeforeValidator, ConfigDict, Field
+from pydantic import AfterValidator, BaseModel, BeforeValidator, ConfigDict, Field
 
 from scout.shared.text import clean_text
 
@@ -45,7 +45,7 @@ class PlanTopic(BaseModel):
 
     id: str
     name: S80 | None = None
-    weight: float = 0.0
+    weight: Annotated[float, AfterValidator(lambda v: round(v, 3))] = 0.0
 
 
 class PlanInsight(BaseModel):
@@ -187,8 +187,8 @@ class CoverageRow(BaseModel):
     label: S60
     corpus_count: int
     user_works: int
-    user_insights: float
-    density: float
+    user_insights: Annotated[float, AfterValidator(lambda v: round(v, 3))]
+    density: Annotated[float, AfterValidator(lambda v: round(v, 3))]
 
 
 class NoveltyRow(BaseModel):

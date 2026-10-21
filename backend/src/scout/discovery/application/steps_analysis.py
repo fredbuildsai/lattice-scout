@@ -185,12 +185,14 @@ def _analyst_context(
     papers: dict[str, CorpusWork] = {}
     for cl in batch:
         members = sorted(
-            (w for w in corpus if w.cluster_id == cl.id), key=lambda w: (-w.cited_by, w.openalex_id)
+            (w for w in corpus if w.cluster_id == cl.id),
+            key=lambda w: (w.abstract is None, -w.cited_by, w.openalex_id),
         )
         papers.update({w.openalex_id: w for w in members[:5]})
     for label in sorted(objection):
         hits = sorted(
-            (w for w in corpus if label in w.query_labels), key=lambda w: (-w.cited_by, w.openalex_id)
+            (w for w in corpus if label in w.query_labels),
+            key=lambda w: (w.abstract is None, -w.cited_by, w.openalex_id),
         )
         papers.update({w.openalex_id: w for w in hits[:3]})
     chunks: list[ChunkForAnalyst] = []
