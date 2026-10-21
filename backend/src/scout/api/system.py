@@ -39,6 +39,11 @@ class SystemStatusOut(BaseModel):
         default=None,
         description="Plain-language explanation shown when `confidential_data_enabled` is false.",
     )
+    vault_upload_warning: bool = Field(
+        default=True,
+        description="True when the UI must warn users not to upload confidential material and require a tick "
+        "before uploading (setting `VAULT_UPLOAD_WARNING`).",
+    )
 
 
 @router.get("/status", summary="Are new analyses accepted right now?", response_model=SystemStatusOut)
@@ -49,13 +54,18 @@ async def system_status(request: Request, account: Account = Depends(current_acc
     enabled = c.llm.confidential_allowed()  # every tier: analyses and matching need both
     documents_analysed = c.llm.confidential_allowed(ModelTier.FAST)  # what ingestion needs
     notice = None if enabled else PARTIAL_NOTICE if documents_analysed else CONFIDENTIAL_NOTICE
+    warning = c.settings.vault_upload_warning
     if st.paused:
         return SystemStatusOut(
             accepting_runs=False,
             message="Scout has reached its daily analysis limit. New analyses open again tomorrow (UTC).",
             confidential_data_enabled=enabled,
             confidential_data_notice=notice,
+            vault_upload_warning=warning,
         )
     return SystemStatusOut(
-        accepting_runs=True, confidential_data_enabled=enabled, confidential_data_notice=notice
+        accepting_runs=True,
+        confidential_data_enabled=enabled,
+        confidential_data_notice=notice,
+        vault_upload_warning=warning,
     )

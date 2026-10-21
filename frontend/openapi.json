@@ -3502,6 +3502,12 @@
             ],
             "description": "Plain-language reason, shown by the UI when paused.",
             "title": "Message"
+          },
+          "vault_upload_warning": {
+            "default": true,
+            "description": "True when the UI must warn users not to upload confidential material and require a tick before uploading (setting `VAULT_UPLOAD_WARNING`).",
+            "title": "Vault Upload Warning",
+            "type": "boolean"
           }
         },
         "required": [

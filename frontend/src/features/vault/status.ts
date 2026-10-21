@@ -40,7 +40,7 @@ export function statusChip(status: string): { label: string; tone: ChipTone } {
 
 /** Shown under a document that is stored but not yet read by a language model (ADR 016). */
 export const AWAITING_PROVIDER_NOTE =
-  'Scout has read this file on its server but not sent it to any AI model, because no approved AI provider is configured. Its extracted text stays here (the uploaded file is removed if you chose to discard it) and is analysed automatically once the operator approves a provider. Meanwhile your analyses use your published work only.'
+  'Scout has read this file on its server but not sent it to any AI model (and cannot yet guarantee the confidentiality of stored files, so please delete it if it is confidential), because no approved AI provider is configured. Its extracted text stays here (the uploaded file is removed if you chose to discard it) and is analysed automatically once the operator approves a provider. Meanwhile your analyses use your published work only.'
 
 const FAILURES: Record<string, string> = {
   encrypted: 'This file is password-protected. Remove the password and upload it again.',

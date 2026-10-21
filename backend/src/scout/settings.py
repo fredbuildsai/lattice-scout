@@ -86,6 +86,8 @@ class Settings(BaseSettings):
     match_non_members: bool = False
     retention_policy: Literal["keep", "discard", "user_choice"] = "user_choice"
 
+    # Show the "do not upload confidential material" warning in the vault (DECISIONS 130).
+    vault_upload_warning: bool = True
     analytics_enabled: bool = True
     analytics_retention_months: int = (
         13  # raw analytics, LLM and external-call rows older than this are dropped

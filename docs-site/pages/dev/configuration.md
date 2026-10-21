@@ -82,6 +82,12 @@ Read by the API (upload limits, `RETENTION_POLICY`) and by the worker (extractio
 | `PROMPTS_DIR` | `prompts` | Versioned agent prompts. |
 | `LLM_MAX_CONCURRENCY` | `8` | Threads used for the synchronous router. |
 
+## Vault
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `VAULT_UPLOAD_WARNING` | `true` | Shows the warning and the "I am not uploading confidential material" checkbox above the upload zone. Exposed as `vault_upload_warning` in `GET /api/v1/system/status`. `false` hides both. |
+
 ## Observability
 
 | Variable | Default | Purpose |

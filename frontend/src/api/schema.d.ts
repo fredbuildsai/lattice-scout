@@ -2112,6 +2112,12 @@ export interface components {
              * @description Plain-language reason, shown by the UI when paused.
              */
             message?: string | null;
+            /**
+             * Vault Upload Warning
+             * @description True when the UI must warn users not to upload confidential material and require a tick before uploading (setting `VAULT_UPLOAD_WARNING`).
+             * @default true
+             */
+            vault_upload_warning: boolean;
         };
         /**
          * TopicOut

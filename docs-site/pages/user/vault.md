@@ -1,6 +1,9 @@
 # Your private vault
 
-The private vault is where you upload your own documents: grants you applied for, grants that were turned down, proposals, unpublished results and lab notes. Scout reads each file and lists what it contains. You can then decide what to do with the file.
+The private vault is where you add your own documents so that Scout can read them and list what they contain. You can then decide what to do with each file.
+
+!!! warning "Do not upload confidential material"
+    Do not upload confidential material such as grant proposals, unpublished manuscripts under embargo, or anything under an NDA or third-party confidentiality. Scout cannot guarantee the confidentiality of stored documents in this pilot. Only upload what you are happy to see stored on our server. You can delete any document at any time. While this warning is on, the upload area asks you to tick **I am not uploading confidential material** before you can choose files.
 
 Find it in the menu under **Private vault** (`/vault`).
 
@@ -22,9 +25,9 @@ Include reviewer reports if you have them. Scout works out what each file is. Yo
 3. **Finding insights.** Scout asks an AI language model to list the aims, methods, findings, open questions and reviewer objections in your document. Scout then checks each item against the text (see below).
 4. **Ready.** The insights are on the document. You can open them with **Show details**.
 
-Scout sends excerpts of your document text to an AI language model to find the insights. The service operator chooses the providers; this version may use the free tiers of OpenRouter, Groq and Mistral. Scout does not train models on your files, but the providers have their own terms. Scout has a rule for this: text from your private documents is sent **only** to providers the operator has marked as approved for confidential data, and never to any other provider. Published literature data, such as paper titles, can go to any configured provider. If no provider is approved, Scout still stores your file and reads its text on its own server, but the document shows **Waiting for an approved provider** and nothing from it goes to any AI model. Text that Scout or a model derived from your documents (for example a draft opportunity written while your documents were in play) is treated the same way. Search terms sent to OpenAlex are built from your published work only. It is analysed automatically, within about ten minutes, once the operator approves a provider. Ask the operator which providers are approved before you upload a confidential document.
+Scout sends excerpts of your document text to an AI language model to find the insights. The service operator chooses the providers; this version may use the free tiers of OpenRouter, Groq and Mistral. Scout does not train models on your files, but the providers have their own terms. Scout has a rule for this: text from your private documents is sent **only** to providers the operator has marked as approved for confidential data, and never to any other provider. Published literature data, such as paper titles, can go to any configured provider. If no provider is approved, Scout still stores your file and reads its text on its own server, but the document shows **Waiting for an approved provider** and nothing from it goes to any AI model. Text that Scout or a model derived from your documents (for example a draft opportunity written while your documents were in play) is treated the same way. Search terms sent to OpenAlex are built from your published work only. It is analysed automatically, within about ten minutes, once the operator approves a provider. Whichever providers are approved, do not upload confidential documents in this pilot.
 
-Nothing from your vault is shared with other researchers in this version. Only your account can open your documents.
+Nothing from your vault is shared with other researchers in this version, and only your account can open your documents in Scout. That is an access rule, not a guarantee of confidentiality: the files and text sit on the operator's server.
 
 ## "Keep the original file"
 

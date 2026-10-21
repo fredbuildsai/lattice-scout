@@ -4,6 +4,12 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 
 ## [Unreleased]
 
+### Added (vault upload warning, DECISIONS 130, F-60)
+- `VAULT_UPLOAD_WARNING` (default true), exposed as `vault_upload_warning` in `GET /api/v1/system/status`. While true, the vault page shows a `role=note` warning not to upload confidential material and a required "I am not uploading confidential material" checkbox before the upload zone is enabled. False hides both.
+
+### Changed
+- Vault, privacy, sign-in and user-doc copy no longer invites uploading grants, proposals or unpublished results.
+
 ### Added (matches and Home, F-35 / F-36)
 - Home, "Your profile" card: bar chart of your included publications per year (from the profile; text alternative and empty state).
 - Matches: Venn diagram of the two method sets around the shared topics, on anonymous and revealed cards (only fields the card already shows, no weights).

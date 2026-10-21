@@ -48,7 +48,7 @@ export function SignInPage() {
         <div className="my-8 md:my-auto">
           <h1 className="max-w-[560px] font-serif text-4xl font-semibold leading-tight md:text-5xl">Find the paper hiding in your drawer.</h1>
           <p className="mt-5 max-w-[560px] text-lg text-ink-2">
-            Upload unpublished results, funded and rejected grants, and proposals. Scout reads them against the literature and your lab&apos;s papers, and shows you what&apos;s worth doing next — and who could do it with you.
+            Add your publications and, if you wish, documents you are happy to share with Scout (no confidential material in this pilot). Scout reads them against the literature and your lab&apos;s papers, and shows you what&apos;s worth doing next — and who could do it with you.
           </p>
           <ul className="mt-8 hidden max-w-[560px] space-y-5 md:block">
             {FEATURES.map((f) => (

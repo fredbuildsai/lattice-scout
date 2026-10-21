@@ -25,7 +25,7 @@ function stub(server: Server) {
     const method = init?.method ?? 'GET'
     server.calls.push({ url, method, body: init?.body })
     const json = (b: unknown, status = 200) => new Response(JSON.stringify(b), { status })
-    if (method === 'GET' && url.endsWith('/api/v1/system/status')) return json(server.system ?? { accepting_runs: true, message: null })
+    if (method === 'GET' && url.endsWith('/api/v1/system/status')) return json(server.system ?? { accepting_runs: true, message: null, vault_upload_warning: false })
     if (method === 'GET' && url.endsWith('/api/v1/documents')) return json({ items: server.docs })
     if (method === 'GET') return json(detail)
     if (method === 'PATCH') return json(doc({ kind: 'proposal', kind_source: 'user' }))
@@ -37,6 +37,13 @@ function stub(server: Server) {
   })
   vi.stubGlobal('fetch', fn)
   return fn
+}
+
+/** Waits for the system status (the upload zone is locked until it says the warning is off), then picks a file. */
+async function pickFile(file: File, opts?: Parameters<typeof userEvent.upload>[2]) {
+  const input = screen.getByLabelText('Choose files', { selector: 'input' })
+  await waitFor(() => expect(input).toBeEnabled())
+  await userEvent.upload(input, file, opts)
 }
 
 function renderPage(upload?: Uploader) {
@@ -148,7 +155,7 @@ describe('upload flow', () => {
       return new Promise(() => undefined)
     })
     const { unmount } = renderPage(upload)
-    await userEvent.upload(screen.getByLabelText('Choose files', { selector: 'input' }), new File(['%PDF'], 'new.pdf', { type: 'application/pdf' }))
+    await pickFile(new File(['%PDF'], 'new.pdf', { type: 'application/pdf' }))
     expect(signal?.aborted).toBe(false)
     unmount()
     expect(signal?.aborted).toBe(true)
@@ -159,7 +166,7 @@ describe('upload flow', () => {
     renderPage(async () => {
       throw new VaultError('http_error', 201)
     })
-    await userEvent.upload(screen.getByLabelText('Choose files', { selector: 'input' }), new File(['%PDF'], 'new.pdf', { type: 'application/pdf' }))
+    await pickFile(new File(['%PDF'], 'new.pdf', { type: 'application/pdf' }))
     expect(await screen.findByText(/upload failed/)).toBeInTheDocument()
   })
 
@@ -168,12 +175,12 @@ describe('upload flow', () => {
     renderPage(async () => {
       throw new VaultError('file_rejected', 422, 'empty_file')
     })
-    await userEvent.upload(screen.getByLabelText('Choose files', { selector: 'input' }), new File(['%PDF'], 'new.pdf', { type: 'application/pdf' }))
+    await pickFile(new File(['%PDF'], 'new.pdf', { type: 'application/pdf' }))
     expect(await screen.findByText(/This file is empty/)).toBeInTheDocument()
   })
 
   const pdf = () => new File(['%PDF'], 'new.pdf', { type: 'application/pdf' })
-  const choose = (f: File) => userEvent.upload(screen.getByLabelText('Choose files', { selector: 'input' }), f)
+  const choose = (f: File) => pickFile(f)
 
   it('uploads with progress, passing keep_original, then lists the document', async () => {
     const server: Server = { docs: [], calls: [] }
@@ -217,7 +224,7 @@ describe('upload flow', () => {
     stub({ docs: [], calls: [] })
     const upload = vi.fn<Uploader>()
     renderPage(upload)
-    await userEvent.upload(screen.getByLabelText('Choose files', { selector: 'input' }), new File(['x'], 'sheet.xlsx'), { applyAccept: false })
+    await pickFile(new File(['x'], 'sheet.xlsx'), { applyAccept: false })
     expect(await screen.findByText(/Only PDF and Word/)).toBeInTheDocument()
     const big = new File(['x'], 'big.pdf')
     Object.defineProperty(big, 'size', { value: 26 * 1024 * 1024 })
@@ -299,5 +306,39 @@ describe('polling', () => {
       await userEvent.click(await screen.findByRole('button', { name: /Analyse with Scout/ }))
       expect(await screen.findByRole('alert')).toBeInTheDocument()
     })
+  })
+})
+
+describe('upload warning (DECISIONS 130)', () => {
+  const warning = { accepting_runs: true, message: null, vault_upload_warning: true }
+  const pdf = () => new File(['%PDF'], 'new.pdf', { type: 'application/pdf' })
+
+  it('shows the note above the upload zone and gates uploading on the checkbox', async () => {
+    stub({ system: warning, docs: [], calls: [] })
+    const upload = vi.fn<Uploader>(async () => ({ document: doc({ id: 'n1' }) as never, duplicate: false }))
+    renderPage(upload)
+    const note = await screen.findByRole('note')
+    expect(note).toHaveTextContent(/do not upload confidential material/i)
+    expect(note).toHaveTextContent(/grant proposals/i)
+    expect(note).toHaveTextContent(/delete any document at any time/i)
+    const input = screen.getByLabelText('Choose files', { selector: 'input' })
+    expect(input).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Choose files' })).toBeDisabled()
+    await userEvent.click(screen.getByLabelText('I am not uploading confidential material'))
+    expect(input).toBeEnabled()
+    expect(screen.getByRole('button', { name: 'Choose files' })).toBeEnabled()
+    await userEvent.upload(input, pdf())
+    await waitFor(() => expect(upload).toHaveBeenCalledOnce())
+  })
+
+  it('shows nothing when the operator switched the warning off', async () => {
+    const server: Server = { system: { ...warning, vault_upload_warning: false }, docs: [], calls: [] }
+    const fn = stub(server)
+    renderPage()
+    await waitFor(() => expect(fn.mock.calls.some(([u]) => String(u).endsWith('/system/status'))).toBe(true))
+    expect(await screen.findByText(/Nothing here yet/)).toBeInTheDocument()
+    expect(screen.queryByRole('note')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('I am not uploading confidential material')).not.toBeInTheDocument()
+    expect(screen.getByLabelText('Choose files', { selector: 'input' })).toBeEnabled()
   })
 })

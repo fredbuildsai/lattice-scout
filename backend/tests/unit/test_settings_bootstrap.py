@@ -156,3 +156,8 @@ def test_allow_any_waiver_is_loud_in_production_and_fake_is_silent() -> None:
 def test_legacy_vault_env_names_are_still_read(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("LLM_VAULT_SANCTIONED_PROVIDERS", "Mistral, groq")
     assert _s(app_env="dev").confidential_authorized_providers == frozenset({"mistral", "groq"})
+
+
+def test_vault_upload_warning_defaults_on_and_can_be_switched_off() -> None:
+    assert _s().vault_upload_warning is True
+    assert _s(vault_upload_warning=False).vault_upload_warning is False

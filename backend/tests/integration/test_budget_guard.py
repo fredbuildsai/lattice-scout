@@ -32,6 +32,7 @@ def test_status_is_open_until_the_llm_cap_is_spent(client: TestClient) -> None: 
         "message": None,
         "confidential_data_enabled": True,
         "confidential_data_notice": None,
+        "vault_upload_warning": True,
     }
 
 
@@ -51,3 +52,18 @@ def test_a_spent_cap_pauses_new_runs_with_a_clear_message(db: object, tmp_path: 
         assert st["accepting_runs"] is False and "tomorrow" in st["message"]
         r = c.post("/api/v1/runs", json={"document_ids": []}, headers=h)
         assert r.status_code == 503 and r.json()["code"] == "service_paused"
+
+
+def test_status_reports_the_vault_upload_warning_switch(db: object, tmp_path: object) -> None:
+    from pathlib import Path
+
+    from tests.integration.test_discovery_fixtures import _settings
+
+    from scout.api.app import create_app
+    from scout.bootstrap import build_container
+    from scout.shared import FixedClock
+
+    settings = _settings(Path(str(tmp_path))).model_copy(update={"vault_upload_warning": False})
+    with TestClient(create_app(build_container(settings, clock=FixedClock(NOW)))) as c:
+        h = _login(c, "budget-user3@example.edu")
+        assert c.get("/api/v1/system/status", headers=h).json()["vault_upload_warning"] is False
