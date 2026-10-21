@@ -171,6 +171,7 @@ class SqlDocumentRepo:
             ),  # fmt: skip
             deleting=await ids(t.c.status == "deleting", t.c.updated_at < older_than),
             stalled=await ids(t.c.status.in_(("extracting", "analysing")), t.c.updated_at < stalled_before),
+            awaiting=await ids(t.c.status == "awaiting_approved_provider"),
         )
 
 

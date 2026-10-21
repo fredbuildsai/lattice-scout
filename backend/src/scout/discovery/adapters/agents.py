@@ -18,7 +18,7 @@ from scout.discovery.domain.agent_io import (
     QueryPlannerInput,
 )
 from scout.discovery.ports.agents import AgentOutcome
-from scout.ports.llm import AgentSpec, CallContext
+from scout.ports.llm import AgentSpec, CallContext, ModelTier
 
 
 class AgentsDiscovery:
@@ -31,6 +31,10 @@ class AgentsDiscovery:
         self._tagger = factory.spec("InsightTopicTagger", InsightTopicTags)
         self._analyst = factory.spec("GapAnalyst", GapAnalysis)
         self._critic = factory.spec("Critic", CriticVerdict)
+
+    def confidential_allowed(self, tier: ModelTier | None = None) -> bool:
+        """Whether confidential (vault) material may go into agent inputs."""
+        return self._f.confidential_allowed(tier)
 
     async def _run[T: BaseModel](
         self, spec: AgentSpec[T], data: BaseModel, ctx: CallContext

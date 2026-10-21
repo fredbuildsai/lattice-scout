@@ -107,6 +107,7 @@ class InMemoryDocumentRepo:
                     d.status in {DocStatus.EXTRACTING, DocStatus.ANALYSING} and d.updated_at < stalled_before
                 )
             ),
+            awaiting=ids(lambda d: d.status is DocStatus.AWAITING_PROVIDER),
         )
 
 

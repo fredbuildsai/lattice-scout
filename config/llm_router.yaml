@@ -5,10 +5,11 @@
 # Costs are zero for free deployments, so the global USD budget guard never trips on them; the provider
 # rate limits (rpm/rpd below, plus 429 cooldowns) are what limits throughput. Set LLM_ROUTER_ALLOW_PAID=false.
 # Model ids follow the llmrouter-free starter config; check them against each provider's current free list.
-# Privacy (docs/adr/015): vault-derived text (documents, passages, insights, profile text) is sent only to
-# deployments that carry `sanctioned: true` AND whose provider is listed in LLM_VAULT_SANCTIONED_PROVIDERS.
-# None is marked: add the flag only after you have confirmed that provider's no-training / no-retention terms.
-# Public literature data (cluster labels, match rationales) may use every deployment.
+# Privacy (docs/adr/016): confidential data (vault documents, passages, insights, profile text derived from them) is
+# sent only to deployments that carry `authorized: true` AND whose provider is listed in
+# LLM_CONFIDENTIAL_AUTHORIZED_PROVIDERS (`sanctioned: true` is still read). None is marked: with none, Scout works on
+# published data only (confidential parts are left out of every prompt) and says so. Add the flag only after you have
+# confirmed that provider's no-training / no-retention terms. Published data may use every deployment.
 deployments:
   - name: openrouter-nemotron-super
     model: openrouter/nvidia/nemotron-3-super-120b-a12b:free

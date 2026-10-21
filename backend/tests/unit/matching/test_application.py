@@ -23,6 +23,7 @@ from scout.matching.domain.agent_io import (
     MethodMention,
     MethodSet,
     Perspective,
+    SignalItem,
 )
 from scout.matching.domain.enums import Action, CareerBand, IdeasStatus, MatchState, Region, ViewerStatus
 from scout.matching.domain.profile import MatchProfile, TopicWeight, WorkIn
@@ -410,3 +411,65 @@ async def test_closed_matches_reject_further_actions() -> None:
     await w.decide.execute(A, mid, Action.DECLINE)
     with pytest.raises(MatchClosed):
         await w.decide.execute(A, mid, Action.ACCEPT)
+
+
+# ---------------------------------------------------------------- ADR 016: no authorized endpoint
+
+
+SECRET_SIGNAL = "SECRET-UNPUBLISHED-AIM"
+
+
+async def test_profile_job_leaves_consented_vault_statements_out_when_no_endpoint_is_authorized() -> None:
+    w = World()
+    w.sources.consents[A] = Consent(True, True, "bio-based-materials")  # A consented to vault signals
+    w.sources.signal_items[A] = [SignalItem(ref="insight:d.methods[0]", text=SECRET_SIGNAL)]
+    w.sources.inputs[A] = ProfileInput(UUID(int=7), "DE", True, works())
+    seen: list[str] = []
+
+    def methods(d: object) -> MethodSet:
+        seen.append(repr(d))
+        return MethodSet(
+            methods=[MethodMention(method_id="lca", source_refs=["work:W1", "work:W2"], confidence="high")]
+        )
+
+    w.agents.methods = methods
+    w.agents.allowed = False
+    await w.profile_job.execute(A)
+    assert seen and not any(SECRET_SIGNAL in s for s in seen)  # the run went ahead without the statement
+    assert w.store.profiles[A].uses_vault_signals is False and w.store.profiles[A].methods == {"lca": 1.0}
+
+
+async def test_profile_job_uses_vault_statements_when_authorized() -> None:
+    w = World()
+    w.sources.consents[A] = Consent(True, True, "bio-based-materials")
+    w.sources.signal_items[A] = [SignalItem(ref="insight:d.methods[0]", text=SECRET_SIGNAL)]
+    w.sources.inputs[A] = ProfileInput(UUID(int=7), "DE", True, works())
+    seen: list[str] = []
+
+    def methods(d: object) -> MethodSet:
+        seen.append(repr(d))
+        return MethodSet(methods=[])
+
+    w.agents.methods = methods
+    await w.profile_job.execute(A)
+    assert any(SECRET_SIGNAL in s for s in seen)
+
+
+async def test_joint_ideas_leave_vault_statements_out_when_no_endpoint_is_authorized() -> None:
+    w = World()
+    mid = await mutual(w)
+    for acc in (A, B):
+        w.sources.consents[acc] = Consent(True, True, "bio-based-materials")
+        w.sources.signal_items[acc] = [SignalItem(ref="insight:d.aims[0]", text=SECRET_SIGNAL)]
+    w.sources.inputs[A] = ProfileInput(UUID(int=7), "DE", True, works(2))
+    w.sources.inputs[B] = ProfileInput(UUID(int=8), "FR", True, works(2))
+    seen: list[str] = []
+
+    def ideas(d: object) -> JointIdeaList:
+        seen.append(repr(d))
+        return JointIdeaList(ideas=[idea(["work:W1"], ["work:W2"])])
+
+    w.agents.ideas = ideas
+    w.agents.allowed = False
+    assert (await w.reveal.handle({"match_id": str(mid)}))["status"] == "ready"
+    assert seen and not any(SECRET_SIGNAL in s for s in seen)

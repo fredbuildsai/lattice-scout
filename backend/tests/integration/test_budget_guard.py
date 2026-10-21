@@ -27,7 +27,12 @@ def _spend(llm_usd: float) -> None:
 
 def test_status_is_open_until_the_llm_cap_is_spent(client: TestClient) -> None:  # noqa: F811
     h = _login(client, "budget-user@example.edu")
-    assert client.get("/api/v1/system/status", headers=h).json() == {"accepting_runs": True, "message": None}
+    assert client.get("/api/v1/system/status", headers=h).json() == {
+        "accepting_runs": True,
+        "message": None,
+        "confidential_data_enabled": True,
+        "confidential_data_notice": None,
+    }
 
 
 def test_a_spent_cap_pauses_new_runs_with_a_clear_message(db: object, tmp_path: object) -> None:

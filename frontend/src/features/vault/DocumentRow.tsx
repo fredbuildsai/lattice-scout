@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useDeleteDocument, useDocumentDetail, useSetKind, type Insights, type VaultDocument } from './api'
-import { formatSize, failureMessage, KIND_LABELS, KINDS, statusChip, type ChipTone, type DocKind } from './status'
+import { AWAITING_PROVIDER_NOTE, formatSize, failureMessage, KIND_LABELS, KINDS, statusChip, type ChipTone, type DocKind } from './status'
 
 const TONES: Record<ChipTone, string> = {
   neutral: 'bg-subtle text-ink-2',
@@ -168,6 +168,12 @@ export function DocumentRow({ doc, selected, onToggle, selectDisabled }: { doc: 
         </div>
         <StatusChip status={doc.status} />
       </div>
+
+      {doc.status === 'awaiting_approved_provider' && (
+        <p role="status" className="mt-2 text-sm text-ink-2">
+          {AWAITING_PROVIDER_NOTE}
+        </p>
+      )}
 
       {failed && (
         <p role="alert" className="mt-2 text-sm text-warm">

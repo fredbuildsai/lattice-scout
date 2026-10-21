@@ -72,7 +72,7 @@ SPEC = AgentSpec(
     tier=ModelTier.FAST,
     instructions="i",
     output_type=Out,
-    data_class=DataClass.PUBLIC,
+    data_class=DataClass.PUBLISHED,
 )
 
 

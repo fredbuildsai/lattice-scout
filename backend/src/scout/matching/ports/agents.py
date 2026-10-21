@@ -12,10 +12,10 @@ from scout.matching.domain.agent_io import (
     MethodExtractorInput,
     MethodSet,
 )
-from scout.ports.llm import AgentOutcome, CallContext
+from scout.ports.llm import AgentOutcome, CallContext, ConfidentialGate
 
 
-class MatchAgentsPort(Protocol):
+class MatchAgentsPort(ConfidentialGate, Protocol):
     """Typed calls; each raises ``LLMUnavailable`` or ``LLMOutputInvalid``."""
 
     async def extract_methods(self, data: MethodExtractorInput, ctx: CallContext) -> AgentOutcome[MethodSet]:

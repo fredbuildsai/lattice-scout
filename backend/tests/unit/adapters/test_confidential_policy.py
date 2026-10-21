@@ -1,4 +1,4 @@
-"""Vault-tagged calls reach only sanctioned deployments (ADR 015); public calls are unaffected."""
+"""Confidential calls reach only authorized deployments (ADR 016); published calls are unaffected."""
 
 import logging
 import os
@@ -15,17 +15,17 @@ pytest.importorskip("llmrouter_free")
 from llmrouter_free import LLMRouter
 from tests.fakes import InMemoryUsageMeter
 
+from scout.adapters.llm.confidential_policy import ConfidentialPolicy, build_router_config
 from scout.adapters.llm.llm_router import LlmRouterAdapter, MeteringCompletion
-from scout.adapters.llm.vault_policy import VaultPolicy, build_router_config
-from scout.ports.llm import AgentSpec, CallContext, DataClass, ModelTier, VaultDataRefused
+from scout.ports.llm import AgentSpec, CallContext, ConfidentialDataRefused, DataClass, ModelTier
 from scout.ports.usage import PriceTable
 from scout.shared import FixedClock, SequentialIdGenerator
 
 CONFIG: dict[str, Any] = {
     "deployments": [
         {"name": "free", "model": "openrouter/x:free", "api_key_env": "TEST_KEY"},
-        {"name": "eu", "model": "mistral/small", "api_key_env": "TEST_KEY", "sanctioned": True},
-        {"name": "marked-only", "model": "groq/y", "api_key_env": "TEST_KEY", "sanctioned": True},
+        {"name": "eu", "model": "mistral/small", "api_key_env": "TEST_KEY", "authorized": True},
+        {"name": "marked-only", "model": "groq/y", "api_key_env": "TEST_KEY", "authorized": True},
     ],
     "routes": {"fast": ["free", "marked-only", "eu"], "reasoning": ["free"]},
     "cooldown": {"rate_limit_seconds": 0, "error_seconds": 0},
@@ -63,55 +63,55 @@ def _adapter(providers: set[str], allow_any: bool = False) -> tuple[LlmRouterAda
     return adapter, seen
 
 
-async def test_vault_call_uses_only_marked_deployments_of_allowed_providers() -> None:
+async def test_confidential_call_uses_only_marked_deployments_of_allowed_providers() -> None:
     adapter, seen = _adapter({"mistral"})
-    await adapter.run(_spec(DataClass.VAULT), {"q": "private"}, CallContext(feature="f"))
+    await adapter.run(_spec(DataClass.CONFIDENTIAL), {"q": "private"}, CallContext(feature="f"))
     assert seen == ["mistral/small"]  # not the free openrouter model, not groq (not on the allowlist)
 
 
-async def test_vault_call_refused_with_empty_allowlist_and_nothing_sent(
+async def test_confidential_call_refused_with_empty_allowlist_and_nothing_sent(
     caplog: pytest.LogCaptureFixture,
 ) -> None:
     adapter, seen = _adapter(set())
-    with caplog.at_level(logging.ERROR), pytest.raises(VaultDataRefused):
-        await adapter.run(_spec(DataClass.VAULT), {"q": "private-text"}, CallContext(feature="f"))
+    with caplog.at_level(logging.ERROR), pytest.raises(ConfidentialDataRefused):
+        await adapter.run(_spec(DataClass.CONFIDENTIAL), {"q": "private-text"}, CallContext(feature="f"))
     assert seen == []
     assert "private-text" not in caplog.text and "SECRET-PROMPT" not in caplog.text
-    assert "vault_data_refused" in caplog.text
+    assert "confidential_refused" in caplog.text
 
 
-async def test_vault_call_refused_when_route_has_no_sanctioned_deployment() -> None:
+async def test_confidential_call_refused_when_route_has_no_authorized_deployment() -> None:
     adapter, seen = _adapter({"mistral"})
     reasoning = AgentSpec(
         name="R", prompt_version="1", tier=ModelTier.REASONING, instructions="i", output_type=Out,
-        data_class=DataClass.VAULT,
+        data_class=DataClass.CONFIDENTIAL,
     )  # fmt: skip
-    with pytest.raises(VaultDataRefused):
+    with pytest.raises(ConfidentialDataRefused):
         await adapter.run(reasoning, {}, CallContext(feature="f"))
     assert seen == []
 
 
-async def test_public_call_may_use_any_deployment() -> None:
+async def test_published_call_may_use_any_deployment() -> None:
     adapter, seen = _adapter(set())
-    await adapter.run(_spec(DataClass.PUBLIC), {"q": "papers"}, CallContext(feature="f"))
+    await adapter.run(_spec(DataClass.PUBLISHED), {"q": "papers"}, CallContext(feature="f"))
     assert seen == ["openrouter/x:free"]
 
 
 async def test_allow_any_waiver_lifts_the_rule() -> None:
     adapter, seen = _adapter(set(), allow_any=True)
-    await adapter.run(_spec(DataClass.VAULT), {}, CallContext(feature="f"))
+    await adapter.run(_spec(DataClass.CONFIDENTIAL), {}, CallContext(feature="f"))
     assert seen == ["openrouter/x:free"]
 
 
-def test_unmarked_provider_on_allowlist_is_not_sanctioned() -> None:
+def test_unmarked_provider_on_allowlist_is_not_authorized() -> None:
     _, policy = build_router_config(CONFIG, {"openrouter"})
-    assert policy.sanctioned_models == frozenset() and policy.vault_routes == {}
+    assert policy.authorized_models == frozenset() and policy.confidential_routes == {}
 
 
-def test_check_model_blocks_unsanctioned_model() -> None:
-    policy = VaultPolicy(sanctioned_models=frozenset({"mistral/small"}))
+def test_check_model_blocks_unauthorized_model() -> None:
+    policy = ConfidentialPolicy(authorized_models=frozenset({"mistral/small"}))
     policy.check_model("mistral/small")
-    with pytest.raises(VaultDataRefused):
+    with pytest.raises(ConfidentialDataRefused):
         policy.check_model("openrouter/x:free")
 
 
@@ -124,9 +124,36 @@ def test_agent_spec_defaults_to_vault_and_prompts_declare_a_class() -> None:
         AgentSpec(
             name="n", prompt_version="1", tier=ModelTier.FAST, instructions="", output_type=Out
         ).data_class
-        is DataClass.VAULT
+        is DataClass.CONFIDENTIAL
     )
     prompts = Path(__file__).resolve().parents[3] / "prompts"
     for f in prompts.glob("[A-Z]*.md"):
         assert "\ndata_class: " in f.read_text(), f"{f.name} must declare data_class"
     _ = load_agent_spec  # loader reads the key (covered by the factory tests)
+
+
+async def test_legacy_sanctioned_key_is_still_read() -> None:
+    deployments = [
+        {k: v for k, v in d.items() if k != "authorized"}
+        | ({"sanctioned": True} if d.get("authorized") else {})
+        for d in CONFIG["deployments"]
+    ]
+    cfg = {**CONFIG, "deployments": deployments}
+    _, policy = build_router_config(cfg, {"mistral"})
+    assert policy.authorized_models == frozenset({"mistral/small"})
+
+
+def test_adapter_reports_whether_each_tier_is_authorized() -> None:
+    adapter, _ = _adapter({"mistral"})
+    assert adapter.confidential_allowed(ModelTier.FAST) is True  # route fast has an authorized member
+    assert adapter.confidential_allowed(ModelTier.REASONING) is False  # route reasoning has none
+    assert adapter.confidential_allowed() is False  # "in doubt" (any tier unauthorized) means no
+    assert _adapter(set())[0].confidential_allowed() is False
+    assert _adapter(set(), allow_any=True)[0].confidential_allowed() is True
+
+
+async def test_confidential_call_never_falls_over_to_an_unauthorized_deployment() -> None:
+    """The pinned route holds authorized members only, so a failing first member cannot spill to the free model."""
+    adapter, seen = _adapter({"mistral"})
+    await adapter.run(_spec(DataClass.CONFIDENTIAL), {"q": "x"}, CallContext(feature="f"))
+    assert all(m == "mistral/small" for m in seen)

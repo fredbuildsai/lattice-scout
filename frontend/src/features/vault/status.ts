@@ -23,6 +23,8 @@ export function statusChip(status: string): { label: string; tone: ChipTone } {
     case 'extracted':
     case 'analysing':
       return { label: 'Finding insights', tone: 'busy' }
+    case 'awaiting_approved_provider':
+      return { label: 'Waiting for an approved provider', tone: 'neutral' }
     case 'ready':
       return { label: 'Ready', tone: 'ok' }
     case 'rejected':
@@ -35,6 +37,10 @@ export function statusChip(status: string): { label: string; tone: ChipTone } {
       return { label: 'Uploaded', tone: 'neutral' }
   }
 }
+
+/** Shown under a document that is stored but not yet read by a language model (ADR 016). */
+export const AWAITING_PROVIDER_NOTE =
+  'Scout has read this file but has not analysed it: no approved AI provider is configured, so private text is not sent anywhere. It stays here and is analysed automatically once the operator approves a provider. Meanwhile your analyses use your published work only.'
 
 const FAILURES: Record<string, string> = {
   encrypted: 'This file is password-protected. Remove the password and upload it again.',

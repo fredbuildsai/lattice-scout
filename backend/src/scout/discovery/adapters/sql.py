@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import dataclasses
 from collections.abc import Sequence
 from datetime import datetime
 from decimal import Decimal
@@ -48,11 +49,13 @@ class SqlRunRepo:
                 by_run.setdefault(d.run_id, []).append(d)
             for r in runs:
                 retention = {x.document_id: x.retention for x in r.inputs.documents}
-                r.inputs = type(r.inputs)(
-                    r.inputs.researcher_id, r.inputs.topics,
-                    tuple(RunDocument(d.label, d.document_id, retention.get(d.document_id, "discard")) for d in by_run.get(r.id, [])),
-                    r.inputs.insight_refs, r.inputs.year_from, r.inputs.novelty_from,
-                )  # fmt: skip
+                r.inputs = dataclasses.replace(
+                    r.inputs,
+                    documents=tuple(
+                        RunDocument(d.label, d.document_id, retention.get(d.document_id, "discard"))
+                        for d in by_run.get(r.id, [])
+                    ),
+                )
         return runs
 
     async def get(self, run_id: UUID, owner_id: AccountId) -> AnalysisRun | None:

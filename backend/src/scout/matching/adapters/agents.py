@@ -13,7 +13,7 @@ from scout.matching.domain.agent_io import (
     MethodExtractorInput,
     MethodSet,
 )
-from scout.ports.llm import AgentOutcome, AgentSpec, CallContext
+from scout.ports.llm import AgentOutcome, AgentSpec, CallContext, ModelTier
 
 
 class AgentsMatching:
@@ -24,6 +24,10 @@ class AgentsMatching:
         self._methods = factory.spec("MethodExtractor", MethodSet)
         self._explainer = factory.spec("MatchExplainer", MatchRationale)
         self._ideas = factory.spec("JointIdeas", JointIdeaList)
+
+    def confidential_allowed(self, tier: ModelTier | None = None) -> bool:
+        """Whether confidential (vault) statements may go into agent inputs."""
+        return self._f.confidential_allowed(tier)
 
     async def _run[T: BaseModel](
         self, spec: AgentSpec[T], data: BaseModel, ctx: CallContext

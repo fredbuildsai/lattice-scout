@@ -42,6 +42,17 @@ class RunCountsOut(BaseModel):
     shown: int
 
 
+def basis_of(value: object) -> Literal["full", "published_only"]:
+    """Normalise a stored basis (anything unknown reads as ``full``)."""
+    return "published_only" if value == "published_only" else "full"
+
+
+PUBLISHED_ONLY_NOTE = (
+    "Based on your published work only; your uploaded documents were not used because no approved provider "
+    "is configured."
+)
+
+
 class RunOut(BaseModel):
     """A run. Poll it every 3 seconds while ``status`` is ``queued`` or ``running``."""
 
@@ -60,6 +71,12 @@ class RunOut(BaseModel):
     openalex_calls: int
     openalex_cap: int
     counts: RunCountsOut
+    basis: Literal["full", "published_only"] = Field(
+        default="full", description="`published_only`: confidential vault material was left out of this run."
+    )
+    basis_note: str | None = Field(
+        default=None, description="Plain-language note shown when `basis` is `published_only`."
+    )
     created_at: datetime
     started_at: datetime | None
     finished_at: datetime | None
@@ -131,6 +148,8 @@ class OpportunityCardOut(BaseModel):
     status: Literal["shown", "saved", "dismissed"]
     verified_sources: int
     clusters: list[str]
+    basis: Literal["full", "published_only"] = "full"
+    basis_note: str | None = None
     created_at: datetime
 
 

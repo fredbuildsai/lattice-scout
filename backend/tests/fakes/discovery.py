@@ -387,6 +387,7 @@ class FakeDiscoveryAgents:
 
     def __init__(self, cost: Decimal = Decimal("0.01")) -> None:
         self.cost = cost
+        self.allowed = True
         self.calls: list[tuple[str, Any]] = []
         self.scripts: dict[str, Any] = {}
         self.kill_on_call: int | None = (
@@ -396,6 +397,9 @@ class FakeDiscoveryAgents:
     def script(self, agent: str, output: Any) -> None:
         """``output`` is a model instance, or a function of the input returning one."""
         self.scripts[agent] = output
+
+    def confidential_allowed(self, tier: object = None) -> bool:
+        return self.allowed
 
     def count(self, agent: str) -> int:
         return sum(1 for a, _ in self.calls if a == agent)

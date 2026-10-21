@@ -907,6 +907,7 @@
           "extracting",
           "extracted",
           "analysing",
+          "awaiting_approved_provider",
           "ready",
           "failed",
           "rejected",
@@ -1041,7 +1042,7 @@
           },
           "status": {
             "$ref": "#/components/schemas/DocStatus",
-            "description": "uploaded, extracting, extracted, analysing, ready, failed or rejected."
+            "description": "uploaded, extracting, extracted, analysing, awaiting_approved_provider (read, waiting for an approved language-model provider), ready, failed or rejected."
           },
           "updated_at": {
             "format": "date-time",
@@ -1217,7 +1218,7 @@
           },
           "status": {
             "$ref": "#/components/schemas/DocStatus",
-            "description": "uploaded, extracting, extracted, analysing, ready, failed or rejected."
+            "description": "uploaded, extracting, extracted, analysing, awaiting_approved_provider (read, waiting for an approved language-model provider), ready, failed or rejected."
           },
           "updated_at": {
             "format": "date-time",
@@ -2455,6 +2456,26 @@
       "OpportunityCardOut": {
         "description": "List item.",
         "properties": {
+          "basis": {
+            "default": "full",
+            "enum": [
+              "full",
+              "published_only"
+            ],
+            "title": "Basis",
+            "type": "string"
+          },
+          "basis_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Basis Note"
+          },
           "clusters": {
             "items": {
               "type": "string"
@@ -2546,6 +2567,26 @@
       "OpportunityDetailOut": {
         "description": "Detail page.",
         "properties": {
+          "basis": {
+            "default": "full",
+            "enum": [
+              "full",
+              "published_only"
+            ],
+            "title": "Basis",
+            "type": "string"
+          },
+          "basis_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Basis Note"
+          },
           "clusters": {
             "items": {
               "type": "string"
@@ -3159,6 +3200,28 @@
       "RunOut": {
         "description": "A run. Poll it every 3 seconds while ``status`` is ``queued`` or ``running``.",
         "properties": {
+          "basis": {
+            "default": "full",
+            "description": "`published_only`: confidential vault material was left out of this run.",
+            "enum": [
+              "full",
+              "published_only"
+            ],
+            "title": "Basis",
+            "type": "string"
+          },
+          "basis_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Plain-language note shown when `basis` is `published_only`.",
+            "title": "Basis Note"
+          },
           "budget_usd": {
             "title": "Budget Usd",
             "type": "string"
@@ -3387,6 +3450,24 @@
             "description": "False when a global daily spend cap is reached.",
             "title": "Accepting Runs",
             "type": "boolean"
+          },
+          "confidential_data_enabled": {
+            "default": true,
+            "description": "False when no approved language-model provider is configured: analyses, matching and document processing then use published data only (uploaded documents are kept but not read).",
+            "title": "Confidential Data Enabled",
+            "type": "boolean"
+          },
+          "confidential_data_notice": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Plain-language explanation shown when `confidential_data_enabled` is false.",
+            "title": "Confidential Data Notice"
           },
           "message": {
             "anyOf": [

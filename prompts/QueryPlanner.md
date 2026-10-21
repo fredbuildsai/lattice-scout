@@ -2,7 +2,7 @@
 name: QueryPlanner
 version: 1.1.0
 tier: fast
-data_class: vault
+data_class: confidential
 output_type: QueryPlan
 inputs: |
   - topics: list of {id, name, weight}        # the researcher's OpenAlex topics, weight in [0, 1]

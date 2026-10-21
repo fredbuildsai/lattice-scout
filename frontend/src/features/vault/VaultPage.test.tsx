@@ -19,12 +19,13 @@ const detail = {
   },
 }
 
-interface Server { docs: unknown[]; calls: { url: string; method: string; body?: unknown }[] }
+interface Server { system?: unknown; docs: unknown[]; calls: { url: string; method: string; body?: unknown }[] }
 function stub(server: Server) {
   const fn = vi.fn(async (url: string, init?: RequestInit) => {
     const method = init?.method ?? 'GET'
     server.calls.push({ url, method, body: init?.body })
     const json = (b: unknown, status = 200) => new Response(JSON.stringify(b), { status })
+    if (method === 'GET' && url.endsWith('/api/v1/system/status')) return json(server.system ?? { accepting_runs: true, message: null })
     if (method === 'GET' && url.endsWith('/api/v1/documents')) return json({ items: server.docs })
     if (method === 'GET') return json(detail)
     if (method === 'PATCH') return json(doc({ kind: 'proposal', kind_source: 'user' }))
@@ -55,6 +56,16 @@ afterEach(() => {
 })
 
 describe('VaultPage', () => {
+  it('shows a document waiting for an approved provider with a clear status, and the system notice', async () => {
+    const notice = 'No approved provider is configured, so Scout works from your published work only.'
+    stub({ docs: [doc({ status: 'awaiting_approved_provider' })], calls: [], system: { accepting_runs: true, message: null, confidential_data_enabled: false, confidential_data_notice: notice } })
+    renderPage()
+    expect(await screen.findByText('Waiting for an approved provider')).toBeInTheDocument()
+    expect(screen.getByText(/analysed automatically once the operator approves a provider/)).toBeInTheDocument()
+    expect(await screen.findByText(notice)).toBeInTheDocument()
+    expect(screen.queryByRole('alert')).toBeNull() // waiting is not a failure
+  })
+
   it('keeps the original-file checkbox unticked by default and explains it', async () => {
     stub({ docs: [], calls: [] })
     renderPage()

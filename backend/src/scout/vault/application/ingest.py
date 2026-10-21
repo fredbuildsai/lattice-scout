@@ -101,7 +101,7 @@ class IngestDocument:
                 return {"skipped": "gone"}
             if doc.status in (DocStatus.UPLOADED, DocStatus.EXTRACTING):
                 done = await self._extract(doc, phase)
-            elif doc.status in (DocStatus.EXTRACTED, DocStatus.ANALYSING):
+            elif doc.status in (DocStatus.EXTRACTED, DocStatus.ANALYSING, DocStatus.AWAITING_PROVIDER):
                 done = await self._analyse(doc, ctx, phase)
             elif doc.needs_purge:
                 phase.code = "storage_unavailable"
@@ -176,7 +176,23 @@ class IngestDocument:
             await uow.commit()
         log.info("vault.rejected", document_id=str(document_id), code=code)
 
+    async def _await_provider(self, doc: Document) -> Result:
+        """No authorized endpoint: keep the document, park it, and let the sweep requeue it later (ADR 016)."""
+        async with self._uow() as uow:
+            cur = await uow.documents.get_for_update(doc.id)
+            if cur is None or cur.status is DocStatus.DELETING:
+                return {"skipped": "gone"}
+            cur.await_provider(self._clock.now())
+            await uow.documents.save(cur)
+            await uow.commit()
+        log.info("vault.awaiting_approved_provider", document_id=str(doc.id))
+        return {"status": DocStatus.AWAITING_PROVIDER.value}
+
     async def _analyse(self, doc: Document, ctx: CallContext, phase: _Phase) -> Result | None:
+        if (
+            not self._insights.available()
+        ):  # the LLM step is skipped; extraction above stays (local, deterministic)
+            return await self._await_provider(doc)
         phase.code = "insights_unavailable"
         async with self._uow() as uow:
             cur = await uow.documents.get_for_update(doc.id)

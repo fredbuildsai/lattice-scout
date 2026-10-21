@@ -40,7 +40,7 @@ describe('DataDeletion', () => {
     stub({})
     renderIt()
     expect(await screen.findByText('Scout does not train models on your files.')).toBeInTheDocument()
-    expect(screen.getByText(/only to providers the operator has approved/)).toBeInTheDocument()
+    expect(screen.getByText(/only to AI providers the operator has approved for confidential data/)).toBeInTheDocument()
     expect(screen.getByText(/Cost records without your identity/)).toBeInTheDocument()
     expect(screen.getByText(/Ratings and comments you gave on a match stay visible/)).toBeInTheDocument()
     expect(screen.getByText(/Short paraphrases \(up to 300 characters\)/)).toBeInTheDocument()

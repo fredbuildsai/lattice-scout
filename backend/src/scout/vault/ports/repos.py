@@ -32,6 +32,9 @@ class StaleSets:
     purge: tuple[UUID, ...] = ()
     deleting: tuple[UUID, ...] = ()
     stalled: tuple[UUID, ...] = ()
+    awaiting: tuple[
+        UUID, ...
+    ] = ()  # waiting for an authorized provider; the sweep requeues them once one exists
 
 
 class DocumentRepo(Protocol):

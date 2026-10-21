@@ -16,13 +16,15 @@ from scout.discovery.domain.agent_io import (
     QueryPlan,
     QueryPlannerInput,
 )
-from scout.ports.llm import AgentOutcome, CallContext
+from scout.ports.llm import AgentOutcome, CallContext, ConfidentialGate
 
 __all__ = ["AgentOutcome", "DiscoveryAgentsPort"]
 
 
-class DiscoveryAgentsPort(Protocol):
-    """Typed calls; each raises ``LLMUnavailable`` or ``LLMOutputInvalid`` (transient)."""
+class DiscoveryAgentsPort(ConfidentialGate, Protocol):
+    """Typed calls; each raises ``LLMUnavailable`` or ``LLMOutputInvalid`` (transient).
+
+    ``confidential_allowed()`` says whether vault material may be put into the inputs at all (ADR 016)."""
 
     async def plan_queries(self, data: QueryPlannerInput, ctx: CallContext) -> AgentOutcome[QueryPlan]:
         """QueryPlanner (fast)."""

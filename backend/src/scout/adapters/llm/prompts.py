@@ -34,6 +34,6 @@ def load_agent_spec[OutT: BaseModel](
         tier=ModelTier(meta["tier"]),
         instructions=body.strip(),
         output_type=output_type,
-        data_class=DataClass(meta.get("data_class", "vault")),
+        data_class=DataClass(meta.get("data_class", "confidential")),
         **overrides,  # type: ignore[arg-type]
     )

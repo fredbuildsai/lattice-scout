@@ -82,7 +82,7 @@ class RevealMatch:
         consent = await self._consents.get(account)
         sig = (
             await self._signals.signals(account, SIGNAL_SECTIONS, 10)
-            if consent and consent.vault_signals
+            if consent and consent.vault_signals and self._agents.confidential_allowed()
             else []
         )
         summary = ResearcherSummary(

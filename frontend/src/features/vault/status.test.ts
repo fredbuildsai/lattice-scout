@@ -7,6 +7,7 @@ describe('statusChip', () => {
     ['extracting', 'Reading'],
     ['extracted', 'Finding insights'],
     ['analysing', 'Finding insights'],
+    ['awaiting_approved_provider', 'Waiting for an approved provider'],
     ['ready', 'Ready'],
     ['failed', 'Couldn’t read'],
     ['rejected', 'Not supported'],

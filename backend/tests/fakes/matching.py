@@ -275,6 +275,10 @@ class ScriptedMatchAgents:
         self.explainer: Callable[[MatchExplainerInput], MatchRationale] | None = None
         self.ideas: Callable[[JointIdeasInput], JointIdeaList] | None = None
         self.calls: dict[str, int] = {"methods": 0, "explain": 0, "ideas": 0}
+        self.allowed = True
+
+    def confidential_allowed(self, tier: object = None) -> bool:
+        return self.allowed
 
     async def extract_methods(self, data: MethodExtractorInput, ctx: CallContext) -> AgentOutcome[MethodSet]:
         self.calls["methods"] += 1

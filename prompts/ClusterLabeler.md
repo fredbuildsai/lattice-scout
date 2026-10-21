@@ -2,7 +2,7 @@
 name: ClusterLabeler
 version: 1.1.0
 tier: fast
-data_class: public
+data_class: published
 output_type: ClusterLabel
 inputs: |
   - cluster_id: str                        # e.g. "k3"

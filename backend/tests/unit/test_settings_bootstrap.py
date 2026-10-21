@@ -24,7 +24,7 @@ def test_offline_defaults() -> None:
 
 REAL = {
     "llm_backend": "openai_direct", "openai_api_key": "k", "literature_backend": "openalex",
-    "llm_vault_sanctioned_providers": "openai",
+    "llm_confidential_authorized_providers": "openai",
     "email_provider": "resend", "email_api_key": "k", "email_from": "a@b.c",
     "storage_backend": "supabase", "supabase_url": "https://x.supabase.co", "supabase_service_role_key": "k",
 }  # fmt: skip
@@ -121,20 +121,35 @@ def test_prod_refuses_dev_defaults_that_would_leak_or_mislink(override: dict[str
 ROUTER = {**PROD_OK, "llm_backend": "llm_router", "mistral_api_key": "k"}
 
 
-def test_prod_refuses_llm_router_without_free_provider_acknowledgement() -> None:
-    kw = {**ROUTER, "llm_vault_sanctioned_providers": "mistral"}
-    with pytest.raises(ValidationError, match="LLM_FREE_PROVIDERS_ACKNOWLEDGED"):
-        _s(app_env="prod", **kw)
-    assert _s(app_env="prod", llm_free_providers_acknowledged=True, **kw).app_env == "prod"
+def test_prod_with_llm_router_and_no_authorized_provider_starts_with_a_warning() -> None:
+    """ADR 016: no refusal; runs go ahead on published data and the warning says so (no secrets in it)."""
+    st = _s(app_env="prod", **{**ROUTER, "llm_confidential_authorized_providers": ""})
+    assert st.app_env == "prod"
+    assert st.confidential_startup_warning and "published data only" in st.confidential_startup_warning
+    assert "k" * 8 not in st.confidential_startup_warning
 
 
-def test_prod_refuses_llm_router_with_empty_vault_allowlist_unless_waived() -> None:
-    kw = {**ROUTER, "llm_free_providers_acknowledged": True, "llm_vault_sanctioned_providers": ""}
-    with pytest.raises(ValidationError, match="LLM_VAULT_SANCTIONED_PROVIDERS"):
-        _s(app_env="prod", **kw)
-    assert _s(app_env="prod", llm_vault_allow_any_provider=True, **kw).app_env == "prod"
+def test_no_warning_when_a_provider_is_authorized_or_waived_or_fake() -> None:
+    assert (
+        _s(
+            app_env="prod", **{**ROUTER, "llm_confidential_authorized_providers": "mistral"}
+        ).confidential_startup_warning
+        is None
+    )
+    assert (
+        _s(
+            app_env="prod",
+            **{
+                **ROUTER,
+                "llm_confidential_authorized_providers": "",
+                "llm_confidential_allow_any_provider": True,
+            },
+        ).confidential_startup_warning
+        is None
+    )
+    assert _s(app_env="dev").confidential_startup_warning is None
 
 
-def test_dev_llm_router_needs_neither_flag() -> None:
-    kw = {**ROUTER, "app_env": "dev", "llm_vault_sanctioned_providers": ""}
-    assert _s(**kw).vault_sanctioned_providers == frozenset()
+def test_legacy_vault_env_names_are_still_read(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("LLM_VAULT_SANCTIONED_PROVIDERS", "Mistral, groq")
+    assert _s(app_env="dev").confidential_authorized_providers == frozenset({"mistral", "groq"})

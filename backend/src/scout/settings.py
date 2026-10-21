@@ -7,14 +7,16 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal, Self
 
-from pydantic import Field, SecretStr, model_validator
+from pydantic import AliasChoices, Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     """All configuration, with offline-safe defaults (fake LLM, fixtures, local storage, dev auth)."""
 
-    model_config = SettingsConfigDict(env_file=(".env", "../.env"), extra="ignore", case_sensitive=False)
+    model_config = SettingsConfigDict(
+        env_file=(".env", "../.env"), extra="ignore", case_sensitive=False, populate_by_name=True
+    )
 
     app_env: Literal["test", "dev", "prod"] = "dev"
     database_url: str = "postgresql+psycopg://scout:scout@localhost:5432/scout"
@@ -115,16 +117,26 @@ class Settings(BaseSettings):
     prompts_dir: Path = Path("prompts")
     llm_max_concurrency: int = 8
     llm_router_allow_paid: bool = False  # free providers only
-    # Prod refuses llm_router (free-tier OpenRouter/Groq/Mistral) until the owner confirms the providers' data-use
-    # terms and opt-outs (docs/adr/015, docs/BLOCKERS.md). Default off.
-    llm_free_providers_acknowledged: bool = False
-    # Vault data (documents, passages, insights, profile text from them) goes only to deployments that are marked
-    # ``sanctioned: true`` in llm_router.yaml AND whose provider is listed here, e.g. "mistral,groq". Empty = no
-    # remote endpoint is sanctioned (only the fake backend can handle vault-tagged calls). ADR 015.
-    llm_vault_sanctioned_providers: str = ""
-    llm_vault_allow_any_provider: bool = (
-        False  # explicit waiver: vault data may reach any configured deployment
+    # Confidential data (vault documents, passages, insights, profile text derived from them) goes only to
+    # deployments marked ``authorized: true`` in llm_router.yaml AND whose provider is listed here, e.g.
+    # "mistral,groq". Empty = no remote endpoint is authorized: runs, matching and ingestion still go ahead on
+    # published data only and say so (ADR 016). The old VAULT names are still read.
+    llm_confidential_authorized_providers: str = Field(
+        default="",
+        validation_alias=AliasChoices(
+            "LLM_CONFIDENTIAL_AUTHORIZED_PROVIDERS", "LLM_VAULT_SANCTIONED_PROVIDERS"
+        ),
     )
+    llm_confidential_allow_any_provider: bool = (
+        Field(  # explicit waiver: confidential data may reach any deployment
+            default=False,
+            validation_alias=AliasChoices(
+                "LLM_CONFIDENTIAL_ALLOW_ANY_PROVIDER", "LLM_VAULT_ALLOW_ANY_PROVIDER"
+            ),
+        )
+    )
+    # Fake backend only: set false to emulate an installation without an authorized provider (demos, tests).
+    llm_fake_confidential_allowed: bool = True
     llm_router_max_usd_per_day: float = 5.0
     analytics_queue_max: int = 20000
     usage_queue_max: int = 10000
@@ -135,11 +147,23 @@ class Settings(BaseSettings):
     embedding_dim: int | None = None
 
     @property
-    def vault_sanctioned_providers(self) -> frozenset[str]:
-        """Parsed ``LLM_VAULT_SANCTIONED_PROVIDERS``."""
+    def confidential_authorized_providers(self) -> frozenset[str]:
+        """Parsed ``LLM_CONFIDENTIAL_AUTHORIZED_PROVIDERS``."""
         return frozenset(
-            p.strip().lower() for p in self.llm_vault_sanctioned_providers.split(",") if p.strip()
+            p.strip().lower() for p in self.llm_confidential_authorized_providers.split(",") if p.strip()
         )
+
+    @property
+    def confidential_startup_warning(self) -> str | None:
+        """Why confidential data is not used by this installation (``None`` when it can be). No secrets."""
+        if self.llm_backend == "fake" or self.llm_confidential_allow_any_provider:
+            return None
+        if self.llm_backend in ("llm_router", "openai_direct") and not self.confidential_authorized_providers:
+            return (
+                "No authorized provider for confidential data (LLM_CONFIDENTIAL_AUTHORIZED_PROVIDERS is empty): "
+                "analyses, matching and document processing run on published data only"
+            )
+        return None
 
     @property
     def supabase_issuer(self) -> str | None:
@@ -179,24 +203,6 @@ class Settings(BaseSettings):
             problems.append("STORAGE_BACKEND=supabase needs SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY")
         if self.auth_mode == "supabase" and not (self.jwks_url and self.supabase_url):
             problems.append("AUTH_MODE=supabase needs SUPABASE_URL (token issuer) and a JWKS URL")
-        if (
-            self.app_env == "prod"
-            and self.llm_backend == "llm_router"
-            and not self.llm_free_providers_acknowledged
-        ):
-            problems.append(
-                "LLM_BACKEND=llm_router sends text to free-tier providers; set "
-                "LLM_FREE_PROVIDERS_ACKNOWLEDGED=true only after confirming their data-use terms (docs/adr/015)"
-            )
-        if (
-            self.app_env == "prod"
-            and self.llm_backend in ("llm_router", "openai_direct")
-            and not (self.vault_sanctioned_providers or self.llm_vault_allow_any_provider)
-        ):
-            problems.append(
-                "vault-tagged agents exist but LLM_VAULT_SANCTIONED_PROVIDERS is empty; list the providers whose "
-                "terms you confirmed, or set LLM_VAULT_ALLOW_ANY_PROVIDER=true to waive the rule (docs/adr/015)"
-            )
         if self.llm_backend == "llm_router" and not (
             self.openrouter_api_key or self.groq_api_key or self.mistral_api_key
         ):

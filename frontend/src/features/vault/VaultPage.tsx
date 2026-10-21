@@ -99,7 +99,13 @@ export function VaultPage({ upload = uploadDocument }: { upload?: Uploader }) {
           <Icon name="lock" size={14} /> Private to you
         </span>
       </div>
-      <p className="mt-2 max-w-[640px] text-ink-2">Everything that never made it into a paper. Scout reads it to find opportunities — nobody else can see it, and Scout does not train models on it. To analyse it, excerpts go only to AI providers the operator approved for private documents.</p>
+      <p className="mt-2 max-w-[640px] text-ink-2">Everything that never made it into a paper. Scout reads it to find opportunities — nobody else can see it. Excerpts of your documents go only to AI providers the operator has approved for confidential data. If none is approved, your files are stored but not read by a model, and your analyses use your published work only.</p>
+
+      {status.data?.confidential_data_enabled === false && (
+        <div role="status" className="mt-4 rounded-card border border-line bg-subtle p-3 text-sm text-ink-2">
+          {status.data.confidential_data_notice}
+        </div>
+      )}
 
       <PausedBanner />
 

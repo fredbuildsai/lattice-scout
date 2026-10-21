@@ -8,7 +8,7 @@ import { claim, count, lit, vault } from './fixtures'
 import type { OpportunityDetail } from './api'
 
 const detail = (over: Partial<OpportunityDetail> = {}): OpportunityDetail => ({
-  id: 'o1', run_id: 'r1', kind: 'white_spot', title: 'Lignin foams without isocyanates', status: 'shown', verified_sources: 4, clusters: ['Lignin'],
+  id: 'o1', run_id: 'r1', kind: 'white_spot', title: 'Lignin foams without isocyanates', status: 'shown', verified_sources: 4, clusters: ['Lignin'], basis: 'full',
   created_at: '2026-10-20T00:00:00Z', effort_estimate: '3 months', why: null,
   rationale: [claim({ id: 'c1', markers: [lit, vault] })], objection: [claim({ id: 'c2', text: 'Fire safety is open.', markers: [vault, count] })], score_claims: [],
   novelty: { count: 141, since_year: 2021, query: 'lignin AND foam', band: 'crowded' }, scores: { fit: 0.8, novelty: 0.4, readiness: 0.6, effort: 0.3 },

@@ -7,9 +7,14 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 from scout.matching.domain.proposal import BringItem
+from scout.shared.confidential import AgentInput, confidential_field, mixed_items_field, published_field
 
 
 class _Model(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+
+class _Input(AgentInput):
     model_config = ConfigDict(frozen=True)
 
 
@@ -27,12 +32,17 @@ class MethodSource(_Model):
     source_ref: str  # work:W123 or insight:<id>
     text: str = Field(max_length=1500)
 
+    @property
+    def is_confidential(self) -> bool:
+        """Insights come from the vault; works are published."""
+        return not self.source_ref.startswith("work:")
 
-class MethodExtractorInput(_Model):
+
+class MethodExtractorInput(_Input):
     """Input of MethodExtractor."""
 
-    vocabulary: list[VocabularyEntry]
-    sources: list[MethodSource] = Field(max_length=30)
+    vocabulary: list[VocabularyEntry] = published_field()
+    sources: list[MethodSource] = mixed_items_field(max_length=30)
 
 
 class MethodMention(_Model):
@@ -89,12 +99,12 @@ class ScoreBreakdown(_Model):
     score: float
 
 
-class MatchExplainerInput(_Model):
-    """Input of MatchExplainer."""
+class MatchExplainerInput(_Input):
+    """Input of MatchExplainer (published data: topics, vocabulary methods, work titles)."""
 
-    a: ResearcherSummary
-    b: ResearcherSummary
-    score_breakdown: ScoreBreakdown
+    a: ResearcherSummary = published_field()
+    b: ResearcherSummary = published_field()
+    score_breakdown: ScoreBreakdown = published_field()
 
 
 class Perspective(_Model):
@@ -119,16 +129,16 @@ class SignalItem(_Model):
     text: str = Field(max_length=300)
 
 
-class JointIdeasInput(_Model):
-    """Input of JointIdeas."""
+class JointIdeasInput(_Input):
+    """Input of JointIdeas. The signals are consented vault statements; without an authorized endpoint they are withheld."""
 
-    a: ResearcherSummary
-    b: ResearcherSummary
-    a_signals: list[SignalItem] = Field(default_factory=list, max_length=10)
-    b_signals: list[SignalItem] = Field(default_factory=list, max_length=10)
-    shared_topics: list[str]
-    a_only_methods: list[str]
-    b_only_methods: list[str]
+    a: ResearcherSummary = published_field()
+    b: ResearcherSummary = published_field()
+    a_signals: list[SignalItem] = confidential_field(default_factory=list, max_length=10)
+    b_signals: list[SignalItem] = confidential_field(default_factory=list, max_length=10)
+    shared_topics: list[str] = published_field()
+    a_only_methods: list[str] = published_field()
+    b_only_methods: list[str] = published_field()
 
 
 class JointIdea(_Model):

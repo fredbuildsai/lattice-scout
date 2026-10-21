@@ -1037,7 +1037,7 @@ export interface components {
          * @description Document lifecycle (DECISIONS 41: ``analysing`` rather than ``analysing_insights``).
          * @enum {string}
          */
-        DocStatus: "uploaded" | "extracting" | "extracted" | "analysing" | "ready" | "failed" | "rejected" | "deleting";
+        DocStatus: "uploaded" | "extracting" | "extracted" | "analysing" | "awaiting_approved_provider" | "ready" | "failed" | "rejected" | "deleting";
         /**
          * DocumentDetailOut
          * @description A document with its insights.
@@ -1079,7 +1079,7 @@ export interface components {
             retention: components["schemas"]["Retention"];
             /** Size Bytes */
             size_bytes: number;
-            /** @description uploaded, extracting, extracted, analysing, ready, failed or rejected. */
+            /** @description uploaded, extracting, extracted, analysing, awaiting_approved_provider (read, waiting for an approved language-model provider), ready, failed or rejected. */
             status: components["schemas"]["DocStatus"];
             /**
              * Updated At
@@ -1146,7 +1146,7 @@ export interface components {
             retention: components["schemas"]["Retention"];
             /** Size Bytes */
             size_bytes: number;
-            /** @description uploaded, extracting, extracted, analysing, ready, failed or rejected. */
+            /** @description uploaded, extracting, extracted, analysing, awaiting_approved_provider (read, waiting for an approved language-model provider), ready, failed or rejected. */
             status: components["schemas"]["DocStatus"];
             /**
              * Updated At
@@ -1610,6 +1610,14 @@ export interface components {
          * @description List item.
          */
         OpportunityCardOut: {
+            /**
+             * Basis
+             * @default full
+             * @enum {string}
+             */
+            basis: "full" | "published_only";
+            /** Basis Note */
+            basis_note?: string | null;
             /** Clusters */
             clusters: string[];
             /**
@@ -1650,6 +1658,14 @@ export interface components {
          * @description Detail page.
          */
         OpportunityDetailOut: {
+            /**
+             * Basis
+             * @default full
+             * @enum {string}
+             */
+            basis: "full" | "published_only";
+            /** Basis Note */
+            basis_note?: string | null;
             /** Clusters */
             clusters: string[];
             /**
@@ -1969,6 +1985,18 @@ export interface components {
          * @description A run. Poll it every 3 seconds while ``status`` is ``queued`` or ``running``.
          */
         RunOut: {
+            /**
+             * Basis
+             * @description `published_only`: confidential vault material was left out of this run.
+             * @default full
+             * @enum {string}
+             */
+            basis: "full" | "published_only";
+            /**
+             * Basis Note
+             * @description Plain-language note shown when `basis` is `published_only`.
+             */
+            basis_note?: string | null;
             /** Budget Usd */
             budget_usd: string;
             /** Cost Usd */
@@ -2061,6 +2089,17 @@ export interface components {
              * @description False when a global daily spend cap is reached.
              */
             accepting_runs: boolean;
+            /**
+             * Confidential Data Enabled
+             * @description False when no approved language-model provider is configured: analyses, matching and document processing then use published data only (uploaded documents are kept but not read).
+             * @default true
+             */
+            confidential_data_enabled: boolean;
+            /**
+             * Confidential Data Notice
+             * @description Plain-language explanation shown when `confidential_data_enabled` is false.
+             */
+            confidential_data_notice?: string | null;
             /**
              * Message
              * @description Plain-language reason, shown by the UI when paused.

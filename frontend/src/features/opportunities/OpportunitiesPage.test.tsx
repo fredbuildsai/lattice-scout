@@ -77,6 +77,14 @@ describe('filter helpers', () => {
 })
 
 describe('OpportunitiesPage', () => {
+  it('notes on a card that it rests on published work only', async () => {
+    const note = 'Based on your published work only; your uploaded documents were not used because no approved provider is configured.'
+    stub({ items: [card('a', 'white_spot', { basis: 'published_only', basis_note: note }), card('b')] })
+    renderPage()
+    const list = await screen.findByRole('list', { name: 'Opportunities' })
+    expect(within(list).getAllByText(note)).toHaveLength(1) // only the card that needs it
+  })
+
   it('prefills the thumbs from GET /feedback', async () => {
     stub()
     renderPage()

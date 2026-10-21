@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { track } from '../../analytics/client'
+import { BasisNote } from '../runs/BasisNote'
 import { Claim } from './Claim'
 import { Thumbs } from './Thumbs'
 import { useSetStatus, type OpportunityCard as Card } from './api'
@@ -39,6 +40,7 @@ export function OpportunityCard({ card, position, compact = false }: { card: Car
       </div>
       <h3 className="mt-2 font-serif text-lg font-semibold leading-snug md:text-xl">{card.title}</h3>
       {card.why && <div className="mt-2 text-sm leading-relaxed text-ink-2"><Claim claim={card.why} opportunityId={card.id} /></div>}
+      {!compact && <BasisNote note={card.basis_note} />}
       <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-line pt-3">
         <Link
           to={`/opportunities/${card.id}`}

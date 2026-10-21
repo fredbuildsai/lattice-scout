@@ -40,6 +40,10 @@ class ExtractInsights:
             concurrency,
         )
 
+    def available(self) -> bool:
+        """Whether insights can be extracted now (document text needs an authorized endpoint)."""
+        return self._x.confidential_allowed()
+
     @staticmethod
     def _inputs(chunks: Sequence[Chunk]) -> tuple[ChunkInput, ...]:
         return tuple(ChunkInput(c.label, c.page_from, c.text) for c in chunks)

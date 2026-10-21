@@ -12,6 +12,8 @@ from dataclasses import dataclass
 from typing import Protocol, assert_never, runtime_checkable
 from uuid import UUID
 
+import structlog
+
 from scout.adapters.literature.fixtures import FixtureLiterature
 from scout.adapters.llm.factory import AgentFactory
 from scout.adapters.llm.fake_llm import FakeLLM
@@ -151,7 +153,9 @@ def _select_llm(
 ) -> LLMPort:
     match s.llm_backend:
         case "fake":
-            return FakeLLM(resolve_path(s.llm_fixtures_dir), usage, prices, clock, ids)
+            fake = FakeLLM(resolve_path(s.llm_fixtures_dir), usage, prices, clock, ids)
+            fake.confidential_ok = s.llm_fake_confidential_allowed
+            return fake
         case "llm_router":
             import os
 
@@ -173,12 +177,12 @@ def _select_llm(
             ledger = create_engine(
                 "sqlite://", poolclass=StaticPool, connect_args={"check_same_thread": False}
             )
-            from scout.adapters.llm.vault_policy import build_router_config
+            from scout.adapters.llm.confidential_policy import build_router_config
 
-            router_config, vault_policy = build_router_config(
+            router_config, policy = build_router_config(
                 load_routes(resolve_path(s.llm_router_config)),
-                s.vault_sanctioned_providers,
-                allow_any=s.llm_vault_allow_any_provider,
+                s.confidential_authorized_providers,
+                allow_any=s.llm_confidential_allow_any_provider,
             )
             router = LLMRouter(
                 router_config,
@@ -191,17 +195,18 @@ def _select_llm(
                 router, prices, usage, clock, ids,
                 {ModelTier.FAST: s.llm_model_fast, ModelTier.REASONING: s.llm_model_reasoning},
                 ThreadPoolExecutor(max_workers=s.llm_max_concurrency, thread_name_prefix="llm"),
-                vault_policy,
+                policy,
             )  # fmt: skip
         case "openai_direct":
+            from scout.adapters.llm.confidential_policy import ConfidentialPolicy
             from scout.adapters.llm.openai_direct import OpenAIAgentsDirectAdapter
-            from scout.adapters.llm.vault_policy import VaultPolicy
 
             return OpenAIAgentsDirectAdapter(
                 prices, usage, clock, ids,
                 {ModelTier.FAST: s.llm_model_fast, ModelTier.REASONING: s.llm_model_reasoning},
-                VaultPolicy(
-                    allow_any=s.llm_vault_allow_any_provider, sanctioned_providers=s.vault_sanctioned_providers
+                ConfidentialPolicy(
+                    allow_any=s.llm_confidential_allow_any_provider,
+                    authorized_providers=s.confidential_authorized_providers,
                 ),
             )  # fmt: skip
         case _ as unreachable:
@@ -379,6 +384,8 @@ def build_container(
         admin_show_vault_quotes=settings.admin_claims_show_vault_quotes,
     )  # fmt: skip
 
+    if (warning := settings.confidential_startup_warning) is not None:
+        structlog.get_logger("scout.startup").warning("confidential_data_disabled", detail=warning)
     return Container(
         matching=matching_service,
         decide_match=DecideOnMatch(match_uow, consent_source, queue, match_notifier, clock, match_cfg),
@@ -393,7 +400,7 @@ def build_container(
         ),
         ingest_document=IngestDocument(vault_uow, storage, extractor, extract_insights, clock),
         delete_document_job=DeleteDocumentJob(vault_uow, storage, clock),
-        sweep_vault=SweepVault(vault_uow, queue, clock),
+        sweep_vault=SweepVault(vault_uow, queue, clock, provider_ready=extract_insights.available),
         start_run=start_run,
         run_analysis=RunAnalysis(
             discovery_uow, SqlRunLedger(db, clock), literature, AgentsDiscovery(agents), profile_source,

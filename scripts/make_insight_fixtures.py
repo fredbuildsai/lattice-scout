@@ -461,6 +461,9 @@ class _Capture:
     def __init__(self) -> None:
         self.inputs: list[BaseModel | dict[str, JsonValue]] = []
 
+    def confidential_allowed(self, tier: Any = None) -> bool:
+        return True
+
     async def run(self, agent: AgentSpec[Any], input: Any, ctx: CallContext) -> AgentResult[Any]:
         self.inputs.append(input)
         return AgentResult(

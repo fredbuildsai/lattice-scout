@@ -5,7 +5,8 @@ from __future__ import annotations
 from pydantic import BaseModel
 
 from scout.adapters.llm.factory import AgentFactory
-from scout.ports.llm import CallContext
+from scout.ports.llm import CallContext, ModelTier
+from scout.shared.confidential import AgentInput, confidential_field
 from scout.vault.domain.insights import DocumentInsights
 from scout.vault.ports.insights import InsightOutcome, InsightRequest
 
@@ -18,12 +19,14 @@ class _Chunk(BaseModel):
     text: str
 
 
-class _Input(BaseModel):
-    mode: str
-    filename: str
-    kind_hint: str | None
-    chunks: list[_Chunk]
-    partials: list[DocumentInsights]
+class _Input(AgentInput):
+    """Wholly confidential: document text has no published form."""
+
+    mode: str = confidential_field()
+    filename: str = confidential_field()
+    kind_hint: str | None = confidential_field()
+    chunks: list[_Chunk] = confidential_field()
+    partials: list[DocumentInsights] = confidential_field()
 
 
 class AgentsInsightExtractor:
@@ -32,6 +35,10 @@ class AgentsInsightExtractor:
     def __init__(self, factory: AgentFactory) -> None:
         self._factory = factory
         self._spec = factory.spec(AGENT, DocumentInsights)  # a broken prompt fails at startup
+
+    def confidential_allowed(self) -> bool:
+        """Whether an authorized endpoint exists for document text."""
+        return self._factory.confidential_allowed(ModelTier.FAST)
 
     async def extract(self, req: InsightRequest, ctx: CallContext) -> InsightOutcome:
         """Run the agent for one slice (``full``/``map``) or the merge (``reduce``)."""

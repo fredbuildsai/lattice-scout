@@ -239,8 +239,12 @@ class RecordingExtractor:
 
     def __init__(self, inner: AgentsInsightExtractor, delay: float = 0.0) -> None:
         self.inner, self.delay = inner, delay
+        self.allowed = True
         self.requests: list[InsightRequest] = []
         self.in_flight = self.max_in_flight = 0
+
+    def confidential_allowed(self) -> bool:
+        return self.allowed
 
     async def extract(self, req: InsightRequest, ctx: CallContext) -> InsightOutcome:
         self.requests.append(req)
@@ -332,7 +336,7 @@ class VaultEnv:
 
         return DeleteDocumentJob(uow=self.uow, storage=self.storage, clock=self.clock)
 
-    def sweep(self, **kw: int) -> SweepVault:
+    def sweep(self, **kw: Any) -> SweepVault:
         """``SweepVault``."""
         from scout.vault.application.sweep import SweepVault
 

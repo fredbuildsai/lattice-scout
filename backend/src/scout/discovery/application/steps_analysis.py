@@ -673,7 +673,7 @@ async def score_persist(c: StepContext) -> Summary:
         o.novelty_probe_id = probe.id
         o.score_basis = {
             "count": count, "probe": probe.label, "query": probe.query, "since_year": since, "saturation": sat,
-            "band": c.field.novelty.bands.label(count),
+            "band": c.field.novelty.bands.label(count), "basis": run.inputs.basis,
         }  # fmt: skip
         if not any(cl.section is ClaimSection.SCORE for cl in o.claims):
             ordn = max((cl.ord for cl in o.claims), default=-1) + 1

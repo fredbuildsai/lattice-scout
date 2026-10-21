@@ -88,7 +88,7 @@ class DocumentOut(BaseModel):
     mime: DocumentMime
     size_bytes: int
     status: DocStatus = Field(
-        description="uploaded, extracting, extracted, analysing, ready, failed or rejected."
+        description="uploaded, extracting, extracted, analysing, awaiting_approved_provider (read, waiting for an approved language-model provider), ready, failed or rejected."
     )
     failure_code: str | None = Field(default=None, description="Why a failed or rejected document stopped.")
     kind: DocKind | None = Field(

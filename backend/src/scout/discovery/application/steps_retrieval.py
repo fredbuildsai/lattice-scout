@@ -127,6 +127,7 @@ async def plan_queries(c: StepContext) -> Summary:
             researcher_id=c.profile.researcher_id,
             topics=tuple(_topic_ref(t) for t in c.profile.topics),
             insight_refs=insight_refs(material),
+            basis=c.basis(),
             year_from=year_from,
             novelty_from=novelty_from,
         )

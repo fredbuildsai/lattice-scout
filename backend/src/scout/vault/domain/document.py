@@ -172,8 +172,15 @@ class Document(AggregateRoot):
 
     def start_analysis(self, now: datetime) -> None:
         """``extracted|analysing`` -> ``analysing``."""
-        self._require("start analysis of", {S.EXTRACTED, S.ANALYSING})
+        self._require("start analysis of", {S.EXTRACTED, S.ANALYSING, S.AWAITING_PROVIDER})
         self.status = S.ANALYSING
+        self._touch(now)
+
+    def await_provider(self, now: datetime) -> None:
+        """``extracted|analysing|awaiting`` -> ``awaiting_approved_provider``: no authorized endpoint can read the
+        text, so the document is kept and analysed later (ADR 016). Not a failure and not a purge trigger."""
+        self._require("wait for a provider with", {S.EXTRACTED, S.ANALYSING, S.AWAITING_PROVIDER})
+        self.status = S.AWAITING_PROVIDER
         self._touch(now)
 
     def finish_analysis(self, kind_suggested: DocKind | None, reason: str | None, now: datetime) -> None:

@@ -1,6 +1,6 @@
 # ADR 015: Vault data goes only to sanctioned LLM endpoints
 
-- **Status:** accepted
+- **Status:** accepted; enforcement (3) and start-up rules (4) superseded by ADR 016 (withhold instead of refuse)
 - **Date:** 2026-10-23 (M6 review blocking #1; supersedes the privacy assumptions of DECISIONS 105)
 
 ## Context

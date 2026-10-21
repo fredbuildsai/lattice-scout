@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { track } from '../../analytics/client'
 import { Icon } from '../../ui/icons'
+import { BasisNote } from './BasisNote'
 import { isRunActive, useCancelRun, useRun, type Run } from './api'
 import { failureMessage, STEP_LABELS } from './messages'
 
@@ -101,6 +102,7 @@ export function RunPage() {
               <div className="h-2 rounded-full bg-scout transition-[width]" style={{ width: `${r.percent}%` }} />
             </div>
             <p className="mt-1 text-xs text-ink-3">{r.percent}% complete</p>
+            <BasisNote note={r.basis_note} />
             {cancel.isError && <p role="alert" className="mt-2 text-sm text-warm">We could not cancel the run. It may have just ended.</p>}
             {r.status === 'done' && (
               <Link to={`/opportunities?run=${r.id}`} className="mt-3 inline-flex min-h-11 items-center rounded-btn bg-accent px-4 text-sm font-semibold text-white hover:bg-accent-dark">

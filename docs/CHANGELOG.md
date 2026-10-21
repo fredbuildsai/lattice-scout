@@ -4,6 +4,12 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 
 ## [Unreleased]
 
+### Changed (privacy model, ADR 016)
+- Confidential data is withheld, not refused. With no authorized LLM endpoint, analyses, matching, joint ideas and document ingestion go ahead on published data only: vault passages, insights, keywords and consented vault statements are left out of every prompt, the run is marked `basis: published_only`, and the run page, opportunity cards and detail page say "Based on your published work only; your uploaded documents were not used because no approved provider is configured." Documents wait in the new status `awaiting_approved_provider` (migration 0017) and are analysed by the vault sweep once a provider is authorized.
+- Every agent input classifies each field as published or confidential (`AgentInput`); an unclassified field fails at import.
+- Production no longer refuses to start without an allowlist: one warning is logged and `GET /system/status` returns `confidential_data_enabled` and `confidential_data_notice`. `LLM_FREE_PROVIDERS_ACKNOWLEDGED` is removed.
+- Renamed (breaking for config files): `sanctioned: true` is now `authorized: true` in `config/llm_router.yaml` (the old key is still read); `LLM_VAULT_SANCTIONED_PROVIDERS` is `LLM_CONFIDENTIAL_AUTHORIZED_PROVIDERS` and `LLM_VAULT_ALLOW_ANY_PROVIDER` is `LLM_CONFIDENTIAL_ALLOW_ANY_PROVIDER` (the old environment names are still read); `VaultDataRefused` is `ConfidentialDataRefused`; prompt front-matter `data_class` is `published` or `confidential`. New: `LLM_FAKE_CONFIDENTIAL_ALLOWED` (demo and tests). Privacy tab, vault page and user pages updated.
+
 ### Security and privacy (review follow-up, M4 to M6)
 - Vault text goes only to sanctioned LLM endpoints (ADR 015, DECISIONS 106-107): `data_class` on every agent, `sanctioned: true` deployments plus `LLM_VAULT_SANCTIONED_PROVIDERS`, a refusal that logs no content, production start-up guards (`LLM_VAULT_ALLOW_ANY_PROVIDER`, `LLM_FREE_PROVIDERS_ACKNOWLEDGED`), a minimal environment for the PDF parser process. The privacy tab, vault page, sign-in page and user pages now say who receives the text and list everything a deletion leaves behind.
 - Migration 0015: default privileges, function EXECUTE and views are closed to the PostgREST roles; migration 0016: feedback reasons per target type.

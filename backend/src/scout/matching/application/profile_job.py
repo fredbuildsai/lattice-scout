@@ -71,7 +71,9 @@ class ComputeResearcherProfile:
         works = method_works(data.works)
         sources = [(w.ref, (w.abstract or w.title)[:1500]) for w in works]
         refs = {ref: "abstract" for ref, _ in sources}
-        use_vault = consent.vault_signals
+        # ADR 016: consented vault statements are used only when an authorized endpoint exists; otherwise the
+        # profile is built from published abstracts and recomputed once one is configured (the methods hash changes).
+        use_vault = consent.vault_signals and self._agents.confidential_allowed()
         if use_vault:
             for s in await self._signals.signals(account, SIGNAL_SECTIONS, 10):
                 sources.append((s.ref, s.text))
