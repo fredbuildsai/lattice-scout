@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import re
 from dataclasses import dataclass, field
 from enum import StrEnum
 from typing import Any, Literal
@@ -10,6 +9,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from scout.shared.text import clean_text
 from scout.vault.domain.enums import DocKind
 from scout.vault.domain.ids import ChunkId
 
@@ -17,14 +17,13 @@ MAX_ITEMS = 8
 
 
 MAX_TEXT = 600
-_CONTROL = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]")
 
 
 def _clean(value: Any) -> Any:
     """Strip control characters (a NUL breaks ``jsonb`` and Postgres then quotes the text in its error) and bound
     the length of every string the model returns."""
     if isinstance(value, str):
-        return _CONTROL.sub("", value)[:MAX_TEXT]
+        return clean_text(value, MAX_TEXT)
     if isinstance(value, list):
         return [_clean(v) for v in value]
     return value

@@ -58,12 +58,19 @@ class JobQueuePort(Protocol):
         """Lock the next due job of one of ``kinds`` and bump its attempts, or return None."""
         ...
 
-    async def complete(self, job_id: UUID, result: dict[str, JsonValue]) -> None:
-        """Mark the job succeeded."""
+    async def complete(
+        self, job_id: UUID, result: dict[str, JsonValue], worker_id: str | None = None
+    ) -> None:
+        """Mark the job succeeded. With ``worker_id``, only if that worker still holds the lease."""
         ...
 
-    async def fail(self, job_id: UUID, error: str, retry_in: int | None) -> None:
-        """Requeue after ``retry_in`` seconds, or mark dead when None or attempts are exhausted."""
+    async def fail(
+        self, job_id: UUID, error: str, retry_in: int | None, worker_id: str | None = None
+    ) -> None:
+        """Requeue after ``retry_in`` seconds, or mark dead when None or attempts are exhausted.
+
+        With ``worker_id``, only if that worker still holds the lease (a stale worker must not touch a re-claimed job).
+        """
         ...
 
     async def heartbeat(self, job_id: UUID, worker_id: str) -> bool:

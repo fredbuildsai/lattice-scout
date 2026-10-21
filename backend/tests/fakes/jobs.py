@@ -66,7 +66,11 @@ class InMemoryJobQueue:
         self.jobs[job.id] = claimed
         return claimed
 
-    async def complete(self, job_id: UUID, result: dict[str, JsonValue]) -> None:
+    async def complete(
+        self, job_id: UUID, result: dict[str, JsonValue], worker_id: str | None = None
+    ) -> None:
+        if worker_id is not None and self.jobs[job_id].locked_by != worker_id:
+            return
         self.jobs[job_id] = self.jobs[job_id].model_copy(
             update={"status": JobStatus.SUCCEEDED, "locked_by": None}
         )
@@ -79,8 +83,12 @@ class InMemoryJobQueue:
         self.jobs[job_id] = job.model_copy(update={"locked_at": self.clock.now()})
         return True
 
-    async def fail(self, job_id: UUID, error: str, retry_in: int | None) -> None:
+    async def fail(
+        self, job_id: UUID, error: str, retry_in: int | None, worker_id: str | None = None
+    ) -> None:
         job = self.jobs[job_id]
+        if worker_id is not None and job.locked_by != worker_id:
+            return
         if retry_in is None or job.attempts >= job.max_attempts:
             upd: dict[str, Any] = {"status": JobStatus.DEAD, "last_error": error, "locked_by": None}
         else:

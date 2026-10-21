@@ -47,8 +47,9 @@ async def _beat(queue: JobQueuePort, job_id: UUID, worker_id: str, every: float)
     while True:
         await asyncio.sleep(every)
         try:
-            await queue.heartbeat(job_id, worker_id)
-        except Exception:
+            if not await queue.heartbeat(job_id, worker_id):
+                log.warning("job_lease_lost", job_id=str(job_id))  # another worker owns the job now
+        except Exception:  # a missed beat is retried; the lease still has slack
             log.warning("job_heartbeat_failed", job_id=str(job_id))
 
 
@@ -78,12 +79,13 @@ async def run_once(
                 trace.Status(trace.StatusCode.ERROR, safe)
             )  # never the raw message (may quote vault text)
             log.warning("job_failed", job_id=str(job.id), kind=job.kind, attempt=job.attempts, error=safe)
-            await queue.fail(job.id, safe, retry_delay(job.attempts))
+            await queue.fail(job.id, safe, retry_delay(job.attempts), worker_id)
         else:
-            await queue.complete(job.id, result)
+            await queue.complete(job.id, result, worker_id)
             log.info("job_done", job_id=str(job.id), kind=job.kind)
         finally:
             beat.cancel()
+            await asyncio.gather(beat, return_exceptions=True)  # never leave the cancelled task running
     return True
 
 

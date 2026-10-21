@@ -92,15 +92,17 @@ class PostgresJobQueue:
             )
         return Job.model_validate(dict(row)) if row else None
 
-    async def complete(self, job_id: UUID, result: dict[str, JsonValue]) -> None:
+    async def complete(
+        self, job_id: UUID, result: dict[str, JsonValue], worker_id: str | None = None
+    ) -> None:
         """Mark succeeded and store the result."""
         async with self._db.engine.begin() as conn:
             await conn.execute(
                 text(
                     "UPDATE job SET status='succeeded', result=CAST(:r AS jsonb), locked_by=NULL, "
-                    "updated_at=:now WHERE id=:id AND status='running'"
+                    "updated_at=:now WHERE id=:id AND status='running' AND (CAST(:w AS text) IS NULL OR locked_by = :w)"
                 ),
-                {"r": json.dumps(result), "now": self._clock.now(), "id": job_id},
+                {"r": json.dumps(result), "now": self._clock.now(), "id": job_id, "w": worker_id},
             )
 
     async def heartbeat(self, job_id: UUID, worker_id: str) -> bool:
@@ -115,7 +117,9 @@ class PostgresJobQueue:
             )
         return bool(res.rowcount)
 
-    async def fail(self, job_id: UUID, error: str, retry_in: int | None) -> None:
+    async def fail(
+        self, job_id: UUID, error: str, retry_in: int | None, worker_id: str | None = None
+    ) -> None:
         """Requeue in ``retry_in`` seconds, or mark dead when out of attempts / no retry requested."""
         now = self._clock.now()
         run_at = now + timedelta(seconds=retry_in or 0)
@@ -127,8 +131,15 @@ class PostgresJobQueue:
                       status = CASE WHEN :retry AND attempts < max_attempts THEN 'queued' ELSE 'dead' END,
                       run_at = CASE WHEN :retry AND attempts < max_attempts THEN :run_at ELSE run_at END,
                       last_error = :err, locked_by = NULL, locked_at = NULL, updated_at = :now
-                    WHERE id = :id AND status = 'running'
+                    WHERE id = :id AND status = 'running' AND (CAST(:w AS text) IS NULL OR locked_by = :w)
                     """
                 ),
-                {"retry": retry_in is not None, "run_at": run_at, "err": error, "now": now, "id": job_id},
+                {
+                    "retry": retry_in is not None,
+                    "run_at": run_at,
+                    "err": error,
+                    "now": now,
+                    "id": job_id,
+                    "w": worker_id,
+                },
             )

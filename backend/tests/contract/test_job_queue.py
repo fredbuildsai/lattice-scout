@@ -143,3 +143,23 @@ async def test_heartbeat_from_a_stranger_or_after_completion_is_refused(
     assert await q.heartbeat(job.id, "w2") is False
     await q.complete(job.id, {})
     assert await q.heartbeat(job.id, "w1") is False
+
+
+async def test_complete_and_fail_by_a_stale_worker_do_not_touch_a_reclaimed_job(
+    make: Callable[[FixedClock], JobQueuePort],
+) -> None:
+    clock = FixedClock(T0)
+    q = make(clock)
+    await q.enqueue(JobSpec(kind="k", max_attempts=3))
+    first = await q.claim("w1", ["k"])
+    assert first
+    clock.advance(timedelta(seconds=301))  # w1 stalls; w2 takes over
+    second = await q.claim("w2", ["k"])
+    assert second and second.attempts == 2
+    await q.complete(first.id, {"stale": True}, "w1")  # ignored
+    await q.fail(first.id, "stale failure", 5, "w1")  # ignored
+    clock.advance(timedelta(seconds=10))
+    assert await q.claim("w3", ["k"]) is None  # still running under w2
+    assert await q.heartbeat(second.id, "w2") is True
+    await q.complete(second.id, {"ok": True}, "w2")
+    assert await q.heartbeat(second.id, "w2") is False

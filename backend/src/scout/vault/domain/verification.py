@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 import re
-import unicodedata
 from collections.abc import Mapping
 from typing import Any
 
+from scout.shared.text import norm
 from scout.vault.domain.chunking import Chunk
 from scout.vault.domain.insights import (
     DocumentInsights,
@@ -19,18 +19,8 @@ from scout.vault.domain.insights import (
 
 MIN_QUOTE_CHARS = 15
 MAX_QUOTE_CHARS = 300
+__all__ = ["EMAIL", "MAX_QUOTE_CHARS", "MIN_QUOTE_CHARS", "norm", "verify"]
 EMAIL = re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]+")
-_DASHES = dict.fromkeys([*range(0x2010, 0x2016), 0x2212], "-")
-_QUOTES = dict.fromkeys([0x2018, 0x2019, 0x201A, 0x201B], "'") | dict.fromkeys(
-    [0x201C, 0x201D, 0x201E, 0x201F], '"'
-)
-
-
-def norm(text: str) -> str:
-    """Normalise for verbatim matching: NFKC, straight quotes, plain hyphens, joined hyphenation, single spaces."""
-    t = unicodedata.normalize("NFKC", text).translate(_DASHES).translate(_QUOTES).replace("­", "")
-    t = re.sub(r"-\s+", "-", t)
-    return re.sub(r"\s+", " ", t).strip()
 
 
 def _haystacks(cited: list[Chunk]) -> list[str]:
