@@ -65,6 +65,7 @@ from scout.discovery.domain.scoring import (
     title_tokens,
 )
 from scout.discovery.domain.verification import (
+    EMAIL,
     CheckResult,
     ChunkMaterial,
     EvidenceRef,
@@ -431,7 +432,9 @@ async def verify(c: StepContext) -> Summary:
     async with c.uow() as uow:
         corpus = await uow.corpus.list(c.run_id)
         probes = await uow.probes.list(c.run_id)
-        opps = [o for o in await uow.opportunities.list_for_run(c.run_id) if o.verify_state == "pending"]
+        everything = await uow.opportunities.list_for_run(c.run_id)
+    total_drafts = len(everything)
+    opps = [o for o in everything if o.verify_state == "pending"]
     all_docs = await c.material(run)
     material = [m for m in all_docs if m.active]
     inactive = {m.label for m in all_docs if not m.active}
@@ -439,6 +442,7 @@ async def verify(c: StepContext) -> Summary:
     index = _build_index(c, corpus, material, probes)
     works = cast(dict[str, WorkMaterial], index.works)
     resolved = 0
+    resolved_new = 0
     budget_out: str | None = None
     counts: Counter[str] = Counter()
 
@@ -460,6 +464,7 @@ async def verify(c: StepContext) -> Summary:
                     if rec is not None:
                         cw = to_corpus(c.run_id, rec, CorpusOrigin.RESOLVED)
                         new_works.append(cw)
+                        resolved_new += 1
                         works[rec.id] = WorkMaterial(rec.id, cw.title, cw.abstract, CorpusOrigin.RESOLVED)
                 if ref.type in ("chunk", "insight") and _doc_label(ref.id) in inactive:
                     res = CheckResult(CheckCode.SOURCE_DELETED)
@@ -476,7 +481,12 @@ async def verify(c: StepContext) -> Summary:
             if not claim_passes(code):
                 claim.set_status(ClaimStatus.UNVERIFIED, code.value, SetBy.VERIFY_CODE)
         alive = [cl for cl in opp.claims if cl.status is ClaimStatus.PENDING]
-        if not alive:
+        if EMAIL.search(" ".join([opp.title, opp.one_line, *opp.next_steps])):
+            for cl in alive:
+                cl.set_status(ClaimStatus.UNVERIFIED, CheckCode.PERSONAL_DATA.value, SetBy.VERIFY_CODE)
+            _finish_opp(opp, OppStatus.UNVERIFIED, CheckCode.PERSONAL_DATA.value)
+            counts["personal_data"] += 1
+        elif not alive:
             _finish_opp(opp, OppStatus.UNVERIFIED, "no_verified_claims")
             counts["no_verified_claims"] += 1
         else:
@@ -517,7 +527,9 @@ async def verify(c: StepContext) -> Summary:
         await c.tx(write)
     if budget_out:
         await c.tx(lambda uow, r: _degrade(r, c, step, f"verify_{budget_out}"))
-    return {"checked": len(opps), "resolved": resolved, **{k: v for k, v in counts.items()}}
+    by_status = Counter(f"n_{o.status.value}" for o in everything)
+    done_resolved = sum(1 for w in corpus if w.origin is CorpusOrigin.RESOLVED) + resolved_new
+    return {"checked": total_drafts, "resolved": done_resolved, **by_status}
 
 
 def _finish_opp(opp: Opportunity, status: OppStatus, reason: str) -> None:
@@ -687,6 +699,7 @@ async def score_persist(c: StepContext) -> Summary:
 
     await c.tx(write)
     by_status = Counter(o.status.value for o in opps)
+    shown = by_status[OppStatus.SHOWN.value]
     return {"shown": shown, "opportunities": len(opps), **{f"n_{k}": v for k, v in by_status.items()}}
 
 

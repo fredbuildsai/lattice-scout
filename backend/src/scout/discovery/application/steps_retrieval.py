@@ -298,9 +298,9 @@ async def group_by_topic(c: StepContext) -> Summary:
     async def first(uow: DiscoveryUnitOfWork, r: AnalysisRun) -> None:
         await uow.clusters.upsert_many(clusters)
         await uow.corpus.set_clusters(c.run_id, assignments)
-        r.record_progress(
-            step, c.generation, 0, min(len(clusters), c.field.clusters.max_labelled), c.clock.now()
-        )
+        labelled = sum(1 for cl in clusters if cl.label_source == "llm")
+        total = min(len(clusters), c.field.clusters.max_labelled)
+        r.record_progress(step, c.generation, min(labelled, total), total, c.clock.now())
 
     await c.tx(first)
 
@@ -341,9 +341,10 @@ async def group_by_topic(c: StepContext) -> Summary:
         await c.tx(write)
 
     await asyncio.gather(*(label_one(cl) for cl in todo))
-    if degraded or (len(clusters) - sum(1 for cl in clusters if cl.is_misc)) > len(todo):
+    real = [cl for cl in clusters if not cl.is_misc]
+    if degraded or any(cl.label_source == "topic" for cl in real):
         await c.tx(lambda uow, r: _degrade(r, c, step, "label_fallback"))
-    return {"clusters": len(clusters), "labelled": sum(1 for cl in todo if cl.label_source == "llm")}
+    return {"clusters": len(clusters), "labelled": sum(1 for cl in real if cl.label_source == "llm")}
 
 
 async def _tag_call(c: StepContext, data: InsightTopicTaggerInput) -> AgentOutcome[InsightTopicTags]:

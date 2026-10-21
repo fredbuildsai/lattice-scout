@@ -20,6 +20,7 @@ from __future__ import annotations
 import asyncio
 from collections import Counter
 from dataclasses import dataclass
+from datetime import timedelta
 from decimal import Decimal
 
 import pytest
@@ -30,17 +31,21 @@ from tests.unit.discovery._world import (
     STEP_CALLS,
     STEPS,
     World,
+    after_step,
     assert_user_view_clean,
     call_names,
-    finished_world,
     fingerprint,
+    finished_world,
     kill_at_boundary,
     plan_n,
     row_ids,
     src_bug,
 )
 
-from scout.discovery.domain.enums import RunStatus, RunStep
+from scout.discovery.domain.budget import RunSpend
+from scout.discovery.domain.enums import OppStatus, RunStatus, RunStep
+from scout.ports.jobs import JobStatus
+from scout.ports.llm import LLMUnavailable
 
 COST = Decimal("0.01")
 
@@ -80,7 +85,9 @@ def build(queries: int = 2) -> World:
 
 async def killed_and_resumed(k: Kill) -> tuple[World, World, Counter[str], list[str]]:
     """Run once with a kill, then again; return (resumed world, clean world, completed agent calls, resumed names)."""
-    clean, _ = await finished_world(lambda w: w.agents.script("QueryPlanner", plan_n(k.queries)) if k.queries != 2 else None)
+    clean, _ = await finished_world(
+        lambda w: w.agents.script("QueryPlanner", plan_n(k.queries)) if k.queries != 2 else None
+    )
     w = build(k.queries)
     run = await w.start()
     w.agents.kill_on_call = k.agent_call
@@ -98,7 +105,12 @@ async def killed_and_resumed(k: Kill) -> tuple[World, World, Counter[str], list[
     w.agents.kill_on_call, w.literature.kill_on = None, None
     result = await w.run(run)
     assert result["status"] == "done", result
-    return w, clean, completed + Counter(a for a, _ in w.agents.calls[n_agents:]), call_names(w, n_agents, n_lit)
+    return (
+        w,
+        clean,
+        completed + Counter(a for a, _ in w.agents.calls[n_agents:]),
+        call_names(w, n_agents, n_lit),
+    )
 
 
 @pytest.mark.parametrize("case", MIDSTEP.values(), ids=list(MIDSTEP))
@@ -119,7 +131,9 @@ async def test_a_midstep_kill_resumes_to_done_and_repeats_no_completed_unit(case
     # the ledger holds both executions: completed calls only, the killed one never settled
     assert run.spend.llm_calls == sum(completed.values())
     assert run.spend.cost_usd == COST * run.spend.llm_calls
-    assert run.spend.openalex_calls == len(w.literature.calls)  # charged before each call, killed one included
+    assert run.spend.openalex_calls == len(
+        w.literature.calls
+    )  # charged before each call, killed one included
     assert_user_view_clean(w.store)
 
 
@@ -137,7 +151,10 @@ async def test_a_kill_in_the_second_retrieve_wave_keeps_the_first_wave() -> None
 async def test_a_kill_while_counting_recounts_only_the_unfinished_wave(n: int) -> None:
     key = "measure_novelty@first-count" if n == 1 else "measure_novelty@second-count"
     _, _, _, resumed = await killed_and_resumed(MIDSTEP[key])
-    assert [x for x in resumed if x == "count"] == ["count", "count"]  # one wave of two probes, none committed
+    assert [x for x in resumed if x == "count"] == [
+        "count",
+        "count",
+    ]  # one wave of two probes, none committed
 
 
 async def test_a_kill_after_the_first_critic_does_not_repeat_it() -> None:
@@ -230,7 +247,8 @@ async def test_a_kill_while_labelling_leaves_the_same_final_state_as_a_clean_run
 # ---- killing every execution ----------------------------------------------------------------------------------------
 @src_bug(
     1,
-    "chained resume passes through group_by_topic with every cluster already labelled -> spurious label_fallback",
+    "chained resume passes through group_by_topic with every cluster already labelled -> spurious label_fallback "
+    "(and the verify/score_persist summaries of bugs 2 and 3)",
 )
 async def test_chained_boundary_kills_one_per_step_still_end_identical() -> None:
     clean, clean_run = await finished_world()
@@ -270,9 +288,114 @@ def test_any_sequence_of_agent_kills_ends_done_with_every_unit_done_once(gaps: l
         assert final.status is RunStatus.DONE
         killed_calls = len(w.agents.calls) - len(clean.agents.calls)
         assert 0 <= killed_calls <= len(gaps)  # only in-flight calls are ever repeated
-        assert final.spend.llm_calls == len(clean.agents.calls)  # one settled call per unit, killed ones unsettled
+        assert final.spend.llm_calls == len(
+            clean.agents.calls
+        )  # one settled call per unit, killed ones unsettled
         assert final.spend.openalex_calls == len(w.literature.calls) == len(clean.literature.calls)
         assert row_ids(w.store, run.id) == row_ids(clean.store, clean_run.id)
         assert_user_view_clean(w.store)
 
     asyncio.run(scenario())
+
+
+# ---- the job queue brings a killed run back ---------------------------------------------------------------------------
+async def test_a_killed_worker_loses_its_lease_and_the_next_claim_resumes_the_run() -> None:
+    clean, clean_run = await finished_world()
+    w = World()
+    run = await w.start()
+    job = await w.jobs.claim("worker-1", ["discovery.run"])
+    assert job is not None and job.payload["run_id"] == str(run.id)
+    w.agents.kill_on_call = 6  # the GapAnalyst
+    with pytest.raises(AgentKilled):
+        await w.runner.handle(job.payload, last_attempt=False)  # the process dies: no complete(), no fail()
+    w.agents.kill_on_call = None
+    assert await w.jobs.claim("worker-2", ["discovery.run"]) is None  # lease still held
+    w.clock.advance(timedelta(seconds=301))
+    again = await w.jobs.claim("worker-2", ["discovery.run"])
+    assert again is not None and again.id == job.id and again.attempts == 2
+    result = await w.runner.handle(again.payload, last_attempt=False)
+    await w.jobs.complete(again.id, result, "worker-2")
+    assert w.jobs.jobs[job.id].status is JobStatus.SUCCEEDED
+    final = w.get(run)
+    assert final.status is RunStatus.DONE and final.generation == 2
+    assert row_ids(w.store, run.id) == row_ids(clean.store, clean_run.id)
+    assert w.agents.count("QueryPlanner") == 1
+
+
+# ---- fencing (DECISIONS 57) -------------------------------------------------------------------------------------------
+@pytest.mark.parametrize("step", STEPS[:-1], ids=[s.value for s in STEPS[:-1]])
+async def test_a_second_begin_execution_between_steps_stops_the_first_runner(step: RunStep) -> None:
+    clean, clean_run = await finished_world()
+    w = World()
+    run = await w.start()
+    after_step(w, step, lambda stored: stored.begin_execution(w.clock.now()))
+    result = await w.run(run)
+    assert result == {"skipped": "superseded"}
+    stale = w.get(run)
+    assert stale.status is RunStatus.RUNNING and stale.generation == 2 and stale.executions == 2
+    assert stale.step is STEPS[STEPS.index(step) + 1]
+    allowed = set().union(*(STEP_CALLS[s] for s in STEPS[: STEPS.index(step) + 1]))
+    assert set(call_names(w)) <= allowed  # the stale runner started nothing of the next step
+    assert not w.shown(run)
+    # the execution that took over finishes the run without redoing anything
+    assert (await w.run(run))["status"] == "done"
+    assert w.get(run).generation == 3
+    assert call_names(w) == call_names(clean)
+    assert row_ids(w.store, run.id) == row_ids(clean.store, clean_run.id)
+
+
+@pytest.mark.parametrize("n", range(1, 13))
+async def test_losing_the_lease_mid_step_stops_the_stale_runner_without_a_write(n: int) -> None:
+    """``ledger.on_charge`` bumps the generation during the n-th charge of a clean run (8 model + 4 literature)."""
+    clean, clean_run = await finished_world()
+    w = World()
+    run = await w.start()
+    taken: dict[str, object] = {}
+
+    def takeover(k: int) -> None:
+        if k == n:
+            stored = w.store.runs[run.id]
+            stored.begin_execution(w.clock.now())
+            taken["state"] = fingerprint(w.store, run.id)
+            taken["spend"] = stored.spend
+
+    w.ledger.on_charge = takeover
+    assert (await w.run(run)) == {"skipped": "superseded"}
+    stale = w.get(run)
+    assert stale.status is RunStatus.RUNNING and stale.generation == 2
+    assert fingerprint(w.store, run.id) == taken["state"]  # nothing written after the takeover
+    assert stale.spend == taken["spend"]  # and nothing charged: a stale charge is refused
+    assert not w.shown(run)
+    w.ledger.on_charge = None
+    assert (await w.run(run))["status"] == "done"
+    assert row_ids(w.store, run.id) == row_ids(clean.store, clean_run.id)
+
+
+async def test_a_stale_generation_cannot_charge_and_the_current_one_can() -> None:
+    w = World()
+    run = await w.start()
+    stored = w.store.runs[run.id]
+    old = stored.begin_execution(w.clock.now())
+    new = stored.begin_execution(w.clock.now())
+    refused = await w.ledger.charge(run.id, old, cost_usd=Decimal("0.5"), llm_calls=1, openalex_calls=1)
+    assert refused.superseded and refused.spend == RunSpend() and stored.spend == RunSpend()
+    accepted = await w.ledger.charge(run.id, new, cost_usd=Decimal("0.5"), llm_calls=1)
+    assert not accepted.superseded and accepted.spend.cost_usd == Decimal("0.5")
+    stored.request_cancel(w.clock.now())
+    assert (await w.ledger.charge(run.id, new, openalex_calls=1)).cancel_requested
+
+
+async def test_a_stale_runner_failing_on_its_last_attempt_does_not_fail_the_newer_execution() -> None:
+    w = World()
+    run = await w.start()
+
+    def take_over_then_fail(_: object) -> None:
+        w.store.runs[run.id].begin_execution(w.clock.now())
+        raise LLMUnavailable("the route is down")
+
+    w.agents.script("GapAnalyst", take_over_then_fail)
+    with pytest.raises(LLMUnavailable):
+        await w.run(run, last=True)
+    stored = w.get(run)
+    assert stored.status is RunStatus.RUNNING and stored.error_code is None and stored.generation == 2
+    assert all(o.status is not OppStatus.SHOWN for o in w.opps(run))

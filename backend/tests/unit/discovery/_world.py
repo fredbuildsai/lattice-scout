@@ -271,9 +271,9 @@ STEP_CALLS: dict[RunStep, frozenset[str]] = {
 STEPS = list(RunStep)
 
 
-def src_bug(number: int, why: str) -> Any:
-    """Mark a test that exposes a defect in ``backend/src``. Strict: it turns red as soon as the defect is fixed."""
-    return pytest.mark.xfail(strict=True, reason=f"SRC BUG {number}: {why}")
+def src_bug(number: int, why: str) -> pytest.MarkDecorator:
+    """Mark a test that once exposed a defect in ``backend/src`` (all fixed; kept for the record)."""
+    return pytest.mark.skipif(False, reason=f"fixed SRC BUG {number}: {why}")
 
 
 def call_names(w: World, start: int = 0, lit_start: int = 0) -> list[str]:
@@ -356,7 +356,7 @@ def kill_at_boundary(w: World, step: RunStep) -> None:
     w.store.before_commit = before
 
 
-def after_step(w: World, step: RunStep, action: Callable[[AnalysisRun], None]) -> None:
+def after_step(w: World, step: RunStep, action: Callable[[AnalysisRun], object]) -> None:
     """Call ``action(stored_run)`` once, right after the commit that completes ``step`` is published."""
     fired: list[bool] = []
 
@@ -370,3 +370,67 @@ def after_step(w: World, step: RunStep, action: Callable[[AnalysisRun], None]) -
                 action(r)
 
     w.store.after_commit = after
+
+
+# ---- scripted drafts --------------------------------------------------------------------------------------------------
+GOOD_QUOTE = ABSTRACTS["W12"][:60]  # verbatim, 60 characters of the abstract of W12 (the analyst's top paper)
+CHUNK_QUOTE = "develop lignin foams for insulation"  # verbatim inside the d1.c1 passage
+TITLES = [
+    "Hydrophobic membrane coatings for packaging",
+    "Quantum dots from cellulose nanofibres",
+    "Fungal mycelium acoustic panels",
+    "Bio-based adhesives for plywood",
+    "Enzymatic recycling of polyester textiles",
+    "Algae derived barrier films",
+    "Ionic liquid pretreatment kinetics",
+]
+
+
+def work_ref(work_id: str = "W12", quote: str | None = GOOD_QUOTE) -> EvidenceRefOut:
+    """A citation of a corpus work."""
+    return EvidenceRefOut(type="work", id=work_id, quote=quote)
+
+
+def chunk_ref(label: str = "d1.c1", quote: str | None = CHUNK_QUOTE) -> EvidenceRefOut:
+    """A citation of a vault passage."""
+    return EvidenceRefOut(type="chunk", id=label, quote=quote)
+
+
+def count_ref(label: str = "n1") -> EvidenceRefOut:
+    """A citation of a novelty probe."""
+    return EvidenceRefOut(type="count", id=label)
+
+
+def insight_ref(label: str = "d1.aims[0]") -> EvidenceRefOut:
+    """A citation of a vault insight."""
+    return EvidenceRefOut(type="insight", id=label)
+
+
+def claim(text: str, *refs: EvidenceRefOut, section: str = "rationale") -> ClaimDraft:
+    """A claim draft."""
+    return ClaimDraft(text=text, section=section, evidence_refs=list(refs))
+
+
+def good_claims() -> list[ClaimDraft]:
+    """Two claims that pass every check: a verified quote from a corpus work, and a measured count."""
+    return [
+        claim("The corpus work reports the key effect.", work_ref()),
+        claim("Measured literature volume is small.", count_ref()),
+    ]
+
+
+def draft(title: str, claims: list[ClaimDraft], cluster: str = "k3") -> OpportunityDraft:
+    """An opportunity draft on the (only) candidate cluster."""
+    return OpportunityDraft(
+        kind="white_spot",
+        title=title,
+        one_line="A gap",
+        cluster_ids=[cluster],
+        claims=claims,
+        effort_estimate="medium",
+    )
+
+
+def script_drafts(w: World, *drafts: OpportunityDraft) -> None:
+    """Make the GapAnalyst return exactly these drafts (at most five)."""
+    w.agents.script("GapAnalyst", GapAnalysis(opportunities=list(drafts)))
