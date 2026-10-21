@@ -18,7 +18,7 @@ from scout.shared import AccountId
 def _from_row(r: Any) -> Feedback:
     return Feedback(
         id=r.id, author_id=AccountId(r.author_id), target_type=TargetType(r.target_type), target_id=r.target_id,
-        rating=Rating(r.rating), reasons=tuple(Reason(x) for x in r.reasons), comment=r.comment,
+        rating=Rating(r.rating) if r.rating else None, stars=r.stars, reasons=tuple(Reason(x) for x in r.reasons), comment=r.comment,
         created_at=r.created_at, updated_at=r.updated_at,
     )  # fmt: skip
 
@@ -34,14 +34,14 @@ class SqlFeedbackRepo:
         t = m.feedback
         values = dict(
             id=feedback.id, author_id=feedback.author_id, target_type=feedback.target_type.value,
-            target_id=feedback.target_id, rating=feedback.rating.value,
+            target_id=feedback.target_id, rating=feedback.rating.value if feedback.rating else None, stars=feedback.stars,
             reasons=[r.value for r in feedback.reasons], comment=feedback.comment,
             created_at=feedback.created_at, updated_at=feedback.updated_at,
         )  # fmt: skip
         ins = pg_insert(t).values(**values)
         stmt = ins.on_conflict_do_update(
             index_elements=[t.c.author_id, t.c.target_type, t.c.target_id],
-            set_={k: ins.excluded[k] for k in ("rating", "reasons", "comment", "updated_at")},
+            set_={k: ins.excluded[k] for k in ("rating", "stars", "reasons", "comment", "updated_at")},
         ).returning(t)
         return _from_row((await self._s.execute(stmt)).one())
 
@@ -67,9 +67,15 @@ class SqlTargetCheck:
         self._s = session
 
     async def rateable(self, author_id: AccountId, target_type: TargetType, target_id: UUID) -> bool:
-        """Opportunities: the author's own, in a user-visible status. Matches: not before M5."""
-        if target_type is not TargetType.OPPORTUNITY:
-            return False
+        """Opportunities: the author's own, in a user-visible status. Matches: mutual ones the author takes part in."""
+        if target_type is TargetType.MATCH:
+            row = await self._s.execute(
+                text(
+                    "SELECT 1 FROM match_proposal WHERE id = :id AND state = 'mutual' AND (a_id = :a OR b_id = :a)"
+                ),
+                {"id": target_id, "a": author_id},
+            )
+            return row.first() is not None
         row = await self._s.execute(
             text(
                 "SELECT 1 FROM opportunity WHERE id = :id AND owner_id = :owner "

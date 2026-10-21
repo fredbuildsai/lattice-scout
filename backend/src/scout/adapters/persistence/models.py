@@ -239,7 +239,7 @@ feedback = Table(
     Column("id", UUID(as_uuid=True), primary_key=True),
     Column("author_id", UUID(as_uuid=True), ForeignKey("account.id"), nullable=False),
     Column("target_type", Text, nullable=False), Column("target_id", UUID(as_uuid=True), nullable=False),
-    Column("rating", Text, nullable=False), Column("reasons", ARRAY(Text), nullable=False),
+    Column("rating", Text), Column("stars", Integer), Column("reasons", ARRAY(Text), nullable=False),
     Column("comment", Text), ts("created_at", nullable=False), ts("updated_at", nullable=False),
 )  # fmt: skip
 

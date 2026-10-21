@@ -34,4 +34,6 @@ def test_rate_replace_and_summarise(
     ).json()
     assert mine["rating"] == "down" and mine["comment"] == "hm"
     assert api.post("/api/v1/feedback", json=body | {"reasons": ["bogus"]}, headers=h).status_code == 422
-    assert api.post("/api/v1/feedback", json=body | {"target_type": "match"}, headers=h).status_code == 404
+    assert api.post("/api/v1/feedback", json=body | {"target_type": "match"}, headers=h).status_code == 422
+    stars = {"target_type": "match", "target_id": oid, "stars": 4}
+    assert api.post("/api/v1/feedback", json=stars, headers=h).status_code == 404  # not a mutual match

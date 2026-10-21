@@ -16,9 +16,9 @@ from scout.shared import NotFound
 router = APIRouter(prefix="/api/v1", tags=["feedback"])
 
 
-def _out(f: Feedback) -> FeedbackOut:
+def feedback_out(f: Feedback) -> FeedbackOut:
     return FeedbackOut(
-        target_type=f.target_type.value, target_id=f.target_id, rating=f.rating.value,
+        target_type=f.target_type.value, target_id=f.target_id, rating=f.rating.value if f.rating else None, stars=f.stars,
         reasons=[r.value for r in f.reasons], comment=f.comment, updated_at=f.updated_at,
     )  # fmt: skip
 
@@ -36,10 +36,10 @@ async def give_feedback(
 ) -> FeedbackOut:
     """Thumbs up or down with optional reason chips and a short comment; the latest rating replaces the earlier one."""
     fb = await get_container(request).give_feedback.execute(
-        account.id, TargetType(body.target_type), body.target_id, Rating(body.rating),
-        [Reason(r) for r in body.reasons], body.comment,
+        account.id, TargetType(body.target_type), body.target_id, Rating(body.rating) if body.rating else None,
+        [Reason(r) for r in body.reasons], body.comment, body.stars,
     )  # fmt: skip
-    return _out(fb)
+    return feedback_out(fb)
 
 
 @router.get(
@@ -58,4 +58,4 @@ async def my_feedback(
     fb = await get_container(request).give_feedback.mine(account.id, TargetType(target_type), target_id)
     if fb is None:
         raise NotFound("no_feedback")
-    return _out(fb)
+    return feedback_out(fb)

@@ -21,9 +21,10 @@ class GiveFeedback:
         author_id: AccountId,
         target_type: TargetType,
         target_id: UUID,
-        rating: Rating,
+        rating: Rating | None,
         reasons: Sequence[Reason] = (),
         comment: str | None = None,
+        stars: int | None = None,
     ) -> Feedback:
         """Store the rating.
 
@@ -32,7 +33,9 @@ class GiveFeedback:
             ValidationFailed: the comment is too long.
         """
         now = self._clock.now()
-        fb = Feedback.give(author_id, target_type, target_id, rating, tuple(reasons), comment, now)
+        fb = Feedback.give(
+            author_id, target_type, target_id, rating, tuple(reasons), comment, now, stars=stars
+        )
         async with self._uow() as uow:
             if not await uow.targets.rateable(author_id, target_type, target_id):
                 raise NotFound("feedback_target_not_found")

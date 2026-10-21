@@ -37,6 +37,17 @@ from scout.identity.adapters.jwks import HttpJwksFetcher, SupabaseJwksVerifier
 from scout.identity.adapters.sql import SqlIdentityUnitOfWork
 from scout.identity.application.service import IdentityService
 from scout.identity.ports.auth import AuthTokenVerifier
+from scout.matching.adapters.agents import AgentsMatching
+from scout.matching.adapters.notifier import LoggingMatchNotifier
+from scout.matching.adapters.sql import SqlMatchUnitOfWork
+from scout.matching.adapters.vocabulary import load_vocabulary
+from scout.matching.application.compute import ComputeMatches
+from scout.matching.application.config import MatchConfig
+from scout.matching.application.profile_job import ComputeResearcherProfile
+from scout.matching.application.reveal_job import MatchingNightly, RevealMatch
+from scout.matching.application.service import DecideOnMatch, MatchingService
+from scout.matching.application.sources import ConsentSourceAdapter, VaultSignalAdapter
+from scout.matching.application.sources import ProfileSourceAdapter as MatchProfileSource
 from scout.ports.analytics import AnalyticsPort
 from scout.ports.jobs import JobQueuePort
 from scout.ports.literature import LiteraturePort
@@ -105,6 +116,12 @@ class Container:
     discovery_uow: Callable[[], DiscoveryUnitOfWork]
     vault_source: VaultSource
     give_feedback: GiveFeedback
+    matching: MatchingService
+    decide_match: DecideOnMatch
+    match_profile: ComputeResearcherProfile
+    compute_matches: ComputeMatches
+    reveal_match: RevealMatch
+    match_nightly: MatchingNightly
     dev_tokens: DevTokenIssuer | None = None
 
 
@@ -243,7 +260,40 @@ def build_container(
             settings.run_max_openalex_calls, settings.run_max_corpus,
         ),
     )  # fmt: skip
+    match_uow = lambda: SqlMatchUnitOfWork(db)  # noqa: E731
+    vocabulary = load_vocabulary(resolve_path(settings.methods_config))
+    match_cfg = MatchConfig(
+        field=settings.launch_field, expiry_days=settings.match_expiry_days, cooldown_days=settings.match_cooldown_days,
+        weekly_cap=settings.match_max_open_per_week, min_score=settings.match_min_score, alpha=settings.match_alpha,
+        beta=settings.match_beta, exclude_coauthors=settings.match_exclude_coauthors,
+        exclude_same_group=settings.match_exclude_same_group, max_explains_per_run=settings.match_max_explains_per_run,
+        nightly_utc_hour=settings.match_nightly_utc_hour,
+    )  # fmt: skip
+    identity_service = IdentityService(lambda: SqlIdentityUnitOfWork(db), clock, ids, settings.launch_field)
+    match_agents, match_notifier = AgentsMatching(agents), LoggingMatchNotifier()
+    consent_source, match_profile_source = (
+        ConsentSourceAdapter(identity_service),
+        MatchProfileSource(profile_service),
+    )
+    signal_source = VaultSignalAdapter(vault_service)
+    profile_job = ComputeResearcherProfile(
+        match_uow,
+        match_profile_source,
+        consent_source,
+        signal_source,
+        match_agents,
+        vocabulary,
+        queue,
+        clock,
+        match_cfg,
+    )
+    compute_matches = ComputeMatches(match_uow, match_agents, vocabulary, match_notifier, clock, match_cfg)
     return Container(
+        matching=MatchingService(match_uow, consent_source, clock, match_cfg),
+        decide_match=DecideOnMatch(match_uow, consent_source, queue, match_notifier, clock, match_cfg),
+        match_profile=profile_job, compute_matches=compute_matches,
+        reveal_match=RevealMatch(match_uow, match_profile_source, consent_source, signal_source, match_agents, vocabulary, clock),
+        match_nightly=MatchingNightly(match_uow, queue, profile_job, compute_matches, clock, match_cfg),
         storage=storage, agents=agents,
         vault=vault_service,
         upload_document=UploadDocument(
@@ -277,7 +327,7 @@ def build_container(
         auth_verifier=verifier, dev_tokens=dev_tokens,
         literature=literature,
         job_queue=queue,
-        identity=IdentityService(lambda: SqlIdentityUnitOfWork(db), clock, ids, settings.launch_field),
+        identity=identity_service,
         profile=profile_service,
         import_profile=ImportProfile(lambda: SqlProfileUnitOfWork(db), literature, clock, ids, cfg),
         settings=settings, clock=clock, ids=ids, db=db, prices=prices, usage_meter=usage, analytics=analytics,

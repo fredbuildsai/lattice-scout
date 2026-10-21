@@ -9,10 +9,11 @@ from uuid import UUID
 import structlog
 from opentelemetry import trace
 from pydantic import JsonValue
+from sqlalchemy import text
 
 from scout.adapters.observability import partitions
 from scout.bootstrap import Container
-from scout.ports.jobs import Job, JobQueuePort, retry_delay
+from scout.ports.jobs import Job, JobQueuePort, JobSpec, retry_delay
 from scout.shared import describe_exception
 from scout.shared.context import RequestContext, set_context
 
@@ -110,7 +111,37 @@ def build_handlers(c: Container) -> dict[str, Handler]:
     """All job handlers, closed over the container."""
 
     async def profile_import(job: Job) -> dict[str, JsonValue]:
-        return await c.import_profile.handle(job.payload, last_attempt=job.attempts >= job.max_attempts)
+        result = await c.import_profile.handle(job.payload, last_attempt=job.attempts >= job.max_attempts)
+        async with c.db.engine.connect() as conn:
+            row = (
+                await conn.execute(
+                    text("SELECT account_id FROM researcher WHERE id = :r"),
+                    {"r": str(job.payload["researcher_id"])},
+                )
+            ).first()
+        account = str(row.account_id) if row else None
+        if account and result.get("skipped") is None:
+            await c.job_queue.enqueue(
+                JobSpec(
+                    kind="matching.profile",
+                    payload={"account_id": account},
+                    dedupe_key=f"profile:{account}",
+                    max_attempts=3,
+                )
+            )
+        return result
+
+    async def matching_profile(job: Job) -> dict[str, JsonValue]:
+        return await c.match_profile.handle(job.payload, last_attempt=last(job))
+
+    async def matching_compute(job: Job) -> dict[str, JsonValue]:
+        return await c.compute_matches.handle(job.payload, last_attempt=last(job))
+
+    async def matching_reveal(job: Job) -> dict[str, JsonValue]:
+        return await c.reveal_match.handle(job.payload, last_attempt=last(job))
+
+    async def matching_nightly(job: Job) -> dict[str, JsonValue]:
+        return await c.match_nightly.handle(job.payload, last_attempt=last(job))
 
     def last(job: Job) -> bool:
         return job.attempts >= job.max_attempts
@@ -139,4 +170,8 @@ def build_handlers(c: Container) -> dict[str, Handler]:
         "vault.sweep": vault_sweep,
         "discovery.run": discovery_run,
         "discovery.sweep": discovery_sweep,
+        "matching.profile": matching_profile,
+        "matching.compute": matching_compute,
+        "matching.reveal": matching_reveal,
+        "matching.nightly": matching_nightly,
     }

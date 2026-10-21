@@ -59,9 +59,17 @@ class Settings(BaseSettings):
     run_max_executions: int = 8
     fields_config: Path = Path("config/fields.yaml")
     admin_claims_show_vault_quotes: bool = False
+    methods_config: Path = Path("config/methods.yaml")
     match_max_open_per_week: int = 3
-    match_expiry_days: int = 21
+    match_expiry_days: int = 14
+    match_cooldown_days: int = 180
+    match_min_score: float = 0.08
+    match_alpha: float = 1.0
+    match_beta: float = 1.5
     match_exclude_coauthors: bool = True
+    match_exclude_same_group: bool = True
+    match_max_explains_per_run: int = 200
+    match_nightly_utc_hour: int = 2
     match_non_members: bool = False
     retention_policy: Literal["keep", "discard", "user_choice"] = "user_choice"
 

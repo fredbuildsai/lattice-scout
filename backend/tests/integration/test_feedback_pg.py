@@ -64,7 +64,7 @@ async def test_upsert_target_check_and_summary_view(db: Database) -> None:
     with pytest.raises(NotFound):
         await uc.execute(ME, TargetType.OPPORTUNITY, uuid4(), Rating.UP)
     with pytest.raises(NotFound):
-        await uc.execute(ME, TargetType.MATCH, opp, Rating.UP)
+        await uc.execute(ME, TargetType.MATCH, opp, None, stars=3)
     async with db.engine.connect() as conn:
         rows = (
             await conn.execute(

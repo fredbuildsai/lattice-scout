@@ -129,6 +129,13 @@ forbidden_modules = ["scout.vault", "scout.profile", "scout.identity"]
 ignore_imports = ["scout.discovery.application.sources -> scout.vault.**", "scout.discovery.application.sources -> scout.profile.**"]
 
 [[tool.importlinter.contracts]]
+name = "matching never imports other contexts except through its anti-corruption layer"
+type = "forbidden"
+source_modules = ["scout.matching.domain", "scout.matching.ports", "scout.matching.application", "scout.matching.adapters"]
+forbidden_modules = ["scout.vault", "scout.profile", "scout.identity", "scout.discovery"]
+ignore_imports = ["scout.matching.application.sources -> scout.vault.**", "scout.matching.application.sources -> scout.profile.**", "scout.matching.application.sources -> scout.identity.**"]
+
+[[tool.importlinter.contracts]]
 name = "adapters never import application services"
 type = "forbidden"
 source_modules = ["scout.adapters", "scout.identity.adapters", "scout.profile.adapters", "scout.vault.adapters", "scout.discovery.adapters", "scout.matching.adapters", "scout.feedback.adapters", "scout.notifications.adapters"]
