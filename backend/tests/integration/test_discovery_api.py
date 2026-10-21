@@ -6,13 +6,16 @@ from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
-from tests.integration.test_discovery_fixtures import CASES, ROOT, _login, _samples, _worker, client  # noqa: F401
+from tests.integration.test_discovery_fixtures import CASES, _login, _worker, client  # noqa: F401
 
 pytestmark = pytest.mark.integration
 
 
 @pytest.fixture
-def finished(client: TestClient, tmp_path: Path) -> tuple[TestClient, dict[str, str], dict]:  # noqa: F811
+def finished(
+    client: TestClient,  # noqa: F811
+    tmp_path: Path,
+) -> tuple[TestClient, dict[str, str], dict]:
     case = CASES["moreira"]
     h = _login(client, "api-demo@example.edu")
     ids = case["author_ids"]
