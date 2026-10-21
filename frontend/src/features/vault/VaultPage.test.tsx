@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { MemoryRouter } from 'react-router-dom'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { VaultPage } from './VaultPage'
 import { VaultError, type Uploader } from './api'
@@ -41,7 +42,9 @@ function renderPage(upload?: Uploader) {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } })
   return render(
     <QueryClientProvider client={qc}>
-      <VaultPage upload={upload} />
+      <MemoryRouter>
+        <VaultPage upload={upload} />
+      </MemoryRouter>
     </QueryClientProvider>,
   )
 }

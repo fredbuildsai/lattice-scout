@@ -6,7 +6,7 @@ export const count: Evidence = { id: 'e3', source_type: 'count', query: 'lignin 
 
 export const claim = (over: Partial<ClaimData> = {}): ClaimData => ({ id: 'c1', text: 'Foams are promising.', markers: [lit, vault, count], ...over })
 
-export const card = (id: string, kind = 'white_spot', over: Partial<OpportunityCard> = {}): OpportunityCard => ({
+export const card = (id: string, kind: OpportunityCard['kind'] = 'white_spot', over: Partial<OpportunityCard> = {}): OpportunityCard => ({
   id, run_id: 'r1', kind, title: `Idea ${id}`, why: claim({ id: `c-${id}` }), scores: { fit: 0.8, novelty: 0.7, readiness: 0.6, effort: 0.3 },
   novelty: { count: 3, since_year: 2021, query: 'q', band: null }, status: 'shown', verified_sources: 4, clusters: [], created_at: '2026-10-20T00:00:00Z', ...over,
 })
