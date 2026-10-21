@@ -1,7 +1,7 @@
 # Progress
 
 Merge policy: stack
-Current milestone: M3 — Gap analysis engine (backend pipeline built, tests and prompts in progress). M2 done and approved after round 2, awaiting human sign-off. M0 and M1 done and awaiting human sign-off; PR #1 open (M1 and M2 added to the same branch)
+Current milestone: M5 — Matching (starting). M4 built (Opportunities UX + feedback), review pending (skipped for cost). M3 done and approved. M2 done and approved after round 2, awaiting human sign-off. M0 and M1 done and awaiting human sign-off; PR #1 open (M1 and M2 added to the same branch)
 Current branch: claude/zealous-curie-7m18vd (harness-designated; used instead of m0-foundations)
 Last session: 2026-10-20 s01 — M0, M1 and M2 built; M2 done and approved by the reviewer
 
@@ -79,3 +79,10 @@ Last session: 2026-10-20 s01 — M0, M1 and M2 built; M2 done and approved by th
 
 ## Open blockers
 - B2 live services, B3 llm-router response-text ledger (both have fallbacks; see docs/BLOCKERS.md)
+
+## M4 — Opportunities UX + feedback
+- [x] Backend `feedback` context: `GiveFeedback`, `POST/GET /feedback`, migration 0007, `analytics.v_feedback_summary` (DECISIONS 75-76; F-29 closed)
+- [x] Frontend: run page, W5 list with ideas chart, W6 detail, shared `<Claim>`/`<SourceMarker>`, thumbs and reason chips, Home briefing, "Analyse with Scout" in the vault
+- [x] Docs: CHANGELOG, journal
+- [ ] reviewer: pending (skipped by user decision, to be run later)
+- Known gaps (frontend): kind counts computed client-side; no year histogram, matching calls, Lattice Press draft or objection status chips (backend has no data for them).

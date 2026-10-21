@@ -5,6 +5,9 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 ## [Unreleased]
 
 ### Added
+- M4 opportunities UX and feedback:
+  - `POST /api/v1/feedback` and `GET /api/v1/feedback`: thumbs with five reason chips and a comment; rating again replaces the earlier rating. Migration `20261022_0007_feedback` with the admin view `analytics.v_feedback_summary`.
+  - Web screens: run progress page, opportunity list with the novelty and readiness chart, opportunity detail with numbered evidence markers and source popovers, Home briefing, and "Analyse with Scout" in the vault.
 - M3 gap analysis engine (backend):
   - `POST /api/v1/runs` (202, 0 to 10 ready documents), `GET /api/v1/runs`, `GET /api/v1/runs/{id}` and `POST /api/v1/runs/{id}/cancel`. A run has eight ordered steps (plan queries, retrieve, group by topic, coverage, measure novelty, analyse, verify, score and persist) and runs as the resumable `discovery.run` job. `discovery.sweep` re-enqueues stalled runs.
   - `GET /api/v1/opportunities`, `GET /api/v1/opportunities/{id}`, `PATCH /api/v1/opportunities/{id}` (shown, saved, dismissed) and `GET /api/v1/evidence/{id}/open`. An opportunity is shown only with at least two distinct verified sources, one of them published literature, and a measured novelty count.
