@@ -1,0 +1,170 @@
+{
+  "a": {
+    "methods": [
+      {
+        "id": "chemical_modification",
+        "label": "Chemical modification"
+      },
+      {
+        "id": "foaming",
+        "label": "Foaming"
+      },
+      {
+        "id": "lca",
+        "label": "Life-cycle assessment"
+      },
+      {
+        "id": "lignin_fractionation",
+        "label": "Lignin fractionation"
+      },
+      {
+        "id": "nanocellulose_isolation",
+        "label": "Nanocellulose isolation"
+      }
+    ],
+    "topics": [
+      {
+        "id": "T10610",
+        "name": "Advanced Cellulose Research Studies",
+        "weight": 1.0
+      },
+      {
+        "id": "T11208",
+        "name": "Lignin and Wood Chemistry",
+        "weight": 0.5931
+      },
+      {
+        "id": "T10513",
+        "name": "Natural Fiber Reinforced Composites",
+        "weight": 0.449
+      },
+      {
+        "id": "T10484",
+        "name": "Wood Treatment and Properties",
+        "weight": 0.3159
+      },
+      {
+        "id": "T10033",
+        "name": "Concrete and Cement Materials Research",
+        "weight": 0.3032
+      },
+      {
+        "id": "T10687",
+        "name": "Innovative concrete reinforcement materials",
+        "weight": 0.2918
+      },
+      {
+        "id": "T11511",
+        "name": "Dyeing and Modifying Textile Fibers",
+        "weight": 0.27
+      },
+      {
+        "id": "T10488",
+        "name": "Nanocomposite Films for Food Packaging",
+        "weight": 0.2468
+      },
+      {
+        "id": "T10409",
+        "name": "Fuel Cells and Related Materials",
+        "weight": 0.2212
+      },
+      {
+        "id": "T10501",
+        "name": "Polymer Nanocomposites and Properties",
+        "weight": 0.1969
+      }
+    ],
+    "works": []
+  },
+  "b": {
+    "methods": [
+      {
+        "id": "machine_learning",
+        "label": "Machine learning"
+      },
+      {
+        "id": "photocatalysis",
+        "label": "Photocatalysis"
+      },
+      {
+        "id": "polymer_synthesis",
+        "label": "Polymer synthesis"
+      }
+    ],
+    "topics": [
+      {
+        "id": "T10210",
+        "name": "Advanced oxidation water treatment",
+        "weight": 1.0
+      },
+      {
+        "id": "T10078",
+        "name": "Advanced Photocatalysis Techniques",
+        "weight": 0.8695
+      },
+      {
+        "id": "T11869",
+        "name": "Per- and polyfluoroalkyl substances research",
+        "weight": 0.6091
+      },
+      {
+        "id": "T10024",
+        "name": "TiO2 Photocatalysis and Solar Cells",
+        "weight": 0.569
+      },
+      {
+        "id": "T10030",
+        "name": "Electrocatalysts for Energy Conversion",
+        "weight": 0.4822
+      },
+      {
+        "id": "T10354",
+        "name": "Catalytic C–H Functionalization Methods",
+        "weight": 0.3802
+      },
+      {
+        "id": "T10548",
+        "name": "Catalytic Cross-Coupling Reactions",
+        "weight": 0.3802
+      },
+      {
+        "id": "T10192",
+        "name": "Catalytic Processes in Materials Science",
+        "weight": 0.3518
+      },
+      {
+        "id": "T10016",
+        "name": "Adsorption and biosorption for pollutant removal",
+        "weight": 0.2437
+      },
+      {
+        "id": "T10197",
+        "name": "Membrane Separation Technologies",
+        "weight": 0.2437
+      }
+    ],
+    "works": []
+  },
+  "score_breakdown": {
+    "a_only_methods": [
+      "Chemical modification",
+      "Foaming",
+      "Life-cycle assessment",
+      "Lignin fractionation",
+      "Nanocellulose isolation"
+    ],
+    "b_only_methods": [
+      "Machine learning",
+      "Photocatalysis",
+      "Polymer synthesis"
+    ],
+    "score": 0.1192767719055065,
+    "shared_topics": [
+      "Adsorption and biosorption for pollutant removal",
+      "Advanced oxidation water treatment",
+      "Fungal and yeast genetics research",
+      "Fungal Infections and Studies",
+      "Per- and polyfluoroalkyl substances research"
+    ]
+  }
+}

@@ -32,6 +32,9 @@ class StaleSets:
     purge: tuple[UUID, ...] = ()
     deleting: tuple[UUID, ...] = ()
     stalled: tuple[UUID, ...] = ()
+    awaiting: tuple[
+        UUID, ...
+    ] = ()  # waiting for an authorized provider; the sweep requeues them once one exists
 
 
 class DocumentRepo(Protocol):
@@ -55,6 +58,10 @@ class DocumentRepo(Protocol):
 
     async def count_active(self, owner_id: AccountId) -> int:
         """Documents that count against the vault limit."""
+        ...
+
+    async def count_uploaded_since(self, owner_id: AccountId, since: datetime) -> int:
+        """Uploads by the owner since ``since`` (counts deleted ones too: the audit trail keeps them)."""
         ...
 
     async def add(self, document: Document) -> None:

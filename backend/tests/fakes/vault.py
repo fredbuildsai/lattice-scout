@@ -76,6 +76,9 @@ class InMemoryDocumentRepo:
             1 for d in self.data.values() if d.owner_id == owner_id and d.status is not DocStatus.DELETING
         )
 
+    async def count_uploaded_since(self, owner_id: AccountId, since: datetime) -> int:
+        return sum(1 for d in self.data.values() if d.owner_id == owner_id and d.created_at >= since)
+
     async def add(self, document: Document) -> None:
         if document.status not in _INACTIVE and await self.find_active_by_sha(
             document.owner_id, document.sha256
@@ -104,6 +107,7 @@ class InMemoryDocumentRepo:
                     d.status in {DocStatus.EXTRACTING, DocStatus.ANALYSING} and d.updated_at < stalled_before
                 )
             ),
+            awaiting=ids(lambda d: d.status is DocStatus.AWAITING_PROVIDER),
         )
 
 

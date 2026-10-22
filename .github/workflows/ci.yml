@@ -29,6 +29,8 @@ jobs:
       - run: uv run mypy src tests
       - run: uv run lint-imports
       - run: uv run pytest -q
+      - name: Offline eval (FakeLLM and fixtures; fails below the quality thresholds)
+        run: uv run python ../eval/run_eval.py
       - run: uv run interrogate -c pyproject.toml src/scout
 
   frontend:

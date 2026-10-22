@@ -70,13 +70,23 @@ Read by the API (upload limits, `RETENTION_POLICY`) and by the worker (extractio
 | `OPENAI_API_KEY` | unset | Secret for `LLM_BACKEND=openai_direct`. Never commit it. |
 | `LLM_ROUTER_CONFIG` | `config/llm_router.yaml` | llm-router deployments and routes. |
 | `LLM_ROUTER_SOURCE` | unset | Install source for llm-router, for example `git+https://github.com/fredbuildsai/llmrouter-free@v0.1.0`. Used by the install commands below. |
-| `LLM_ROUTER_ALLOW_PAID` | `true` | Whether llm-router may use paid deployments. |
+| `LLM_CONFIDENTIAL_AUTHORIZED_PROVIDERS` | empty | Comma list of providers (model prefix, e.g. `mistral,groq`) that may receive confidential data (vault documents and anything derived from them). A deployment also needs `authorized: true` in `config/llm_router.yaml`. Empty means no remote endpoint gets confidential data: runs, matching and ingestion still go ahead on published data only and say so. The old name `LLM_VAULT_SANCTIONED_PROVIDERS` is still read. See ADR 016. |
+| `LLM_CONFIDENTIAL_ALLOW_ANY_PROVIDER` | `false` | Explicit waiver: confidential data may reach any configured deployment (not recommended). Old name `LLM_VAULT_ALLOW_ANY_PROVIDER` still read. |
+| `LLM_FAKE_CONFIDENTIAL_ALLOWED` | `true` | `LLM_BACKEND=fake` only: `false` emulates an installation without an authorized provider (published-only runs, documents waiting), for demos and tests. |
+| `LLM_ROUTER_ALLOW_PAID` | `false` | Whether llm-router may use paid deployments. |
+| `OPENROUTER_API_KEY`, `GROQ_API_KEY`, `MISTRAL_API_KEY` | unset | Provider keys for `LLM_BACKEND=llm_router`. `config/llm_router.yaml` skips a deployment whose key is unset, so one key is enough. Needed for live tests, the live eval and deployment, not for development. |
 | `LLM_ROUTER_MAX_USD_PER_DAY` | `5.0` | Daily spend limit (USD) passed to the llm-router client. |
 | `LLM_MODEL_FAST` / `LLM_MODEL_REASONING` | `fast` / `reasoning` | llm-router route names (or model ids for `openai_direct`). |
 | `LLM_PRICE_TABLE` | `config/llm_prices.yaml` | Price per million tokens, used to compute `llm_call` cost. |
 | `LLM_FIXTURES_DIR` | `backend/tests/fixtures/llm` | Fixtures used by `LLM_BACKEND=fake`. |
 | `PROMPTS_DIR` | `prompts` | Versioned agent prompts. |
 | `LLM_MAX_CONCURRENCY` | `8` | Threads used for the synchronous router. |
+
+## Vault
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `VAULT_UPLOAD_WARNING` | `true` | Shows the warning and the "I am not uploading confidential material" checkbox above the upload zone. Exposed as `vault_upload_warning` in `GET /api/v1/system/status`. `false` hides both. |
 
 ## Observability
 
@@ -114,6 +124,11 @@ Read by the API (start rules, the run and opportunity endpoints, `ADMIN_CLAIMS_S
 | `RUN_MAX_CORPUS` | `2500` | Largest literature corpus of one run, in works. Profile works do not count. |
 | `RUN_MAX_PER_DAY` | `5` | Runs one account may start in 24 hours. More gives 429 `run_limit_reached`. |
 | `ACCOUNT_DAILY_BUDGET_USD` | `5.00` | Spend of one account's runs in 24 hours, in USD. When the remainder is below USD 0.36 (the reasoning reserve plus three fast reserves), a new run gives 429 `daily_budget_reached`. |
+| `GLOBAL_DAILY_LLM_BUDGET_USD` | `20.00` | LLM spend of all users since UTC midnight. At the cap new runs give 503 `service_paused` and the nightly matching job skips computation. The log carries `budget.warning` at 80% and `budget.cap_reached`. |
+| `GLOBAL_DAILY_OPENALEX_BUDGET_USD` | `5.00` | Same for OpenAlex calls (`external_call.cost_usd`). |
+| `UPLOAD_MAX_PER_DAY` | `30` | Uploads per account in 24 hours (`0` = unlimited). The 31st gives 429 `upload_limit_reached`. |
+| `AUDIT_HASH_KEY` | dev default | Key for the pseudonymous tombstone of an erased account. Required when `APP_ENV=prod`. |
+| `ERASURE_SECOND_PASS_MINUTES` | `15` | Delay of the second sweep after an account deletion. |
 | `RUN_LLM_CONCURRENCY` | `3` | Agent calls one run makes at the same time. |
 | `RUN_OPENALEX_CONCURRENCY` | `4` | Literature calls one run makes at the same time. |
 | `RUN_ANALYSE_MAX_CALLS` | `2` | GapAnalyst batches per run (4 candidates each). |
@@ -126,6 +141,26 @@ Read by the API (start rules, the run and opportunity endpoints, `ADMIN_CLAIMS_S
 
 Not settings (fixed in code): reserves of USD 0.02 for a fast model call and USD 0.30 for a reasoning call, at most 8 candidate clusters per run, at most 10 documents per run, and the title similarity of 0.6 above which an idea counts as a duplicate.
 
+## Matching
+
+Read by the API (the matches endpoints, `PATCH /api/v1/me/consent`) and by the worker (the matching jobs). Restart both
+after a change. The rules are in the [matching module](https://github.com/fredbuildsai/lattice-scout/blob/main/backend/src/scout/matching/README.md)
+and the [matching developer page](matching.md). The values below are the same as in `.env.example`.
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `MATCH_MAX_OPEN_PER_WEEK` | `3` | Weekly cap: proposals one account may receive in a rolling seven days (counted when created). |
+| `MATCH_EXPIRY_DAYS` | `14` | Days a proposal stays open before it expires. |
+| `MATCH_COOLDOWN_DAYS` | `180` | Days before the same pair may be proposed again after its last proposal. |
+| `MATCH_MIN_SCORE` | `0.11` | Lowest score (formula `c2`) a pair needs to be proposed. Calibrated with `scripts/calibrate_matching.py` (DECISIONS 112); final tuning on pilot feedback in M7. |
+| `MATCH_ALPHA` | `1.0` | Exponent on the topic overlap in the score. |
+| `MATCH_BETA` | `1.5` | Exponent on the method difference in the score. |
+| `MATCH_EXCLUDE_COAUTHORS` | `true` | Do not propose researchers who share a claimed OpenAlex work. |
+| `MATCH_EXCLUDE_SAME_GROUP` | `true` | Do not propose researchers with the same normalised institution. |
+| `MATCH_MAX_EXPLAINS_PER_RUN` | `200` | MatchExplainer calls per compute run. After the limit, the template is used. |
+| `MATCH_NIGHTLY_UTC_HOUR` | `2` | Hour (UTC) of the nightly matching run. |
+| `METHODS_CONFIG` | `config/methods.yaml` | Controlled vocabulary of research methods (version 1, 44 methods). |
+
 ## Reserved for later milestones
 
 These fields exist in `Settings` and in `.env.example`, but no code reads them yet. They are documented so that the
@@ -134,10 +169,7 @@ names stay stable. Each is defined by the milestone in brackets.
 | Variable | Default | Milestone | Purpose |
 |---|---|---|---|
 | `ANALYTICS_RETENTION_DAYS` | `395` | not scheduled | Retention for analytics rows. |
-| `MATCH_MAX_OPEN_PER_WEEK` | `3` | M5 | Matching: open proposals per researcher per week. |
-| `MATCH_EXPIRY_DAYS` | `21` | M5 | Matching: days before a proposal expires. |
-| `MATCH_EXCLUDE_COAUTHORS` | `true` | M5 | Matching: exclude past co-authors. |
-| `MATCH_NON_MEMBERS` | `false` | M5 | Matching: allow matches with non-members (Phase 2). |
+| `MATCH_NON_MEMBERS` | `false` | not scheduled | Matching with non-members (Phase 2). |
 | `EMBEDDING_MODEL` / `EMBEDDING_DIM` | unset | none | Present in `Settings` but unused: ADR-005 keeps embeddings out of the MVP. Do not set them. |
 
 ## Using the real LLM router

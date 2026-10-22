@@ -8,12 +8,15 @@ from typing import Any
 
 from pydantic import BaseModel, JsonValue
 
+from scout.adapters.llm.confidential_policy import ConfidentialPolicy
 from scout.adapters.llm.fake_llm import canonical_json
 from scout.adapters.llm.metering import record_for
 from scout.ports.llm import (
     AgentResult,
     AgentSpec,
     CallContext,
+    ConfidentialDataRefused,
+    DataClass,
     LLMOutputInvalid,
     LLMUnavailable,
     ModelTier,
@@ -33,7 +36,9 @@ class OpenAIAgentsDirectAdapter:
         clock: Clock,
         ids: IdGenerator,
         model_for: Mapping[ModelTier, str],
+        policy: ConfidentialPolicy | None = None,
     ) -> None:
+        self._policy = policy or ConfidentialPolicy()
         self._prices, self._usage, self._clock, self._ids, self._model_for = (
             prices,
             usage,
@@ -42,6 +47,10 @@ class OpenAIAgentsDirectAdapter:
             model_for,
         )
 
+    def confidential_allowed(self, tier: ModelTier | None = None) -> bool:
+        """True when ``openai`` is an authorized provider."""
+        return self._policy.provider_allowed("openai")
+
     async def run[OutT: BaseModel](
         self, agent: AgentSpec[OutT], input: BaseModel | Mapping[str, JsonValue], ctx: CallContext
     ) -> AgentResult[OutT]:
@@ -49,6 +58,8 @@ class OpenAIAgentsDirectAdapter:
         from agents import Agent, ModelSettings, RunConfig, Runner  # lazy: optional ``llm`` extra
 
         model = self._model_for[agent.tier]
+        if agent.data_class is DataClass.CONFIDENTIAL and not self._policy.provider_allowed("openai"):
+            raise ConfidentialDataRefused("Confidential data refused: openai is not an authorized provider")
         sdk_agent: Agent[Any] = Agent(
             name=agent.name,
             instructions=agent.instructions,

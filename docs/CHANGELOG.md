@@ -4,7 +4,98 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 
 ## [Unreleased]
 
+### Added (live model eval, F-46, DECISIONS 131)
+- `eval/run_eval.py --live`: scores real free models (OpenRouter Nemotron/GLM, Groq gpt-oss, Mistral) on the nine runtime agents through the same agent factory and llm-router adapter as the app. Per deployment and agent: schema-valid rate, strict-schema acceptance with JSON-mode fallback, empty rate, latency p50/p95, retries, 429/quota events; rule checks for the Critic (8 planted-bad and 8 good drafts), evidence quotes, invented ids, MatchExplainer (12 cases) and JointIdeas anonymity. `eval/thresholds.yaml` sets pass/fail and the verdict `GO` / `GO_PUBLISHED_ONLY` / `NO_GO` / `INCOMPLETE` per deployment. Flags: `--deployment`, `--route`, `--agents`, `--runs`, `--max-calls` (hard cap per deployment, default 60), `--allow-synthetic-confidential`, `--out`, `--dry-run`. Free deployments only. Reports go to `eval/reports/live-<date>.json|md` and hold no prompt or model text.
+- Confidential-class agents run only on synthetic `[SAMPLE]` inputs built from public OpenAlex titles, and only on deployments the operator lists.
+- `.github/workflows/live-eval.yml` takes deployments, call cap, runs and the synthetic allowlist as inputs; `docs/prompt-findings/` holds the tuning loop and one file per agent for failing cases. How to run: OPERATIONS "Live model eval".
+
+### Removed (F-3)
+- The floating "Ask Scout" button: the feature does not exist, so nothing for it is shown. The `scout_fab_clicked` event name stays in the analytics catalogue (shared with the backend) and is no longer emitted.
+
+### Added (vault upload warning, DECISIONS 130, F-60)
+- `VAULT_UPLOAD_WARNING` (default true), exposed as `vault_upload_warning` in `GET /api/v1/system/status`. While true, the vault page shows a `role=note` warning not to upload confidential material and a required "I am not uploading confidential material" checkbox before the upload zone is enabled. False hides both.
+
+### Changed
+- Vault, privacy, sign-in and user-doc copy no longer invites uploading grants, proposals or unpublished results.
+
+### Added (matches and Home, F-35 / F-36)
+- Home, "Your profile" card: bar chart of your included publications per year (from the profile; text alternative and empty state).
+- Matches: Venn diagram of the two method sets around the shared topics, on anonymous and revealed cards (only fields the card already shows, no weights).
+- Revealed matches only: `career_since` (year of the other researcher's first included work) and `joint_works_count` (works both of you included; omitted when 0) on `RevealedMatchView`, read through `match_reveal_v` (migration 0018). The UI shows "Mid career since 2013" and "N joint papers". The anonymous view has neither field (tested).
+- "Draft an intro": a deterministic template (no LLM) from shared topics and the you/they-bring texts, in an editable text area with Copy, Reset and "Open in email app". It is also the body of the "Write an intro" `mailto:` link. Nothing is sent by Scout.
+
+### Changed (matching score, ADR 017, F-39)
+- Formula `c2`: topic similarity is the overlap coefficient instead of the weighted Jaccard. Default `MATCH_MIN_SCORE` is 0.11 (was 0.08). The demo pair Foster/Moreira scores 0.119 and no longer needs a lowered threshold in the seed. Stored `c1` proposals stay readable. Final tuning on pilot feedback is still expected in M7.
+- `scripts/calibrate_matching.py` (new) reproduces the calibration; `scripts/fetch_fixtures.py` gained `--find` and `--add-author --openalex-id` to record a further public author (blocker B7).
+
+### Changed (privacy model, ADR 016)
+- Confidential data is withheld, not refused. With no authorized LLM endpoint, analyses, matching, joint ideas and document ingestion go ahead on published data only: vault passages, insights, keywords and consented vault statements are left out of every prompt, the run is marked `basis: published_only`, and the run page, opportunity cards and detail page say "Based on your published work only; your uploaded documents were not used because no approved provider is configured." Documents wait in the new status `awaiting_approved_provider` (migration 0017) and are analysed by the vault sweep once a provider is authorized.
+- Every agent input classifies each field as published or confidential (`AgentInput`); an unclassified field fails at import.
+- Production no longer refuses to start without an allowlist: one warning is logged and `GET /system/status` returns `confidential_data_enabled` and `confidential_data_notice`. `LLM_FREE_PROVIDERS_ACKNOWLEDGED` is removed.
+- Renamed (breaking for config files): `sanctioned: true` is now `authorized: true` in `config/llm_router.yaml` (the old key is still read); `LLM_VAULT_SANCTIONED_PROVIDERS` is `LLM_CONFIDENTIAL_AUTHORIZED_PROVIDERS` and `LLM_VAULT_ALLOW_ANY_PROVIDER` is `LLM_CONFIDENTIAL_ALLOW_ANY_PROVIDER` (the old environment names are still read); `VaultDataRefused` is `ConfidentialDataRefused`; prompt front-matter `data_class` is `published` or `confidential`. New: `LLM_FAKE_CONFIDENTIAL_ALLOWED` (demo and tests). Privacy tab, vault page and user pages updated.
+
+### Security and privacy (ADR 016 review round 1)
+- Text derived from confidential input is confidential: the Critic's draft and earlier opportunity titles go only to authorized deployments in a run that used the vault (`derived_field`, `tainted`); no vault keyword or insight goes into an OpenAlex query (the second novelty probe and the vault part of the query plan are gone).
+- Unclassified input is never sent, also for published agents. "Discard original" now holds while a document waits for a provider (file deleted after extraction; text redacted after analysis, also after a failure).
+- Start-up warning follows the built policy; `LLM_CONFIDENTIAL_ALLOW_ANY_PROVIDER` is logged loudly (error level in production). Router log records no longer carry the provider's error text. Fixture generators repaired and smoke-tested.
+- One wording for the published-only notices; the run note no longer claims documents were left out when none were uploaded.
+
+### Security and privacy (review follow-up, M4 to M6)
+- Vault text goes only to sanctioned LLM endpoints (ADR 015, DECISIONS 106-107): `data_class` on every agent, `sanctioned: true` deployments plus `LLM_VAULT_SANCTIONED_PROVIDERS`, a refusal that logs no content, production start-up guards (`LLM_VAULT_ALLOW_ANY_PROVIDER`, `LLM_FREE_PROVIDERS_ACKNOWLEDGED`), a minimal environment for the PDF parser process. The privacy tab, vault page, sign-in page and user pages now say who receives the text and list everything a deletion leaves behind.
+- Migration 0015: default privileges, function EXECUTE and views are closed to the PostgREST roles; migration 0016: feedback reasons per target type.
+- Erasure: the analytics session survives pass 1 in the pass-2 payload and the browser forgets it; dead `account.delete` rows no longer keep the raw id; bounded storage purge loop.
+- Matching: withdrawing consent closes pending proposals at once, an accept can no longer make a match mutual with someone who left or is being deleted, the survivor's card is the same after a deletion, each side reads the explanation written for it (F-38), candidates are ranked per person.
+- Free models: `GLOBAL_DAILY_LLM_CALLS` pauses new runs when the day's provider requests reach the cap.
+
+### Fixed
+- First-login race on the e-mail index no longer answers 409 to a legitimate new user (F-45). Dev login now reaches the accounts created by `make seed`. The reveal job's idea input no longer depends on database row order. A match card refreshes while its joint ideas are being written.
+- Card thumbs keep saved reasons and comment; "Analyse with Scout" no longer sends more than 10 documents; hidden opportunities cannot be rated; `POST /events` drops a batch when the opt-out flag cannot be read.
+
 ### Added
+- Playwright smoke specs `opportunities`, `matches` and `privacy` (desktop and 390 px), a PostgreSQL API test of the whole matching flow, feedback and card component tests, user notes "Start an analysis", "Rate an idea", a developer page for feedback.
+
+### Fixed
+- Matches opt-in copy no longer says others see only field, region and career stage: it now names the shared topics and the short method descriptions too (F-37). User page "Matching" gets the same sentence.
+
+### Added
+- Matches (F-36): two-pane layout (list and detail), "Load more" following `next_cursor`, "You both said yes" hero, and "Write an intro" / "Propose call" `mailto:` links. Venn, workspace and call buttons stay open in the backlog.
+- Opportunity card thumbs prefill from `GET /feedback`; Home shows the profile summary and "Review my publications" (F-35).
+
+### Changed
+- LLM routing now targets free providers: `config/llm_router.yaml` lists OpenRouter, Groq and Mistral deployments (no OpenAI), `LLM_ROUTER_ALLOW_PAID` defaults to `false`, schema hints are sent with `strict=False`, and `OPENROUTER_API_KEY`, `GROQ_API_KEY`, `MISTRAL_API_KEY` are settings. Development and CI still run on the fake LLM (DECISIONS 105).
+
+### Added
+- M6 slice E, security and observability:
+  - Row level security on every table (migration 0013), enforced by a test for new tables and monthly partitions. Security headers, narrower CORS, API docs off in production, production refusal of wildcard or http origins. A test checks that every route requires an account unless listed public, and that agent traces never include prompt text.
+  - Views `v_funnel_discovery`, `v_funnel_matching` and `v_ops_signals` (migration 0014). Retention job: partitions older than `ANALYTICS_RETENTION_MONTHS` (13) are dropped. Analytics opt-out (`analytics_opt_out` in `PATCH /api/v1/me/notifications`).
+  - CI runs the offline eval; `audit.yml` (weekly) and `make audit` run `pip-audit` and `pnpm audit` (clean on 2026-10-23); `live-eval.yml` is a manual, SPEND-gated workflow whose `--live` mode is still a stub.
+  - Documents: `docs/SECURITY.md`, `docs/OPERATIONS.md`.
+  - Privacy page: "Usage analytics" switch; the analytics client stops sending when it is on.
+- M6 slice D, notifications (backend): mails for a finished run, a new suggestion, a mutual match and an optional weekly digest. Plain text with a link only, no names or counts; a decline is never mailed. `GET/PATCH /api/v1/me/notifications`; migration 0012 (`notification_pref`, `notification`); jobs `notification.send` and `notification.digest`; senders `console` (default) and `resend`; setting `APP_BASE_URL`. Privacy page: "E-mail notifications" section with three switches.
+- M6 slice C, privacy tab and pause banner (frontend):
+  - Privacy tab (`/settings/privacy`): "Delete my vault" (type `DELETE`) and "Delete my account" (retype your e-mail), a statement that Scout never trains models on your files, and a list of what deletion removes and keeps. After an account deletion the user is signed out with an "account is being deleted" message; any 403 `account_deleted` does the same.
+  - Banner on the Vault and Opportunities pages when new analyses are paused by the daily budget; the "Analyse with Scout" button is disabled with the same message. Friendly messages for `service_paused` and `upload_limit_reached`.
+- M6 slice B, rate limits and global budget guard (backend):
+  - `UPLOAD_MAX_PER_DAY` (default 30 per account, 0 = off): the 31st upload in 24 hours gets 429 `upload_limit_reached`. Upload-delete loops count too, because the limit reads the audit trail.
+  - `GLOBAL_DAILY_LLM_BUDGET_USD` (20) and `GLOBAL_DAILY_OPENALEX_BUDGET_USD` (5) cap the spend of all users since UTC midnight. At the cap `POST /api/v1/runs` answers 503 `service_paused` and the nightly matching job skips profile and match computation. The log carries `budget.warning` (80%) and `budget.cap_reached`, once per service and day, for the alert rule.
+  - `GET /api/v1/system/status` returns `accepting_runs` and a plain-language message for the UI.
+- M6 slice A, account and vault deletion (backend):
+  - `POST /api/v1/me/delete` (typed e-mail confirmation, 202) blocks the account at once and queues the job `account.delete`. The job detaches pending matches, deletes mutual ones, purges the storage prefix `vault/{id}` and the sign-in record, removes analytics, anonymises cost rows, and deletes the account with everything it owns. A second pass 15 minutes later sweeps late writers. Only an HMAC tombstone (`account.deleted`) stays in the audit log.
+  - The other person in a pending match sees the same thing as after a consent withdrawal: the card expires. Detached proposals are purged 30 days after they expire.
+  - `POST /api/v1/documents/delete-all` (typed `DELETE`, 202) deletes every document of the vault and refreshes the matching profile.
+  - Stale tokens of an erased account get 403; a new login after the erasure creates a new account. New settings `AUDIT_HASH_KEY` (required in production) and `ERASURE_SECOND_PASS_MINUTES`; migration 0011.
+  - Test that scans every table and the bucket for the user's ids, e-mail, name and ORCID, plus a guard that fails when a new table holds no seeded row.
+- M5 matching (backend, Matches screen, documentation):
+  - Matching profiles from the imported works and, with consent, the verified methods signals of the vault. Topics are weighted by recency and citations. Methods are mapped to a 44-entry controlled vocabulary (`config/methods.yaml`). Jobs `matching.profile` and `matching.compute` run after an import and after a consent change.
+  - Complementarity proposals: a pair is scored from topic overlap and method difference. Co-authors and researchers at the same institution are excluded by default, a pair waits 180 days after its last proposal, and each person receives at most three new proposals in seven days. The nightly job `matching.nightly` runs at 02:00 UTC.
+  - Double opt-in. `GET /api/v1/matches`, `GET /api/v1/matches/{id}` and `POST /api/v1/matches/{id}/decision` (accept, decline, withdraw, never suggest again). Contact details and one to three joint ideas appear only after both sides accept. The reveal is enforced in three layers: the `match_reveal_v` view, a static test of the adapters and a domain check. A decline is never shown to the other side.
+  - Agents MethodExtractor 1.0.1, MatchExplainer 1.1.0 and JointIdeas 1.1.0. Each has a template or failure fallback. An anonymity guard drops text that carries years, DOIs, links, e-mail addresses, ORCIDs or OpenAlex ids.
+  - Match ratings: `POST /api/v1/matches/{id}/rating` with 1 to 5 stars, reason chips and a comment. Only a participant of a mutual match can rate.
+  - Web: the Matches screen with the anonymous card, the waiting and expired states, the reveal with contact details and joint ideas, and the star rating.
+  - Migrations `20261022_0008_matching` (proposals, joint ideas, blocks, `match_reveal_v`, `analytics.v_match_funnel`), `20261023_0009_matching_profiles` (profile and method tables, `match_pool_v`, `match_pair_conflict_v`) and `20261023_0010_feedback_stars` (`feedback.stars` with its checks, the widened reason list, and `avg_stars` in `analytics.v_feedback_summary`).
+  - `make seed` loads the demo: two public OpenAlex records (Johan Foster and Raphaell Moreira, reconnect mode) and 24 synthetic researchers (`example.edu`, marked as samples).
+  - `scripts/make_matching_fixtures.py` writes the FakeLLM fixtures for the matching agents. Settings `MATCH_*` and `METHODS_CONFIG`.
+  - Documentation: matching module README, developer page "Matching", user page "Matching", and the configuration reference for the matching variables.
 - M4 opportunities UX and feedback:
   - `POST /api/v1/feedback` and `GET /api/v1/feedback`: thumbs with five reason chips and a comment; rating again replaces the earlier rating. Migration `20261022_0007_feedback` with the admin view `analytics.v_feedback_summary`.
   - Web screens: run progress page, opportunity list with the novelty and readiness chart, opportunity detail with numbered evidence markers and source popovers, Home briefing, and "Analyse with Scout" in the vault.

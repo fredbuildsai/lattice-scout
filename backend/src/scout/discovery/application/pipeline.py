@@ -14,7 +14,7 @@ from scout.discovery.domain.corpus import CorpusWork
 from scout.discovery.domain.enums import CorpusOrigin, RunStatus
 from scout.discovery.domain.field import FieldConfig
 from scout.discovery.domain.ids import corpus_work_id
-from scout.discovery.domain.run import AnalysisRun, Superseded
+from scout.discovery.domain.run import PUBLISHED_ONLY, AnalysisRun, Superseded
 from scout.discovery.ports.agents import AgentOutcome, DiscoveryAgentsPort
 from scout.discovery.ports.repos import DiscoveryUnitOfWork
 from scout.discovery.ports.sources import DocMaterial, RunProfile, VaultSource
@@ -104,8 +104,22 @@ class StepContext:
 
     async def material(self, run: AnalysisRun) -> list[DocMaterial]:
         """Fresh vault material of the run's documents (a deleted document comes back inactive)."""
+        if not self.agents.confidential_allowed():  # ADR 016: no authorized endpoint, so published data only
+            return []
         labelled = tuple((d.label, d.document_id) for d in run.inputs.documents)
         return await self.vault.run_material(self.owner_id, labelled) if labelled else []
+
+    @staticmethod
+    def tainted(run: AnalysisRun) -> bool:
+        """Whether text this run produced or selected may derive from vault material (ADR 016, provenance).
+
+        True once the run was started on a full basis with documents, whatever the authorization is now: drafts
+        written while the vault was in play stay confidential after authorization is withdrawn."""
+        return run.inputs.basis != PUBLISHED_ONLY and bool(run.inputs.documents)
+
+    def basis(self) -> str:
+        """``published_only`` when confidential (vault) material is left out of this run, else ``full``."""
+        return "full" if self.agents.confidential_allowed() else PUBLISHED_ONLY
 
 
 def to_corpus(run_id: UUID, rec: WorkRecord, origin: CorpusOrigin, label: str | None = None) -> CorpusWork:

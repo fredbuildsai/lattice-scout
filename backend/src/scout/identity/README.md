@@ -2,7 +2,7 @@
 
 **Purpose:** the account behind every signed-in user: the mapping from the verified token to an account row, the two consent flags and the account lifecycle (ARCHITECTURE §3.2, §4.3). Design: `docs/design/M1-identity-profile-claim.md` §2.
 
-**Status:** M1 implemented (token verification, `GET /me`, `PATCH /me/consent`). The `deleted_at` field and its `account_deleted` check exist, but no use case sets it yet. Admin views (`role = admin`) arrive in M7.
+**Status:** M1 implemented (token verification, `GET /me`, `PATCH /me/consent`). M6 added account erasure: `IdentityService.request_deletion` (soft delete and job), the job `DeleteAccountJob`, the hourly `SweepErasures`, and the stale-token check in `ensure_account`. See `docs/design/M6-deletion.md`. Admin views (`role = admin`) arrive in M7.
 
 **Layout** (same for every context):
 
@@ -27,7 +27,7 @@ The import rules are enforced by import-linter (`make contracts`).
 | `consent_vault_signals` | Allows vault-derived topic signals in matching. Default `False`. Requires `consent_matching`. |
 | `launch_field` | Set from `LAUNCH_FIELD` when the account is created. |
 | `role` | `user` (default) or `admin`. |
-| `created_at`, `updated_at`, `deleted_at` | Timestamps. `deleted_at` is set by no use case yet. |
+| `created_at`, `updated_at`, `deleted_at` | Timestamps. `deleted_at` is set by `Account.request_deletion`; the row is hard-deleted by the erasure job. |
 
 Behaviour on the aggregate:
 

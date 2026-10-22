@@ -23,6 +23,8 @@ export function statusChip(status: string): { label: string; tone: ChipTone } {
     case 'extracted':
     case 'analysing':
       return { label: 'Finding insights', tone: 'busy' }
+    case 'awaiting_approved_provider':
+      return { label: 'Waiting for an approved provider', tone: 'neutral' }
     case 'ready':
       return { label: 'Ready', tone: 'ok' }
     case 'rejected':
@@ -35,6 +37,10 @@ export function statusChip(status: string): { label: string; tone: ChipTone } {
       return { label: 'Uploaded', tone: 'neutral' }
   }
 }
+
+/** Shown under a document that is stored but not yet read by a language model (ADR 016). */
+export const AWAITING_PROVIDER_NOTE =
+  'Scout has read this file on its server but not sent it to any AI model (and cannot yet guarantee the confidentiality of stored files, so please delete it if it is confidential), because no approved AI provider is configured. Its extracted text stays here (the uploaded file is removed if you chose to discard it) and is analysed automatically once the operator approves a provider. Meanwhile your analyses use your published work only.'
 
 const FAILURES: Record<string, string> = {
   encrypted: 'This file is password-protected. Remove the password and upload it again.',
@@ -62,6 +68,8 @@ const ERRORS: Record<string, string> = {
   unsupported_file_type: 'Only PDF and Word (.docx) files are supported for now.',
   vault_limit_reached: 'Your vault is full. Delete a document to add another.',
   file_rejected: 'This file could not be accepted. It may be empty, damaged or protected.',
+  upload_limit_reached: 'You have reached today’s upload limit. Please try again tomorrow.',
+  service_paused: 'Scout is paused for today to keep costs in check. New analyses resume after midnight UTC.',
   network_error: 'The upload was interrupted. Check your connection and try again.',
 }
 

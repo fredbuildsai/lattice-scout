@@ -1,0 +1,62 @@
+name: Live eval (manual)
+# Scores real FREE models on Scout's agents (eval/run_eval.py --live; docs/OPERATIONS.md "Live model eval").
+# Needs repository secrets that the human adds: OPENROUTER_API_KEY, GROQ_API_KEY, MISTRAL_API_KEY (any one is enough).
+# Cost is zero: free deployments only, and the harness refuses OpenRouter models without ":free". The only limit is the
+# providers' free quota, hence the hard cap on provider requests per deployment (--max-calls). Never runs on push.
+# Keys reach the job only as environment variables of the one step that needs them; the harness never prints them.
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Type RUN to confirm (calls free-tier LLM providers; mind their daily quota)"
+        required: true
+      deployments:
+        description: "Deployment names from config/llm_router.yaml, comma separated"
+        required: true
+        default: "openrouter-nemotron-super"
+      max_calls:
+        description: "Cap on provider requests per deployment, retries included (max 500)"
+        required: true
+        default: "60"
+      runs:
+        description: "Repeat every case N times"
+        required: true
+        default: "1"
+      allow_synthetic_confidential:
+        description: "Deployments that may receive the SYNTHETIC sample inputs of confidential-class agents (empty: none, those agents are skipped)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  live-eval:
+    if: ${{ inputs.confirm == 'RUN' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with: { python-version: "3.12" }
+      # llmrouter-free must be installable here: see docs/BLOCKERS.md B5
+      - run: uv sync --frozen --extra llm
+        working-directory: backend
+      - name: Live eval
+        working-directory: backend
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+          # inputs go through the environment, never interpolated into the shell line
+          DEPLOYMENTS: ${{ inputs.deployments }}
+          MAX_CALLS: ${{ inputs.max_calls }}
+          RUNS: ${{ inputs.runs }}
+          ALLOW_SYNTHETIC: ${{ inputs.allow_synthetic_confidential }}
+        run: |
+          args=(--live --deployment "$DEPLOYMENTS" --max-calls "$MAX_CALLS" --runs "$RUNS")
+          if [ -n "$ALLOW_SYNTHETIC" ]; then args+=(--allow-synthetic-confidential "$ALLOW_SYNTHETIC"); fi
+          uv run python ../eval/run_eval.py "${args[@]}" | tee "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with: { name: live-eval-report, path: "eval/reports/live-*" }

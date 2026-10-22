@@ -111,7 +111,7 @@ def test_fixture_run_shows_grounded_opportunities(client: TestClient, tmp_path: 
     ids = CASE["author_ids"]
     r = client.post("/api/v1/profile/claim", json={"author_ids": ids, "primary_author_id": ids[0]}, headers=h)
     assert r.status_code == 202
-    assert _worker(tmp_path) == 1
+    assert _worker(tmp_path) == 2  # import + matching.profile
     assert client.get("/api/v1/profile", headers=h).json()["import"]["status"] == "done"
 
     samples = _samples()

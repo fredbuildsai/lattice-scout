@@ -1,0 +1,22 @@
+name: Dependency audit
+on:
+  schedule: [{ cron: "17 5 * * 1" }]
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with: { python-version: "3.12" }
+      - name: pip-audit (locked backend dependencies)
+        working-directory: backend
+        run: |
+          uv export --frozen --no-hashes --no-emit-project > /tmp/req.txt
+          uvx pip-audit -r /tmp/req.txt --disable-pip --no-deps
+      - uses: pnpm/action-setup@v4
+        with: { version: 9 }
+      - name: pnpm audit (production dependencies)
+        working-directory: frontend
+        run: pnpm audit --prod

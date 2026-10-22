@@ -43,6 +43,10 @@ class InsightOutcome:
 class InsightExtractorPort(Protocol):
     """Extract structured insights from document text."""
 
+    def confidential_allowed(self) -> bool:
+        """Whether document text may be sent to the model at all (an authorized endpoint exists, ADR 016)."""
+        ...
+
     async def extract(self, req: InsightRequest, ctx: CallContext) -> InsightOutcome:
         """Run the agent.
 

@@ -1,0 +1,440 @@
+{
+  "sources": [
+    {
+      "source_ref": "work:W7119086364",
+      "text": "Sustainable Synthesis of Bio‐Based Magnetic and Conductive Wood for Electromagnetic Interference Shielding Applications"
+    },
+    {
+      "source_ref": "work:W7164334760",
+      "text": "Lignin Type and Content Influence the Foaming Dynamics and Properties of Flexible Polyurethane Foams"
+    },
+    {
+      "source_ref": "work:W7172407009",
+      "text": "The AP-1 adaptor complex is required for cell surface modifications and the survival of Cryptococcus neoformans in phagocytic cells"
+    },
+    {
+      "source_ref": "work:W7214346167",
+      "text": "Disruption of Lignin-Emissive Domains: Deciphering Fiber–Cement Interfacial Reactions by EEM Fluorescence and DUV Raman Spectroscopy"
+    },
+    {
+      "source_ref": "work:W4407110752",
+      "text": "Advanced chitosan hybrid dye labels for dynamic monitoring of shrimp and milk freshness"
+    },
+    {
+      "source_ref": "work:W4408038562",
+      "text": "Droplet-templating soft materials into structured bead-based aerogels with compartmentalized or welded configurations"
+    },
+    {
+      "source_ref": "work:W4408343920",
+      "text": "Polyphosphatases have a polyphosphate-independent influence on the virulence of Cryptococcus neoformans"
+    },
+    {
+      "source_ref": "work:W4411654219",
+      "text": "Improving yield and colloidal stability of cellulose nanocrystals isolated via assisted subcritical water hydrolysis: influence of mechanical pretreatments and esterifying agents on cellulose hydrolysis in subcritical water"
+    },
+    {
+      "source_ref": "work:W4412034040",
+      "text": "Engineering low-carbon fiber cement with biochar: understanding its physicochemical properties and their impact on the composite performance and carbon footprint"
+    },
+    {
+      "source_ref": "work:W4412978443",
+      "text": "Development of a robust ion-selective membrane from sulfonated cellulose nanofibers for zinc–iodine redox flow batteries"
+    },
+    {
+      "source_ref": "work:W4414120574",
+      "text": "Bioinspired waterproof, breathable materials: How does nature transport water across its surfaces and through its membranes?"
+    },
+    {
+      "source_ref": "work:W4415531997",
+      "text": "Artificial substitutes for Descemet's membrane - corneal endothelium complex: state of the art"
+    },
+    {
+      "source_ref": "work:W4390531961",
+      "text": "Structural dependence of PFAS oxidation in a boron doped diamond-electrochemical system"
+    },
+    {
+      "source_ref": "work:W4390548217",
+      "text": "Binary mixture of subcritical water and acetone: a hybrid solvent system towards the production of lignin nanoparticles"
+    },
+    {
+      "source_ref": "work:W4393031648",
+      "text": "Preparation of isolated guard cells, containing cell walls, from Vicia faba"
+    },
+    {
+      "source_ref": "work:W4393116980",
+      "text": "Proton Exchange Membranes from Sulfonated Lignin Nanocomposites for Redox Flow Battery Applications"
+    },
+    {
+      "source_ref": "work:W4393238145",
+      "text": "Development of a pH-responsive intelligent label using low molecular weight chitosan grafted with phenol red for food packaging applications"
+    },
+    {
+      "source_ref": "work:W4394732631",
+      "text": "Fungal-derived adsorption membrane to capture potentially toxic elements"
+    },
+    {
+      "source_ref": "work:W4394797117",
+      "text": "Collagen derived from a giant African snail (Achatina achatina) for biomedical applications"
+    },
+    {
+      "source_ref": "work:W4396767272",
+      "text": "Water-Repellent Spray for Textiles Using Plant Waste from Conifer Trees"
+    }
+  ],
+  "vocabulary": [
+    {
+      "label": "Life-cycle assessment",
+      "method_id": "lca",
+      "synonyms": [
+        "LCA",
+        "life cycle analysis"
+      ]
+    },
+    {
+      "label": "Techno-economic analysis",
+      "method_id": "tea",
+      "synonyms": [
+        "TEA",
+        "techno-economic assessment"
+      ]
+    },
+    {
+      "label": "FTIR spectroscopy",
+      "method_id": "ftir",
+      "synonyms": [
+        "infrared spectroscopy",
+        "FT-IR"
+      ]
+    },
+    {
+      "label": "Raman spectroscopy",
+      "method_id": "raman",
+      "synonyms": [
+        "Raman"
+      ]
+    },
+    {
+      "label": "NMR spectroscopy",
+      "method_id": "nmr",
+      "synonyms": [
+        "nuclear magnetic resonance",
+        "NMR"
+      ]
+    },
+    {
+      "label": "X-ray diffraction",
+      "method_id": "xrd",
+      "synonyms": [
+        "XRD"
+      ]
+    },
+    {
+      "label": "Small-angle scattering",
+      "method_id": "saxs_sans",
+      "synonyms": [
+        "SAXS",
+        "SANS",
+        "small angle x-ray scattering"
+      ]
+    },
+    {
+      "label": "Scanning electron microscopy",
+      "method_id": "sem",
+      "synonyms": [
+        "SEM"
+      ]
+    },
+    {
+      "label": "Transmission electron microscopy",
+      "method_id": "tem",
+      "synonyms": [
+        "TEM"
+      ]
+    },
+    {
+      "label": "Atomic force microscopy",
+      "method_id": "afm",
+      "synonyms": [
+        "AFM"
+      ]
+    },
+    {
+      "label": "Thermogravimetric analysis",
+      "method_id": "tga",
+      "synonyms": [
+        "TGA"
+      ]
+    },
+    {
+      "label": "Differential scanning calorimetry",
+      "method_id": "dsc",
+      "synonyms": [
+        "DSC"
+      ]
+    },
+    {
+      "label": "Dynamic mechanical analysis",
+      "method_id": "dma",
+      "synonyms": [
+        "DMA"
+      ]
+    },
+    {
+      "label": "Rheology",
+      "method_id": "rheology",
+      "synonyms": [
+        "rheometry",
+        "rheological measurements"
+      ]
+    },
+    {
+      "label": "Mechanical testing",
+      "method_id": "mechanical_testing",
+      "synonyms": [
+        "tensile testing",
+        "compression testing",
+        "flexural testing"
+      ]
+    },
+    {
+      "label": "Size-exclusion chromatography",
+      "method_id": "gpc_sec",
+      "synonyms": [
+        "GPC",
+        "SEC",
+        "gel permeation chromatography"
+      ]
+    },
+    {
+      "label": "Gas chromatography-mass spectrometry",
+      "method_id": "gc_ms",
+      "synonyms": [
+        "GC-MS",
+        "GC/MS"
+      ]
+    },
+    {
+      "label": "Liquid chromatography",
+      "method_id": "hplc_lcms",
+      "synonyms": [
+        "HPLC",
+        "LC-MS"
+      ]
+    },
+    {
+      "label": "Porosimetry and BET surface area",
+      "method_id": "bet_porosimetry",
+      "synonyms": [
+        "BET",
+        "nitrogen adsorption",
+        "mercury porosimetry"
+      ]
+    },
+    {
+      "label": "Contact angle measurement",
+      "method_id": "contact_angle",
+      "synonyms": [
+        "wettability",
+        "goniometry"
+      ]
+    },
+    {
+      "label": "Cone calorimetry",
+      "method_id": "cone_calorimetry",
+      "synonyms": [
+        "flammability testing",
+        "heat release rate",
+        "limiting oxygen index"
+      ]
+    },
+    {
+      "label": "Reactive extrusion",
+      "method_id": "reactive_extrusion",
+      "synonyms": [
+        "twin-screw extrusion"
+      ]
+    },
+    {
+      "label": "Moulding and hot pressing",
+      "method_id": "moulding",
+      "synonyms": [
+        "hot pressing",
+        "compression moulding",
+        "injection moulding"
+      ]
+    },
+    {
+      "label": "Electrospinning",
+      "method_id": "electrospinning",
+      "synonyms": [
+        "electrospun fibres"
+      ]
+    },
+    {
+      "label": "Freeze casting",
+      "method_id": "freeze_casting",
+      "synonyms": [
+        "ice templating",
+        "freeze drying"
+      ]
+    },
+    {
+      "label": "Foaming",
+      "method_id": "foaming",
+      "synonyms": [
+        "foam preparation",
+        "polyurethane foaming"
+      ]
+    },
+    {
+      "label": "Additive manufacturing",
+      "method_id": "additive_manufacturing",
+      "synonyms": [
+        "3D printing",
+        "direct ink writing"
+      ]
+    },
+    {
+      "label": "Nanocellulose isolation",
+      "method_id": "nanocellulose_isolation",
+      "synonyms": [
+        "cellulose nanofibril production",
+        "TEMPO oxidation"
+      ]
+    },
+    {
+      "label": "Lignin fractionation",
+      "method_id": "lignin_fractionation",
+      "synonyms": [
+        "organosolv",
+        "lignin extraction",
+        "lignin depolymerisation"
+      ]
+    },
+    {
+      "label": "Enzymatic hydrolysis",
+      "method_id": "enzymatic_hydrolysis",
+      "synonyms": [
+        "saccharification"
+      ]
+    },
+    {
+      "label": "Fermentation",
+      "method_id": "fermentation",
+      "synonyms": [
+        "bioreactor cultivation",
+        "microbial production"
+      ]
+    },
+    {
+      "label": "Pyrolysis and hydrothermal liquefaction",
+      "method_id": "pyrolysis_htl",
+      "synonyms": [
+        "pyrolysis",
+        "HTL",
+        "torrefaction"
+      ]
+    },
+    {
+      "label": "Chemical modification",
+      "method_id": "chemical_modification",
+      "synonyms": [
+        "functionalisation",
+        "grafting",
+        "esterification"
+      ]
+    },
+    {
+      "label": "Polymer synthesis",
+      "method_id": "polymer_synthesis",
+      "synonyms": [
+        "polymerisation",
+        "polycondensation"
+      ]
+    },
+    {
+      "label": "Membrane fabrication",
+      "method_id": "membrane_fabrication",
+      "synonyms": [
+        "phase inversion",
+        "membrane casting"
+      ]
+    },
+    {
+      "label": "Adsorption testing",
+      "method_id": "adsorption_testing",
+      "synonyms": [
+        "batch adsorption",
+        "isotherm",
+        "breakthrough curves"
+      ]
+    },
+    {
+      "label": "Photocatalysis",
+      "method_id": "photocatalysis",
+      "synonyms": [
+        "photocatalytic degradation"
+      ]
+    },
+    {
+      "label": "Electrochemistry",
+      "method_id": "electrochemistry",
+      "synonyms": [
+        "cyclic voltammetry",
+        "impedance spectroscopy",
+        "electrochemical oxidation"
+      ]
+    },
+    {
+      "label": "Biodegradation testing",
+      "method_id": "biodegradation_testing",
+      "synonyms": [
+        "composting test",
+        "soil burial"
+      ]
+    },
+    {
+      "label": "Toxicity testing",
+      "method_id": "toxicity_testing",
+      "synonyms": [
+        "ecotoxicity",
+        "cytotoxicity"
+      ]
+    },
+    {
+      "label": "Molecular simulation",
+      "method_id": "molecular_simulation",
+      "synonyms": [
+        "molecular dynamics",
+        "DFT",
+        "density functional theory"
+      ]
+    },
+    {
+      "label": "Process modelling",
+      "method_id": "process_modelling",
+      "synonyms": [
+        "process simulation",
+        "Aspen",
+        "kinetic modelling"
+      ]
+    },
+    {
+      "label": "Machine learning",
+      "method_id": "machine_learning",
+      "synonyms": [
+        "neural network",
+        "regression model",
+        "data-driven modelling"
+      ]
+    },
+    {
+      "label": "Design of experiments",
+      "method_id": "design_of_experiments",
+      "synonyms": [
+        "DoE",
+        "response surface methodology"
+      ]
+    }
+  ]
+}

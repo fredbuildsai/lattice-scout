@@ -48,10 +48,20 @@ async def _seed(db: Database, opp: UUID) -> None:
         )
 
 
+class _OwnOpportunities:
+    """Target check stub: the visibility rule is tested through the API (test_feedback_api.py)."""
+
+    def __init__(self, opp: UUID) -> None:
+        self._opp = opp
+
+    async def rateable(self, author_id: AccountId, target_type: TargetType, target_id: UUID) -> bool:
+        return target_type is TargetType.OPPORTUNITY and target_id == self._opp and author_id == ME
+
+
 async def test_upsert_target_check_and_summary_view(db: Database) -> None:
     opp = uuid4()
     await _seed(db, opp)
-    uc = GiveFeedback(lambda: SqlFeedbackUnitOfWork(db), FixedClock(NOW))
+    uc = GiveFeedback(lambda: SqlFeedbackUnitOfWork(db), FixedClock(NOW), _OwnOpportunities(opp))
     await uc.execute(ME, TargetType.OPPORTUNITY, opp, Rating.UP, [Reason.SPOT_ON])
     second = await uc.execute(
         ME, TargetType.OPPORTUNITY, opp, Rating.DOWN, [Reason.TOO_VAGUE, Reason.WRONG_FIELD], "meh"
@@ -64,7 +74,7 @@ async def test_upsert_target_check_and_summary_view(db: Database) -> None:
     with pytest.raises(NotFound):
         await uc.execute(ME, TargetType.OPPORTUNITY, uuid4(), Rating.UP)
     with pytest.raises(NotFound):
-        await uc.execute(ME, TargetType.MATCH, opp, Rating.UP)
+        await uc.execute(ME, TargetType.MATCH, opp, None, stars=3)
     async with db.engine.connect() as conn:
         rows = (
             await conn.execute(
@@ -83,6 +93,34 @@ async def test_database_rejects_unknown_reasons(db: Database) -> None:
                 text(
                     "INSERT INTO feedback (id, author_id, target_type, target_id, rating, reasons)"
                     " VALUES (gen_random_uuid(), :a, 'opportunity', gen_random_uuid(), 'up', ARRAY['bogus'])"
+                ),
+                {"a": ME},
+            )
+
+
+@pytest.mark.parametrize(
+    ("target", "extra", "reasons"),
+    [
+        ("opportunity", "rating", "ARRAY['methods_fit']"),  # a match chip on an opportunity
+        ("match", "stars", "ARRAY['spot_on']"),  # an opportunity chip on a match
+        (
+            "opportunity",
+            "rating",
+            "ARRAY['spot_on','already_knew','not_feasible','wrong_field','too_vague','spot_on']",
+        ),
+    ],
+)
+async def test_database_checks_reasons_per_target_and_the_limit_of_five(
+    db: Database, target: str, extra: str, reasons: str
+) -> None:
+    await _seed(db, uuid4())
+    value = "'up'" if extra == "rating" else "3"
+    with pytest.raises(DBAPIError):
+        async with db.engine.begin() as conn:
+            await conn.execute(
+                text(
+                    f"INSERT INTO feedback (id, author_id, target_type, target_id, {extra}, reasons)"  # noqa: S608
+                    f" VALUES (gen_random_uuid(), :a, '{target}', gen_random_uuid(), {value}, {reasons})"
                 ),
                 {"a": ME},
             )

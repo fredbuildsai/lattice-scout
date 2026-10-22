@@ -57,3 +57,10 @@ export function useCancelRun(id: string) {
     },
   })
 }
+
+export type SystemStatus = components['schemas']['SystemStatusOut']
+
+/** GET /system/status: whether new analyses are accepted (daily budget). Refreshes every minute. */
+export function useSystemStatus() {
+  return useQuery({ queryKey: ['system-status'], queryFn: () => apiJson<SystemStatus>('/api/v1/system/status'), refetchInterval: 60_000, staleTime: 30_000 })
+}

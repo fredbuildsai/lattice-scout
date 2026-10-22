@@ -64,6 +64,20 @@ class InsightsOut(BaseModel):
     prompt_version: str
 
 
+class ClearVaultIn(BaseModel):
+    """Typed confirmation for deleting the whole vault."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    confirm: str = Field(max_length=20, description="The word ``DELETE``.")
+
+
+class ClearedOut(BaseModel):
+    """How many documents were marked for deletion by this call."""
+
+    deleting: int = Field(description="Documents newly marked for deletion (0 on a repeat call).")
+
+
 class DocumentOut(BaseModel):
     """A document in the vault."""
 
@@ -74,7 +88,7 @@ class DocumentOut(BaseModel):
     mime: DocumentMime
     size_bytes: int
     status: DocStatus = Field(
-        description="uploaded, extracting, extracted, analysing, ready, failed or rejected."
+        description="uploaded, extracting, extracted, analysing, awaiting_approved_provider (read, waiting for an approved language-model provider), ready, failed or rejected."
     )
     failure_code: str | None = Field(default=None, description="Why a failed or rejected document stopped.")
     kind: DocKind | None = Field(

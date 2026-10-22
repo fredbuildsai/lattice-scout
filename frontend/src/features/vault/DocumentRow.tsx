@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useDeleteDocument, useDocumentDetail, useSetKind, type Insights, type VaultDocument } from './api'
-import { formatSize, failureMessage, KIND_LABELS, KINDS, statusChip, type ChipTone, type DocKind } from './status'
+import { AWAITING_PROVIDER_NOTE, formatSize, failureMessage, KIND_LABELS, KINDS, statusChip, type ChipTone, type DocKind } from './status'
 
 const TONES: Record<ChipTone, string> = {
   neutral: 'bg-subtle text-ink-2',
@@ -142,7 +142,7 @@ export function DeleteDialog({ doc, busy, error, onCancel, onConfirm }: { doc: V
 }
 
 /** A vault document: name, status chip, extracted summary with expandable details, kind selector and delete. */
-export function DocumentRow({ doc, selected, onToggle }: { doc: VaultDocument; selected?: boolean; onToggle?: () => void }) {
+export function DocumentRow({ doc, selected, onToggle, selectDisabled }: { doc: VaultDocument; selected?: boolean; onToggle?: () => void; selectDisabled?: boolean }) {
   const ready = doc.status === 'ready'
   const detail = useDocumentDetail(doc.id, ready)
   const setKind = useSetKind()
@@ -157,17 +157,23 @@ export function DocumentRow({ doc, selected, onToggle }: { doc: VaultDocument; s
     <li className="rounded-card border border-line bg-surface p-4" aria-label={doc.filename}>
       <div className="flex flex-wrap items-start justify-between gap-2">
         {onToggle && ready && (
-          <input type="checkbox" checked={!!selected} onChange={onToggle} aria-label={`Select ${doc.filename} for analysis`} className="mt-1 h-5 w-5 shrink-0 accent-accent" />
+          <input type="checkbox" checked={!!selected} disabled={selectDisabled} onChange={onToggle} aria-label={`Select ${doc.filename} for analysis`} className="mt-1 h-5 w-5 shrink-0 accent-accent" />
         )}
         <div className="min-w-0 flex-1">
           <p className="break-words font-semibold">{doc.filename}</p>
           <p className="text-xs text-ink-3">
             {doc.mime.endsWith('pdf') ? 'PDF' : 'DOCX'} · {formatSize(doc.size_bytes)}
-            {doc.pages ? ` · ${doc.pages} pages` : ''} · {doc.original_available ? 'original kept' : 'insights only'} · Added {formatAdded(doc.created_at)}
+            {doc.pages ? ` · ${doc.pages} pages` : ''} · {doc.original_available ? 'original kept' : doc.status === 'awaiting_approved_provider' ? 'file removed, text kept until analysed' : 'insights only'} · Added {formatAdded(doc.created_at)}
           </p>
         </div>
         <StatusChip status={doc.status} />
       </div>
+
+      {doc.status === 'awaiting_approved_provider' && (
+        <p role="status" className="mt-2 text-sm text-ink-2">
+          {AWAITING_PROVIDER_NOTE}
+        </p>
+      )}
 
       {failed && (
         <p role="alert" className="mt-2 text-sm text-warm">

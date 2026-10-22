@@ -31,6 +31,9 @@ class DocStatus(StrEnum):
     EXTRACTING = "extracting"
     EXTRACTED = "extracted"
     ANALYSING = "analysing"
+    AWAITING_PROVIDER = (
+        "awaiting_approved_provider"  # text is read; insights wait for an authorized LLM endpoint (ADR 016)
+    )
     READY = "ready"
     FAILED = "failed"
     REJECTED = "rejected"

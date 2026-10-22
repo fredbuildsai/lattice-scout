@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+from datetime import datetime
 from types import TracebackType
 from typing import Self
 
@@ -36,6 +37,12 @@ class InMemoryAccountRepo:
 
     async def save(self, account: Account) -> None:
         self.data[account.id] = copy.deepcopy(account)
+
+    async def get_for_update(self, account_id: AccountId) -> Account | None:
+        return await self.get(account_id)
+
+    async def deleted_at_for(self, subject_hash: str) -> datetime | None:
+        return None
 
 
 class InMemoryIdentityUoW:

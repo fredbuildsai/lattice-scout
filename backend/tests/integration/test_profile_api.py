@@ -79,7 +79,7 @@ def test_acceptance_find_merge_import_and_land(client: TestClient) -> None:
         == 1
     )
 
-    assert _run_worker() == 1  # exactly one import job
+    assert _run_worker() == 2  # one import job and the matching profile job it triggers
     p = client.get("/api/v1/profile", headers=h).json()
     assert p["import"]["status"] == "done" and p["verified_level"] == "orcid_matched"
     assert (
@@ -201,11 +201,11 @@ def test_concurrent_claims_of_same_author_both_become_contested(client: TestClie
 def test_toggle_during_import_is_not_overwritten(client: TestClient) -> None:
     h = _login(client, "ada@example.edu")
     client.post("/api/v1/profile/claim", json={"author_ids": [FOSTER]}, headers=h)
-    assert _run_worker() == 1
+    assert _run_worker() == 2
     work = next(w for w in client.get("/api/v1/profile", headers=h).json()["works"] if w["included"])
     client.patch(f"/api/v1/profile/works/{work['id']}", json={"included": False}, headers=h)
     client.post("/api/v1/profile/claim", json={"author_ids": [FOSTER, SPLIT]}, headers=h)  # new generation
-    assert _run_worker() == 1
+    assert _run_worker() == 2
     again = next(w for w in client.get("/api/v1/profile", headers=h).json()["works"] if w["id"] == work["id"])
     assert again["included"] is False and again["included_by_user"] is True
 
@@ -248,3 +248,27 @@ def test_email_change_colliding_with_other_account_is_409_not_500(client: TestCl
     tok = jwt.encode(claims, c.dev_tokens._keys.private, algorithm="ES256", headers={"kid": "dev-1"})
     r = client.get("/api/v1/me", headers={"Authorization": f"Bearer {tok}"})
     assert r.status_code == 409 and r.json()["code"] == "email_in_use"
+
+
+def test_parallel_first_requests_of_new_users_never_see_email_in_use(client: TestClient) -> None:
+    """F-45: the SPA sends several requests on load; the e-mail index can fire before the id arbiter."""
+    from uuid import NAMESPACE_URL, uuid5
+
+    from scout.identity.domain.account import EmailInUse
+
+    async def bursts() -> list[object]:
+        c = build_container(_settings())
+        try:
+            results: list[object] = []
+            for n in range(6):
+                email, sub = f"fresh{n}@example.edu", uuid5(NAMESPACE_URL, f"scout-dev:fresh{n}@example.edu")
+                results += await asyncio.gather(
+                    *(c.identity.ensure_account(sub, email) for _ in range(12)), return_exceptions=True
+                )
+            return results
+        finally:
+            await c.db.dispose()
+
+    results = asyncio.run(bursts())
+    assert not [r for r in results if isinstance(r, EmailInUse)]
+    assert not [r for r in results if isinstance(r, BaseException)], results

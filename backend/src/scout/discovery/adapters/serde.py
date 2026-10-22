@@ -36,6 +36,7 @@ def inputs_to_json(i: RunInputs) -> dict[str, Any]:
         "topics": [{"id": t.id, "name": t.name, "subfield": t.subfield, "weight": t.weight} for t in i.topics],
         "documents": [{"label": d.label, "document_id": str(d.document_id), "retention": d.retention} for d in i.documents],
         "insight_refs": list(i.insight_refs), "year_from": i.year_from, "novelty_from": i.novelty_from,
+        "basis": i.basis,
     }  # fmt: skip
 
 
@@ -46,6 +47,7 @@ def inputs_from_json(j: dict[str, Any]) -> RunInputs:
         topics=tuple(TopicRef(t["id"], t.get("name"), t.get("subfield"), t["weight"]) for t in j.get("topics", [])),
         documents=tuple(RunDocument(d["label"], UUID(d["document_id"]), d["retention"]) for d in j.get("documents", [])),
         insight_refs=tuple(j.get("insight_refs", [])), year_from=j.get("year_from"), novelty_from=j.get("novelty_from"),
+        basis=j.get("basis", "full"),
     )  # fmt: skip
 
 

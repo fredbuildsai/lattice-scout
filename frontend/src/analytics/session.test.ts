@@ -1,7 +1,16 @@
 import { describe, expect, it } from 'vitest'
-import { SESSION_TIMEOUT_MS, touchSession, uuidv7 } from './session'
+import { clearSession, SESSION_TIMEOUT_MS, touchSession, uuidv7 } from './session'
 
 describe('session', () => {
+  it('clearSession (sign-out, account deletion) makes the next touch a new session', () => {
+    sessionStorage.clear()
+    const a = touchSession(5)
+    clearSession()
+    const b = touchSession(6)
+    expect(b.rotated).toBe(true)
+    expect(b.id).not.toBe(a.id)
+  })
+
   it('keeps the id within 30 minutes and rotates after', () => {
     sessionStorage.clear()
     const a = touchSession(1_000_000)

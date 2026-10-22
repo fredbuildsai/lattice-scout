@@ -12,6 +12,13 @@ from typing import Annotated, Literal
 
 from pydantic import AfterValidator, BaseModel, BeforeValidator, ConfigDict, Field
 
+from scout.shared.confidential import (
+    AgentInput,
+    confidential_field,
+    derived_field,
+    mixed_items_field,
+    published_field,
+)
 from scout.shared.text import clean_text
 
 
@@ -64,15 +71,16 @@ class PlanField(BaseModel):
     keywords: list[str] = []
 
 
-class QueryPlannerInput(BaseModel):
-    """What the QueryPlanner sees. No names, no quotes, no chunks."""
+class QueryPlannerInput(AgentInput):
+    """What the QueryPlanner sees. No names, no quotes, no chunks. ``insights`` and ``keywords`` would come from the
+    vault, but the pipeline leaves them empty: the planned search strings go to OpenAlex (ADR 016)."""
 
-    topics: list[PlanTopic]
-    recent_titles: list[S200] = Field(default_factory=list, max_length=20)
-    insights: list[PlanInsight] = Field(default_factory=list, max_length=60)
-    keywords: list[S40] = Field(default_factory=list, max_length=30)
-    field: PlanField
-    year_from: int
+    topics: list[PlanTopic] = published_field()
+    recent_titles: list[S200] = published_field(default_factory=list, max_length=20)
+    insights: list[PlanInsight] = confidential_field(default_factory=list, max_length=60)
+    keywords: list[S40] = confidential_field(default_factory=list, max_length=30)
+    field: PlanField = published_field()
+    year_from: int = published_field()
 
 
 class PlannedQuery(_Out):
@@ -100,12 +108,12 @@ class TopicName(BaseModel):
     name: S80
 
 
-class ClusterLabelInput(BaseModel):
-    """What the ClusterLabeler sees: topic names and up to ten public titles."""
+class ClusterLabelInput(AgentInput):
+    """What the ClusterLabeler sees: topic names and up to ten published titles."""
 
-    cluster_id: str
-    openalex_topics: list[TopicName] = Field(max_length=10)
-    sample_titles: list[S200] = Field(max_length=10)
+    cluster_id: str = published_field()
+    openalex_topics: list[TopicName] = published_field(max_length=10)
+    sample_titles: list[S200] = published_field(max_length=10)
 
 
 class ClusterLabel(_Out):
@@ -133,11 +141,11 @@ class TagInsight(BaseModel):
     text: S300
 
 
-class InsightTopicTaggerInput(BaseModel):
-    """What the InsightTopicTagger sees (at most 40 insights per call)."""
+class InsightTopicTaggerInput(AgentInput):
+    """What the InsightTopicTagger sees (at most 40 insights per call). Wholly confidential: no published form."""
 
-    clusters: list[TagCluster] = Field(max_length=30)
-    insights: list[TagInsight] = Field(max_length=40)
+    clusters: list[TagCluster] = published_field(max_length=30)
+    insights: list[TagInsight] = confidential_field(max_length=40)
 
 
 class InsightTag(_Out):
@@ -219,17 +227,19 @@ class ChunkForAnalyst(BaseModel):
     text: Annotated[str, _cap(4000)]
 
 
-class GapContext(BaseModel):
-    """Everything the GapAnalyst sees for one batch of candidates."""
+class GapContext(AgentInput):
+    """Everything the GapAnalyst sees for one batch of candidates. Insights and chunks come from the vault."""
 
-    profile_summary: ProfileSummary
-    insights: list[InsightForAnalyst] = Field(default_factory=list)
-    coverage: list[CoverageRow]
-    novelty: list[NoveltyRow]
-    papers: list[PaperForAnalyst] = Field(max_length=40)
-    chunks: list[ChunkForAnalyst] = Field(default_factory=list, max_length=40)
-    max_opportunities: int = 5
-    exclude_titles: list[S120] = Field(default_factory=list, max_length=40)
+    profile_summary: ProfileSummary = published_field()
+    insights: list[InsightForAnalyst] = confidential_field(default_factory=list)
+    coverage: list[CoverageRow] = published_field()
+    novelty: list[NoveltyRow] = published_field()
+    papers: list[PaperForAnalyst] = published_field(max_length=40)
+    chunks: list[ChunkForAnalyst] = confidential_field(default_factory=list, max_length=40)
+    max_opportunities: int = published_field(default=5)
+    exclude_titles: list[S120] = derived_field(
+        default_factory=list, max_length=40
+    )  # earlier titles: provenance
 
 
 class EvidenceRefOut(_Out):
@@ -302,6 +312,11 @@ class EvidenceText(BaseModel):
     year: int | None = None
     text: Annotated[str, _cap(1200)]
 
+    @property
+    def is_confidential(self) -> bool:
+        """Passages and insights come from the vault; works and counts are published."""
+        return self.type not in ("work", "count")
+
 
 class SimilarPaper(BaseModel):
     """A corpus paper close to the draft's title."""
@@ -312,12 +327,16 @@ class SimilarPaper(BaseModel):
     abstract: Annotated[str, _cap(800)] = ""
 
 
-class CriticInput(BaseModel):
-    """What the Critic sees: one draft and only its evidence."""
+class CriticInput(AgentInput):
+    """What the Critic sees: one draft and only its evidence. The draft's text is derived from whatever the
+    analyst saw: when the run used vault material (``tainted``) the draft is confidential, so the call goes to an
+    authorized endpoint or not at all; passages and insights are withheld when none exists."""
 
-    draft: CriticDraft
-    evidence_texts: list[EvidenceText]
-    similar_papers: list[SimilarPaper] = Field(default_factory=list, max_length=5)
+    draft: CriticDraft = (
+        derived_field()
+    )  # written by an analyst that saw the vault: confidential when tainted
+    evidence_texts: list[EvidenceText] = mixed_items_field()
+    similar_papers: list[SimilarPaper] = published_field(default_factory=list, max_length=5)
 
 
 class ClaimVerdict(_Out):

@@ -9,7 +9,7 @@ React 18 + TypeScript (strict) + Vite + Tailwind + React Router + TanStack Query
 | `pnpm dev` | Dev server on http://localhost:5173 (API at `VITE_API_URL`, default http://localhost:8000) |
 | `pnpm lint` / `pnpm typecheck` / `pnpm test` / `pnpm build` | The frontend checks (`make fe-check`) |
 | `pnpm gen-client` | Regenerates `src/api/schema.d.ts` from `openapi.json` (`make gen-client` exports the schema first) |
-| `pnpm e2e` | Playwright smoke test. Start the API first: `cd backend && uv run uvicorn scout.api.app:create_app --factory --port 8000`. Screenshots go to `e2e/screenshots/` |
+| `pnpm e2e` | Playwright smoke specs (`smoke`, `claim`, `vault`, `opportunities`, `matches`, `privacy`; one worker). Needs the API (`make api`), the worker (`make worker`) and a seeded dev database (`make seed`, once). `PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers` on the cloud VM. The privacy spec seeds one expensive `llm_call` row with `psql` (`E2E_DATABASE_URL`) and removes it. Screenshots go to `e2e/screenshots/` |
 
 Env: `VITE_API_URL`, `VITE_ANALYTICS_ENABLED` (`false` turns analytics off), `VITE_AUTH_MODE`, `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`. Vite reads `frontend/.env` (copy the lines from `frontend/.env.example`), not the repository-root `.env`.
 

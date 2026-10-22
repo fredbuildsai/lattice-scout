@@ -14,6 +14,7 @@ from scout.vault.domain.enums import DocKind, DocStatus, DocumentMime, PageBasis
 S = DocStatus
 _IN_PROGRESS = {S.UPLOADED, S.EXTRACTING, S.EXTRACTED, S.ANALYSING}
 _TERMINAL = {S.READY, S.FAILED, S.REJECTED}
+_PURGEABLE = _TERMINAL | {S.AWAITING_PROVIDER}  # extraction is done: the bytes are not needed again
 
 
 class DocumentUploaded(DomainEvent):
@@ -125,10 +126,11 @@ class Document(AggregateRoot):
 
     @property
     def needs_purge(self) -> bool:
-        """Discard policy, finished, original still stored."""
+        """Discard policy, extraction finished (ready, failed, rejected or waiting for a provider), original still
+        stored. A waiting document keeps its extracted text until it is analysed, but not the uploaded file."""
         return (
             self.retention is Retention.DISCARD
-            and self.status in _TERMINAL
+            and self.status in _PURGEABLE
             and self.original_deleted_at is None
         )
 
@@ -172,8 +174,15 @@ class Document(AggregateRoot):
 
     def start_analysis(self, now: datetime) -> None:
         """``extracted|analysing`` -> ``analysing``."""
-        self._require("start analysis of", {S.EXTRACTED, S.ANALYSING})
+        self._require("start analysis of", {S.EXTRACTED, S.ANALYSING, S.AWAITING_PROVIDER})
         self.status = S.ANALYSING
+        self._touch(now)
+
+    def await_provider(self, now: datetime) -> None:
+        """``extracted|analysing|awaiting`` -> ``awaiting_approved_provider``: no authorized endpoint can read the
+        text, so the document is kept and analysed later (ADR 016). Not a failure and not a purge trigger."""
+        self._require("wait for a provider with", {S.EXTRACTED, S.ANALYSING, S.AWAITING_PROVIDER})
+        self.status = S.AWAITING_PROVIDER
         self._touch(now)
 
     def finish_analysis(self, kind_suggested: DocKind | None, reason: str | None, now: datetime) -> None:
@@ -198,7 +207,7 @@ class Document(AggregateRoot):
         """Record that the bytes were purged. Idempotent; returns True the first time."""
         if self.retention is not Retention.DISCARD:
             raise InvalidStateTransition("Only documents with the discard policy have their original purged")
-        self._require("purge the original of", _TERMINAL)
+        self._require("purge the original of", _PURGEABLE)
         if self.original_deleted_at is not None:
             return False
         self.original_deleted_at = now

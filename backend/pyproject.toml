@@ -58,7 +58,7 @@ packages = ["src/scout"]
 testpaths = ["tests"]
 asyncio_mode = "auto"
 addopts = "-ra -m 'not needs_network and not needs_supabase'"
-pythonpath = ["."]
+pythonpath = [".", "../eval"]
 markers = [
   "integration: needs the VM's PostgreSQL 16",
   "needs_network: live external calls (skipped by default)",
@@ -68,7 +68,7 @@ markers = [
 [tool.ruff]
 line-length = 110
 target-version = "py312"
-src = ["src", "tests"]
+src = ["src", "tests", "../eval"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "ASYNC", "S", "RUF"]
@@ -80,7 +80,7 @@ ignore = ["S101", "RUF012", "RUF028", "E501"]
 
 [tool.mypy]
 python_version = "3.12"
-mypy_path = "src"
+mypy_path = "src:../eval"
 plugins = ["pydantic.mypy"]
 warn_unused_ignores = true
 ignore_missing_imports = true
@@ -88,6 +88,13 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 module = ["scout.shared.*", "scout.ports.*", "scout.settings", "scout.bootstrap", "scout.*.domain.*", "scout.*.application.*", "scout.*.ports.*"]
 strict = true
+
+[[tool.mypy.overrides]]
+module = ["tests.unit.matching.*", "tests.fakes.erasure", "tests.unit.identity.test_delete_account_job", "tests.integration.erasure_seed", "tests.integration.test_account_erasure_pg", "tests.integration.test_matching_reveal_pg", "tests.integration.test_matching_repos_pg", "tests.integration.test_matching_candidates_pg"]
+disallow_untyped_defs = false
+disallow_untyped_calls = false
+disallow_incomplete_defs = false
+disallow_any_generics = false
 
 [tool.interrogate]
 fail-under = 95
@@ -120,6 +127,13 @@ type = "forbidden"
 source_modules = ["scout.discovery.domain", "scout.discovery.ports", "scout.discovery.application", "scout.discovery.adapters"]
 forbidden_modules = ["scout.vault", "scout.profile", "scout.identity"]
 ignore_imports = ["scout.discovery.application.sources -> scout.vault.**", "scout.discovery.application.sources -> scout.profile.**"]
+
+[[tool.importlinter.contracts]]
+name = "matching never imports other contexts except through its anti-corruption layer"
+type = "forbidden"
+source_modules = ["scout.matching.domain", "scout.matching.ports", "scout.matching.application", "scout.matching.adapters"]
+forbidden_modules = ["scout.vault", "scout.profile", "scout.identity", "scout.discovery"]
+ignore_imports = ["scout.matching.application.sources -> scout.vault.**", "scout.matching.application.sources -> scout.profile.**", "scout.matching.application.sources -> scout.identity.**"]
 
 [[tool.importlinter.contracts]]
 name = "adapters never import application services"

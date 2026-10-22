@@ -167,6 +167,9 @@ class _Blocking:
     def __init__(self) -> None:
         self.entered, self.release = asyncio.Event(), asyncio.Event()
 
+    def confidential_allowed(self) -> bool:
+        return True
+
     async def extract(self, req: InsightRequest, ctx: CallContext) -> InsightOutcome:
         self.entered.set()
         await self.release.wait()

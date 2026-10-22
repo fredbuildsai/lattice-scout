@@ -63,6 +63,15 @@ export function useSetKind() {
   })
 }
 
+/** POST /documents/delete-all (202 `{deleting: n}`): the user typed DELETE. Refreshes the documents list. */
+export function useDeleteAllDocuments() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: () => vaultJson<{ deleting: number }>('/api/v1/documents/delete-all', { method: 'POST', body: JSON.stringify({ confirm: 'DELETE' }) }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['documents'] }),
+  })
+}
+
 /** DELETE /documents/{id}. */
 export function useDeleteDocument() {
   const qc = useQueryClient()

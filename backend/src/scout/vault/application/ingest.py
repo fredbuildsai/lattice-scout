@@ -47,7 +47,9 @@ async def fail_document(
         now = clock.now()
         doc.fail(code, now)
         await uow.documents.save(doc)
-        if doc.needs_purge:
+        if (
+            doc.retention is Retention.DISCARD
+        ):  # the original may already be gone (it is purged while waiting)
             await uow.chunks.redact(document_id, {}, now)
         await uow.commit()
         return True
@@ -101,7 +103,7 @@ class IngestDocument:
                 return {"skipped": "gone"}
             if doc.status in (DocStatus.UPLOADED, DocStatus.EXTRACTING):
                 done = await self._extract(doc, phase)
-            elif doc.status in (DocStatus.EXTRACTED, DocStatus.ANALYSING):
+            elif doc.status in (DocStatus.EXTRACTED, DocStatus.ANALYSING, DocStatus.AWAITING_PROVIDER):
                 done = await self._analyse(doc, ctx, phase)
             elif doc.needs_purge:
                 phase.code = "storage_unavailable"
@@ -161,7 +163,7 @@ class IngestDocument:
             now = self._clock.now()
             cur.reject(code, now)
             await uow.documents.save(cur)
-            if cur.needs_purge:
+            if cur.retention is Retention.DISCARD:
                 await uow.chunks.redact(document_id, {}, now)
             await uow.audit.add(
                 AuditEntry(
@@ -176,7 +178,25 @@ class IngestDocument:
             await uow.commit()
         log.info("vault.rejected", document_id=str(document_id), code=code)
 
+    async def _await_provider(self, doc: Document) -> Result:
+        """No authorized endpoint: keep the document, park it, and let the sweep requeue it later (ADR 016)."""
+        async with self._uow() as uow:
+            cur = await uow.documents.get_for_update(doc.id)
+            if cur is None or cur.status is DocStatus.DELETING:
+                return {"skipped": "gone"}
+            cur.await_provider(self._clock.now())
+            await uow.documents.save(cur)
+            await uow.commit()
+        log.info("vault.awaiting_approved_provider", document_id=str(doc.id))
+        # "Discard original" holds while waiting: the file goes now, the extracted text stays until analysis.
+        await self._purge(await self._load(doc.id))
+        return {"status": DocStatus.AWAITING_PROVIDER.value}
+
     async def _analyse(self, doc: Document, ctx: CallContext, phase: _Phase) -> Result | None:
+        if (
+            not self._insights.available()
+        ):  # the LLM step is skipped; extraction above stays (local, deterministic)
+            return await self._await_provider(doc)
         phase.code = "insights_unavailable"
         async with self._uow() as uow:
             cur = await uow.documents.get_for_update(doc.id)
@@ -198,7 +218,7 @@ class IngestDocument:
             cur.finish_analysis(stored.kind_suggested, stored.kind_reason, now)
             await uow.documents.save(cur)
             if (
-                cur.needs_purge
+                cur.retention is Retention.DISCARD
             ):  # discard: text is replaced by verified quotes and summaries in this same commit
                 await uow.chunks.redact(doc.id, retained_content(chunks, stored.items), now)
             await uow.commit()

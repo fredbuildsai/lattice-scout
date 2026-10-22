@@ -14,4 +14,4 @@
 
 The import rules are enforced by import-linter (`make contracts`).
 
-**Status:** no code yet, milestone M6 (`docs/IMPLEMENTATION_PLAN.md` §2).
+**Status:** M6 slice D. `domain/notification.py` (templates, `Prefs`, `render`), `application/service.py` (`Notifications`, `MatchMailNotifier`, `WeeklyDigest`), `adapters/senders.py` (console, Resend), `adapters/sql.py` (preferences and delivery log). Mails are jobs (`notification.send`); copy never names a person or a decision (DECISIONS 95-98).

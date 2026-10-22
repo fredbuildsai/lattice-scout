@@ -1,6 +1,9 @@
 # Your private vault
 
-The private vault is where you upload your own documents: grants you applied for, grants that were turned down, proposals, unpublished results and lab notes. Scout reads each file and lists what it contains. You can then decide what to do with the file.
+The private vault is where you add your own documents so that Scout can read them and list what they contain. You can then decide what to do with each file.
+
+!!! warning "Do not upload confidential material"
+    Do not upload confidential material such as grant proposals, unpublished manuscripts under embargo, or anything under an NDA or third-party confidentiality. Scout cannot guarantee the confidentiality of stored documents in this pilot. Only upload what you are happy to see stored on our server. You can delete any document at any time. While this warning is on, the upload area asks you to tick **I am not uploading confidential material** before you can choose files.
 
 Find it in the menu under **Private vault** (`/vault`).
 
@@ -22,15 +25,15 @@ Include reviewer reports if you have them. Scout works out what each file is. Yo
 3. **Finding insights.** Scout asks an AI language model to list the aims, methods, findings, open questions and reviewer objections in your document. Scout then checks each item against the text (see below).
 4. **Ready.** The insights are on the document. You can open them with **Show details**.
 
-Scout sends the text of your document to the AI language model that the Scout service uses. The service operator chooses the model provider. If your document is confidential, check the terms of your service before you upload it.
+Scout sends excerpts of your document text to an AI language model to find the insights. The service operator chooses the providers; this version may use the free tiers of OpenRouter, Groq and Mistral. Scout does not train models on your files, but the providers have their own terms. Scout has a rule for this: text from your private documents is sent **only** to providers the operator has marked as approved for confidential data, and never to any other provider. Published literature data, such as paper titles, can go to any configured provider. If no provider is approved, Scout still stores your file and reads its text on its own server, but the document shows **Waiting for an approved provider** and nothing from it goes to any AI model. Text that Scout or a model derived from your documents (for example a draft opportunity written while your documents were in play) is treated the same way. Search terms sent to OpenAlex are built from your published work only. It is analysed automatically, within about ten minutes, once the operator approves a provider. Whichever providers are approved, do not upload confidential documents in this pilot.
 
-Nothing from your vault is shared with other researchers in this version. Only your account can open your documents.
+Nothing from your vault is shared with other researchers in this version, and only your account can open your documents in Scout. That is an access rule, not a guarantee of confidentiality: the files and text sit on the operator's server.
 
 ## "Keep the original file"
 
 Under the drop zone there is a box called **Keep the original file**. It is **unticked** by default.
 
-- **Unticked.** Scout deletes the file once it has finished reading it. Scout keeps the insights, short quotes of reviewer comments (up to 300 characters each) and short summaries. It does not keep the full text. The document row says **insights only**.
+- **Unticked.** Scout deletes the file once it has finished reading it. Scout keeps the insights, short quotes of reviewer comments (up to 300 characters each) and short summaries. It does not keep the full text. The document row says **insights only**. While a document is **waiting for an approved provider**, the uploaded file is already deleted but the text Scout extracted stays on the server until the document is analysed (then it is cut down to insights and short quotes) or you delete it; the row says **file removed, text kept until analysed**.
 - **Ticked.** Scout keeps the file and its full text until you delete the document. The row says **original kept**.
 
 If the box is unticked, the file is deleted even when reading fails. To try again, upload the file again.
@@ -113,3 +116,23 @@ Deleting removes:
 The document disappears from your list straight away. The stored file is removed by a background job. If storage is slow, the job tries again.
 
 **Deleting cannot be undone.** To get the document back, upload the file again.
+
+## Delete everything
+
+The privacy tab (Settings, Privacy) offers "Delete my vault". You confirm by typing DELETE. It removes every document you uploaded, the text and insights taken from them, and the stored files. Your profile, past runs and matches stay. Deleting your whole account removes those too.
+
+## Delete your account
+
+In the same tab, "Delete my account" asks you to type your e-mail address again. Your files, profile, runs, feedback and matches are then erased in the background and you are signed out. Matches that are still pending simply expire for the other person; they are not told why. This cannot be undone.
+
+**What is not erased:**
+
+- Cost records, which no longer name you.
+- Ratings and free-text comments you gave on a match that both sides accepted stay visible to the other person. A comment may name you.
+- After you delete only your vault: short paraphrases (up to 300 characters) inside ideas that Scout already showed you.
+- The region and career band on a closed match proposal, for 30 days.
+- Server logs and the sign-in provider's own audit log, which are outside Scout's database.
+
+## Daily limit
+
+If many people use Scout on the same day, new analyses can pause until the next day (UTC). A banner tells you when that happens; your documents and earlier results stay available.

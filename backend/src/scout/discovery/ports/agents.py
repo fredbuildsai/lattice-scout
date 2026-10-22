@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from decimal import Decimal
 from typing import Protocol
 
 from scout.discovery.domain.agent_io import (
@@ -18,22 +16,15 @@ from scout.discovery.domain.agent_io import (
     QueryPlan,
     QueryPlannerInput,
 )
-from scout.ports.llm import CallContext, TokenUsage
+from scout.ports.llm import AgentOutcome, CallContext, ConfidentialGate
+
+__all__ = ["AgentOutcome", "DiscoveryAgentsPort"]
 
 
-@dataclass(frozen=True)
-class AgentOutcome[T]:
-    """A model output with its accounting (the run ledger charges ``cost_usd`` and the tokens)."""
+class DiscoveryAgentsPort(ConfidentialGate, Protocol):
+    """Typed calls; each raises ``LLMUnavailable`` or ``LLMOutputInvalid`` (transient).
 
-    output: T
-    prompt_version: str
-    model: str
-    cost_usd: Decimal
-    usage: TokenUsage
-
-
-class DiscoveryAgentsPort(Protocol):
-    """Typed calls; each raises ``LLMUnavailable`` or ``LLMOutputInvalid`` (transient)."""
+    ``confidential_allowed()`` says whether vault material may be put into the inputs at all (ADR 016)."""
 
     async def plan_queries(self, data: QueryPlannerInput, ctx: CallContext) -> AgentOutcome[QueryPlan]:
         """QueryPlanner (fast)."""

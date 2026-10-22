@@ -1,0 +1,64 @@
+{
+  "for_a": {
+    "you_bring": [
+      {
+        "text": "Isolating nanocellulose with tuned surface chemistry",
+        "source_refs": []
+      },
+      {
+        "text": "Foam processing with lignin-based polyols",
+        "source_refs": []
+      },
+      {
+        "text": "Chemical modification of cellulose and chitosan",
+        "source_refs": []
+      }
+    ],
+    "they_bring": [
+      {
+        "text": "Photocatalytic films that break down pollutants in water",
+        "source_refs": []
+      },
+      {
+        "text": "Synthesis of polymer and hybrid catalyst materials",
+        "source_refs": []
+      },
+      {
+        "text": "Machine learning for faster materials discovery",
+        "source_refs": []
+      }
+    ],
+    "why": "You both work on adsorption and biosorption for pollutant removal and advanced oxidation water treatment. Combining your nanocellulose isolation with their photocatalysis could open questions that neither of you covers alone."
+  },
+  "for_b": {
+    "you_bring": [
+      {
+        "text": "Photocatalytic films that break down pollutants in water",
+        "source_refs": []
+      },
+      {
+        "text": "Synthesis of polymer and hybrid catalyst materials",
+        "source_refs": []
+      },
+      {
+        "text": "Machine learning for faster materials discovery",
+        "source_refs": []
+      }
+    ],
+    "they_bring": [
+      {
+        "text": "Isolating nanocellulose with tuned surface chemistry",
+        "source_refs": []
+      },
+      {
+        "text": "Foam processing with lignin-based polyols",
+        "source_refs": []
+      },
+      {
+        "text": "Chemical modification of cellulose and chitosan",
+        "source_refs": []
+      }
+    ],
+    "why": "You both work on adsorption and biosorption for pollutant removal and advanced oxidation water treatment. Combining your photocatalysis with their nanocellulose isolation could open questions that neither of you covers alone."
+  }
+}

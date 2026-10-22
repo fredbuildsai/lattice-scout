@@ -53,6 +53,18 @@ describe('RunPage', () => {
     expect(screen.getByRole('note')).toHaveTextContent('OpenAlex was slow')
   })
 
+  it('says honestly when the run used published work only, and stays quiet otherwise', async () => {
+    const note = 'Based on your published work only; your uploaded documents were not used because no approved provider is configured.'
+    vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify(run({ status: 'done', percent: 100, basis: 'published_only', basis_note: note })), { status: 200 })))
+    const view = renderPage()
+    expect(await screen.findByText(note)).toBeInTheDocument()
+    view.unmount()
+    vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify(run({ status: 'done', percent: 100, basis: 'full', basis_note: null })), { status: 200 })))
+    renderPage()
+    await screen.findByRole('link', { name: 'See the opportunities' })
+    expect(screen.queryByText(/published work only/)).toBeNull()
+  })
+
   it('explains a failed run in plain words', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify(run({ status: 'failed', error_code: 'corpus_empty' })), { status: 200 })))
     renderPage()

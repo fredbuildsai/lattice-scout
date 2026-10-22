@@ -125,3 +125,19 @@ describe('properties and sessions', () => {
     expect(c.pending).toBe(0)
   })
 })
+
+describe('opt-out', () => {
+  it('drops new events and discards queued ones when opted out, resumes when cleared', async () => {
+    const { client, sent } = setup()
+    client.track('menu_opened')
+    client.setOptOut(true)
+    expect(client.pending).toBe(0)
+    client.pageView('/')
+    client.track('menu_opened')
+    await client.flush()
+    expect(sent).toHaveLength(0)
+    client.setOptOut(false)
+    client.track('menu_opened')
+    expect(client.pending).toBe(1)
+  })
+})

@@ -222,6 +222,101 @@
         "title": "AdminEvidenceOut",
         "type": "object"
       },
+      "AnonymousMatchView": {
+        "description": "A proposal before the reveal: no name, no institution, no year.",
+        "properties": {
+          "career_band": {
+            "$ref": "#/components/schemas/CareerBand"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "field_label": {
+            "title": "Field Label",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "const": "anonymous",
+            "default": "anonymous",
+            "title": "Kind",
+            "type": "string"
+          },
+          "my_decision": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Decision"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "region": {
+            "$ref": "#/components/schemas/Region"
+          },
+          "score": {
+            "title": "Score",
+            "type": "number"
+          },
+          "shared_topics": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Shared Topics",
+            "type": "array"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ViewerStatus"
+          },
+          "they_bring": {
+            "items": {
+              "$ref": "#/components/schemas/BringText"
+            },
+            "title": "They Bring",
+            "type": "array"
+          },
+          "why": {
+            "title": "Why",
+            "type": "string"
+          },
+          "you_bring": {
+            "items": {
+              "$ref": "#/components/schemas/BringItem"
+            },
+            "title": "You Bring",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "score",
+          "field_label",
+          "region",
+          "career_band",
+          "shared_topics",
+          "you_bring",
+          "they_bring",
+          "why",
+          "my_decision",
+          "created_at",
+          "expires_at"
+        ],
+        "title": "AnonymousMatchView",
+        "type": "object"
+      },
       "Body_upload_document_api_v1_documents_post": {
         "properties": {
           "file": {
@@ -252,6 +347,43 @@
           "file"
         ],
         "title": "Body_upload_document_api_v1_documents_post",
+        "type": "object"
+      },
+      "BringItem": {
+        "description": "One thing a side brings.",
+        "properties": {
+          "source_refs": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 3,
+            "title": "Source Refs",
+            "type": "array"
+          },
+          "text": {
+            "maxLength": 120,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "title": "BringItem",
+        "type": "object"
+      },
+      "BringText": {
+        "description": "What the other side brings, without references (they would point at that person's papers).",
+        "properties": {
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "title": "BringText",
         "type": "object"
       },
       "CandidateGroupOut": {
@@ -370,6 +502,17 @@
         "title": "CandidatesOut",
         "type": "object"
       },
+      "CareerBand": {
+        "description": "Coarse career stage shown on the anonymous card.",
+        "enum": [
+          "early",
+          "mid",
+          "senior",
+          "unknown"
+        ],
+        "title": "CareerBand",
+        "type": "string"
+      },
       "ChecklistItemOut": {
         "description": "A readiness item.",
         "properties": {
@@ -462,6 +605,38 @@
         "title": "ClaimStatus",
         "type": "string"
       },
+      "ClearVaultIn": {
+        "additionalProperties": false,
+        "description": "Typed confirmation for deleting the whole vault.",
+        "properties": {
+          "confirm": {
+            "description": "The word ``DELETE``.",
+            "maxLength": 20,
+            "title": "Confirm",
+            "type": "string"
+          }
+        },
+        "required": [
+          "confirm"
+        ],
+        "title": "ClearVaultIn",
+        "type": "object"
+      },
+      "ClearedOut": {
+        "description": "How many documents were marked for deletion by this call.",
+        "properties": {
+          "deleting": {
+            "description": "Documents newly marked for deletion (0 on a repeat call).",
+            "title": "Deleting",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "deleting"
+        ],
+        "title": "ClearedOut",
+        "type": "object"
+      },
       "ConsentIn": {
         "additionalProperties": false,
         "description": "Partial update of consents.",
@@ -492,6 +667,65 @@
           }
         },
         "title": "ConsentIn",
+        "type": "object"
+      },
+      "Contact": {
+        "description": "Identity and contact of the other side. Only built for a mutual match.",
+        "properties": {
+          "career_band": {
+            "$ref": "#/components/schemas/CareerBand"
+          },
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "email": {
+            "title": "Email",
+            "type": "string"
+          },
+          "institution": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Institution"
+          },
+          "openalex_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Openalex Ids",
+            "type": "array"
+          },
+          "orcid": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Orcid"
+          },
+          "region": {
+            "$ref": "#/components/schemas/Region"
+          }
+        },
+        "required": [
+          "display_name",
+          "institution",
+          "email",
+          "orcid",
+          "openalex_ids",
+          "region",
+          "career_band"
+        ],
+        "title": "Contact",
         "type": "object"
       },
       "DatasetOut": {
@@ -526,6 +760,39 @@
         "title": "DatasetOut",
         "type": "object"
       },
+      "Decision": {
+        "description": "A stored decision.",
+        "enum": [
+          "accept",
+          "decline"
+        ],
+        "title": "Decision",
+        "type": "string"
+      },
+      "DecisionIn": {
+        "description": "Accept, decline or withdraw.",
+        "properties": {
+          "action": {
+            "enum": [
+              "accept",
+              "decline",
+              "withdraw"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "never_similar": {
+            "default": false,
+            "title": "Never Similar",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "title": "DecisionIn",
+        "type": "object"
+      },
       "DegradedOut": {
         "description": "A step that finished with less than full output.",
         "properties": {
@@ -543,6 +810,36 @@
           "reason"
         ],
         "title": "DegradedOut",
+        "type": "object"
+      },
+      "DeleteAccountIn": {
+        "additionalProperties": false,
+        "description": "Typed confirmation for account deletion.",
+        "properties": {
+          "confirm_email": {
+            "description": "The account e-mail address, typed again.",
+            "maxLength": 320,
+            "title": "Confirm Email",
+            "type": "string"
+          }
+        },
+        "required": [
+          "confirm_email"
+        ],
+        "title": "DeleteAccountIn",
+        "type": "object"
+      },
+      "DeletingOut": {
+        "description": "Deletion accepted.",
+        "properties": {
+          "status": {
+            "default": "deleting",
+            "description": "Always ``deleting``: erasure runs in the background.",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "title": "DeletingOut",
         "type": "object"
       },
       "DevLoginRequest": {
@@ -610,6 +907,7 @@
           "extracting",
           "extracted",
           "analysing",
+          "awaiting_approved_provider",
           "ready",
           "failed",
           "rejected",
@@ -744,7 +1042,7 @@
           },
           "status": {
             "$ref": "#/components/schemas/DocStatus",
-            "description": "uploaded, extracting, extracted, analysing, ready, failed or rejected."
+            "description": "uploaded, extracting, extracted, analysing, awaiting_approved_provider (read, waiting for an approved language-model provider), ready, failed or rejected."
           },
           "updated_at": {
             "format": "date-time",
@@ -920,7 +1218,7 @@
           },
           "status": {
             "$ref": "#/components/schemas/DocStatus",
-            "description": "uploaded, extracting, extracted, analysing, ready, failed or rejected."
+            "description": "uploaded, extracting, extracted, analysing, awaiting_approved_provider (read, waiting for an approved language-model provider), ready, failed or rejected."
           },
           "updated_at": {
             "format": "date-time",
@@ -1350,30 +1648,64 @@
                 "type": "null"
               }
             ],
+            "description": "Omit to keep the earlier comment; null or '' clears it.",
             "title": "Comment"
           },
           "rating": {
-            "enum": [
-              "up",
-              "down"
+            "anyOf": [
+              {
+                "enum": [
+                  "up",
+                  "down"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
             ],
-            "title": "Rating",
-            "type": "string"
+            "title": "Rating"
           },
           "reasons": {
-            "items": {
-              "enum": [
-                "spot_on",
-                "already_knew",
-                "not_feasible",
-                "wrong_field",
-                "too_vague"
-              ],
-              "type": "string"
-            },
-            "maxItems": 5,
-            "title": "Reasons",
-            "type": "array"
+            "anyOf": [
+              {
+                "items": {
+                  "enum": [
+                    "spot_on",
+                    "already_knew",
+                    "not_feasible",
+                    "wrong_field",
+                    "too_vague",
+                    "methods_fit",
+                    "right_seniority",
+                    "shared_timeline",
+                    "too_similar",
+                    "already_knew_them"
+                  ],
+                  "type": "string"
+                },
+                "maxItems": 5,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Omit to keep the earlier chips; [] clears them.",
+            "title": "Reasons"
+          },
+          "stars": {
+            "anyOf": [
+              {
+                "maximum": 5.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stars"
           },
           "target_id": {
             "format": "uuid",
@@ -1391,8 +1723,7 @@
         },
         "required": [
           "target_type",
-          "target_id",
-          "rating"
+          "target_id"
         ],
         "title": "FeedbackIn",
         "type": "object"
@@ -1412,12 +1743,19 @@
             "title": "Comment"
           },
           "rating": {
-            "enum": [
-              "up",
-              "down"
+            "anyOf": [
+              {
+                "enum": [
+                  "up",
+                  "down"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
             ],
-            "title": "Rating",
-            "type": "string"
+            "title": "Rating"
           },
           "reasons": {
             "items": {
@@ -1426,12 +1764,28 @@
                 "already_knew",
                 "not_feasible",
                 "wrong_field",
-                "too_vague"
+                "too_vague",
+                "methods_fit",
+                "right_seniority",
+                "shared_timeline",
+                "too_similar",
+                "already_knew_them"
               ],
               "type": "string"
             },
             "title": "Reasons",
             "type": "array"
+          },
+          "stars": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stars"
           },
           "target_id": {
             "format": "uuid",
@@ -1456,6 +1810,7 @@
           "target_type",
           "target_id",
           "rating",
+          "stars",
           "reasons",
           "comment",
           "updated_at"
@@ -1475,6 +1830,17 @@
         },
         "title": "HTTPValidationError",
         "type": "object"
+      },
+      "IdeasStatus": {
+        "description": "Joint idea generation after the reveal.",
+        "enum": [
+          "none",
+          "pending",
+          "ready",
+          "failed"
+        ],
+        "title": "IdeasStatus",
+        "type": "string"
       },
       "ImportOut": {
         "description": "State of the works import.",
@@ -1638,6 +2004,156 @@
         "title": "ItemOut",
         "type": "object"
       },
+      "JointIdeaView": {
+        "description": "One collaboration idea, from the viewer's point of view.",
+        "properties": {
+          "first_step": {
+            "title": "First Step",
+            "type": "string"
+          },
+          "possible_output": {
+            "title": "Possible Output",
+            "type": "string"
+          },
+          "question": {
+            "title": "Question",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "uses_from_them": {
+            "items": {
+              "$ref": "#/components/schemas/BringItem"
+            },
+            "title": "Uses From Them",
+            "type": "array"
+          },
+          "uses_from_you": {
+            "items": {
+              "$ref": "#/components/schemas/BringItem"
+            },
+            "title": "Uses From You",
+            "type": "array"
+          }
+        },
+        "required": [
+          "title",
+          "question",
+          "uses_from_you",
+          "uses_from_them",
+          "first_step",
+          "possible_output"
+        ],
+        "title": "JointIdeaView",
+        "type": "object"
+      },
+      "MatchListOut": {
+        "description": "A page of matches. ``matching_enabled`` is false until the account consents.",
+        "properties": {
+          "items": {
+            "items": {
+              "discriminator": {
+                "mapping": {
+                  "anonymous": "#/components/schemas/AnonymousMatchView",
+                  "revealed": "#/components/schemas/RevealedMatchView"
+                },
+                "propertyName": "kind"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/AnonymousMatchView"
+                },
+                {
+                  "$ref": "#/components/schemas/RevealedMatchView"
+                }
+              ]
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "matching_enabled": {
+            "title": "Matching Enabled",
+            "type": "boolean"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "matching_enabled",
+          "items",
+          "next_cursor"
+        ],
+        "title": "MatchListOut",
+        "type": "object"
+      },
+      "MatchRatingIn": {
+        "description": "Rate a mutual match from 1 to 5 stars.",
+        "properties": {
+          "comment": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Omit to keep the earlier comment.",
+            "title": "Comment"
+          },
+          "reasons": {
+            "anyOf": [
+              {
+                "items": {
+                  "enum": [
+                    "spot_on",
+                    "already_knew",
+                    "not_feasible",
+                    "wrong_field",
+                    "too_vague",
+                    "methods_fit",
+                    "right_seniority",
+                    "shared_timeline",
+                    "too_similar",
+                    "already_knew_them"
+                  ],
+                  "type": "string"
+                },
+                "maxItems": 5,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Omit to keep the earlier chips.",
+            "title": "Reasons"
+          },
+          "stars": {
+            "maximum": 5.0,
+            "minimum": 1.0,
+            "title": "Stars",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "stars"
+        ],
+        "title": "MatchRatingIn",
+        "type": "object"
+      },
       "MeOut": {
         "description": "The signed-in account.",
         "properties": {
@@ -1733,6 +2249,91 @@
           "refs"
         ],
         "title": "MethodOut",
+        "type": "object"
+      },
+      "NotificationPrefsIn": {
+        "additionalProperties": false,
+        "description": "Partial update.",
+        "properties": {
+          "analytics_opt_out": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Analytics Opt Out"
+          },
+          "email_digest": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email Digest"
+          },
+          "email_matches": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email Matches"
+          },
+          "email_runs": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email Runs"
+          }
+        },
+        "title": "NotificationPrefsIn",
+        "type": "object"
+      },
+      "NotificationPrefsOut": {
+        "description": "What Scout may e-mail.",
+        "properties": {
+          "analytics_opt_out": {
+            "description": "True: Scout drops your product-analytics events.",
+            "title": "Analytics Opt Out",
+            "type": "boolean"
+          },
+          "email_digest": {
+            "description": "A weekly summary (off by default).",
+            "title": "Email Digest",
+            "type": "boolean"
+          },
+          "email_matches": {
+            "description": "A mail for a new suggestion and for a mutual match.",
+            "title": "Email Matches",
+            "type": "boolean"
+          },
+          "email_runs": {
+            "description": "A mail when an analysis finishes.",
+            "title": "Email Runs",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "email_runs",
+          "email_matches",
+          "email_digest",
+          "analytics_opt_out"
+        ],
+        "title": "NotificationPrefsOut",
         "type": "object"
       },
       "NoveltyOut": {
@@ -1855,6 +2456,26 @@
       "OpportunityCardOut": {
         "description": "List item.",
         "properties": {
+          "basis": {
+            "default": "full",
+            "enum": [
+              "full",
+              "published_only"
+            ],
+            "title": "Basis",
+            "type": "string"
+          },
+          "basis_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Basis Note"
+          },
           "clusters": {
             "items": {
               "type": "string"
@@ -1946,6 +2567,26 @@
       "OpportunityDetailOut": {
         "description": "Detail page.",
         "properties": {
+          "basis": {
+            "default": "full",
+            "enum": [
+              "full",
+              "published_only"
+            ],
+            "title": "Basis",
+            "type": "string"
+          },
+          "basis_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Basis Note"
+          },
           "clusters": {
             "items": {
               "type": "string"
@@ -2316,6 +2957,20 @@
         "title": "RefOut",
         "type": "object"
       },
+      "Region": {
+        "description": "Coarse region shown on the anonymous card.",
+        "enum": [
+          "africa",
+          "asia",
+          "europe",
+          "north_america",
+          "south_america",
+          "oceania",
+          "unknown"
+        ],
+        "title": "Region",
+        "type": "string"
+      },
       "Rejection": {
         "description": "Why an event was not accepted.",
         "properties": {
@@ -2379,6 +3034,122 @@
         ],
         "title": "Retention",
         "type": "string"
+      },
+      "RevealedMatchView": {
+        "description": "A mutual match: identity, contact and joint ideas.\n\n``career_since`` is the year of the other side's first included work; ``joint_works_count`` the works both\nincluded (None when none). Neither exists on ``AnonymousMatchView``.",
+        "properties": {
+          "career_since": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Career Since"
+          },
+          "contact": {
+            "$ref": "#/components/schemas/Contact"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "ideas_status": {
+            "$ref": "#/components/schemas/IdeasStatus"
+          },
+          "joint_ideas": {
+            "items": {
+              "$ref": "#/components/schemas/JointIdeaView"
+            },
+            "title": "Joint Ideas",
+            "type": "array"
+          },
+          "joint_works_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Joint Works Count"
+          },
+          "kind": {
+            "const": "revealed",
+            "default": "revealed",
+            "title": "Kind",
+            "type": "string"
+          },
+          "my_rating": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "My Rating"
+          },
+          "revealed_at": {
+            "format": "date-time",
+            "title": "Revealed At",
+            "type": "string"
+          },
+          "score": {
+            "title": "Score",
+            "type": "number"
+          },
+          "shared_topics": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Shared Topics",
+            "type": "array"
+          },
+          "status": {
+            "const": "mutual",
+            "default": "mutual",
+            "title": "Status",
+            "type": "string"
+          },
+          "they_bring": {
+            "items": {
+              "$ref": "#/components/schemas/BringItem"
+            },
+            "title": "They Bring",
+            "type": "array"
+          },
+          "why": {
+            "title": "Why",
+            "type": "string"
+          },
+          "you_bring": {
+            "items": {
+              "$ref": "#/components/schemas/BringItem"
+            },
+            "title": "You Bring",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "score",
+          "shared_topics",
+          "you_bring",
+          "they_bring",
+          "why",
+          "contact",
+          "ideas_status",
+          "joint_ideas",
+          "revealed_at"
+        ],
+        "title": "RevealedMatchView",
+        "type": "object"
       },
       "RunCountsOut": {
         "description": "What the run found so far.",
@@ -2451,6 +3222,28 @@
       "RunOut": {
         "description": "A run. Poll it every 3 seconds while ``status`` is ``queued`` or ``running``.",
         "properties": {
+          "basis": {
+            "default": "full",
+            "description": "`published_only`: confidential vault material was left out of this run.",
+            "enum": [
+              "full",
+              "published_only"
+            ],
+            "title": "Basis",
+            "type": "string"
+          },
+          "basis_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Plain-language note shown when `basis` is `published_only`.",
+            "title": "Basis Note"
+          },
           "budget_usd": {
             "title": "Budget Usd",
             "type": "string"
@@ -2672,6 +3465,57 @@
         "title": "StepOut",
         "type": "object"
       },
+      "SystemStatusOut": {
+        "description": "Whether new analyses are accepted right now.",
+        "properties": {
+          "accepting_runs": {
+            "description": "False when a global daily spend cap is reached.",
+            "title": "Accepting Runs",
+            "type": "boolean"
+          },
+          "confidential_data_enabled": {
+            "default": true,
+            "description": "False unless an approved language-model provider covers every step (both the fast and the reasoning tier): analyses and matching then use published data only. Documents are read on the server either way and are analysed as soon as the fast tier is approved.",
+            "title": "Confidential Data Enabled",
+            "type": "boolean"
+          },
+          "confidential_data_notice": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Plain-language explanation shown when `confidential_data_enabled` is false.",
+            "title": "Confidential Data Notice"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Plain-language reason, shown by the UI when paused.",
+            "title": "Message"
+          },
+          "vault_upload_warning": {
+            "default": true,
+            "description": "True when the UI must warn users not to upload confidential material and require a tick before uploading (setting `VAULT_UPLOAD_WARNING`).",
+            "title": "Vault Upload Warning",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "accepting_runs"
+        ],
+        "title": "SystemStatusOut",
+        "type": "object"
+      },
       "TopicOut": {
         "description": "A topic with a weight between 0 and 1.",
         "properties": {
@@ -2758,6 +3602,18 @@
         ],
         "title": "ValidationError",
         "type": "object"
+      },
+      "ViewerStatus": {
+        "description": "What one participant is told. Never derived from the other side's decision (except ``mutual``).",
+        "enum": [
+          "awaiting_you",
+          "waiting_on_them",
+          "mutual",
+          "declined_by_you",
+          "expired"
+        ],
+        "title": "ViewerStatus",
+        "type": "string"
       },
       "WorkOut": {
         "description": "A work attributed to the researcher.",
@@ -3178,6 +4034,48 @@
         ]
       }
     },
+    "/api/v1/documents/delete-all": {
+      "post": {
+        "description": "Needs the typed word ``DELETE``. Extracted text and insights go at once, stored files right after.",
+        "operationId": "delete_all_documents_api_v1_documents_delete_all_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClearVaultIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClearedOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete every document in the vault",
+        "tags": [
+          "vault"
+        ]
+      }
+    },
     "/api/v1/documents/{document_id}": {
       "delete": {
         "description": "Extracted text and insights are removed immediately; the stored file is removed right after.",
@@ -3481,6 +4379,262 @@
         ]
       }
     },
+    "/api/v1/matches": {
+      "get": {
+        "description": "Newest first. Identity is shown only for mutual matches; a decline is never shown to the other side.",
+        "operationId": "list_matches_api_v1_matches_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 50,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatchListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Your match proposals",
+        "tags": [
+          "matching"
+        ]
+      }
+    },
+    "/api/v1/matches/{match_id}": {
+      "get": {
+        "description": "Anonymous card, or the revealed view with contact and joint ideas once both accepted.",
+        "operationId": "get_match_api_v1_matches__match_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "match_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Match Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "discriminator": {
+                    "mapping": {
+                      "anonymous": "#/components/schemas/AnonymousMatchView",
+                      "revealed": "#/components/schemas/RevealedMatchView"
+                    },
+                    "propertyName": "kind"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/AnonymousMatchView"
+                    },
+                    {
+                      "$ref": "#/components/schemas/RevealedMatchView"
+                    }
+                  ],
+                  "title": "Response Get Match Api V1 Matches  Match Id  Get"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not yours, unknown or hidden."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "One match",
+        "tags": [
+          "matching"
+        ]
+      }
+    },
+    "/api/v1/matches/{match_id}/decision": {
+      "post": {
+        "description": "Both sides must accept before names and contact details appear; withdraw takes an acceptance back.",
+        "operationId": "decide_api_v1_matches__match_id__decision_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "match_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Match Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "discriminator": {
+                    "mapping": {
+                      "anonymous": "#/components/schemas/AnonymousMatchView",
+                      "revealed": "#/components/schemas/RevealedMatchView"
+                    },
+                    "propertyName": "kind"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/AnonymousMatchView"
+                    },
+                    {
+                      "$ref": "#/components/schemas/RevealedMatchView"
+                    }
+                  ],
+                  "title": "Response Decide Api V1 Matches  Match Id  Decision Post"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not yours or unknown."
+          },
+          "409": {
+            "description": "Expired, closed, nothing to withdraw, or consent required."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Accept, decline or withdraw",
+        "tags": [
+          "matching"
+        ]
+      }
+    },
+    "/api/v1/matches/{match_id}/rating": {
+      "post": {
+        "description": "1 to 5 stars with optional reason chips; rating again replaces the earlier rating.",
+        "operationId": "rate_match_api_v1_matches__match_id__rating_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "match_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Match Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MatchRatingIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not a mutual match of yours."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Rate a mutual match",
+        "tags": [
+          "matching"
+        ]
+      }
+    },
     "/api/v1/me": {
       "get": {
         "description": "Return the signed-in account; creates it on the first call.",
@@ -3542,6 +4696,110 @@
         "summary": "Update matching and vault-signal consents",
         "tags": [
           "identity"
+        ]
+      }
+    },
+    "/api/v1/me/delete": {
+      "post": {
+        "description": "Block the account at once and erase it in the background (files, rows, sign-in). No undo.",
+        "operationId": "delete_me_api_v1_me_delete_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteAccountIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeletingOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete the account and everything it owns",
+        "tags": [
+          "identity"
+        ]
+      }
+    },
+    "/api/v1/me/notifications": {
+      "get": {
+        "description": "Defaults: runs and matches on, digest off.",
+        "operationId": "get_prefs_api_v1_me_notifications_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationPrefsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "E-mail preferences",
+        "tags": [
+          "notifications"
+        ]
+      },
+      "patch": {
+        "description": "Only the fields you send change.",
+        "operationId": "patch_prefs_api_v1_me_notifications_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationPrefsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationPrefsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Change e-mail preferences",
+        "tags": [
+          "notifications"
         ]
       }
     },
@@ -4113,6 +5371,28 @@
         "summary": "Stop a run",
         "tags": [
           "discovery"
+        ]
+      }
+    },
+    "/api/v1/system/status": {
+      "get": {
+        "description": "The shared daily budget is a pilot safeguard. When it is used up, runs resume after midnight UTC.",
+        "operationId": "system_status_api_v1_system_status_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemStatusOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Are new analyses accepted right now?",
+        "tags": [
+          "system"
         ]
       }
     },

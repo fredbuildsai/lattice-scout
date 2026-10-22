@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import json
+import os
 import signal
 import sys
 
@@ -15,6 +16,16 @@ _CODES = {
     "encrypted", "no_text_layer", "too_many_pages", "text_too_long", "corrupt_file", "zip_bomb",
     "extraction_timeout", "too_complex",
 }  # fmt: skip
+
+
+_ENV_KEEP = ("PATH", "LANG", "LC_ALL", "PYTHONHASHSEED", "VIRTUAL_ENV", "HOME")
+
+
+def _child_env() -> dict[str, str]:
+    """Minimal environment for the parser child: it reads untrusted files and must not see provider keys."""
+    env = {k: v for k in _ENV_KEEP if (v := os.environ.get(k)) is not None}
+    env.setdefault("PYTHONHASHSEED", "0")
+    return env
 
 
 class PdfDocxExtractor:
@@ -36,6 +47,7 @@ class PdfDocxExtractor:
             sys.executable, "-I", "-m", "scout.vault.adapters.extract_child",
             mime.value, str(self._max_pages), str(self._max_chars), str(self._memory), str(self._timeout),
             stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.DEVNULL,
+            env=_child_env(),
         )  # fmt: skip
         try:
             out, _ = await asyncio.wait_for(proc.communicate(data), timeout=self._timeout + 5)

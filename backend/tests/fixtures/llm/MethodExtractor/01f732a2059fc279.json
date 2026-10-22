@@ -1,0 +1,68 @@
+{
+  "methods": [
+    {
+      "method_id": "polymer_synthesis",
+      "new_label": null,
+      "source_refs": [
+        "work:W7164855134",
+        "work:W7170056032",
+        "work:W4411023486"
+      ],
+      "confidence": "high"
+    },
+    {
+      "method_id": "membrane_fabrication",
+      "new_label": null,
+      "source_refs": [
+        "work:W4394732631"
+      ],
+      "confidence": "high"
+    },
+    {
+      "method_id": "adsorption_testing",
+      "new_label": null,
+      "source_refs": [
+        "work:W4394732631",
+        "work:W2905157929"
+      ],
+      "confidence": "high"
+    },
+    {
+      "method_id": "photocatalysis",
+      "new_label": null,
+      "source_refs": [
+        "work:W7163127579",
+        "work:W7170056032",
+        "work:W4401793377"
+      ],
+      "confidence": "high"
+    },
+    {
+      "method_id": "electrochemistry",
+      "new_label": null,
+      "source_refs": [
+        "work:W4390531961"
+      ],
+      "confidence": "high"
+    },
+    {
+      "method_id": "machine_learning",
+      "new_label": null,
+      "source_refs": [
+        "work:W2950629258"
+      ],
+      "confidence": "high"
+    },
+    {
+      "method_id": null,
+      "new_label": "heterogeneous catalysis testing",
+      "source_refs": [
+        "work:W7164855134",
+        "work:W7164938406",
+        "work:W4416235139",
+        "work:W4416808046"
+      ],
+      "confidence": "medium"
+    }
+  ]
+}

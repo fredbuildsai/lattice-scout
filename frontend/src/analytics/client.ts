@@ -92,6 +92,7 @@ export class AnalyticsClient {
   private timer: ReturnType<typeof setInterval> | null = null
   private flushScheduled = false
   private readonly enabled: boolean
+  private optedOut = false
   private readonly now: () => number
   private readonly transport: Transport
   private readonly storage: Storage | undefined
@@ -105,6 +106,12 @@ export class AnalyticsClient {
     this.storage = deps.storage
     this.schedule = deps.schedule ?? idle
     this.appVersion = deps.appVersion ?? '0.1.0'
+  }
+
+  /** Sets the account's analytics opt-out; when true, queued events are discarded and new ones dropped. */
+  setOptOut(value: boolean): void {
+    this.optedOut = value
+    if (value) this.queue = []
   }
 
   /** Route pattern of the page currently shown (sent as `X-Page`). */
@@ -152,7 +159,7 @@ export class AnalyticsClient {
     properties: WireEvent['properties'],
     extra: Pick<WireEvent, 'page' | 'prev_page' | 'dwell_ms'>,
   ): void {
-    if (!this.enabled) return
+    if (!this.enabled || this.optedOut) return
     const t = this.now()
     const { id, rotated } = touchSession(t, this.storage)
     if (rotated && this.sessionId !== null) {

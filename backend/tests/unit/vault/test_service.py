@@ -188,3 +188,39 @@ async def test_delete_frees_the_hash_for_a_new_upload() -> None:
     await env.service().delete(OWNER, doc_id)
     again = await env.upload_uc().upload(OWNER, "again.pdf", DATA, True, None)
     assert again.created is True and again.document.id != doc_id
+
+
+# --------------------------------------------------------------------------- delete_all (M6 privacy tab)
+async def test_delete_all_marks_every_document_once_and_refreshes_the_matching_profile() -> None:
+    env = VaultEnv()
+    ids = [await _ready(env, data=pdf_bytes(make_pages(1, seed=s))) for s in (1, 2, 3)]
+    other = await _ready(env, data=pdf_bytes(make_pages(1, seed=9)), owner=OTHER)
+    svc = env.service()
+    assert await svc.delete_all(OWNER) == 3
+    assert await svc.list(OWNER) == []
+    assert len(await svc.list(OTHER)) == 1 and other is not None
+    assert {j.payload["document_id"] for j in _delete_jobs(env)} == {str(i) for i in ids}
+    assert [j for j in env.jobs.jobs.values() if j.kind == "matching.profile"]
+    assert [e.action for e in env.store.audit.entries].count("vault.cleared") == 1
+    assert await svc.delete_all(OWNER) == 0  # idempotent
+    assert [e.action for e in env.store.audit.entries].count("vault.cleared") == 1
+
+
+# --------------------------------------------------------------------------- daily upload limit (M6)
+async def test_upload_limit_per_day_counts_per_owner_and_resets_after_24_hours() -> None:
+    from scout.vault.application.upload import UploadLimitReached
+
+    env = VaultEnv()
+    for seed in (1, 2):
+        await env.upload(pdf_bytes(make_pages(1, seed=seed)), max_per_day=2)
+    with pytest.raises(UploadLimitReached) as info:
+        await env.upload(pdf_bytes(make_pages(1, seed=3)), max_per_day=2)
+    assert info.value.code == "upload_limit_reached" and info.value.http_status == 429
+    await env.upload(
+        pdf_bytes(make_pages(1, seed=1)), max_per_day=2
+    )  # the same bytes: returns the existing one
+    await env.upload(
+        pdf_bytes(make_pages(1, seed=4)), owner=OTHER, max_per_day=2
+    )  # another owner is unaffected
+    env.clock.advance(timedelta(hours=25))
+    await env.upload(pdf_bytes(make_pages(1, seed=3)), max_per_day=2)

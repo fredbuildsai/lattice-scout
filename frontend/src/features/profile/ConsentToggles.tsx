@@ -1,6 +1,7 @@
 import { useConsent, type Me } from './api'
 
-function Row({ id, title, hint, checked, disabled, dim, onChange }: { id: string; title: string; hint: string; checked: boolean; disabled: boolean; dim?: boolean; onChange: (v: boolean) => void }) {
+/** One labelled switch row (checkbox) with a hint, shared by consent and notification settings. */
+export function Row({ id, title, hint, checked, disabled, dim, onChange }: { id: string; title: string; hint: string; checked: boolean; disabled: boolean; dim?: boolean; onChange: (v: boolean) => void }) {
   return (
     <div className={`flex items-start justify-between gap-4 rounded-btn bg-subtle p-4 ${dim ? 'opacity-60' : ''}`}>
       <div>
@@ -22,7 +23,7 @@ export function ConsentToggles({ me }: { me: Me }) {
   return (
     <div className="space-y-3">
       <Row id="consent-matching" title="Suggest me to complementary researchers" hint="You stay anonymous. Contacts are shared only if you both accept." checked={me.consent_matching} disabled={consent.isPending} onChange={(v) => consent.mutate({ consent_matching: v })} />
-      <Row id="consent-vault" title="Also use topic signals from my private vault" hint="Never the files themselves. Requires matching." checked={me.consent_vault_signals} disabled={consent.isPending || !me.consent_matching} dim={!me.consent_matching} onChange={(v) => consent.mutate({ consent_vault_signals: v })} />
+      <Row id="consent-vault" title="Also use topic signals from my private vault" hint="Never the files themselves. After you both accept, joint ideas shown to both of you may draw on short statements from your documents (methods and aims), but only when the operator has approved an AI provider for confidential data. Requires matching." checked={me.consent_vault_signals} disabled={consent.isPending || !me.consent_matching} dim={!me.consent_matching} onChange={(v) => consent.mutate({ consent_vault_signals: v })} />
       {consent.isError && (
         <p role="alert" className="text-sm text-warm">
           Could not save your choice. Try again.

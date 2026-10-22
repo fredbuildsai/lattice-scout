@@ -12,12 +12,17 @@ nav:
       - Profile and claim: dev/profile.md
       - Private vault: dev/vault.md
       - Gap analysis: dev/discovery.md
+      - Matching: dev/matching.md
+      - Feedback: dev/feedback.md
+      - Deletion: dev/erasure.md
+      - Notifications: dev/notifications.md
       - Configuration: dev/configuration.md
   - User guide:
       - user/index.md
       - Getting started: user/getting-started.md
       - Private vault: user/vault.md
       - Find opportunities: user/find-opportunities.md
+      - Matching: user/matching.md
 validation:
   links:
     not_found: warn

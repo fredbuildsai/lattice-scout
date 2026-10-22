@@ -239,6 +239,71 @@ feedback = Table(
     Column("id", UUID(as_uuid=True), primary_key=True),
     Column("author_id", UUID(as_uuid=True), ForeignKey("account.id"), nullable=False),
     Column("target_type", Text, nullable=False), Column("target_id", UUID(as_uuid=True), nullable=False),
-    Column("rating", Text, nullable=False), Column("reasons", ARRAY(Text), nullable=False),
+    Column("rating", Text), Column("stars", Integer), Column("reasons", ARRAY(Text), nullable=False),
     Column("comment", Text), ts("created_at", nullable=False), ts("updated_at", nullable=False),
+)  # fmt: skip
+
+match_proposal = Table(
+    "match_proposal", metadata,
+    Column("id", UUID(as_uuid=True), primary_key=True),
+    Column("a_id", UUID(as_uuid=True), ForeignKey("account.id")),
+    Column("b_id", UUID(as_uuid=True), ForeignKey("account.id")),
+    Column("field", Text, nullable=False), Column("score", Float, nullable=False),
+    Column("score_basis", JSONB, nullable=False), Column("rationale", JSONB, nullable=False),
+    Column("a_public", JSONB, nullable=False), Column("b_public", JSONB, nullable=False),
+    Column("state", Text, nullable=False), Column("a_decision", Text), Column("b_decision", Text),
+    ts("a_decided_at"), ts("b_decided_at"), Column("declined_by", Text), Column("close_reason", Text),
+    Column("never_similar_by", Text), ts("created_at", nullable=False), ts("expires_at", nullable=False),
+    ts("revealed_at"), ts("closed_at"), Column("ideas_status", Text, nullable=False),
+    Column("ideas_prompt_version", Text), ts("updated_at", nullable=False),
+)  # fmt: skip
+
+joint_idea = Table(
+    "joint_idea", metadata,
+    Column("id", UUID(as_uuid=True), primary_key=True), Column("match_id", UUID(as_uuid=True), nullable=False),
+    Column("match_state", Text, nullable=False), Column("ord", Integer, nullable=False),
+    Column("title", Text, nullable=False), Column("question", Text, nullable=False),
+    Column("uses_from_a", JSONB, nullable=False), Column("uses_from_b", JSONB, nullable=False),
+    Column("first_step", Text, nullable=False), Column("possible_output", Text, nullable=False),
+    Column("prompt_version", Text), Column("model", Text), ts("created_at", nullable=False),
+)  # fmt: skip
+
+match_block = Table(
+    "match_block", metadata,
+    Column("account_id", UUID(as_uuid=True), ForeignKey("account.id"), primary_key=True),
+    Column("blocked_account_id", UUID(as_uuid=True), ForeignKey("account.id"), primary_key=True),
+    Column("match_id", UUID(as_uuid=True)), ts("created_at", nullable=False),
+)  # fmt: skip
+
+match_profile = Table(
+    "match_profile", metadata,
+    Column("account_id", UUID(as_uuid=True), ForeignKey("account.id"), primary_key=True),
+    Column("researcher_id", UUID(as_uuid=True), ForeignKey("researcher.id"), nullable=False),
+    Column("field", Text, nullable=False), Column("region", Text, nullable=False),
+    Column("career_band", Text, nullable=False), Column("activity", Float, nullable=False),
+    Column("eligible", Boolean, nullable=False), Column("topics_hash", Text, nullable=False),
+    Column("methods_hash", Text, nullable=False), Column("vocabulary_version", Text, nullable=False),
+    Column("methods_prompt_version", Text, nullable=False), Column("uses_vault_signals", Boolean, nullable=False),
+    ts("computed_at", nullable=False), ts("created_at", nullable=False), ts("updated_at", nullable=False),
+)  # fmt: skip
+
+match_profile_topic = Table(
+    "match_profile_topic", metadata,
+    Column("account_id", UUID(as_uuid=True), ForeignKey("match_profile.account_id"), primary_key=True),
+    Column("topic_id", Text, primary_key=True), Column("name", Text, nullable=False),
+    Column("weight", Float, nullable=False),
+)  # fmt: skip
+
+match_profile_method = Table(
+    "match_profile_method", metadata,
+    Column("account_id", UUID(as_uuid=True), ForeignKey("match_profile.account_id"), primary_key=True),
+    Column("method_id", Text, primary_key=True), Column("weight", Float, nullable=False),
+    Column("source", Text, primary_key=True),
+)  # fmt: skip
+
+match_method_proposal = Table(
+    "match_method_proposal", metadata,
+    Column("id", UUID(as_uuid=True), primary_key=True),
+    Column("account_id", UUID(as_uuid=True), ForeignKey("account.id"), nullable=False),
+    Column("label", Text, nullable=False), Column("source_refs", ARRAY(Text), nullable=False), ts("created_at", nullable=False),
 )  # fmt: skip

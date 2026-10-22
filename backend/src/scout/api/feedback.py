@@ -9,6 +9,7 @@ from fastapi import APIRouter, Depends, Request
 
 from scout.api.deps import current_account, get_container
 from scout.api.schemas.feedback import FeedbackIn, FeedbackOut
+from scout.feedback.application.give_feedback import UNSET
 from scout.feedback.domain.feedback import Feedback, Rating, Reason, TargetType
 from scout.identity.domain.account import Account
 from scout.shared import NotFound
@@ -16,9 +17,9 @@ from scout.shared import NotFound
 router = APIRouter(prefix="/api/v1", tags=["feedback"])
 
 
-def _out(f: Feedback) -> FeedbackOut:
+def feedback_out(f: Feedback) -> FeedbackOut:
     return FeedbackOut(
-        target_type=f.target_type.value, target_id=f.target_id, rating=f.rating.value,
+        target_type=f.target_type.value, target_id=f.target_id, rating=f.rating.value if f.rating else None, stars=f.stars,
         reasons=[r.value for r in f.reasons], comment=f.comment, updated_at=f.updated_at,
     )  # fmt: skip
 
@@ -36,10 +37,11 @@ async def give_feedback(
 ) -> FeedbackOut:
     """Thumbs up or down with optional reason chips and a short comment; the latest rating replaces the earlier one."""
     fb = await get_container(request).give_feedback.execute(
-        account.id, TargetType(body.target_type), body.target_id, Rating(body.rating),
-        [Reason(r) for r in body.reasons], body.comment,
+        account.id, TargetType(body.target_type), body.target_id, Rating(body.rating) if body.rating else None,
+        None if body.reasons is None else [Reason(r) for r in body.reasons],
+        body.comment if "comment" in body.model_fields_set else UNSET, body.stars,
     )  # fmt: skip
-    return _out(fb)
+    return feedback_out(fb)
 
 
 @router.get(
@@ -58,4 +60,4 @@ async def my_feedback(
     fb = await get_container(request).give_feedback.mine(account.id, TargetType(target_type), target_id)
     if fb is None:
         raise NotFound("no_feedback")
-    return _out(fb)
+    return feedback_out(fb)

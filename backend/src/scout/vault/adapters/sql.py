@@ -15,6 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from scout.adapters.persistence import models as m
 from scout.adapters.persistence.audit import SqlAuditLog
+from scout.adapters.persistence.models import audit_log
 from scout.adapters.persistence.uow import SqlUnitOfWork
 from scout.ports.audit import AuditLog
 from scout.shared import AccountId
@@ -119,6 +120,16 @@ class SqlDocumentRepo:
         )
         return int(n or 0)
 
+    async def count_uploaded_since(self, owner_id: AccountId, since: datetime) -> int:
+        """Count ``document.uploaded`` audit rows, so upload-delete loops do not reset the limit."""
+        a = audit_log
+        n = await self._s.scalar(
+            select(func.count())
+            .select_from(a)
+            .where(a.c.actor_id == owner_id, a.c.action == "document.uploaded", a.c.at >= since)
+        )
+        return int(n or 0)
+
     async def add(self, document: Document) -> None:
         """Insert; a lost race on the unique index becomes ``DuplicateDocument``."""
         try:
@@ -160,6 +171,7 @@ class SqlDocumentRepo:
             ),  # fmt: skip
             deleting=await ids(t.c.status == "deleting", t.c.updated_at < older_than),
             stalled=await ids(t.c.status.in_(("extracting", "analysing")), t.c.updated_at < stalled_before),
+            awaiting=await ids(t.c.status == "awaiting_approved_provider"),
         )
 
 

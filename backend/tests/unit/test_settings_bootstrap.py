@@ -24,6 +24,7 @@ def test_offline_defaults() -> None:
 
 REAL = {
     "llm_backend": "openai_direct", "openai_api_key": "k", "literature_backend": "openalex",
+    "llm_confidential_authorized_providers": "openai",
     "email_provider": "resend", "email_api_key": "k", "email_from": "a@b.c",
     "storage_backend": "supabase", "supabase_url": "https://x.supabase.co", "supabase_service_role_key": "k",
 }  # fmt: skip
@@ -46,7 +47,17 @@ def test_prod_refuses_each_offline_backend(key: str, value: str, needle: str) ->
 
 
 def test_prod_accepts_real_backends() -> None:
-    assert _s(app_env="prod", auth_mode="supabase", **REAL).app_env == "prod"
+    assert (
+        _s(
+            app_env="prod",
+            auth_mode="supabase",
+            audit_hash_key="k" * 32,
+            cors_origins=["https://app.example.edu"],
+            app_base_url="https://app.example.edu",
+            **REAL,
+        ).app_env
+        == "prod"
+    )
 
 
 def test_every_settings_field_is_in_env_example() -> None:
@@ -90,3 +101,63 @@ def test_supabase_auth_needs_url_for_issuer() -> None:
 def test_prod_refuses_local_storage() -> None:
     with pytest.raises(ValidationError, match="STORAGE_BACKEND=local"):
         _s(app_env="prod", auth_mode="supabase", **{**REAL, "storage_backend": "local"})
+
+
+PROD_OK = {**REAL, "auth_mode": "supabase", "audit_hash_key": "k" * 32, "app_base_url": "https://app.example.edu",
+           "cors_origins": ["https://app.example.edu"]}  # fmt: skip
+
+
+@pytest.mark.parametrize(
+    ("override", "needle"),
+    [({"app_base_url": "http://localhost:5173"}, "APP_BASE_URL"), ({"app_base_url": "http://app.example.edu"}, "APP_BASE_URL"),
+     ({"audit_hash_key": "dev-audit-hash-key-change-me"}, "AUDIT_HASH_KEY")],
+)  # fmt: skip
+def test_prod_refuses_dev_defaults_that_would_leak_or_mislink(override: dict[str, str], needle: str) -> None:
+    assert _s(app_env="prod", **PROD_OK).app_env == "prod"
+    with pytest.raises(ValidationError, match=needle):
+        _s(app_env="prod", **{**PROD_OK, **override})
+
+
+ROUTER = {**PROD_OK, "llm_backend": "llm_router", "mistral_api_key": "k"}
+
+
+def test_prod_with_llm_router_and_no_authorized_provider_starts_with_a_warning() -> None:
+    """ADR 016: no refusal; runs go ahead on published data and the warning says so (no secrets in it)."""
+    st = _s(app_env="prod", **{**ROUTER, "llm_confidential_authorized_providers": ""})
+    assert st.app_env == "prod"
+    [(event, level, detail)] = st.confidential_startup_events(allowed=False)
+    assert (event, level) == ("confidential_data_disabled", "warning") and "published data only" in detail
+    assert "k" * 8 not in detail
+
+
+def test_the_warning_follows_the_policy_that_was_built_not_the_settings() -> None:
+    """Providers listed but no deployment marked authorized: the adapter says no, so the warning is logged."""
+    st = _s(app_env="prod", **{**ROUTER, "llm_confidential_authorized_providers": "mistral"})
+    assert st.confidential_startup_events(allowed=True) == []
+    [(event, _, detail)] = st.confidential_startup_events(allowed=False)
+    assert event == "confidential_data_disabled" and "mark deployments authorized" in detail
+
+
+def test_allow_any_waiver_is_loud_in_production_and_fake_is_silent() -> None:
+    waived = {
+        **ROUTER,
+        "llm_confidential_authorized_providers": "",
+        "llm_confidential_allow_any_provider": True,
+    }
+    [(event, level, detail)] = _s(app_env="prod", **waived).confidential_startup_events(allowed=True)
+    assert (event, level) == ("confidential_allow_any", "error") and "ANY configured provider" in detail
+    [(_, dev_level, _)] = _s(
+        app_env="dev", **{k: v for k, v in waived.items() if k != "auth_mode"}
+    ).confidential_startup_events(True)
+    assert dev_level == "warning"
+    assert _s(app_env="dev").confidential_startup_events(allowed=False) == []  # fake backend
+
+
+def test_legacy_vault_env_names_are_still_read(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("LLM_VAULT_SANCTIONED_PROVIDERS", "Mistral, groq")
+    assert _s(app_env="dev").confidential_authorized_providers == frozenset({"mistral", "groq"})
+
+
+def test_vault_upload_warning_defaults_on_and_can_be_switched_off() -> None:
+    assert _s().vault_upload_warning is True
+    assert _s(vault_upload_warning=False).vault_upload_warning is False

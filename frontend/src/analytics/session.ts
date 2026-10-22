@@ -55,3 +55,12 @@ export function touchSession(
 export function peekSessionId(storage: Storage = sessionStorage): string {
   return read(storage)?.id ?? touchSession(Date.now(), storage).id
 }
+
+/** Forget the session id (sign-out, account deletion): the next event starts a new, unlinked session. */
+export function clearSession(storage: Storage = sessionStorage): void {
+  try {
+    storage.removeItem(KEY)
+  } catch {
+    /* ignore */
+  }
+}

@@ -12,6 +12,7 @@ from scout.discovery.domain.budget import RunBudget, RunSpend
 from scout.discovery.domain.enums import RunFailure, RunStatus, RunStep, StepStatus
 from scout.shared import AccountId, AggregateRoot, Conflict, DomainError, InvalidStateTransition
 
+PUBLISHED_ONLY = "published_only"
 STEP_ORDER: tuple[RunStep, ...] = tuple(RunStep)
 STEP_WEIGHTS: dict[RunStep, int] = {
     RunStep.PLAN_QUERIES: 5, RunStep.RETRIEVE: 15, RunStep.GROUP_BY_TOPIC: 10, RunStep.COVERAGE: 10,
@@ -104,6 +105,9 @@ class RunInputs:
     insight_refs: tuple[str, ...] = ()
     year_from: int | None = None
     novelty_from: int | None = None
+    basis: str = (
+        "full"  # "published_only": vault material was left out because no endpoint is authorized (ADR 016)
+    )
 
 
 @dataclass

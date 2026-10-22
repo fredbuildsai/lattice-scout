@@ -62,6 +62,17 @@ class LocalFileStorage:
         await asyncio.to_thread(shutil.rmtree, directory, True)
         return count
 
+    async def list_prefix(self, prefix: str) -> list[str]:
+        """Sorted keys under ``prefix``."""
+        directory = self._path(prefix)
+        if not directory.is_dir():
+            return []
+        return sorted(
+            p.relative_to(self._root).as_posix()
+            for p in directory.rglob("*")
+            if p.is_file() and not p.name.startswith(".tmp-")
+        )
+
     async def exists(self, key: str) -> bool:
         """Whether the object exists."""
         return self._path(key).is_file()

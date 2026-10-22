@@ -28,7 +28,9 @@ class SweepVault:
         interval_minutes: int = 10,
         stalled_after_minutes: int = 60,
         limit: int = 100,
+        provider_ready: Callable[[], bool] = lambda: False,
     ) -> None:
+        self._provider_ready = provider_ready
         self._uow, self._jobs, self._clock = uow, jobs, clock
         self._interval, self._stalled, self._limit = interval_minutes, stalled_after_minutes, limit
 
@@ -61,7 +63,7 @@ class SweepVault:
                 now - period, now - timedelta(minutes=self._stalled), self._limit
             )
             owners: dict[UUID, str | None] = dict.fromkeys(
-                (*stale.uploaded, *stale.purge, *stale.deleting, *stale.stalled)
+                (*stale.uploaded, *stale.purge, *stale.deleting, *stale.stalled, *stale.awaiting)
             )
             for doc_id in owners:
                 doc = await uow.documents.get_for_update(doc_id)
@@ -70,6 +72,11 @@ class SweepVault:
             await self._enqueue("vault.ingest", str(doc_id), owners[doc_id], 4)
         for doc_id in stale.purge:
             await self._enqueue("vault.ingest", str(doc_id), owners[doc_id], 4)
+        requeued = 0
+        if self._provider_ready():  # an authorized endpoint exists now: analyse the parked documents
+            for doc_id in stale.awaiting:
+                await self._enqueue("vault.ingest", str(doc_id), owners[doc_id], 4)
+                requeued += 1
         for doc_id in stale.deleting:
             await self._enqueue("vault.delete", str(doc_id), owners[doc_id], 8)
         failed = 0
@@ -77,7 +84,7 @@ class SweepVault:
             failed += await fail_document(self._uow, self._clock, doc_id, "ingest_stalled")
         counts: dict[str, JsonValue] = {
             "uploaded": len(stale.uploaded), "purge": len(stale.purge), "deleting": len(stale.deleting),
-            "stalled": failed,
+            "stalled": failed, "awaiting_requeued": requeued,
         }  # fmt: skip
         log.info("vault.sweep", **counts)
         return counts

@@ -3,7 +3,7 @@ import { useAuth } from '../../auth/AuthProvider'
 import { Icon, LogoMark } from '../../ui/icons'
 
 const FEATURES: Array<{ icon: 'lock' | 'sparkle' | 'people'; tone: string; title: string; body: string }> = [
-  { icon: 'lock', tone: 'bg-accent-50 text-accent', title: 'A private vault for what never got published', body: 'Word, PDF, spreadsheets, slides, notebook photos. Never shared, never used to train models.' },
+  { icon: 'lock', tone: 'bg-accent-50 text-accent', title: 'A private vault for what never got published', body: 'Word, PDF, spreadsheets, slides, notebook photos. Never shared with other researchers. Scout does not train models on it.' },
   { icon: 'sparkle', tone: 'bg-scout-50 text-scout', title: 'An AI research scout with a team of sub-agents', body: 'Reads your files, maps the field, finds white spots and synergies with your published work. Every idea cites its sources.' },
   { icon: 'people', tone: 'bg-teal-50 text-teal', title: 'Matches with complementary researchers', body: 'Anonymous until you both say yes. Only then are contacts and joint opportunities revealed.' },
 ]
@@ -48,7 +48,7 @@ export function SignInPage() {
         <div className="my-8 md:my-auto">
           <h1 className="max-w-[560px] font-serif text-4xl font-semibold leading-tight md:text-5xl">Find the paper hiding in your drawer.</h1>
           <p className="mt-5 max-w-[560px] text-lg text-ink-2">
-            Upload unpublished results, funded and rejected grants, and proposals. Scout reads them against the literature and your lab&apos;s papers, and shows you what&apos;s worth doing next — and who could do it with you.
+            Add your publications and, if you wish, documents you are happy to share with Scout (no confidential material in this pilot). Scout reads them against the literature and your lab&apos;s papers, and shows you what&apos;s worth doing next — and who could do it with you.
           </p>
           <ul className="mt-8 hidden max-w-[560px] space-y-5 md:block">
             {FEATURES.map((f) => (

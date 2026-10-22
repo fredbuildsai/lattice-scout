@@ -14,6 +14,7 @@ from scout.discovery.domain.budget import RunBudget
 from scout.discovery.domain.run import AnalysisRun, RunDocument
 from scout.discovery.ports.repos import DiscoveryUnitOfWork, RunInProgress
 from scout.discovery.ports.sources import ProfileSource, VaultSource
+from scout.ports.budget import GlobalBudgetPort
 from scout.ports.jobs import JobQueuePort, JobSpec
 from scout.shared import AccountId, Clock, Conflict, IdGenerator, NotFound, RateLimited, ValidationFailed
 
@@ -72,9 +73,10 @@ class StartAnalysisRun:
         clock: Clock,
         ids: IdGenerator,
         cfg: StartConfig,
+        budget: GlobalBudgetPort | None = None,
     ) -> None:
         self._uow, self._jobs, self._profiles, self._vault = uow, jobs, profiles, vault
-        self._clock, self._ids, self._cfg = clock, ids, cfg
+        self._clock, self._ids, self._cfg, self._budget = clock, ids, cfg, budget
 
     async def start(
         self, owner_id: AccountId, document_ids: Sequence[UUID], session_id: UUID | None = None
@@ -88,7 +90,10 @@ class StartAnalysisRun:
             ProfileRequired: no claimed profile with a finished import.
             RunInProgress: the owner already has an active run.
             RunLimitReached, DailyBudgetReached: the daily caps.
+            ServicePaused: the global daily spend cap is reached.
         """
+        if self._budget is not None:
+            await self._budget.ensure_open()
         ids = tuple(document_ids)
         if len(ids) > MAX_DOCUMENTS or len(set(ids)) != len(ids):
             raise ValidationFailed("Attach at most 10 different documents", extra={"max": MAX_DOCUMENTS})

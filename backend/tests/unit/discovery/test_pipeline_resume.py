@@ -69,7 +69,6 @@ MIDSTEP = {
     "group_by_topic@second-label": Kill(RunStep.GROUP_BY_TOPIC, agent_call=3),
     "coverage@tagger": Kill(RunStep.COVERAGE, agent_call=5),
     "measure_novelty@first-count": Kill(RunStep.MEASURE_NOVELTY, lit=("count", 1)),
-    "measure_novelty@second-count": Kill(RunStep.MEASURE_NOVELTY, lit=("count", 2)),
     "analyse@GapAnalyst": Kill(RunStep.ANALYSE, agent_call=6),
     "verify@first-critic": Kill(RunStep.VERIFY, agent_call=7),
     "verify@second-critic": Kill(RunStep.VERIFY, agent_call=8),
@@ -147,14 +146,9 @@ async def test_a_kill_in_the_second_retrieve_wave_keeps_the_first_wave() -> None
     assert run.step_state[RunStep.RETRIEVE].data["done"] == ["q1", "q2", "q3", "q4", "q5", "q6"]
 
 
-@pytest.mark.parametrize("n", [1, 2])
-async def test_a_kill_while_counting_recounts_only_the_unfinished_wave(n: int) -> None:
-    key = "measure_novelty@first-count" if n == 1 else "measure_novelty@second-count"
-    _, _, _, resumed = await killed_and_resumed(MIDSTEP[key])
-    assert [x for x in resumed if x == "count"] == [
-        "count",
-        "count",
-    ]  # one wave of two probes, none committed
+async def test_a_kill_while_counting_recounts_only_the_unfinished_wave() -> None:
+    _, _, _, resumed = await killed_and_resumed(MIDSTEP["measure_novelty@first-count"])
+    assert [x for x in resumed if x == "count"] == ["count"]  # one wave of one probe, none committed
 
 
 async def test_a_kill_after_the_first_critic_does_not_repeat_it() -> None:
@@ -344,9 +338,9 @@ async def test_a_second_begin_execution_between_steps_stops_the_first_runner(ste
     assert row_ids(w.store, run.id) == row_ids(clean.store, clean_run.id)
 
 
-@pytest.mark.parametrize("n", range(1, 13))
+@pytest.mark.parametrize("n", range(1, 12))
 async def test_losing_the_lease_mid_step_stops_the_stale_runner_without_a_write(n: int) -> None:
-    """``ledger.on_charge`` bumps the generation during the n-th charge of a clean run (8 model + 4 literature)."""
+    """``ledger.on_charge`` bumps the generation during the n-th charge of a clean run (8 model + 3 literature)."""
     clean, clean_run = await finished_world()
     w = World()
     run = await w.start()

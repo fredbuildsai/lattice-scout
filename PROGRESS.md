@@ -1,7 +1,7 @@
 # Progress
 
 Merge policy: stack
-Current milestone: M5 — Matching (starting). M4 built (Opportunities UX + feedback), review pending (skipped for cost). M3 done and approved. M2 done and approved after round 2, awaiting human sign-off. M0 and M1 done and awaiting human sign-off; PR #1 open (M1 and M2 added to the same branch)
+Current milestone: M6 done (slices A-E; review pending, skipped by user decision; independent security review still to run). Next: M7 Pilot launch (build only). M5 done (review pending, skipped by user decision). Next: M6 Notifications, privacy, hardening. M4 built (Opportunities UX + feedback), review pending (skipped for cost). M3 done and approved. M2 done and approved after round 2, awaiting human sign-off. M0 and M1 done and awaiting human sign-off; PR #1 open (M1 and M2 added to the same branch)
 Current branch: claude/zealous-curie-7m18vd (harness-designated; used instead of m0-foundations)
 Last session: 2026-10-20 s01 — M0, M1 and M2 built; M2 done and approved by the reviewer
 
@@ -62,6 +62,11 @@ Last session: 2026-10-20 s01 — M0, M1 and M2 built; M2 done and approved by th
 ## M4 — Opportunities UX + feedback
 ## M5 — Matching
 ## M6 — Notifications, privacy, hardening
+- [x] Slice A: account and vault deletion backend, scan test (docs/design/M6-deletion.md)
+- [x] Slice B: upload rate limit, global daily budget guard, `GET /system/status` (UI banner comes with slice C)
+- [x] Slice C: privacy tab, deletion dialogs, pause banner (notification preferences move to slice D with the emails)
+- [x] Slice D: notifications and emails (console sender by default; Resend only with keys; magic-link template in docs/EMAIL_TEMPLATES.md)
+- [x] Slice E: RLS, headers, CORS, retention, funnel/ops views, analytics opt-out, audit and eval workflows (docs/SECURITY.md, docs/OPERATIONS.md)
 ## M7 — Pilot launch (build only)
 ## M8 — Documentation
 
@@ -78,11 +83,31 @@ Last session: 2026-10-20 s01 — M0, M1 and M2 built; M2 done and approved by th
 - M2 not verified live: Supabase storage (`needs_supabase`) and real LLM output. Docling is deferred (BACKLOG).
 
 ## Open blockers
+- B6 (owner, not blocking, ADR 016): confirm a provider's data-use terms, then mark its deployments `authorized: true` and list it in `LLM_CONFIDENTIAL_AUTHORIZED_PROVIDERS`. Until then Scout runs on published data only and says so; production starts with a warning
 - B2 live services, B3 llm-router response-text ledger (both have fallbacks; see docs/BLOCKERS.md)
 
 ## M4 — Opportunities UX + feedback
 - [x] Backend `feedback` context: `GiveFeedback`, `POST/GET /feedback`, migration 0007, `analytics.v_feedback_summary` (DECISIONS 75-76; F-29 closed)
 - [x] Frontend: run page, W5 list with ideas chart, W6 detail, shared `<Claim>`/`<SourceMarker>`, thumbs and reason chips, Home briefing, "Analyse with Scout" in the vault
 - [x] Docs: CHANGELOG, journal
-- [ ] reviewer: pending (skipped by user decision, to be run later)
+- [x] reviewer: done 2026-10-21 (docs/reviews/M4.md); blocking and should-fix findings fixed 2026-10-24 (Resolution section)
 - Known gaps (frontend): kind counts computed client-side; no year histogram, matching calls, Lattice Press draft or objection status chips (backend has no data for them).
+
+## M5 — Matching
+- [x] architect design note (docs/design/M5-matching.md, DECISIONS 77-86)
+- [x] Slice A: domain (proposal state machine, reveal rule, scoring, ids), Hypothesis tests, migration 0008, SQL adapters, reveal integration tests
+- [x] Slice B: vocabulary, prompts 1.0.1/1.1.0 and fixtures, profiles, ComputeMatches, DecideOnMatch, RevealMatch, nightly, endpoints, fakes, feedback stars (migrations 0009-0010)
+- [x] Slice C: seed_dev.py (`make seed`), frontend W7/M7/M8 + Home teaser, docs (README, user and dev pages, CHANGELOG)
+- [x] reviewer: done (docs/reviews/M5.md); findings fixed 2026-10-24 except score calibration (F-39)
+
+### Notes for next session (M5 slice B, not started; budget ran out)
+- Start from docs/design/M5-matching.md §9 slice B. Existing prompts to bump: prompts/{MethodExtractor,MatchExplainer,JointIdeas}.md (inputs without names/region/band, DECISIONS 77-86).
+- Still to build: `config/methods.yaml` + loader, `matching/domain/agent_io.py`, `MatchAgentsPort` + `AgentsMatching`, ACL sources, `ComputeResearcherProfile`, `ComputeMatches`, nightly job, `DecideOnMatch`, `RevealMatch`, `MatchingService`, in-memory fakes (tests/fakes/matching.py), feedback `stars`, `api/matches.py`, migration 0009 (profile tables, candidate views), worker handlers, bootstrap, settings, `make gen-client`.
+- Slice C: `seed_dev.py`, W7/M7/M8 frontend, docs. Reviewer skipped by user decision (M4 and M5 review pending).
+
+- M5 known issues for the review: the MatchesPage privacy copy says others see only field, region and career stage, but the card also shows shared topics and method texts (fix copy or card); ComputeMatches passes no titles to the anonymity guard and stores only the explainer's `for_a` text; no pagination UI on /matches; no e2e docs screenshots.
+
+## Review follow-up (2026-10-24)
+- Fixed the blocking and should-fix findings of the M4, M5 and M6 reviews (docs/reviews/*.md, Resolution sections; docs/journal/2026-10-24-s02.md). New: ADR 015, DECISIONS 106-119, migrations 0015-0016, Playwright specs `opportunities`, `matches`, `privacy`, `test_matching_flow_pg.py`.
+- To run the e2e specs: API and worker on the dev database (`make db migrate seed`, `make api`, `make worker`), then `cd frontend && PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers pnpm e2e`. Privacy spec seeds one expensive `llm_call` row with psql and removes it; the API caches the budget for 30 s.
+- Deferred (BACKLOG): F-49 to F-53, nits in F-50 to F-52, final `reviewer` pass before M7.

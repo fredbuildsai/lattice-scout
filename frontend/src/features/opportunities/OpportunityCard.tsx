@@ -1,6 +1,6 @@
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { track } from '../../analytics/client'
+import { BasisNote } from '../runs/BasisNote'
 import { Claim } from './Claim'
 import { Thumbs } from './Thumbs'
 import { useSetStatus, type OpportunityCard as Card } from './api'
@@ -18,7 +18,6 @@ export function KindBadge({ kind }: { kind: string }) {
  */
 export function OpportunityCard({ card, position, compact = false }: { card: Card; position: number; compact?: boolean }) {
   const set = useSetStatus()
-  const [rating, setRating] = useState<'up' | 'down' | null>(null)
   const k = kindInfo(card.kind)
   const saved = card.status === 'saved'
   const dismissed = card.status === 'dismissed'
@@ -40,7 +39,8 @@ export function OpportunityCard({ card, position, compact = false }: { card: Car
         )}
       </div>
       <h3 className="mt-2 font-serif text-lg font-semibold leading-snug md:text-xl">{card.title}</h3>
-      {card.why && <p className="mt-2 text-sm leading-relaxed text-ink-2"><Claim claim={card.why} opportunityId={card.id} /></p>}
+      {card.why && <div className="mt-2 text-sm leading-relaxed text-ink-2"><Claim claim={card.why} opportunityId={card.id} /></div>}
+      {!compact && <BasisNote note={card.basis_note} />}
       <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-line pt-3">
         <Link
           to={`/opportunities/${card.id}`}
@@ -76,7 +76,7 @@ export function OpportunityCard({ card, position, compact = false }: { card: Car
         )}
         {!compact && (
           <div className="ml-auto">
-            <Thumbs opportunityId={card.id} rating={rating} onRated={setRating} />
+            <Thumbs opportunityId={card.id} />
           </div>
         )}
       </div>

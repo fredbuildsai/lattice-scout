@@ -74,10 +74,10 @@ export function useFeedback(opportunityId: string) {
 export function useGiveFeedback(opportunityId: string) {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (v: { rating: 'up' | 'down'; reasons: string[] }) =>
+    mutationFn: (v: { rating: 'up' | 'down'; reasons?: string[] }) =>
       apiJson<Feedback>('/api/v1/feedback', {
         method: 'POST',
-        body: JSON.stringify({ target_type: 'opportunity', target_id: opportunityId, rating: v.rating, reasons: v.reasons.slice(0, 5) }),
+        body: JSON.stringify({ target_type: 'opportunity', target_id: opportunityId, rating: v.rating, ...(v.reasons ? { reasons: v.reasons.slice(0, 5) } : {}) }),
       }),
     onSuccess: (fb, v) => {
       track('feedback_given', { target_type: 'opportunity', target_id: opportunityId, rating: v.rating })

@@ -42,12 +42,35 @@ class ScrubExceptions(logging.Filter):
         return True
 
 
+_PROVIDER_LOGGERS = ("llmrouter_free", "llmrouter_free.router", "llmrouter_free.store", "LiteLLM", "litellm")
+
+
+class ScrubProviderText(ScrubExceptions):
+    """Router and provider library records keep their route, deployment and outcome, never the provider's text.
+
+    A provider error can echo the generated answer or the prompt (for example a JSON-validation 400 quoting
+    ``failed_generation``). The router formats its warning as ``"<outcome> on route 'r' via d: <error text>"``: the
+    text after the first colon and the arguments that fill it are dropped (ADR 016, privacy).
+    """
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        """Cut the record's message at the first colon, with the arguments that belong to the cut part."""
+        super().filter(record)
+        if record.args:
+            head = str(record.msg).split(":", 1)[0]
+            record.msg = head
+            args = record.args if isinstance(record.args, tuple) else (record.args,)
+            record.args = args[: head.count("%")]
+        return True
+
+
 def install_exception_scrubber() -> None:
-    """Attach the scrubber to the root logger and to uvicorn's loggers (idempotent)."""
-    for name in ("", "uvicorn", "uvicorn.error", "starlette", "fastapi"):
+    """Attach the scrubbers to the root logger, uvicorn's and the LLM router's loggers (idempotent)."""
+    for name in ("", "uvicorn", "uvicorn.error", "starlette", "fastapi", *_PROVIDER_LOGGERS):
         logger = logging.getLogger(name)
-        if not any(isinstance(f, ScrubExceptions) for f in logger.filters):
-            logger.addFilter(ScrubExceptions())
+        flt: type[ScrubExceptions] = ScrubProviderText if name in _PROVIDER_LOGGERS else ScrubExceptions
+        if not any(type(f) is flt for f in logger.filters):
+            logger.addFilter(flt())
         for handler in logger.handlers:
             if not any(isinstance(f, ScrubExceptions) for f in handler.filters):
                 handler.addFilter(ScrubExceptions())

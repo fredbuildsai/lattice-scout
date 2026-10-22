@@ -12,7 +12,12 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field, JsonValue, model_validator
 
 from scout.shared import InfrastructureError
+from scout.shared.confidential import (
+    DataClass,
+)
 from scout.shared.context import RequestContext
+
+__all__ = ["DataClass"]  # re-exported: adapters and tests import it from the LLM port
 
 
 class ModelTier(StrEnum):
@@ -34,6 +39,9 @@ class AgentSpec[OutT: BaseModel]:
     temperature: float = 0.2
     max_output_tokens: int = 4096
     strict_schema: bool = True
+    data_class: DataClass = (
+        DataClass.CONFIDENTIAL
+    )  # fail closed: only an agent that never sees private text is published
 
 
 class CallContext(BaseModel):
@@ -109,6 +117,17 @@ class LLMUnavailable(InfrastructureError):
     title = "Language model unavailable"
 
 
+class ConfidentialDataRefused(InfrastructureError):
+    """Backstop: a confidential call reached an adapter without an authorized endpoint, so nothing was sent.
+
+    The agent factory and the use cases check ``confidential_allowed`` first and use the published form
+    (ADR 016), so users never see this."""
+
+    code = "confidential_data_refused"
+    http_status = 503
+    title = "No authorized language model endpoint for confidential data"
+
+
 class LLMOutputInvalid(InfrastructureError):
     """The model (or a fixture) produced output that does not match the schema."""
 
@@ -117,7 +136,15 @@ class LLMOutputInvalid(InfrastructureError):
     title = "Language model returned invalid output"
 
 
-class LLMPort(Protocol):
+class ConfidentialGate(Protocol):
+    """Whether confidential data may be sent through this backend (ADR 016)."""
+
+    def confidential_allowed(self, tier: ModelTier | None = None) -> bool:
+        """True when ``tier`` (``None``: every tier) is served by authorized deployments only for confidential calls."""
+        ...
+
+
+class LLMPort(ConfidentialGate, Protocol):
     """Run one typed agent call."""
 
     async def run[OutT: BaseModel](
@@ -125,3 +152,14 @@ class LLMPort(Protocol):
     ) -> AgentResult[OutT]:
         """Execute ``agent`` on ``input``; record usage; raise ``LLMUnavailable`` / ``LLMOutputInvalid``."""
         ...
+
+
+@dataclass(frozen=True)
+class AgentOutcome[T]:
+    """A model output with its accounting (the run ledger charges ``cost_usd`` and the tokens)."""
+
+    output: T
+    prompt_version: str
+    model: str
+    cost_usd: Decimal
+    usage: TokenUsage

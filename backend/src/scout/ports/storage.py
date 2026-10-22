@@ -52,6 +52,10 @@ class FileStoragePort(Protocol):
         """Delete every object whose key starts with ``prefix + '/'``; return how many were removed."""
         ...
 
+    async def list_prefix(self, prefix: str) -> list[str]:
+        """Every key that starts with ``prefix + '/'``, sorted."""
+        ...
+
     async def exists(self, key: str) -> bool:
         """Whether the key exists."""
         ...

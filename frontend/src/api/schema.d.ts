@@ -68,6 +68,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/documents/delete-all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Delete every document in the vault
+         * @description Needs the typed word ``DELETE``. Extracted text and insights go at once, stored files right after.
+         */
+        post: operations["delete_all_documents_api_v1_documents_delete_all_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/documents/{document_id}": {
         parameters: {
             query?: never;
@@ -160,6 +180,86 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/matches": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Your match proposals
+         * @description Newest first. Identity is shown only for mutual matches; a decline is never shown to the other side.
+         */
+        get: operations["list_matches_api_v1_matches_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/matches/{match_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * One match
+         * @description Anonymous card, or the revealed view with contact and joint ideas once both accepted.
+         */
+        get: operations["get_match_api_v1_matches__match_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/matches/{match_id}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Accept, decline or withdraw
+         * @description Both sides must accept before names and contact details appear; withdraw takes an acceptance back.
+         */
+        post: operations["decide_api_v1_matches__match_id__decision_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/matches/{match_id}/rating": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Rate a mutual match
+         * @description 1 to 5 stars with optional reason chips; rating again replaces the earlier rating.
+         */
+        post: operations["rate_match_api_v1_matches__match_id__rating_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/me": {
         parameters: {
             query?: never;
@@ -198,6 +298,50 @@ export interface paths {
          * @description Turning matching off also turns vault signals off; vault signals need matching.
          */
         patch: operations["patch_consent_api_v1_me_consent_patch"];
+        trace?: never;
+    };
+    "/api/v1/me/delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Delete the account and everything it owns
+         * @description Block the account at once and erase it in the background (files, rows, sign-in). No undo.
+         */
+        post: operations["delete_me_api_v1_me_delete_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/notifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * E-mail preferences
+         * @description Defaults: runs and matches on, digest off.
+         */
+        get: operations["get_prefs_api_v1_me_notifications_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Change e-mail preferences
+         * @description Only the fields you send change.
+         */
+        patch: operations["patch_prefs_api_v1_me_notifications_patch"];
         trace?: never;
     };
     "/api/v1/opportunities": {
@@ -388,6 +532,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/system/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Are new analyses accepted right now?
+         * @description The shared daily budget is a pilot safeguard. When it is used up, runs resume after midnight UTC.
+         */
+        get: operations["system_status_api_v1_system_status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -505,6 +669,48 @@ export interface components {
             /** Verified */
             verified: boolean | null;
         };
+        /**
+         * AnonymousMatchView
+         * @description A proposal before the reveal: no name, no institution, no year.
+         */
+        AnonymousMatchView: {
+            career_band: components["schemas"]["CareerBand"];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /** Field Label */
+            field_label: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "anonymous";
+            my_decision: components["schemas"]["Decision"] | null;
+            region: components["schemas"]["Region"];
+            /** Score */
+            score: number;
+            /** Shared Topics */
+            shared_topics: string[];
+            status: components["schemas"]["ViewerStatus"];
+            /** They Bring */
+            they_bring: components["schemas"]["BringText"][];
+            /** Why */
+            why: string;
+            /** You Bring */
+            you_bring: components["schemas"]["BringItem"][];
+        };
         /** Body_upload_document_api_v1_documents_post */
         Body_upload_document_api_v1_documents_post: {
             /**
@@ -520,6 +726,24 @@ export interface components {
             keep_original: boolean;
             /** @description Optional classification hint. */
             kind?: components["schemas"]["DocKind"] | null;
+        };
+        /**
+         * BringItem
+         * @description One thing a side brings.
+         */
+        BringItem: {
+            /** Source Refs */
+            source_refs?: string[];
+            /** Text */
+            text: string;
+        };
+        /**
+         * BringText
+         * @description What the other side brings, without references (they would point at that person's papers).
+         */
+        BringText: {
+            /** Text */
+            text: string;
         };
         /**
          * CandidateGroupOut
@@ -591,6 +815,12 @@ export interface components {
             groups: components["schemas"]["CandidateGroupOut"][];
         };
         /**
+         * CareerBand
+         * @description Coarse career stage shown on the anonymous card.
+         * @enum {string}
+         */
+        CareerBand: "early" | "mid" | "senior" | "unknown";
+        /**
          * ChecklistItemOut
          * @description A readiness item.
          */
@@ -638,6 +868,28 @@ export interface components {
          */
         ClaimStatus: "pending" | "verified" | "unverified" | "contradicted" | "rejected_by_critic";
         /**
+         * ClearVaultIn
+         * @description Typed confirmation for deleting the whole vault.
+         */
+        ClearVaultIn: {
+            /**
+             * Confirm
+             * @description The word ``DELETE``.
+             */
+            confirm: string;
+        };
+        /**
+         * ClearedOut
+         * @description How many documents were marked for deletion by this call.
+         */
+        ClearedOut: {
+            /**
+             * Deleting
+             * @description Documents newly marked for deletion (0 on a repeat call).
+             */
+            deleting: number;
+        };
+        /**
          * ConsentIn
          * @description Partial update of consents.
          */
@@ -652,6 +904,24 @@ export interface components {
              * @description Allow vault-derived signals in matching.
              */
             consent_vault_signals?: boolean | null;
+        };
+        /**
+         * Contact
+         * @description Identity and contact of the other side. Only built for a mutual match.
+         */
+        Contact: {
+            career_band: components["schemas"]["CareerBand"];
+            /** Display Name */
+            display_name: string;
+            /** Email */
+            email: string;
+            /** Institution */
+            institution: string | null;
+            /** Openalex Ids */
+            openalex_ids: string[];
+            /** Orcid */
+            orcid: string | null;
+            region: components["schemas"]["Region"];
         };
         /**
          * DatasetOut
@@ -669,6 +939,28 @@ export interface components {
             status: "available" | "planned" | "partial";
         };
         /**
+         * Decision
+         * @description A stored decision.
+         * @enum {string}
+         */
+        Decision: "accept" | "decline";
+        /**
+         * DecisionIn
+         * @description Accept, decline or withdraw.
+         */
+        DecisionIn: {
+            /**
+             * Action
+             * @enum {string}
+             */
+            action: "accept" | "decline" | "withdraw";
+            /**
+             * Never Similar
+             * @default false
+             */
+            never_similar: boolean;
+        };
+        /**
          * DegradedOut
          * @description A step that finished with less than full output.
          */
@@ -677,6 +969,29 @@ export interface components {
             reason: string;
             /** Step */
             step: string;
+        };
+        /**
+         * DeleteAccountIn
+         * @description Typed confirmation for account deletion.
+         */
+        DeleteAccountIn: {
+            /**
+             * Confirm Email
+             * @description The account e-mail address, typed again.
+             */
+            confirm_email: string;
+        };
+        /**
+         * DeletingOut
+         * @description Deletion accepted.
+         */
+        DeletingOut: {
+            /**
+             * Status
+             * @description Always ``deleting``: erasure runs in the background.
+             * @default deleting
+             */
+            status: string;
         };
         /**
          * DevLoginRequest
@@ -722,7 +1037,7 @@ export interface components {
          * @description Document lifecycle (DECISIONS 41: ``analysing`` rather than ``analysing_insights``).
          * @enum {string}
          */
-        DocStatus: "uploaded" | "extracting" | "extracted" | "analysing" | "ready" | "failed" | "rejected" | "deleting";
+        DocStatus: "uploaded" | "extracting" | "extracted" | "analysing" | "awaiting_approved_provider" | "ready" | "failed" | "rejected" | "deleting";
         /**
          * DocumentDetailOut
          * @description A document with its insights.
@@ -764,7 +1079,7 @@ export interface components {
             retention: components["schemas"]["Retention"];
             /** Size Bytes */
             size_bytes: number;
-            /** @description uploaded, extracting, extracted, analysing, ready, failed or rejected. */
+            /** @description uploaded, extracting, extracted, analysing, awaiting_approved_provider (read, waiting for an approved language-model provider), ready, failed or rejected. */
             status: components["schemas"]["DocStatus"];
             /**
              * Updated At
@@ -831,7 +1146,7 @@ export interface components {
             retention: components["schemas"]["Retention"];
             /** Size Bytes */
             size_bytes: number;
-            /** @description uploaded, extracting, extracted, analysing, ready, failed or rejected. */
+            /** @description uploaded, extracting, extracted, analysing, awaiting_approved_provider (read, waiting for an approved language-model provider), ready, failed or rejected. */
             status: components["schemas"]["DocStatus"];
             /**
              * Updated At
@@ -963,15 +1278,20 @@ export interface components {
          * @description A rating. Rating the same target again replaces the earlier one.
          */
         FeedbackIn: {
-            /** Comment */
-            comment?: string | null;
             /**
-             * Rating
-             * @enum {string}
+             * Comment
+             * @description Omit to keep the earlier comment; null or '' clears it.
              */
-            rating: "up" | "down";
-            /** Reasons */
-            reasons?: ("spot_on" | "already_knew" | "not_feasible" | "wrong_field" | "too_vague")[];
+            comment?: string | null;
+            /** Rating */
+            rating?: ("up" | "down") | null;
+            /**
+             * Reasons
+             * @description Omit to keep the earlier chips; [] clears them.
+             */
+            reasons?: ("spot_on" | "already_knew" | "not_feasible" | "wrong_field" | "too_vague" | "methods_fit" | "right_seniority" | "shared_timeline" | "too_similar" | "already_knew_them")[] | null;
+            /** Stars */
+            stars?: number | null;
             /**
              * Target Id
              * Format: uuid
@@ -990,13 +1310,12 @@ export interface components {
         FeedbackOut: {
             /** Comment */
             comment: string | null;
-            /**
-             * Rating
-             * @enum {string}
-             */
-            rating: "up" | "down";
+            /** Rating */
+            rating: ("up" | "down") | null;
             /** Reasons */
-            reasons: ("spot_on" | "already_knew" | "not_feasible" | "wrong_field" | "too_vague")[];
+            reasons: ("spot_on" | "already_knew" | "not_feasible" | "wrong_field" | "too_vague" | "methods_fit" | "right_seniority" | "shared_timeline" | "too_similar" | "already_knew_them")[];
+            /** Stars */
+            stars: number | null;
             /**
              * Target Id
              * Format: uuid
@@ -1018,6 +1337,12 @@ export interface components {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
+        /**
+         * IdeasStatus
+         * @description Joint idea generation after the reveal.
+         * @enum {string}
+         */
+        IdeasStatus: "none" | "pending" | "ready" | "failed";
         /**
          * ImportOut
          * @description State of the works import.
@@ -1084,6 +1409,54 @@ export interface components {
             summary: string;
         };
         /**
+         * JointIdeaView
+         * @description One collaboration idea, from the viewer's point of view.
+         */
+        JointIdeaView: {
+            /** First Step */
+            first_step: string;
+            /** Possible Output */
+            possible_output: string;
+            /** Question */
+            question: string;
+            /** Title */
+            title: string;
+            /** Uses From Them */
+            uses_from_them: components["schemas"]["BringItem"][];
+            /** Uses From You */
+            uses_from_you: components["schemas"]["BringItem"][];
+        };
+        /**
+         * MatchListOut
+         * @description A page of matches. ``matching_enabled`` is false until the account consents.
+         */
+        MatchListOut: {
+            /** Items */
+            items: (components["schemas"]["AnonymousMatchView"] | components["schemas"]["RevealedMatchView"])[];
+            /** Matching Enabled */
+            matching_enabled: boolean;
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /**
+         * MatchRatingIn
+         * @description Rate a mutual match from 1 to 5 stars.
+         */
+        MatchRatingIn: {
+            /**
+             * Comment
+             * @description Omit to keep the earlier comment.
+             */
+            comment?: string | null;
+            /**
+             * Reasons
+             * @description Omit to keep the earlier chips.
+             */
+            reasons?: ("spot_on" | "already_knew" | "not_feasible" | "wrong_field" | "too_vague" | "methods_fit" | "right_seniority" | "shared_timeline" | "too_similar" | "already_knew_them")[] | null;
+            /** Stars */
+            stars: number;
+        };
+        /**
          * MeOut
          * @description The signed-in account.
          */
@@ -1139,6 +1512,46 @@ export interface components {
             name: string;
             /** Refs */
             refs: components["schemas"]["RefOut"][];
+        };
+        /**
+         * NotificationPrefsIn
+         * @description Partial update.
+         */
+        NotificationPrefsIn: {
+            /** Analytics Opt Out */
+            analytics_opt_out?: boolean | null;
+            /** Email Digest */
+            email_digest?: boolean | null;
+            /** Email Matches */
+            email_matches?: boolean | null;
+            /** Email Runs */
+            email_runs?: boolean | null;
+        };
+        /**
+         * NotificationPrefsOut
+         * @description What Scout may e-mail.
+         */
+        NotificationPrefsOut: {
+            /**
+             * Analytics Opt Out
+             * @description True: Scout drops your product-analytics events.
+             */
+            analytics_opt_out: boolean;
+            /**
+             * Email Digest
+             * @description A weekly summary (off by default).
+             */
+            email_digest: boolean;
+            /**
+             * Email Matches
+             * @description A mail for a new suggestion and for a mutual match.
+             */
+            email_matches: boolean;
+            /**
+             * Email Runs
+             * @description A mail when an analysis finishes.
+             */
+            email_runs: boolean;
         };
         /**
          * NoveltyOut
@@ -1197,6 +1610,14 @@ export interface components {
          * @description List item.
          */
         OpportunityCardOut: {
+            /**
+             * Basis
+             * @default full
+             * @enum {string}
+             */
+            basis: "full" | "published_only";
+            /** Basis Note */
+            basis_note?: string | null;
             /** Clusters */
             clusters: string[];
             /**
@@ -1237,6 +1658,14 @@ export interface components {
          * @description Detail page.
          */
         OpportunityDetailOut: {
+            /**
+             * Basis
+             * @default full
+             * @enum {string}
+             */
+            basis: "full" | "published_only";
+            /** Basis Note */
+            basis_note?: string | null;
             /** Clusters */
             clusters: string[];
             /**
@@ -1419,6 +1848,12 @@ export interface components {
             page_to: number;
         };
         /**
+         * Region
+         * @description Coarse region shown on the anonymous card.
+         * @enum {string}
+         */
+        Region: "africa" | "asia" | "europe" | "north_america" | "south_america" | "oceania" | "unknown";
+        /**
          * Rejection
          * @description Why an event was not accepted.
          */
@@ -1468,6 +1903,56 @@ export interface components {
          */
         Retention: "keep" | "discard";
         /**
+         * RevealedMatchView
+         * @description A mutual match: identity, contact and joint ideas.
+         *
+         *     ``career_since`` is the year of the other side's first included work; ``joint_works_count`` the works both
+         *     included (None when none). Neither exists on ``AnonymousMatchView``.
+         */
+        RevealedMatchView: {
+            /** Career Since */
+            career_since?: number | null;
+            contact: components["schemas"]["Contact"];
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            ideas_status: components["schemas"]["IdeasStatus"];
+            /** Joint Ideas */
+            joint_ideas: components["schemas"]["JointIdeaView"][];
+            /** Joint Works Count */
+            joint_works_count?: number | null;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "revealed";
+            /** My Rating */
+            my_rating?: number | null;
+            /**
+             * Revealed At
+             * Format: date-time
+             */
+            revealed_at: string;
+            /** Score */
+            score: number;
+            /** Shared Topics */
+            shared_topics: string[];
+            /**
+             * Status
+             * @default mutual
+             * @constant
+             */
+            status: "mutual";
+            /** They Bring */
+            they_bring: components["schemas"]["BringItem"][];
+            /** Why */
+            why: string;
+            /** You Bring */
+            you_bring: components["schemas"]["BringItem"][];
+        };
+        /**
          * RunCountsOut
          * @description What the run found so far.
          */
@@ -1507,6 +1992,18 @@ export interface components {
          * @description A run. Poll it every 3 seconds while ``status`` is ``queued`` or ``running``.
          */
         RunOut: {
+            /**
+             * Basis
+             * @description `published_only`: confidential vault material was left out of this run.
+             * @default full
+             * @enum {string}
+             */
+            basis: "full" | "published_only";
+            /**
+             * Basis Note
+             * @description Plain-language note shown when `basis` is `published_only`.
+             */
+            basis_note?: string | null;
             /** Budget Usd */
             budget_usd: string;
             /** Cost Usd */
@@ -1590,6 +2087,39 @@ export interface components {
             status: "pending" | "running" | "done" | "degraded";
         };
         /**
+         * SystemStatusOut
+         * @description Whether new analyses are accepted right now.
+         */
+        SystemStatusOut: {
+            /**
+             * Accepting Runs
+             * @description False when a global daily spend cap is reached.
+             */
+            accepting_runs: boolean;
+            /**
+             * Confidential Data Enabled
+             * @description False unless an approved language-model provider covers every step (both the fast and the reasoning tier): analyses and matching then use published data only. Documents are read on the server either way and are analysed as soon as the fast tier is approved.
+             * @default true
+             */
+            confidential_data_enabled: boolean;
+            /**
+             * Confidential Data Notice
+             * @description Plain-language explanation shown when `confidential_data_enabled` is false.
+             */
+            confidential_data_notice?: string | null;
+            /**
+             * Message
+             * @description Plain-language reason, shown by the UI when paused.
+             */
+            message?: string | null;
+            /**
+             * Vault Upload Warning
+             * @description True when the UI must warn users not to upload confidential material and require a tick before uploading (setting `VAULT_UPLOAD_WARNING`).
+             * @default true
+             */
+            vault_upload_warning: boolean;
+        };
+        /**
          * TopicOut
          * @description A topic with a weight between 0 and 1.
          */
@@ -1628,6 +2158,12 @@ export interface components {
             /** Error Type */
             type: string;
         };
+        /**
+         * ViewerStatus
+         * @description What one participant is told. Never derived from the other side's decision (except ``mutual``).
+         * @enum {string}
+         */
+        ViewerStatus: "awaiting_you" | "waiting_on_them" | "mutual" | "declined_by_you" | "expired";
         /**
          * WorkOut
          * @description A work attributed to the researcher.
@@ -1890,6 +2426,39 @@ export interface operations {
             };
         };
     };
+    delete_all_documents_api_v1_documents_delete_all_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ClearVaultIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClearedOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_document_api_v1_documents__document_id__get: {
         parameters: {
             query?: never;
@@ -2122,6 +2691,167 @@ export interface operations {
             };
         };
     };
+    list_matches_api_v1_matches_get: {
+        parameters: {
+            query?: {
+                cursor?: string | null;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MatchListOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_match_api_v1_matches__match_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                match_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnonymousMatchView"] | components["schemas"]["RevealedMatchView"];
+                };
+            };
+            /** @description Not yours, unknown or hidden. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    decide_api_v1_matches__match_id__decision_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                match_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DecisionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnonymousMatchView"] | components["schemas"]["RevealedMatchView"];
+                };
+            };
+            /** @description Not yours or unknown. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Expired, closed, nothing to withdraw, or consent required. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    rate_match_api_v1_matches__match_id__rating_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                match_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MatchRatingIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeedbackOut"];
+                };
+            };
+            /** @description Not a mutual match of yours. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_me_api_v1_me_get: {
         parameters: {
             query?: never;
@@ -2162,6 +2892,92 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_me_api_v1_me_delete_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteAccountIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeletingOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_prefs_api_v1_me_notifications_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotificationPrefsOut"];
+                };
+            };
+        };
+    };
+    patch_prefs_api_v1_me_notifications_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NotificationPrefsIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotificationPrefsOut"];
                 };
             };
             /** @description Validation Error */
@@ -2570,6 +3386,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    system_status_api_v1_system_status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SystemStatusOut"];
                 };
             };
         };

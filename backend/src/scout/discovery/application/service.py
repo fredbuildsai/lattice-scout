@@ -282,6 +282,14 @@ class DiscoveryService:
             card, views[ClaimSection.RATIONALE], views[ClaimSection.OBJECTION], views[ClaimSection.SCORE]
         )
 
+    async def is_visible(self, owner_id: AccountId, opportunity_id: UUID) -> bool:
+        """True when ``get_opportunity`` would answer for this owner (shown rule and status included)."""
+        try:
+            await self._owned_visible(owner_id, opportunity_id)
+        except NotFound:
+            return False
+        return True
+
     async def set_status(self, owner_id: AccountId, opportunity_id: UUID, new: OppStatus) -> CardView:
         """The owner saves, dismisses or restores an opportunity."""
         await self._owned_visible(owner_id, opportunity_id)

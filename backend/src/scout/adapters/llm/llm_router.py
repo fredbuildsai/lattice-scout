@@ -19,9 +19,18 @@ from typing import Any
 
 from pydantic import BaseModel, JsonValue
 
+from scout.adapters.llm.confidential_policy import ConfidentialPolicy
 from scout.adapters.llm.fake_llm import canonical_json
 from scout.adapters.llm.metering import provider_of, record_for
-from scout.ports.llm import AgentResult, AgentSpec, CallContext, LLMUnavailable, ModelTier, TokenUsage
+from scout.ports.llm import (
+    AgentResult,
+    AgentSpec,
+    CallContext,
+    DataClass,
+    LLMUnavailable,
+    ModelTier,
+    TokenUsage,
+)
 from scout.ports.usage import LlmCallStatus, PriceTable, UsageMeterPort
 from scout.shared import Clock, IdGenerator
 
@@ -82,6 +91,9 @@ class MeteringCompletion:
     def __call__(self, **kwargs: Any) -> Any:
         started = time.perf_counter()
         model = str(kwargs.get("model", ""))
+        guard: ConfidentialPolicy | None = getattr(_local, "confidential_guard", None)
+        if guard is not None:
+            guard.check_model(model)  # raises ConfidentialDataRefused before anything is sent
         try:
             response = self._fn()(**kwargs)
         except Exception as exc:
@@ -111,9 +123,16 @@ class LlmRouterAdapter:
         ids: IdGenerator,
         route_for: Mapping[ModelTier, str],
         executor: ThreadPoolExecutor,
+        policy: ConfidentialPolicy | None = None,
     ) -> None:
+        self._policy = policy or ConfidentialPolicy()
         self._router, self._prices, self._usage = router, prices, usage
         self._clock, self._ids, self._route_for, self._executor = clock, ids, route_for, executor
+
+    def confidential_allowed(self, tier: ModelTier | None = None) -> bool:
+        """True when every tier asked for has authorized deployments (so a fall-over stays authorized)."""
+        tiers = [tier] if tier else list(self._route_for)
+        return all(self._policy.allows_confidential(self._route_for[t]) for t in tiers)
 
     def _call(
         self, agent: AgentSpec[Any], messages: list[dict[str, str]], route: str
@@ -121,6 +140,7 @@ class LlmRouterAdapter:
         from llmrouter_free import json_schema_response_format, json_validator
 
         _local.attempts = []
+        _local.confidential_guard = self._policy if agent.data_class is DataClass.CONFIDENTIAL else None
         try:
             kwargs: dict[str, Any] = {
                 "validate": json_validator(agent.output_type),
@@ -129,7 +149,8 @@ class LlmRouterAdapter:
                 "use_cache": False,
             }
             if agent.strict_schema:
-                kwargs["response_format"] = json_schema_response_format(agent.output_type)
+                # strict=False: Groq rejects strict schemas; the schema is still sent as a hint and validated by us
+                kwargs["response_format"] = json_schema_response_format(agent.output_type, strict=False)
             else:
                 kwargs["json_mode"] = True
             result = self._router.complete(route, messages, **kwargs)
@@ -137,12 +158,14 @@ class LlmRouterAdapter:
         except Exception as exc:
             exc.attempts = list(_local.attempts)  # type: ignore[attr-defined]
             raise
+        finally:
+            _local.confidential_guard = None
 
     async def run[OutT: BaseModel](
         self, agent: AgentSpec[OutT], input: BaseModel | Mapping[str, JsonValue], ctx: CallContext
     ) -> AgentResult[OutT]:
         """Run the agent; record one row per attempt; raise ``LLMUnavailable`` if the route is exhausted."""
-        route = self._route_for[agent.tier]
+        route = self._policy.route_for(agent.name, agent.data_class, self._route_for[agent.tier])
         messages = [
             {"role": "system", "content": agent.instructions},
             {"role": "user", "content": canonical_json(input)},

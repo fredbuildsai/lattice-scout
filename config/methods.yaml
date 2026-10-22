@@ -1,0 +1,137 @@
+# Controlled vocabulary of research methods for the launch field (matching, MethodExtractor).
+# New labels proposed by the model go to method_label_proposal and enter here only after review.
+version: 1
+field: bio-based-materials
+methods:
+  - id: lca
+    label: Life-cycle assessment
+    synonyms: [LCA, life cycle analysis]
+  - id: tea
+    label: Techno-economic analysis
+    synonyms: [TEA, techno-economic assessment]
+  - id: ftir
+    label: FTIR spectroscopy
+    synonyms: [infrared spectroscopy, FT-IR]
+  - id: raman
+    label: Raman spectroscopy
+    synonyms: [Raman]
+  - id: nmr
+    label: NMR spectroscopy
+    synonyms: [nuclear magnetic resonance, NMR]
+  - id: xrd
+    label: X-ray diffraction
+    synonyms: [XRD]
+  - id: saxs_sans
+    label: Small-angle scattering
+    synonyms: [SAXS, SANS, small angle x-ray scattering]
+  - id: sem
+    label: Scanning electron microscopy
+    synonyms: [SEM]
+  - id: tem
+    label: Transmission electron microscopy
+    synonyms: [TEM]
+  - id: afm
+    label: Atomic force microscopy
+    synonyms: [AFM]
+  - id: tga
+    label: Thermogravimetric analysis
+    synonyms: [TGA]
+  - id: dsc
+    label: Differential scanning calorimetry
+    synonyms: [DSC]
+  - id: dma
+    label: Dynamic mechanical analysis
+    synonyms: [DMA]
+  - id: rheology
+    label: Rheology
+    synonyms: [rheometry, rheological measurements]
+  - id: mechanical_testing
+    label: Mechanical testing
+    synonyms: [tensile testing, compression testing, flexural testing]
+  - id: gpc_sec
+    label: Size-exclusion chromatography
+    synonyms: [GPC, SEC, gel permeation chromatography]
+  - id: gc_ms
+    label: Gas chromatography-mass spectrometry
+    synonyms: [GC-MS, GC/MS]
+  - id: hplc_lcms
+    label: Liquid chromatography
+    synonyms: [HPLC, LC-MS]
+  - id: bet_porosimetry
+    label: Porosimetry and BET surface area
+    synonyms: [BET, nitrogen adsorption, mercury porosimetry]
+  - id: contact_angle
+    label: Contact angle measurement
+    synonyms: [wettability, goniometry]
+  - id: cone_calorimetry
+    label: Cone calorimetry
+    synonyms: [flammability testing, heat release rate, limiting oxygen index]
+  - id: reactive_extrusion
+    label: Reactive extrusion
+    synonyms: [twin-screw extrusion]
+  - id: moulding
+    label: Moulding and hot pressing
+    synonyms: [hot pressing, compression moulding, injection moulding]
+  - id: electrospinning
+    label: Electrospinning
+    synonyms: [electrospun fibres]
+  - id: freeze_casting
+    label: Freeze casting
+    synonyms: [ice templating, freeze drying]
+  - id: foaming
+    label: Foaming
+    synonyms: [foam preparation, polyurethane foaming]
+  - id: additive_manufacturing
+    label: Additive manufacturing
+    synonyms: [3D printing, direct ink writing]
+  - id: nanocellulose_isolation
+    label: Nanocellulose isolation
+    synonyms: [cellulose nanofibril production, TEMPO oxidation]
+  - id: lignin_fractionation
+    label: Lignin fractionation
+    synonyms: [organosolv, lignin extraction, lignin depolymerisation]
+  - id: enzymatic_hydrolysis
+    label: Enzymatic hydrolysis
+    synonyms: [saccharification]
+  - id: fermentation
+    label: Fermentation
+    synonyms: [bioreactor cultivation, microbial production]
+  - id: pyrolysis_htl
+    label: Pyrolysis and hydrothermal liquefaction
+    synonyms: [pyrolysis, HTL, torrefaction]
+  - id: chemical_modification
+    label: Chemical modification
+    synonyms: [functionalisation, grafting, esterification]
+  - id: polymer_synthesis
+    label: Polymer synthesis
+    synonyms: [polymerisation, polycondensation]
+  - id: membrane_fabrication
+    label: Membrane fabrication
+    synonyms: [phase inversion, membrane casting]
+  - id: adsorption_testing
+    label: Adsorption testing
+    synonyms: [batch adsorption, isotherm, breakthrough curves]
+  - id: photocatalysis
+    label: Photocatalysis
+    synonyms: [photocatalytic degradation]
+  - id: electrochemistry
+    label: Electrochemistry
+    synonyms: [cyclic voltammetry, impedance spectroscopy, electrochemical oxidation]
+  - id: biodegradation_testing
+    label: Biodegradation testing
+    synonyms: [composting test, soil burial]
+  - id: toxicity_testing
+    label: Toxicity testing
+    synonyms: [ecotoxicity, cytotoxicity]
+  - id: molecular_simulation
+    label: Molecular simulation
+    synonyms: [molecular dynamics, DFT, density functional theory]
+  - id: process_modelling
+    label: Process modelling
+    synonyms: [process simulation, Aspen, kinetic modelling]
+  - id: machine_learning
+    label: Machine learning
+    synonyms: [neural network, regression model, data-driven modelling]
+  - id: design_of_experiments
+    label: Design of experiments
+    synonyms: [DoE, response surface methodology]

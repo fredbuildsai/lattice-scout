@@ -6,6 +6,7 @@ re-raised ``from None`` with a fixed message, because a chained pydantic ``Valid
 
 from __future__ import annotations
 
+import dataclasses
 import re
 import time
 from collections.abc import Mapping
@@ -18,8 +19,19 @@ from pydantic import BaseModel, JsonValue, ValidationError
 
 from scout.adapters.llm.fake_llm import canonical_json
 from scout.adapters.llm.prompts import load_agent_spec
-from scout.ports.llm import AgentResult, AgentSpec, CallContext, LLMOutputInvalid, LLMPort, LLMUnavailable
+from scout.ports.llm import (
+    AgentResult,
+    AgentSpec,
+    CallContext,
+    ConfidentialDataRefused,
+    DataClass,
+    LLMOutputInvalid,
+    LLMPort,
+    LLMUnavailable,
+    ModelTier,
+)
 from scout.shared import InfrastructureError, ValidationFailed
+from scout.shared.confidential import AgentInput, input_for_route
 
 log = structlog.get_logger("scout.agents")
 _PLACEHOLDER = re.compile(r"\{\{\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*\}\}")
@@ -62,10 +74,15 @@ class AgentFactory:
             name=raw.name, prompt_version=raw.prompt_version, tier=raw.tier,
             instructions=_PLACEHOLDER.sub(fill, raw.instructions), output_type=raw.output_type,
             temperature=raw.temperature, max_output_tokens=raw.max_output_tokens, strict_schema=raw.strict_schema,
+            data_class=raw.data_class,
         )  # fmt: skip
         if not overrides:
             self._cache[name] = spec
         return spec
+
+    def confidential_allowed(self, tier: ModelTier | None = None) -> bool:
+        """Whether confidential data may be sent for ``tier`` (``None``: both tiers). Use cases ask this first."""
+        return self._llm.confidential_allowed(tier)
 
     @staticmethod
     def version(spec: AgentSpec[BaseModel]) -> str:
@@ -82,6 +99,17 @@ class AgentFactory:
             LLMUnavailable: any other provider or infrastructure failure.
         """
         started = time.perf_counter()
+        authorized = self._llm.confidential_allowed(spec.tier)
+        planned: tuple[BaseModel | Mapping[str, JsonValue], DataClass] | None
+        if isinstance(input, AgentInput):
+            planned = input_for_route(spec.data_class, input, authorized=authorized)
+        else:  # a plain model or mapping cannot be classified, so it is confidential, whatever the agent's class
+            planned = (input, DataClass.CONFIDENTIAL) if authorized else None
+        if planned is None:
+            log.warning("agent_skipped", agent=self.version(spec), reason="no_published_form")
+            raise ConfidentialDataRefused(f"{spec.name}: no published form of this input") from None
+        input, data_class = planned
+        spec = dataclasses.replace(spec, data_class=data_class)
         input_chars = len(canonical_json(input))
         with self._tracer.start_as_current_span("agent.run") as span:
             span.set_attribute("agent.name", spec.name)

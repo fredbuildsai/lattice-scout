@@ -164,3 +164,19 @@ class ConsentIn(BaseModel):
     consent_vault_signals: bool | None = Field(
         default=None, description="Allow vault-derived signals in matching."
     )
+
+
+class DeleteAccountIn(BaseModel):
+    """Typed confirmation for account deletion."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    confirm_email: str = Field(max_length=320, description="The account e-mail address, typed again.")
+
+
+class DeletingOut(BaseModel):
+    """Deletion accepted."""
+
+    status: str = Field(
+        default="deleting", description="Always ``deleting``: erasure runs in the background."
+    )

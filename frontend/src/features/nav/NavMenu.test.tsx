@@ -38,8 +38,7 @@ describe('header menu', () => {
     expect(screen.queryByRole('navigation', { name: 'All destinations' })).toBeNull()
   })
 
-  it('closes on Escape and the FAB is tracked', async () => {
-    const track = vi.spyOn(analytics, 'track')
+  it('closes on Escape and shows no Ask Scout button', async () => {
     const user = userEvent.setup()
     render(
       <MemoryRouter>
@@ -49,7 +48,6 @@ describe('header menu', () => {
     await user.click(await screen.findByRole('button', { name: 'Open menu' }))
     await user.keyboard('{Escape}')
     expect(screen.queryByRole('navigation', { name: 'All destinations' })).toBeNull()
-    await user.click(screen.getByRole('button', { name: 'Ask Scout' }))
-    expect(track).toHaveBeenCalledWith('scout_fab_clicked', undefined)
+    expect(screen.queryByRole('button', { name: 'Ask Scout' })).toBeNull()
   })
 })

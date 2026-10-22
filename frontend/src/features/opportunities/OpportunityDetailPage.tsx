@@ -1,5 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { BasisNote } from '../runs/BasisNote'
 import { Icon } from '../../ui/icons'
 import { Claim } from './Claim'
 import { FeedbackPanel } from './FeedbackPanel'
@@ -133,9 +134,9 @@ function Claims({ claims, id }: { claims: ClaimData[]; id: string }) {
   return (
     <div className="space-y-3">
       {claims.map((c) => (
-        <p key={c.id} className="leading-relaxed">
+        <div key={c.id} className="leading-relaxed">
           <Claim claim={c} opportunityId={id} />
-        </p>
+        </div>
       ))}
     </div>
   )
@@ -179,6 +180,7 @@ export function OpportunityDetailPage() {
           <h1 id="page-title" className="mt-2 max-w-[820px] font-serif text-3xl font-semibold leading-tight md:text-4xl">
             {o.title}
           </h1>
+          <BasisNote note={o.basis_note} />
           <div className="mt-4 flex flex-wrap items-center gap-2">
             {o.status === 'dismissed' ? (
               <button type="button" disabled={set.isPending} onClick={() => set.mutate({ id: o.id, status: 'shown' })} className="min-h-11 rounded-btn border border-line-strong px-4 text-sm font-semibold">
@@ -263,9 +265,9 @@ export function OpportunityDetailPage() {
                 {o.score_claims.length > 0 && (
                   <div className="mt-3 space-y-2 border-t border-line pt-3 text-xs text-ink-2">
                     {o.score_claims.map((c) => (
-                      <p key={c.id}>
+                      <div key={c.id}>
                         <Claim claim={c} opportunityId={o.id} />
-                      </p>
+                      </div>
                     ))}
                   </div>
                 )}

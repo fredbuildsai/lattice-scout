@@ -6,6 +6,7 @@ import asyncio
 import hashlib
 from collections.abc import Callable
 from dataclasses import dataclass
+from datetime import timedelta
 from uuid import UUID
 
 import structlog
@@ -13,7 +14,7 @@ import structlog
 from scout.ports.audit import AuditEntry
 from scout.ports.jobs import JobQueuePort, JobSpec
 from scout.ports.storage import FileStoragePort
-from scout.shared import AccountId, Clock, Conflict, IdGenerator
+from scout.shared import AccountId, Clock, Conflict, IdGenerator, RateLimited
 from scout.vault.domain.document import Document
 from scout.vault.domain.enums import DocKind, DocumentMime, RetentionPolicy
 from scout.vault.domain.ids import storage_key
@@ -29,6 +30,13 @@ from scout.vault.domain.upload import (
 from scout.vault.ports.repos import DuplicateDocument, VaultUnitOfWork
 
 log = structlog.get_logger()
+
+
+class UploadLimitReached(RateLimited):
+    """Too many uploads in 24 hours."""
+
+    code = "upload_limit_reached"
+    title = "Daily upload limit reached"
 
 
 class VaultLimitReached(Conflict):
@@ -69,9 +77,11 @@ class UploadDocument:
         policy: RetentionPolicy,
         max_bytes: int,
         max_documents: int,
+        max_per_day: int = 0,
     ) -> None:
         self._uow, self._storage, self._jobs, self._clock, self._ids = uow, storage, jobs, clock, ids
         self._policy, self._max_bytes, self._max_documents = policy, max_bytes, max_documents
+        self._max_per_day = max_per_day
 
     async def upload(
         self,
@@ -88,6 +98,7 @@ class UploadDocument:
             FileTooLarge: empty or above the size limit.
             UnsupportedFileType: not a PDF or DOCX by content.
             FileRejected: a DOCX that is a zip bomb or corrupt.
+            UploadLimitReached: more than ``max_per_day`` uploads in 24 hours.
             Conflict: the vault already holds the maximum number of documents (``vault_limit_reached``).
         """
         if not data:
@@ -102,6 +113,11 @@ class UploadDocument:
                 return UploadResult(existing, False)
             if await uow.documents.count_active(owner_id) >= self._max_documents:
                 raise VaultLimitReached("vault_limit_reached", extra={"limit": self._max_documents})
+            if self._max_per_day and (
+                await uow.documents.count_uploaded_since(owner_id, self._clock.now() - timedelta(hours=24))
+                >= self._max_per_day
+            ):
+                raise UploadLimitReached("Daily upload limit reached", extra={"limit": self._max_per_day})
 
         document_id = self._ids.new()
         key = storage_key(owner_id, document_id)

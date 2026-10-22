@@ -117,7 +117,12 @@ class SupabaseJwksVerifier:
         except ValueError as exc:
             raise InvalidToken() from exc
         meta = claims.get("app_metadata") or {}
+        try:
+            issued_at = datetime.fromtimestamp(int(claims["iat"]), tz=UTC) if "iat" in claims else None
+        except (ValueError, TypeError, OverflowError, OSError):
+            issued_at = None
         return AuthPrincipal(
             sub=sub, email=claims.get("email"), role="authenticated",
             app_role=str(meta.get("role", "user")) if isinstance(meta, dict) else "user", exp=exp,
+            issued_at=issued_at,
         )  # fmt: skip

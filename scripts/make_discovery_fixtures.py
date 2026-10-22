@@ -768,6 +768,10 @@ class Recording:
         self.inner = inner
         self.calls: list[tuple[str, BaseModel, BaseModel]] = []
 
+    def confidential_allowed(self, tier: Any = None) -> bool:
+        """The agent factory asks the port before every call (ADR 016); the fake allows everything."""
+        return self.inner.confidential_allowed(tier)
+
     async def run(self, agent: AgentSpec[Any], input: Any, ctx: CallContext) -> AgentResult[Any]:
         """Delegate; keep the pair for the discovery agents."""
         result = await self.inner.run(agent, input, ctx)

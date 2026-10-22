@@ -1,5 +1,7 @@
 """Offline eval of the gap-analysis pipeline (``make eval``): FakeLLM fixtures, FixtureLiterature, in-memory services.
 
+``--live`` scores real free models on the agents instead (``eval/live_eval``, docs/OPERATIONS.md "Live model eval").
+
 Runs every case in ``eval/cases`` through the real pipeline (the runner of ``scripts/make_discovery_fixtures.py``),
 computes quality metrics, writes ``eval/reports/<timestamp>.json`` and prints a Markdown table. Exit code 1 when a
 threshold fails: 3 <= shown <= 10 (per case) and verified-evidence rate >= 0.6. Needs no network.
@@ -59,6 +61,15 @@ def _metrics(mod: ModuleType, run, themes: list[list[str]], seconds: float) -> d
 
 async def main() -> int:
     """Run all cases; return the process exit code."""
+    if "--live" in sys.argv:
+        sys.path.insert(0, str(ROOT / "eval"))
+        import logging
+
+        import structlog
+        from live_eval.cli import live_main
+
+        structlog.configure(wrapper_class=structlog.make_filtering_bound_logger(logging.ERROR))  # quiet: per-call info logs
+        return await live_main(sys.argv[1:])
     mod = _load_runner()
     rows = []
     for case in mod.load_cases():

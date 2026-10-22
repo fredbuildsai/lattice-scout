@@ -26,7 +26,7 @@ def make(retention: Retention = Retention.KEEP) -> Document:
 def to_status(d: Document, target: DocStatus) -> Document:
     path = {
         S.UPLOADED: [], S.EXTRACTING: ["start"], S.EXTRACTED: ["start", "extract"],
-        S.ANALYSING: ["start", "extract", "analyse"], S.READY: ["start", "extract", "analyse", "ready"],
+        S.ANALYSING: ["start", "extract", "analyse"], S.AWAITING_PROVIDER: ["start", "extract", "await"], S.READY: ["start", "extract", "analyse", "ready"],
         S.FAILED: ["fail"], S.REJECTED: ["start", "reject"], S.DELETING: ["delete"],
     }[target]  # fmt: skip
     for step in path:
@@ -36,6 +36,8 @@ def to_status(d: Document, target: DocStatus) -> Document:
             d.finish_extraction(pages=3, basis=PageBasis.PHYSICAL, chunks=2, extractor="x", now=NOW)
         elif step == "analyse":
             d.start_analysis(NOW)
+        elif step == "await":
+            d.await_provider(NOW)
         elif step == "ready":
             d.finish_analysis(DocKind.PROPOSAL, None, NOW)
         elif step == "fail":
@@ -58,7 +60,8 @@ ALLOWED = {
     "start_extraction": {S.UPLOADED, S.EXTRACTING},
     "finish_extraction": {S.EXTRACTING},
     "reject": {S.EXTRACTING},
-    "start_analysis": {S.EXTRACTED, S.ANALYSING},
+    "start_analysis": {S.EXTRACTED, S.ANALYSING, S.AWAITING_PROVIDER},
+    "await_provider": {S.EXTRACTED, S.ANALYSING, S.AWAITING_PROVIDER},
     "finish_analysis": {S.ANALYSING},
     "fail": {S.UPLOADED, S.EXTRACTING, S.EXTRACTED, S.ANALYSING},
 }
@@ -72,6 +75,7 @@ def apply(d: Document, action: str) -> None:
         ),
         "reject": lambda: d.reject("corrupt_file", NOW),
         "start_analysis": lambda: d.start_analysis(NOW),
+        "await_provider": lambda: d.await_provider(NOW),
         "finish_analysis": lambda: d.finish_analysis(None, None, NOW),
         "fail": lambda: d.fail("x", NOW),
     }[action]()

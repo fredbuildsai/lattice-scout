@@ -4,9 +4,11 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Request
 
-from scout.api.deps import current_account, get_container
-from scout.api.schemas.profile import ConsentIn, MeOut, ResearcherSummaryOut
+from scout.api.deps import current_account, current_principal, get_container
+from scout.api.schemas.profile import ConsentIn, DeleteAccountIn, DeletingOut, MeOut, ResearcherSummaryOut
 from scout.identity.domain.account import Account
+from scout.identity.ports.auth import AuthPrincipal
+from scout.ports.jobs import JobSpec
 
 router = APIRouter(prefix="/api/v1", tags=["identity"])
 
@@ -39,7 +41,30 @@ async def patch_consent(
     account: Account = Depends(current_account),  # noqa: B008
 ) -> MeOut:
     """Turning matching off also turns vault signals off; vault signals need matching."""
-    updated = await get_container(request).identity.update_consent(
-        account.id, body.consent_matching, body.consent_vault_signals
+    c = get_container(request)
+    updated = await c.identity.update_consent(account.id, body.consent_matching, body.consent_vault_signals)
+    await c.job_queue.enqueue(
+        JobSpec(
+            kind="matching.profile",
+            payload={"account_id": str(account.id)},
+            dedupe_key=f"profile:{account.id}",
+            max_attempts=3,
+        )
     )
     return await _me(request, updated)
+
+
+@router.post(
+    "/me/delete",
+    summary="Delete the account and everything it owns",
+    response_model=DeletingOut,
+    status_code=202,
+)
+async def delete_me(
+    body: DeleteAccountIn,
+    request: Request,
+    principal: AuthPrincipal = Depends(current_principal),  # noqa: B008
+) -> DeletingOut:
+    """Block the account at once and erase it in the background (files, rows, sign-in). No undo."""
+    await get_container(request).identity.request_deletion(principal.sub, body.confirm_email)
+    return DeletingOut()

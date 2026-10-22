@@ -12,7 +12,16 @@ from typing import Any
 from pydantic import BaseModel, JsonValue, ValidationError
 
 from scout.adapters.llm.metering import record_for
-from scout.ports.llm import AgentResult, AgentSpec, CallContext, LLMOutputInvalid, TokenUsage
+from scout.ports.llm import (
+    AgentResult,
+    AgentSpec,
+    CallContext,
+    ConfidentialDataRefused,
+    DataClass,
+    LLMOutputInvalid,
+    ModelTier,
+    TokenUsage,
+)
 from scout.ports.usage import LlmCallStatus, PriceTable, UsageMeterPort
 from scout.shared import Clock, IdGenerator, InfrastructureError
 
@@ -43,6 +52,11 @@ class FakeLLM:
     ) -> None:
         self._dir, self._usage, self._prices, self._clock, self._ids = fixtures_dir, usage, prices, clock, ids
         self._scripts: dict[str, Any] = {}
+        self.confidential_ok = True  # tests set False to emulate an installation without authorized endpoints
+
+    def confidential_allowed(self, tier: ModelTier | None = None) -> bool:
+        """The fake never leaves the process, so it may see everything unless a test narrows it."""
+        return self.confidential_ok
 
     def script(self, agent_name: str, output: BaseModel | Mapping[str, Any] | Callable[[Any], Any]) -> None:
         """Override the output of an agent (a value, or a function of the input)."""
@@ -65,6 +79,10 @@ class FakeLLM:
         self, agent: AgentSpec[OutT], input: BaseModel | Mapping[str, JsonValue], ctx: CallContext
     ) -> AgentResult[OutT]:
         """Return the fixture/script output validated against ``agent.output_type``; record one llm_call."""
+        if agent.data_class is DataClass.CONFIDENTIAL and not self.confidential_ok:
+            raise ConfidentialDataRefused(
+                "fake: no authorized endpoint"
+            )  # same backstop as the real adapters
         raw = self._raw_output(agent, input)
         try:
             output = raw if isinstance(raw, agent.output_type) else agent.output_type.model_validate(raw)

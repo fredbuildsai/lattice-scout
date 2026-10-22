@@ -368,15 +368,15 @@ async def test_cancelling_a_running_run_stops_it_at_the_next_step_boundary(step:
     assert_user_view_clean(w.store)
 
 
-# charge number -> step it happens in, for a clean run: 1 plan, 2-3 search, 4-6 label, 7 tag, 8-9 count, 10 analyse, 11-12 critic
+# charge number -> step it happens in, for a clean run: 1 plan, 2-3 search, 4-6 label, 7 tag, 8 count, 9 analyse, 10-11 critic
 CHARGE_STEP = [
     RunStep.PLAN_QUERIES, RunStep.RETRIEVE, RunStep.RETRIEVE, RunStep.GROUP_BY_TOPIC, RunStep.GROUP_BY_TOPIC,
-    RunStep.GROUP_BY_TOPIC, RunStep.COVERAGE, RunStep.MEASURE_NOVELTY, RunStep.MEASURE_NOVELTY, RunStep.ANALYSE,
+    RunStep.GROUP_BY_TOPIC, RunStep.COVERAGE, RunStep.MEASURE_NOVELTY, RunStep.ANALYSE,
     RunStep.VERIFY, RunStep.VERIFY,
 ]  # fmt: skip
 
 
-@pytest.mark.parametrize("n", range(1, 13))
+@pytest.mark.parametrize("n", range(1, 12))
 async def test_cancelling_a_running_run_is_noticed_at_the_next_charge(n: int) -> None:
     w = World()
     run = await w.start()
@@ -553,3 +553,31 @@ async def test_the_sweeper_brings_back_a_killed_run_whose_job_is_dead() -> None:
     final = w.get(run)
     assert final.status is RunStatus.DONE and final.executions == 2
     assert w.agents.count("QueryPlanner") == 1 and w.agents.count("GapAnalyst") == 1
+
+
+# ---- global budget (M6) -----------------------------------------------------------------------------------------------
+async def test_a_paused_service_refuses_new_runs_and_creates_nothing() -> None:
+    from decimal import Decimal as D
+
+    from scout.adapters.observability.budget import GlobalBudget
+    from scout.discovery.application.start import StartAnalysisRun
+    from scout.ports.budget import ServicePaused
+
+    class Spent:
+        async def spent_since(self, since: object) -> tuple[D, D]:
+            return D(20), D(0)
+
+    w = World()
+    starter = StartAnalysisRun(
+        w.uow,
+        w.jobs,
+        w.profiles,
+        w.vault,
+        w.clock,
+        w.ids,
+        w.start_cfg,
+        GlobalBudget(Spent(), w.clock, D(20), D(5)),
+    )
+    with pytest.raises(ServicePaused):
+        await starter.start(OWNER, ())
+    assert w.store.runs == {} and not w.jobs.jobs

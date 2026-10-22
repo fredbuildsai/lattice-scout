@@ -14,6 +14,8 @@ from scout.api.schemas.discovery import (
     RunListOut,
     RunOut,
     StepOut,
+    basis_note_for,
+    basis_of,
 )
 from scout.discovery.application.service import RunView
 from scout.identity.domain.account import Account
@@ -32,7 +34,8 @@ def run_out(v: RunView) -> RunOut:
         degraded=[DegradedOut(step=d.step.value, reason=d.reason) for d in r.degraded],
         error_code=r.error_code, document_ids=v.document_ids, cost_usd=str(r.spend.cost_usd),
         budget_usd=str(r.budget.usd), openalex_calls=r.spend.openalex_calls, openalex_cap=r.budget.openalex_calls,
-        counts=RunCountsOut(**v.counts), created_at=r.created_at, started_at=r.started_at, finished_at=r.finished_at,
+        counts=RunCountsOut(**v.counts),
+        basis=basis_of(r.inputs.basis), basis_note=basis_note_for(r.inputs.basis, bool(r.inputs.documents)), created_at=r.created_at, started_at=r.started_at, finished_at=r.finished_at,
     )  # fmt: skip
 
 
