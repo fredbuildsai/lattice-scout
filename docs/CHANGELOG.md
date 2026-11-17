@@ -11,6 +11,16 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 - Settings `EXTERNAL_REFRESH_PER_DAY` (10), `EXTERNAL_BATCH_SIZE` (20), `EXTERNAL_PI_ONLY` (true).
 - `LiteraturePort.works_by_filter` and `get_authors`; `WorkRecord.last_author_id/last_author_name`; `AuthorRecord.counts_by_year`.
 
+### Added (local Docker run)
+- `docker compose up --build` runs PostgreSQL 16, a one-shot migration, the API, the worker and the frontend (Vite dev server) with the real OpenAlex and llm-router backends by default. Start from `.env.docker.example`; `.env` is required. Ports are bound to 127.0.0.1. `--profile seed` loads the demo data without network calls, and `docker compose down -v` resets the data. Services and troubleshooting: `docs/OPERATIONS.md`. Not run end to end yet (no Docker daemon in the build environment).
+- `POSTGRES_PORT` (Compose only, default 5432) and the Docker rows of `docs-site/pages/dev/configuration.md`.
+
+### Fixed (onboarding, migrations, Docker)
+- Onboarding: after "This is me" on one candidate card, the other cards offer "Also me" and add their records to the same claim, instead of replacing the first choice. A researcher split across several OpenAlex profiles can claim all of them (at most 10 records, with a counter).
+- Migrations read `DATABASE_URL` directly, so `make migrate` and the Docker `migrate` service need no LLM keys.
+- Docker: `.env` is passed with a plain `env_file` (works with older Compose versions); llm-router is always installed into the image, falling back to the default GitHub source when `LLM_ROUTER_SOURCE` is empty or not a URL or path.
+- `.env.example` and `.env.docker.example` no longer put a comment after an empty value, which Compose read as the value.
+
 ### Added (live model eval, F-46, DECISIONS 131)
 - `eval/run_eval.py --live`: scores real free models (OpenRouter Nemotron/GLM, Groq gpt-oss, Mistral) on the nine runtime agents through the same agent factory and llm-router adapter as the app. Per deployment and agent: schema-valid rate, strict-schema acceptance with JSON-mode fallback, empty rate, latency p50/p95, retries, 429/quota events; rule checks for the Critic (8 planted-bad and 8 good drafts), evidence quotes, invented ids, MatchExplainer (12 cases) and JointIdeas anonymity. `eval/thresholds.yaml` sets pass/fail and the verdict `GO` / `GO_PUBLISHED_ONLY` / `NO_GO` / `INCOMPLETE` per deployment. Flags: `--deployment`, `--route`, `--agents`, `--runs`, `--max-calls` (hard cap per deployment, default 60), `--allow-synthetic-confidential`, `--out`, `--dry-run`. Free deployments only. Reports go to `eval/reports/live-<date>.json|md` and hold no prompt or model text.
 - Confidential-class agents run only on synthetic `[SAMPLE]` inputs built from public OpenAlex titles, and only on deployments the operator lists.
@@ -196,8 +206,3 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 - M2 runs offline by default. On 2026-10-20 the vault unit and storage contract tests passed without a database, and `make test-integration` passed (39 tests, including the 30-page acceptance flow with the fake LLM). Not run for this entry: live LLM calls (`needs_network`), live Supabase storage (`needs_supabase`), and the frontend end-to-end test against a running stack.
 - Not in M2 (see `docs/BACKLOG.md`): retry for failed documents, switching a kept document to `discard`, OCR and docling, citing vault evidence from opportunities (M3 and M4), and matching on vault content (M5).
 - Known issues, tracked as F-11 to F-15 in `docs/BACKLOG.md`: a full vault shows a generic upload error; an empty file is reported as too large; the page wording for Word files without page breaks; a delete-dialog sentence about opportunities that cannot be checked yet; and the zip-bomb message wording.
-### Added (local Docker)
-- `docker compose up --build` runs postgres, migrations, api, worker and the frontend with real OpenAlex and llm-router backends by default; `.env.docker.example`, `.dockerignore`, optional `seed` profile. Untested without a Docker daemon (docs/OPERATIONS.md).
-
-### Fixed (claim several profiles)
-- Onboarding: after "This is me" on one candidate card, the other cards offer "Also me" and add their records to the same claim, instead of replacing the first choice. A researcher split across several OpenAlex profiles now imports all of them (max 10 records).

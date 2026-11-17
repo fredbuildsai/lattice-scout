@@ -68,13 +68,13 @@ Below your matches, Scout can also suggest researchers who have **not** joined L
 OpenAlex records only, so you have ideas even while few colleagues are members. Choose where to look and press
 **Find researchers**:
 
-- **In your network**: people who published with your co-authors in the last three years. The card says which of your
-  co-authors link you ("via ...").
+- **In your network**: people who published with one of your co-authors in the last three years. The card says which
+  of your co-authors link you ("via ...").
 - **In your field**: people outside your network who published on your topics in the last three years.
 
 By default only the last author of a paper (often the group leader) is suggested. You, your co-authors and members of
-Lattice Scout are never suggested here. Each card shows the name, institution, shared topics, h-index, citations, recent
-works and a link to the OpenAlex profile. **Save** keeps a card at hand; **Dismiss** hides it and that person is not
+Lattice Scout (people who have claimed their OpenAlex profile here) are never suggested. Each card shows the name,
+institution, shared topics, h-index, citations, recent works and a link to the OpenAlex profile. **Save** keeps a card at hand; **Dismiss** hides it and that person is not
 suggested again. You can search up to 10 times a day.
 
 Scout never contacts these researchers and they never see you. If you want to reach out, use the OpenAlex profile to

@@ -170,7 +170,6 @@ All under `/api/v1`, behind `current_account`. Source: `backend/src/scout/api/ma
 | `GET /matches/{match_id}` | `MatchingService.get` | 200 `MatchCard` | 404 `match_not_found` |
 | `POST /matches/{match_id}/decision` | `DecideOnMatch.execute` | 200 `MatchCard` | 404; 409 `consent_required`, `match_expired`, `match_closed`, `nothing_to_withdraw`; 422 `never_similar_needs_decline` |
 | `POST /matches/{match_id}/rating` | `GiveFeedback` (feedback context) | 200 feedback (`stars`, `reasons`, `comment`) | 404 when not a mutual match of the caller |
-
 | `GET /matches/external?layer=` | `ExternalSuggestions.visible` | 200 `ExternalListOut` (active and saved) | 422 unknown layer |
 | `POST /matches/external/refresh` | `ExternalSuggestions.refresh` | 200 `ExternalListOut` | 409 `profile_required`; 429 `external_refresh_limit`; 422 unknown scope |
 | `PATCH /matches/external/{id}` | `ExternalSuggestions.set_state` | 200 `ExternalSuggestionOut` | 404 `suggestion_not_found` |

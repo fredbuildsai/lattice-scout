@@ -65,6 +65,10 @@ make migrate     # apply Alembic migrations (cd backend && uv run alembic upgrad
 make dev         # migrate, then API (port 8000, reload), worker and, if frontend/node_modules exists, the Vite dev server
 ```
 
+To run the whole stack (PostgreSQL, migrations, API, worker, frontend) with only Docker installed, use
+`docker compose up --build` with a `.env` copied from `.env.docker.example`. See
+[Run the whole site locally with Docker](https://github.com/fredbuildsai/lattice-scout/blob/main/docs/OPERATIONS.md#run-the-whole-site-locally-with-docker).
+
 Run the processes separately if you prefer:
 
 ```bash

@@ -77,19 +77,45 @@ Connect a read-only database user to the `analytics` schema. Suggested first boa
 
 ## Run the whole site locally with Docker
 
-Needs only Docker (Compose v2) and a `.env` file. The images are built on your machine; nothing is deployed.
+Needs Docker with Compose v2 and a `.env` file. The images are built on your machine and nothing is deployed.
 
 ```bash
 git clone https://github.com/fredbuildsai/lattice-scout && cd lattice-scout
-git checkout claude/zealous-curie-7m18vd      # until it is merged
-cp .env.docker.example .env                   # then edit .env: OpenAlex key + mailto, at least one LLM key
-docker compose up --build                     # open http://localhost:5173 (API: http://localhost:8000/docs)
+git checkout claude/zealous-curie-7m18vd      # until it is merged into main
+cp .env.docker.example .env                   # then edit .env (see below)
+docker compose up --build                     # web app: http://localhost:5173, API docs: http://localhost:8000/docs
 ```
 
-* **Environment variables.** Compose reads `.env` twice: for `${VAR}` in `docker-compose.yml`, and (`env_file`) it passes every line to the `api`, `worker`, `migrate` and `seed` containers. `.env` is git-ignored. The frontend only gets the `VITE_*` values listed in the compose file; Postgres and the frontend never see API keys. After editing `.env`, run `docker compose up -d` again (a changed value recreates the container).
-* **Real data from the start.** The defaults are `LLM_BACKEND=llm_router` and `LITERATURE_BACKEND=openalex`. The API refuses to start without at least one of `OPENROUTER_API_KEY`, `GROQ_API_KEY`, `MISTRAL_API_KEY` (`docker compose logs api` says so). `llmrouter-free` is installed into the image at build time from `LLM_ROUTER_SOURCE` (default: its GitHub repository; if that repository is private, the build fails: clone it next to this repo and set `LLM_ROUTER_SOURCE` to a path you add to the build context, or make it public).
-* **Services.** `postgres` (data in the `pgdata` volume), `migrate` (runs `alembic upgrade head` once), `api`, `worker`, `frontend` (Vite dev server, live reload from `./frontend`). Ports are bound to 127.0.0.1 only.
-* **Accounts.** `AUTH_MODE=dev`: sign in with any email, no Supabase needed. Dev signing keys and uploads live in the `appdata` volume.
-* **Demo data (optional).** `docker compose --profile seed run --rm seed` loads the Foster/Moreira demo pair and synthetic researchers from the committed fixtures. It never calls OpenAlex or an LLM.
-* **Stop / reset.** `docker compose down` keeps your data; `docker compose down -v` deletes the database and uploads.
-* **Status.** Written without a Docker daemon in the build VM, so it has not been run end to end. Report the first error (`docker compose logs <service>`) and it will be fixed.
+In `.env`, set at least one LLM key (`OPENROUTER_API_KEY`, `GROQ_API_KEY` or `MISTRAL_API_KEY`) and, if you have one,
+`OPENALEX_API_KEY` and `OPENALEX_MAILTO` (a contact address that OpenAlex receives with each request).
+
+* **`.env` is required.** Compose stops when the file is missing. Keep comments on their own lines. A comment after an
+  empty value (`KEY=  # note`) is read as the value, so do not write one. Compose v2 before 2.24 works: the file is read
+  with a plain `env_file`.
+* **Two readers of `.env`.** Compose reads it for `${VAR}` in `docker-compose.yml`, and `env_file` passes every line to
+  the `migrate`, `api`, `worker` and `seed` containers. The `frontend` container gets only the `VITE_*` values listed in
+  the compose file. Postgres and the frontend never see your API keys. After you edit `.env`, run `docker compose up -d`
+  again; containers whose settings changed are recreated.
+* **Real backends by default.** The compose file sets `LLM_BACKEND=llm_router` and `LITERATURE_BACKEND=openalex`. The API
+  refuses to start with `llm_router` and no provider key; `docker compose logs api` shows the message.
+* **llm-router in the image.** The image installs `llmrouter-free` at build time from `LLM_ROUTER_SOURCE`. An empty
+  value, or one that is not a git URL, an `http(s)` URL or an absolute path, falls back to the default GitHub repository.
+  If your machine cannot reach that repository (for example it is private), the build fails at the install step. Then
+  set `LLM_ROUTER_SOURCE` to a URL you can reach, such as a fork. A local folder does not work, because the build
+  context does not include it.
+* **Services.** `postgres` (PostgreSQL 16, data in the `pgdata` volume). `migrate` runs `alembic upgrade head` once and
+  exits; it reads `DATABASE_URL` directly, so it needs no LLM keys. `api` (port 8000). `worker`. `frontend` (Vite dev
+  server with live reload from `./frontend`, port 5173). Published ports are bound to 127.0.0.1 only. Change
+  `POSTGRES_PORT` if a local PostgreSQL already uses 5432.
+* **Accounts.** `AUTH_MODE=dev`: sign in with any e-mail address; no Supabase is needed. Dev signing keys and uploaded
+  files live in the `appdata` volume, shared by `api` and `worker`.
+* **Without keys.** To run with no provider and no OpenAlex access, set `LLM_BACKEND=fake` and
+  `LITERATURE_BACKEND=fixtures` in `.env`. The API then starts with no keys. The image still runs the llm-router install
+  step.
+* **Demo data (optional).** `docker compose --profile seed run --rm seed` loads the Foster and Moreira demo pair and
+  synthetic researchers from the committed fixtures. It sets `LLM_BACKEND=fake` and `LITERATURE_BACKEND=fixtures`, so it
+  calls neither OpenAlex nor an LLM.
+* **Stop and reset.** `docker compose down` keeps your data. `docker compose down -v` deletes the database, the uploaded
+  files and the dev signing keys.
+* **Status.** This setup was written without a Docker daemon available, so it has not been run end to end. If a step
+  fails, `docker compose logs <service>` shows the first error.

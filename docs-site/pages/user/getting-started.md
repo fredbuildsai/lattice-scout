@@ -36,6 +36,29 @@ Under your card you see **Records to include**. A ticked record counts as yours.
 - A record marked **possibly a namesake, left unticked** has a similar name at your institution, but Scout is not sure it is yours. Tick it only if you know it is.
 - The main record (the one with the most works) stays ticked.
 
+### Your work under several profiles
+
+OpenAlex often splits one researcher into several author records. This happens when your name appears in different
+forms on different papers, when you changed institution, or when OpenAlex could not link older papers to you. So you
+may see two or three cards that are all you.
+
+To include all of them:
+
+1. Choose **This is me** on the card that fits you best. This is your main profile.
+2. On each other card that is also you, choose **Also me**. Its records are added to yours and ticked.
+3. Read the counter above the confirm button. It shows how many records you have selected. You can select at most
+   **10 records**.
+4. To take a card out again, choose **Also me** on it a second time.
+
+Tick only records that are yours. A namesake with the same name and institution is not you. If you are not sure, leave
+the record unticked. You can claim again later (see below).
+
+Your main profile stays the card you chose first. Choose **Confirm** when you are done. Scout imports the works of all
+selected records together.
+
+To change your records later, open **Claim profile** again, search, and choose your cards and records. The new
+selection replaces the old one, and Scout imports your works again.
+
 ## 4. Confirm and wait
 
 1. Choose your matching preference (see step 6).
@@ -60,8 +83,8 @@ When Scout refreshes your works later, your own choices are kept.
 
 Open **Profile and privacy** (or go to `/settings/privacy`). There are two switches. Both are off until you turn them on.
 
-- **Suggest me to complementary researchers.** You stay anonymous. Contacts are shared only if you both accept. Matching is not live yet, so this switch changes nothing you can see at the moment.
-- **Also use topic signals from my private vault.** Scout uses only topic signals, never your files. This switch needs the first one. Turning the first switch off turns this one off too. The private vault is not part of this release yet.
+- **Suggest me to complementary researchers.** You stay anonymous. Contacts are shared only if you both accept. Suggestions appear on the **Matches** page.
+- **Also use topic signals from my private vault.** Scout uses only topic signals, never your files. This switch needs the first one. Turning the first switch off turns this one off too. In this pilot Scout works on published data only, so this switch has no effect yet.
 
 ## What Scout stores
 

@@ -4,6 +4,20 @@ AI research scout for scientists: finds new research opportunities in your unpub
 
 This repository starts as a **hand-off bundle** for Claude Code, which builds the MVP unsupervised in cloud sessions.
 
+## Run locally with Docker
+
+With Docker (Compose v2) installed, the whole site runs on your machine: PostgreSQL, migrations, API, worker and the
+web app.
+
+```bash
+cp .env.docker.example .env      # add at least one LLM key (OPENROUTER, GROQ or MISTRAL) and your OpenAlex contact address
+docker compose up --build        # web app: http://localhost:5173, API docs: http://localhost:8000/docs
+```
+
+Real OpenAlex and LLM backends are the default. To run without any keys, set `LLM_BACKEND=fake` and
+`LITERATURE_BACKEND=fixtures` in `.env`. `docker compose --profile seed run --rm seed` adds demo data, and
+`docker compose down -v` resets everything. Details, services and troubleshooting: [`docs/OPERATIONS.md`](docs/OPERATIONS.md#run-the-whole-site-locally-with-docker).
+
 ## Start here (human)
 1. Push this folder to a new GitHub repository (contents at the root, including the hidden `.claude/` folder and `.gitignore`).
 2. Set up Claude Code in the cloud: `docs/IMPLEMENTATION_PLAN.md` §0.9 (environment, setup script, variables).

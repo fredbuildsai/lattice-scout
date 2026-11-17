@@ -15,7 +15,7 @@ COPY tests/fixtures/openalex ./tests/fixtures/openalex
 COPY scripts ./scripts
 WORKDIR /app/backend
 RUN uv sync --frozen --no-dev
-# The real LLM router (not in the lock file, DECISIONS 3). Empty = skip, then only LLM_BACKEND=fake works.
+# The real LLM router (not in the lock file, DECISIONS 3). Always installed; see the fallback below.
 ARG LLM_ROUTER_SOURCE=git+https://github.com/fredbuildsai/llmrouter-free
 # A value that is not a git URL, URL or path (empty, or a stray "# comment" from a .env line) falls back to the default.
 RUN src="$LLM_ROUTER_SOURCE"; \

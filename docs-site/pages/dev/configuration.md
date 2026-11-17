@@ -69,7 +69,7 @@ Read by the API (upload limits, `RETENTION_POLICY`) and by the worker (extractio
 |---|---|---|
 | `OPENAI_API_KEY` | unset | Secret for `LLM_BACKEND=openai_direct`. Never commit it. |
 | `LLM_ROUTER_CONFIG` | `config/llm_router.yaml` | llm-router deployments and routes. |
-| `LLM_ROUTER_SOURCE` | unset | Install source for llm-router, for example `git+https://github.com/fredbuildsai/llmrouter-free@v0.1.0`. Used by the install commands below. |
+| `LLM_ROUTER_SOURCE` | unset | Install source for llm-router, for example `git+https://github.com/fredbuildsai/llmrouter-free@v0.1.0`. Used by the install commands below and as the build argument of the Docker image. Empty, or a value that is not a git URL, `http(s)` URL or absolute path, falls back to the default GitHub repository (see [Docker](#docker-compose-local-run)). |
 | `LLM_CONFIDENTIAL_AUTHORIZED_PROVIDERS` | empty | Comma list of providers (model prefix, e.g. `mistral,groq`) that may receive confidential data (vault documents and anything derived from them). A deployment also needs `authorized: true` in `config/llm_router.yaml`. Empty means no remote endpoint gets confidential data: runs, matching and ingestion still go ahead on published data only and say so. The old name `LLM_VAULT_SANCTIONED_PROVIDERS` is still read. See ADR 016. |
 | `LLM_CONFIDENTIAL_ALLOW_ANY_PROVIDER` | `false` | Explicit waiver: confidential data may reach any configured deployment (not recommended). Old name `LLM_VAULT_ALLOW_ANY_PROVIDER` still read. |
 | `LLM_FAKE_CONFIDENTIAL_ALLOWED` | `true` | `LLM_BACKEND=fake` only: `false` emulates an installation without an authorized provider (published-only runs, documents waiting), for demos and tests. |
@@ -185,3 +185,18 @@ LLM_BACKEND=llm_router OPENAI_API_KEY=... uv run uvicorn scout.api.app:create_ap
 ```
 
 The live LLM tests (`backend/tests/live/`, marker `needs_network`) call the real adapters. They are skipped by default.
+
+## Docker Compose (local run)
+
+Read by `docker-compose.yml`, not by `Settings`. Run `docker compose up --build` after `cp .env.docker.example .env`;
+[operations](https://github.com/fredbuildsai/lattice-scout/blob/main/docs/OPERATIONS.md) describes the whole run.
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `POSTGRES_PORT` | `5432` | Host port of the `postgres` service (bound to `127.0.0.1`). Change it when a local PostgreSQL already uses 5432. |
+| `LLM_ROUTER_SOURCE` | `git+https://github.com/fredbuildsai/llmrouter-free` | Build argument: where the image installs llm-router from. |
+| `APP_ENV`, `AUTH_MODE`, `LLM_BACKEND`, `LITERATURE_BACKEND` | `dev`, `dev`, `llm_router`, `openalex` | Compose defaults for the backend services. Values in `.env` win. The `seed` service always uses `fake` and `fixtures`. |
+| `VITE_AUTH_MODE`, `VITE_API_URL`, `VITE_ANALYTICS_ENABLED` | `dev`, `http://localhost:8000`, `true` | The only values the frontend container receives. |
+
+The API refuses to start with `LLM_BACKEND=llm_router` unless one of `OPENROUTER_API_KEY`, `GROQ_API_KEY` or
+`MISTRAL_API_KEY` is set. `DATABASE_URL` inside the containers points at the `postgres` service.
