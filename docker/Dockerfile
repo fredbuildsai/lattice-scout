@@ -17,6 +17,10 @@ WORKDIR /app/backend
 RUN uv sync --frozen --no-dev
 # The real LLM router (not in the lock file, DECISIONS 3). Empty = skip, then only LLM_BACKEND=fake works.
 ARG LLM_ROUTER_SOURCE=git+https://github.com/fredbuildsai/llmrouter-free
-RUN if [ -n "$LLM_ROUTER_SOURCE" ]; then uv pip install --python /app/backend/.venv/bin/python "$LLM_ROUTER_SOURCE"; fi
+# A value that is not a git URL, URL or path (empty, or a stray "# comment" from a .env line) is skipped.
+RUN case "$LLM_ROUTER_SOURCE" in \
+      git+*|http*|/*) uv pip install --python /app/backend/.venv/bin/python "$LLM_ROUTER_SOURCE" ;; \
+      *) echo "llmrouter-free not installed (LLM_ROUTER_SOURCE='$LLM_ROUTER_SOURCE')" ;; \
+    esac
 ENV PATH="/app/backend/.venv/bin:$PATH" PYTHONUNBUFFERED=1
 CMD ["uvicorn", "scout.api.app:create_app", "--factory", "--host", "0.0.0.0", "--port", "8000"]
