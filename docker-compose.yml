@@ -20,9 +20,7 @@ x-backend: &backend
     dockerfile: docker/Dockerfile
     args:
       LLM_ROUTER_SOURCE: ${LLM_ROUTER_SOURCE-git+https://github.com/fredbuildsai/llmrouter-free}
-  env_file:
-    - path: .env
-      required: false
+  env_file: [.env]
   environment: *backend-env
   volumes: ["appdata:/data"]
 

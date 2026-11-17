@@ -77,7 +77,7 @@ Connect a read-only database user to the `analytics` schema. Suggested first boa
 
 ## Run the whole site locally with Docker
 
-Needs only Docker (Compose v2.24 or later). The images are built on your machine; nothing is deployed.
+Needs only Docker (Compose v2) and a `.env` file. The images are built on your machine; nothing is deployed.
 
 ```bash
 git clone https://github.com/fredbuildsai/lattice-scout && cd lattice-scout
