@@ -191,3 +191,6 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 - Known issues, tracked as F-11 to F-15 in `docs/BACKLOG.md`: a full vault shows a generic upload error; an empty file is reported as too large; the page wording for Word files without page breaks; a delete-dialog sentence about opportunities that cannot be checked yet; and the zip-bomb message wording.
 ### Added (local Docker)
 - `docker compose up --build` runs postgres, migrations, api, worker and the frontend with real OpenAlex and llm-router backends by default; `.env.docker.example`, `.dockerignore`, optional `seed` profile. Untested without a Docker daemon (docs/OPERATIONS.md).
+
+### Fixed (claim several profiles)
+- Onboarding: after "This is me" on one candidate card, the other cards offer "Also me" and add their records to the same claim, instead of replacing the first choice. A researcher split across several OpenAlex profiles now imports all of them (max 10 records).

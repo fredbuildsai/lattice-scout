@@ -3,7 +3,7 @@ import { ConsentToggles } from './ConsentToggles'
 import { TopicChips } from './TopicChips'
 import { WorksStep } from './WorksStep'
 import { storedClaim, useCandidates, useClaim, useMe, useProfile, type CandidateGroup } from './api'
-import { buildClaim, initialSelection, toggleRecord } from './claimSelection'
+import { buildClaim, groupIncluded, initialSelection, MAX_CLAIM_RECORDS, toggleGroup, toggleRecord } from './claimSelection'
 
 /**
  * W1 / M1 claim flow at /onboarding: search, pick a candidate card, tick records, set the matching
@@ -38,9 +38,15 @@ function ClaimForm({ onClaimed }: { onClaimed: () => void }) {
     setSubmitted({ name: name.trim(), affiliation: affiliation.trim() })
   }
   function choose(g: CandidateGroup) {
+    if (group && group.group_id !== g.group_id) {
+      // a further card of the same person: add or remove its records, keep the main profile
+      setSelected((s) => toggleGroup(group.primary.author_id, g, s))
+      return
+    }
     setChosen(g.group_id)
     setSelected(initialSelection(g))
   }
+  const tooMany = selected.length > MAX_CLAIM_RECORDS
 
   return (
     <section aria-labelledby="page-title" className="mx-auto max-w-[900px]">
@@ -81,8 +87,10 @@ function ClaimForm({ onClaimed }: { onClaimed: () => void }) {
         <ul className="mt-6 space-y-4" aria-label="Candidate profiles">
           {groups.map((g) => {
             const active = g.group_id === chosen
+            const also = !active && !!group && groupIncluded(g, selected)
+            const primaryId = group?.primary.author_id ?? g.primary.author_id
             return (
-              <li key={g.group_id} className={`rounded-card border bg-surface p-4 md:p-5 ${active ? 'border-accent ring-2 ring-accent-50' : 'border-line'}`}>
+              <li key={g.group_id} className={`rounded-card border bg-surface p-4 md:p-5 ${active ? 'border-accent ring-2 ring-accent-50' : also ? 'border-accent' : 'border-line'}`}>
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <h2 className="text-lg font-semibold">{g.primary.display_name}</h2>
@@ -93,22 +101,22 @@ function ClaimForm({ onClaimed }: { onClaimed: () => void }) {
                     </p>
                     {g.orcid && <p className="font-mono text-xs text-ink-3">ORCID {g.orcid}</p>}
                   </div>
-                  <button type="button" aria-pressed={active} onClick={() => choose(g)} className={`h-10 rounded-btn border px-4 text-sm font-semibold ${active ? 'border-accent bg-accent text-white' : 'border-line-strong hover:bg-subtle'}`}>
-                    {active ? 'This is me' : `This is me (${g.primary.display_name})`}
+                  <button type="button" aria-pressed={active || also} onClick={() => choose(g)} className={`h-10 rounded-btn border px-4 text-sm font-semibold ${active || also ? 'border-accent bg-accent text-white' : 'border-line-strong hover:bg-subtle'}`}>
+                    {active ? 'This is me' : also ? 'Also me' : group ? `Also me (${g.primary.display_name})` : `This is me (${g.primary.display_name})`}
                   </button>
                 </div>
                 <div className="mt-3">
                   <TopicChips topics={g.top_topics} />
                 </div>
-                {active && (
+                {(active || also) && (
                   <fieldset className="mt-4 border-t border-line pt-3">
                     <legend className="text-sm font-semibold">Records to include</legend>
                     {[...g.records, ...g.possible].map((r) => {
-                      const isPrimary = r.author_id === g.primary.author_id
+                      const isPrimary = r.author_id === primaryId
                       const possible = g.possible.some((p) => p.author_id === r.author_id)
                       return (
                         <label key={r.author_id} className="flex items-start gap-3 py-2 text-sm">
-                          <input type="checkbox" className="mt-0.5 h-5 w-5 accent-accent" checked={selected.includes(r.author_id)} disabled={isPrimary} onChange={() => setSelected((s) => toggleRecord(g, s, r.author_id))} />
+                          <input type="checkbox" className="mt-0.5 h-5 w-5 accent-accent" checked={selected.includes(r.author_id)} disabled={isPrimary} onChange={() => setSelected((s) => toggleRecord(primaryId, s, r.author_id))} />
                           <span>
                             {r.display_name} · {r.works_count} works
                             <span className="block text-ink-3">
@@ -136,12 +144,20 @@ function ClaimForm({ onClaimed }: { onClaimed: () => void }) {
 
       {group && (
         <div className="mt-6 flex flex-col items-end gap-2">
+          <p className="text-sm text-ink-3" role="status">
+            {selected.length} {selected.length === 1 ? 'record' : 'records'} selected
+          </p>
+          {tooMany && (
+            <p role="alert" className="text-sm text-warm">
+              Select at most {MAX_CLAIM_RECORDS} records.
+            </p>
+          )}
           {claim.isError && (
             <p role="alert" className="text-sm text-warm">
               Could not save your profile. Try again.
             </p>
           )}
-          <button type="button" disabled={claim.isPending} onClick={() => claim.mutate(buildClaim(group, selected), { onSuccess: onClaimed })} className="h-12 w-full rounded-btn bg-accent px-6 font-semibold text-white hover:bg-accent-dark disabled:opacity-60 md:w-auto">
+          <button type="button" disabled={claim.isPending || tooMany} onClick={() => claim.mutate(buildClaim(groups, group, selected), { onSuccess: onClaimed })} className="h-12 w-full rounded-btn bg-accent px-6 font-semibold text-white hover:bg-accent-dark disabled:opacity-60 md:w-auto">
             {claim.isPending ? 'Saving…' : 'Confirm'}
           </button>
         </div>
