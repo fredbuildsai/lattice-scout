@@ -54,12 +54,17 @@ from scout.matching.adapters.agents import AgentsMatching
 from scout.matching.adapters.sql import SqlMatchUnitOfWork
 from scout.matching.adapters.vocabulary import load_vocabulary
 from scout.matching.application.compute import ComputeMatches
-from scout.matching.application.config import MatchConfig
+from scout.matching.application.config import ExternalConfig, MatchConfig
 from scout.matching.application.erasure import MatchErasure
+from scout.matching.application.external import ExternalSuggestions
 from scout.matching.application.profile_job import ComputeResearcherProfile
 from scout.matching.application.reveal_job import MatchingNightly, RevealMatch
 from scout.matching.application.service import DecideOnMatch, MatchingService
-from scout.matching.application.sources import ConsentSourceAdapter, VaultSignalAdapter
+from scout.matching.application.sources import (
+    ConsentSourceAdapter,
+    MemberDirectoryAdapter,
+    VaultSignalAdapter,
+)
 from scout.matching.application.sources import ProfileSourceAdapter as MatchProfileSource
 from scout.notifications.adapters.senders import ConsoleEmailSender, ResendEmailSender
 from scout.notifications.adapters.sql import SqlNotificationStore
@@ -141,6 +146,7 @@ class Container:
     give_feedback: GiveFeedback
     matching: MatchingService
     decide_match: DecideOnMatch
+    external_suggestions: ExternalSuggestions
     match_profile: ComputeResearcherProfile
     compute_matches: ComputeMatches
     reveal_match: RevealMatch
@@ -389,6 +395,13 @@ def build_container(
     return Container(
         matching=matching_service,
         decide_match=DecideOnMatch(match_uow, consent_source, queue, match_notifier, clock, match_cfg),
+        external_suggestions=ExternalSuggestions(
+            match_uow, match_profile_source, MemberDirectoryAdapter(profile_service), literature, clock, ids,
+            ExternalConfig(
+                refresh_per_day=settings.external_refresh_per_day, batch_size=settings.external_batch_size,
+                pi_only=settings.external_pi_only, min_score=settings.match_min_score, alpha=settings.match_alpha,
+            ),
+        ),
         match_profile=profile_job, compute_matches=compute_matches,
         reveal_match=RevealMatch(match_uow, match_profile_source, consent_source, signal_source, match_agents, vocabulary, clock),
         match_nightly=MatchingNightly(match_uow, queue, profile_job, compute_matches, clock, match_cfg, global_budget),

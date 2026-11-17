@@ -172,9 +172,18 @@ EOF
 
 To run only the compute step, call `await c.compute_matches.execute(None)` instead.
 
+## External suggestions
+
+Researchers who are not members, found in OpenAlex, so a researcher sees suggestions while the platform is small
+(DECISIONS 132). Two scopes today: `in_network` (co-authors of your co-authors) and `in_field` (outside your network,
+same topics); "out of network" and "out of field" are BACKLOG F-61. The search runs when the user presses "Find
+researchers" (`POST /api/v1/matches/external/refresh`), limited by `EXTERNAL_REFRESH_PER_DAY`. Formula `ext1`:
+`T^alpha * (0.5 + 0.5 * min(activity))`, no method term. No LLM. These people are never contacted and never enter
+proposals. Details and the step-by-step algorithm: the matching module README.
+
 ## Configuration
 
-Set in `.env` (see [configuration](configuration.md) for each default): `MATCH_MAX_OPEN_PER_WEEK`, `MATCH_EXPIRY_DAYS`, `MATCH_COOLDOWN_DAYS`, `MATCH_MIN_SCORE`, `MATCH_ALPHA`, `MATCH_BETA`, `MATCH_EXCLUDE_COAUTHORS`, `MATCH_EXCLUDE_SAME_GROUP`, `MATCH_MAX_EXPLAINS_PER_RUN`, `MATCH_NIGHTLY_UTC_HOUR`, `METHODS_CONFIG`. Restart the API and the worker after a change. `MATCH_NON_MEMBERS` exists but no code reads it yet.
+Set in `.env` (see [configuration](configuration.md) for each default): `MATCH_MAX_OPEN_PER_WEEK`, `MATCH_EXPIRY_DAYS`, `MATCH_COOLDOWN_DAYS`, `MATCH_MIN_SCORE`, `MATCH_ALPHA`, `MATCH_BETA`, `MATCH_EXCLUDE_COAUTHORS`, `MATCH_EXCLUDE_SAME_GROUP`, `MATCH_MAX_EXPLAINS_PER_RUN`, `MATCH_NIGHTLY_UTC_HOUR`, `METHODS_CONFIG`, `EXTERNAL_REFRESH_PER_DAY`, `EXTERNAL_BATCH_SIZE`, `EXTERNAL_PI_ONLY`. Restart the API and the worker after a change. `MATCH_NON_MEMBERS` exists but no code reads it yet.
 
 The vocabulary is `config/methods.yaml` (version 1, 44 methods). Each entry has an `id`, a `label` and `synonyms`. A method id that is not in the file is dropped, and a new label goes to `match_method_proposal` for review.
 

@@ -35,6 +35,10 @@ class ResearcherRepo(Protocol):
         """Every researcher (any account) that claimed one of the ids."""
         ...
 
+    async def all_author_ids(self) -> set[str]:
+        """Every claimed OpenAlex author id, across all researchers."""
+        ...
+
     async def set_verified_level(self, researcher_id: UUID, level: VerifiedLevel) -> None:
         """Change only ``verified_level`` (used for other accounts' rows: never rewrites their import state)."""
         ...

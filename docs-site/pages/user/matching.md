@@ -62,6 +62,24 @@ The card opens with **You both said yes** and shows:
 - **Joint ideas**: one to three ideas for working together. Each has a title, a question, what each of you brings, a first step and a possible output. Ideas can take a short time to appear. If Scout cannot make them, the contact details still show.
 - **Rating**: rate the match from 1 to 5 stars. You can add reasons (for example "Methods fit" or "Too similar to me") and a comment. A new rating replaces the old one. Ratings help the team tune matching.
 
+## Researchers not on Lattice Scout yet
+
+Below your matches, Scout can also suggest researchers who have **not** joined Lattice Scout. It finds them in public
+OpenAlex records only, so you have ideas even while few colleagues are members. Choose where to look and press
+**Find researchers**:
+
+- **In your network**: people who published with your co-authors in the last three years. The card says which of your
+  co-authors link you ("via ...").
+- **In your field**: people outside your network who published on your topics in the last three years.
+
+By default only the last author of a paper (often the group leader) is suggested. You, your co-authors and members of
+Lattice Scout are never suggested here. Each card shows the name, institution, shared topics, h-index, citations, recent
+works and a link to the OpenAlex profile. **Save** keeps a card at hand; **Dismiss** hides it and that person is not
+suggested again. You can search up to 10 times a day.
+
+Scout never contacts these researchers and they never see you. If you want to reach out, use the OpenAlex profile to
+find their contact yourself. "Out of network" and "out of field" searches are planned.
+
 ## Limits and rules
 
 - You get at most **3 new proposals in 7 days**.

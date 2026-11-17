@@ -21,6 +21,7 @@ from scout.matching.domain.enums import (
     MatchState,
     Side,
 )
+from scout.matching.domain.external import ExternalLayer, ExternalSuggestion, SuggestionState
 from scout.matching.domain.ids import idea_id
 from scout.matching.domain.profile import MatchProfile, TopicWeight
 from scout.matching.domain.proposal import BringItem, MatchProposal, PublicFacet, ScoreBasis, StoredRationale
@@ -426,6 +427,110 @@ class SqlBlockRepo:
         await self._s.execute(stmt.on_conflict_do_nothing())
 
 
+def _suggestion(r: Any) -> ExternalSuggestion:
+    return ExternalSuggestion(
+        id=r.id, account_id=r.account_id, openalex_id=r.openalex_id, name=r.name, institution=r.institution,
+        score=float(r.score), topic_overlap=float(r.topic_overlap), layer=ExternalLayer(r.layer), vias=tuple(r.vias),
+        shared_topics=tuple(r.shared_topics), h_index=r.h_index, citations=int(r.citations),
+        works_count=r.works_count, recent_works=r.recent_works, created_at=r.created_at, updated_at=r.updated_at,
+        state=SuggestionState(r.state), formula=r.formula,
+    )  # fmt: skip
+
+
+class SqlExternalSuggestionRepo:
+    """Implements ``ExternalSuggestionRepo``."""
+
+    def __init__(self, session: AsyncSession) -> None:
+        self._s = session
+
+    async def list_for(
+        self, account: AccountId, states: Sequence[SuggestionState], layer: ExternalLayer | None = None
+    ) -> list[ExternalSuggestion]:
+        """``in_network`` first, then best score, then OpenAlex id."""
+        t = m.match_external_suggestion
+        q = select(t).where(t.c.account_id == account, t.c.state.in_([x.value for x in states]))
+        if layer is not None:
+            q = q.where(t.c.layer == layer.value)
+        q = q.order_by((t.c.layer != ExternalLayer.IN_NETWORK.value), t.c.score.desc(), t.c.openalex_id)
+        return [_suggestion(r) for r in (await self._s.execute(q)).all()]
+
+    async def get(self, suggestion_id: UUID, account: AccountId) -> ExternalSuggestion | None:
+        """Only the owner's."""
+        t = m.match_external_suggestion
+        r = (
+            await self._s.execute(select(t).where(t.c.id == suggestion_id, t.c.account_id == account))
+        ).first()
+        return _suggestion(r) if r is not None else None
+
+    async def seen_ids(self, account: AccountId) -> set[str]:
+        """Every stored OpenAlex id of the account."""
+        t = m.match_external_suggestion
+        rows = (
+            (await self._s.execute(select(t.c.openalex_id).where(t.c.account_id == account))).scalars().all()
+        )
+        return set(rows)
+
+    async def add_many(self, suggestions: Sequence[ExternalSuggestion]) -> int:
+        """``ON CONFLICT (account_id, openalex_id) DO NOTHING``."""
+        if not suggestions:
+            return 0
+        rows = [
+            {
+                "id": x.id,
+                "account_id": x.account_id,
+                "openalex_id": x.openalex_id,
+                "name": x.name,
+                "institution": x.institution,
+                "score": x.score,
+                "topic_overlap": x.topic_overlap,
+                "formula": x.formula,
+                "layer": x.layer.value,
+                "vias": list(x.vias),
+                "shared_topics": list(x.shared_topics),
+                "h_index": x.h_index,
+                "citations": x.citations,
+                "works_count": x.works_count,
+                "recent_works": x.recent_works,
+                "state": x.state.value,
+                "created_at": x.created_at,
+                "updated_at": x.updated_at,
+            }  # fmt: skip
+            for x in suggestions
+        ]
+        stmt = pg_insert(m.match_external_suggestion).values(rows).on_conflict_do_nothing()
+        res = await self._s.execute(stmt.returning(m.match_external_suggestion.c.id))
+        return len(res.all())
+
+    async def save(self, suggestion: ExternalSuggestion) -> None:
+        """State and ``updated_at``."""
+        t = m.match_external_suggestion
+        await self._s.execute(
+            update(t)
+            .where(t.c.id == suggestion.id, t.c.account_id == suggestion.account_id)
+            .values(state=suggestion.state.value, updated_at=suggestion.updated_at)
+        )
+
+    async def delete_for(self, account: AccountId) -> int:
+        """Suggestions and refresh log of the account."""
+        res = await self._s.execute(
+            delete(m.match_external_suggestion).where(m.match_external_suggestion.c.account_id == account)
+        )
+        await self._s.execute(
+            delete(m.match_external_refresh).where(m.match_external_refresh.c.account_id == account)
+        )
+        return int(getattr(res, "rowcount", 0) or 0)
+
+    async def record_refresh(self, account: AccountId, now: datetime) -> None:
+        """One row per refresh."""
+        await self._s.execute(insert(m.match_external_refresh).values(account_id=account, created_at=now))
+
+    async def refreshes_since(self, account: AccountId, since: datetime) -> int:
+        """Count of refreshes since ``since``."""
+        t = m.match_external_refresh
+        q = select(func.count()).select_from(t).where(t.c.account_id == account, t.c.created_at >= since)
+        return int((await self._s.execute(q)).scalar_one())
+
+
 class SqlMatchUnitOfWork(SqlUnitOfWork):
     """Unit of work over one session."""
 
@@ -435,8 +540,10 @@ class SqlMatchUnitOfWork(SqlUnitOfWork):
     _profiles: SqlMatchProfileRepo
     _candidates: SqlCandidateQuery
     _ideas: SqlJointIdeaRepo
+    _external: SqlExternalSuggestionRepo
 
     def _bind(self) -> None:
+        self._external = SqlExternalSuggestionRepo(self.session)
         self._profiles = SqlMatchProfileRepo(self.session)
         self._candidates = SqlCandidateQuery(self.session)
         self._ideas = SqlJointIdeaRepo(self.session)
@@ -473,3 +580,8 @@ class SqlMatchUnitOfWork(SqlUnitOfWork):
     def ideas(self) -> SqlJointIdeaRepo:
         """Joint ideas."""
         return self._ideas
+
+    @property
+    def external(self) -> SqlExternalSuggestionRepo:
+        """External suggestions."""
+        return self._external

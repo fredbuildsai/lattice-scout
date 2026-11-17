@@ -43,6 +43,9 @@ class InMemoryResearcherRepo:
     async def find_by_author_ids(self, author_ids: Collection[str]) -> list[Researcher]:
         return [copy.deepcopy(r) for r in self.data.values() if set(r.author_ids) & set(author_ids)]
 
+    async def all_author_ids(self) -> set[str]:
+        return {a for r in self.data.values() for a in r.author_ids}
+
     async def set_verified_level(self, researcher_id: UUID, level: VerifiedLevel) -> None:
         self.data[researcher_id].verified_level = level
 

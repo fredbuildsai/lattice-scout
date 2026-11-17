@@ -19,6 +19,7 @@ class ProfileInput:
     country: str | None
     import_done: bool
     works: tuple[WorkIn, ...]  # included works
+    author_ids: tuple[str, ...] = ()  # claimed OpenAlex author ids, primary first
 
 
 @dataclass(frozen=True)
@@ -35,6 +36,14 @@ class ProfileSource(Protocol):
 
     async def matching_input(self, account: AccountId) -> ProfileInput | None:
         """Included works and facets, or None without a profile."""
+        ...
+
+
+class MemberDirectory(Protocol):
+    """Who is already on the platform, as OpenAlex author ids (external suggestions must skip them)."""
+
+    async def claimed_author_ids(self) -> set[str]:
+        """Every OpenAlex author id claimed by any researcher."""
         ...
 
 

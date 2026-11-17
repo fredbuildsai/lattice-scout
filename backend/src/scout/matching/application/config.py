@@ -24,3 +24,20 @@ class MatchConfig:
     nightly_utc_hour: int = 2
     methods_prompt_version: str = "1.0.1"
     reveal_retry_minutes: int = 10
+
+
+@dataclass(frozen=True)
+class ExternalConfig:
+    """Tunables of external suggestions (researchers not on the platform; settings ``EXTERNAL_*``)."""
+
+    refresh_per_day: int = 10  # per account in 24 hours, 0 = unlimited
+    batch_size: int = 20  # most new suggestions stored per refresh
+    pi_only: bool = True  # only last authors (likely principal investigators) become candidates
+    min_score: float = 0.11
+    min_topic: float = 0.1
+    alpha: float = 1.0
+    bridge_coauthors: int = 15
+    max_lookups: int = 50
+    network_share: float = 0.6
+    my_works_limit: int = 300
+    concurrency: int = 4

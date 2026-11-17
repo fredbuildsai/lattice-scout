@@ -4,13 +4,14 @@ from __future__ import annotations
 
 import json
 import re
+from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
 import structlog
 
 from scout.adapters.literature.parse import parse_author, parse_work, short_id
-from scout.ports.literature import AuthorCandidate, AuthorRecord, WorkQuery, WorkRecord
+from scout.ports.literature import AuthorCandidate, AuthorRecord, WorkFilter, WorkQuery, WorkRecord
 from scout.shared import NotFound
 
 log = structlog.get_logger()
@@ -112,3 +113,35 @@ class FixtureLiterature:
             ):
                 return w
         return None
+
+    async def works_by_filter(self, query: WorkFilter) -> list[WorkRecord]:
+        """Best effort over the recordings: the author's recorded works, or every recorded work in the topics;
+        then the date filter, the sort (``cited_by_count:desc`` or newest first) and the page."""
+        if query.author_id:
+            works = await self.list_author_works(query.author_id)
+        elif query.topic_ids:
+            want = {short_id(t) for t in query.topic_ids}
+            works = [w for w in self._all_works().values() if want & {t.id for t in w.topics}]
+        else:
+            return []
+        if query.from_publication_date:
+            since = int(query.from_publication_date[:4])
+            works = [w for w in works if (w.year or 0) >= since]
+        if query.sort == "cited_by_count:desc":
+            works = sorted(works, key=lambda w: (-w.cited_by_count, w.id))
+        else:
+            works = sorted(works, key=lambda w: (-(w.year or 0), w.id))
+        start = (query.page - 1) * query.per_page
+        return works[start : start + query.per_page]
+
+    async def get_authors(self, author_ids: Sequence[str]) -> list[AuthorRecord]:
+        """Recorded authors among the ids (``get_author`` recordings first, then search hits)."""
+        known: dict[str, AuthorRecord] = {}
+        for e in self._entries("search_authors"):
+            for r in self._load(e["file"])["results"]:
+                rec = parse_author(r)
+                known.setdefault(rec.id, rec)
+        for e in self._entries("get_author"):
+            rec = parse_author(self._load(e["file"]))
+            known[rec.id] = rec
+        return [known[i] for i in dict.fromkeys(short_id(a) for a in author_ids) if i in known]

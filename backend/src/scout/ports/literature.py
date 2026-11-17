@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from typing import Protocol
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -19,6 +20,16 @@ class TopicRef(BaseModel):
     score: float | None = None
 
 
+class YearCount(BaseModel):
+    """Works and citations of an author in one year (OpenAlex ``counts_by_year``)."""
+
+    model_config = ConfigDict(frozen=True)
+
+    year: int
+    works_count: int = 0
+    cited_by_count: int = 0
+
+
 class AuthorRecord(BaseModel):
     """An OpenAlex author record (subset)."""
 
@@ -33,6 +44,9 @@ class AuthorRecord(BaseModel):
     institutions: tuple[str, ...] = ()
     country: str | None = None
     topics: tuple[TopicRef, ...] = ()
+    counts_by_year: tuple[YearCount, ...] = Field(
+        default=(), description="Recent years only (OpenAlex keeps ~10)."
+    )
 
 
 class AuthorCandidate(AuthorRecord):
@@ -54,6 +68,23 @@ class WorkRecord(BaseModel):
     topics: tuple[TopicRef, ...] = ()
     author_ids: tuple[str, ...] = ()
     author_names: tuple[str, ...] = ()
+    last_author_id: str | None = Field(
+        default=None, description="Author at position ``last`` (likely the PI)."
+    )
+    last_author_name: str | None = None
+
+
+class WorkFilter(BaseModel):
+    """Works by author or by topics, without a text search (``/works?filter=``)."""
+
+    model_config = ConfigDict(frozen=True)
+
+    author_id: str | None = None
+    topic_ids: tuple[str, ...] = Field(default=(), description="Any of these topics (OR).")
+    from_publication_date: str | None = None
+    sort: str | None = Field(default=None, description="E.g. ``cited_by_count:desc``.")
+    page: int = Field(default=1, ge=1)
+    per_page: int = Field(default=100, ge=1, le=200)
 
 
 class WorkQuery(BaseModel):
@@ -96,4 +127,12 @@ class LiteraturePort(Protocol):
 
     async def count_works(self, query: WorkQuery) -> int:
         """Number of works matching a query (novelty measurement)."""
+        ...
+
+    async def works_by_filter(self, query: WorkFilter) -> list[WorkRecord]:
+        """One page of works matching a filter (author or topics, date, sort)."""
+        ...
+
+    async def get_authors(self, author_ids: Sequence[str]) -> list[AuthorRecord]:
+        """Author records for many ids in as few calls as possible; unknown ids are skipped."""
         ...

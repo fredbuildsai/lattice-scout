@@ -4,6 +4,13 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 
 ## [Unreleased]
 
+### Added (external suggestions, DECISIONS 132)
+- Matches page section "Researchers not on Lattice Scout yet": researchers who are not members, found in public OpenAlex data, so a researcher gets suggestions while few colleagues have joined. Two scopes for now, both on by default: "In your network" (co-authors of your co-authors, with the co-authors who link you) and "In your field" (outside your network, same topics). Cards show name, institution, scope, "via", shared topics, h-index, citations, recent works and an OpenAlex link, with Save and Dismiss. No LLM; these people are never contacted and never enter the double opt-in.
+- API: `GET /api/v1/matches/external?layer=`, `POST /api/v1/matches/external/refresh` (`{"scopes": [...]}`; 409 `profile_required`, 429 `external_refresh_limit`), `PATCH /api/v1/matches/external/{id}` (`active` / `saved` / `dismissed`).
+- Migration 0019: tables `match_external_suggestion` and `match_external_refresh` (RLS on); account erasure deletes them.
+- Settings `EXTERNAL_REFRESH_PER_DAY` (10), `EXTERNAL_BATCH_SIZE` (20), `EXTERNAL_PI_ONLY` (true).
+- `LiteraturePort.works_by_filter` and `get_authors`; `WorkRecord.last_author_id/last_author_name`; `AuthorRecord.counts_by_year`.
+
 ### Added (live model eval, F-46, DECISIONS 131)
 - `eval/run_eval.py --live`: scores real free models (OpenRouter Nemotron/GLM, Groq gpt-oss, Mistral) on the nine runtime agents through the same agent factory and llm-router adapter as the app. Per deployment and agent: schema-valid rate, strict-schema acceptance with JSON-mode fallback, empty rate, latency p50/p95, retries, 429/quota events; rule checks for the Critic (8 planted-bad and 8 good drafts), evidence quotes, invented ids, MatchExplainer (12 cases) and JointIdeas anonymity. `eval/thresholds.yaml` sets pass/fail and the verdict `GO` / `GO_PUBLISHED_ONLY` / `NO_GO` / `INCOMPLETE` per deployment. Flags: `--deployment`, `--route`, `--agents`, `--runs`, `--max-calls` (hard cap per deployment, default 60), `--allow-synthetic-confidential`, `--out`, `--dry-run`. Free deployments only. Reports go to `eval/reports/live-<date>.json|md` and hold no prompt or model text.
 - Confidential-class agents run only on synthetic `[SAMPLE]` inputs built from public OpenAlex titles, and only on deployments the operator lists.

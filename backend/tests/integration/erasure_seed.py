@@ -231,6 +231,10 @@ def seed_world(conn: Connection, s: Seeded, storage_dir: Path) -> None:
         vocabulary_version="v1", methods_prompt_version="v1", computed_at=now)  # fmt: skip
     ins(conn, "match_profile_topic", account_id=a, topic_id="T1", name="Lignin", weight=0.5)
     ins(conn, "match_profile_method", account_id=a, method_id="rheometry", weight=0.4, source="vault")
+    # ---- external suggestions (researchers not on the platform) and the refresh log
+    ins(conn, "match_external_suggestion", id=uuid4(), account_id=a, openalex_id="A777", name="Ada Outsider (sample)",
+        score=0.5, topic_overlap=0.5, layer="in_network", vias=["Bea"], created_at=now, updated_at=now)  # fmt: skip
+    ins(conn, "match_external_refresh", account_id=a, created_at=now)
     ins(
         conn,
         "match_method_proposal",

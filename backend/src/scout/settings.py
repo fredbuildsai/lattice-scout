@@ -84,6 +84,10 @@ class Settings(BaseSettings):
     match_max_explains_per_run: int = 200
     match_nightly_utc_hour: int = 2
     match_non_members: bool = False
+    # External suggestions: researchers not on the platform, from OpenAlex (DECISIONS 132).
+    external_refresh_per_day: int = 10  # searches per account in 24 hours, 0 = unlimited
+    external_batch_size: int = 20  # most new suggestions kept per search
+    external_pi_only: bool = True  # only last authors (likely principal investigators) become candidates
     retention_policy: Literal["keep", "discard", "user_choice"] = "user_choice"
 
     # Show the "do not upload confidential material" warning in the vault (DECISIONS 130).

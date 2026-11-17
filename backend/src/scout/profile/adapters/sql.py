@@ -126,6 +126,11 @@ class SqlResearcherRepo:
         rows = (await self._s.execute(select(m.researcher).where(m.researcher.c.id.in_(sub)))).all()
         return await self._load(list(rows))
 
+    async def all_author_ids(self) -> set[str]:
+        """Every claimed OpenAlex author id."""
+        rows = (await self._s.execute(select(m.researcher_openalex_id.c.openalex_author_id))).scalars().all()
+        return {str(x) for x in rows}
+
     @staticmethod
     def _row(r: Researcher) -> dict[str, object]:
         return {

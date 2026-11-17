@@ -9,11 +9,21 @@ from fastapi import APIRouter, Depends, Query, Request
 from scout.api.deps import current_account, get_container
 from scout.api.feedback import feedback_out
 from scout.api.schemas.feedback import FeedbackOut, MatchRatingIn
-from scout.api.schemas.matching import DecisionIn, MatchCardOut, MatchListOut
+from scout.api.schemas.matching import (
+    DecisionIn,
+    ExternalLayerName,
+    ExternalListOut,
+    ExternalRefreshIn,
+    ExternalStateIn,
+    ExternalSuggestionOut,
+    MatchCardOut,
+    MatchListOut,
+)
 from scout.feedback.application.give_feedback import UNSET
 from scout.feedback.domain.feedback import Reason, TargetType
 from scout.identity.domain.account import Account
 from scout.matching.domain.enums import Action
+from scout.matching.domain.external import ExternalLayer, ExternalSuggestion, SuggestionState
 
 router = APIRouter(prefix="/api/v1", tags=["matching"])
 
@@ -30,6 +40,75 @@ async def list_matches(
     return MatchListOut(
         matching_enabled=page.matching_enabled, items=page.items, next_cursor=page.next_cursor
     )
+
+
+def external_out(s: ExternalSuggestion) -> ExternalSuggestionOut:
+    """Domain suggestion -> DTO."""
+    return ExternalSuggestionOut(
+        id=s.id, openalex_id=s.openalex_id, openalex_url=f"https://openalex.org/{s.openalex_id}", name=s.name,
+        institution=s.institution, layer=s.layer.value, vias=list(s.vias), shared_topics=list(s.shared_topics),
+        score=s.score, topic_overlap=s.topic_overlap, formula=s.formula, h_index=s.h_index, citations=s.citations,
+        works_count=s.works_count, recent_works=s.recent_works, state=s.state.value, created_at=s.created_at,
+    )  # fmt: skip
+
+
+@router.get(
+    "/matches/external",
+    summary="Researchers not on Lattice Scout yet",
+    response_model=ExternalListOut,
+)
+async def list_external(
+    request: Request,
+    layer: ExternalLayerName | None = None,
+    account: Account = Depends(current_account),  # noqa: B008
+) -> ExternalListOut:
+    """Active and saved suggestions from public OpenAlex data; dismissed ones are hidden. These people are not
+    members: they are never contacted and never enter the double opt-in."""
+    items = await get_container(request).external_suggestions.visible(
+        account.id, ExternalLayer(layer) if layer else None
+    )
+    return ExternalListOut(items=[external_out(s) for s in items])
+
+
+@router.post(
+    "/matches/external/refresh",
+    summary="Find researchers not on Lattice Scout yet",
+    response_model=ExternalListOut,
+    responses={
+        409: {"description": "Claim your profile first."},
+        429: {"description": "Daily search limit reached (EXTERNAL_REFRESH_PER_DAY)."},
+    },
+)
+async def refresh_external(
+    body: ExternalRefreshIn,
+    request: Request,
+    account: Account = Depends(current_account),  # noqa: B008
+) -> ExternalListOut:
+    """Searches OpenAlex now (in_network: co-authors of your co-authors; in_field: outside your network, same
+    topics), stores new suggestions and returns the list. No LLM is involved."""
+    items = await get_container(request).external_suggestions.refresh(
+        account.id, [ExternalLayer(x) for x in dict.fromkeys(body.scopes)]
+    )
+    return ExternalListOut(items=[external_out(s) for s in items])
+
+
+@router.patch(
+    "/matches/external/{suggestion_id}",
+    summary="Save, dismiss or restore a suggestion",
+    response_model=ExternalSuggestionOut,
+    responses={404: {"description": "Not yours or unknown."}},
+)
+async def set_external_state(
+    suggestion_id: UUID,
+    body: ExternalStateIn,
+    request: Request,
+    account: Account = Depends(current_account),  # noqa: B008
+) -> ExternalSuggestionOut:
+    """``saved`` keeps it at hand, ``dismissed`` hides it (it is never suggested again), ``active`` restores it."""
+    s = await get_container(request).external_suggestions.set_state(
+        account.id, suggestion_id, SuggestionState(body.state)
+    )
+    return external_out(s)
 
 
 @router.get(

@@ -49,6 +49,7 @@ function setup({ enabled = true, items = [], feedback = null, decisionResponse, 
           ? json(decisionResponse.body, decisionResponse.status)
           : json(anon({ status: 'waiting_on_them' }))
       }
+      if (url.includes('/api/v1/matches/external')) return json({ items: [] })
       if (url.includes('/api/v1/matches')) {
         matchUrls.push(url)
         if (url.includes('cursor=c1'))
@@ -223,7 +224,9 @@ describe('MatchesPage', () => {
     expect(await screen.findByText('You both said yes')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Write an intro' })).toHaveAttribute(
       'href',
-      expect.stringMatching(/^mailto:ada@example\.edu\?subject=Lattice%20Scout%3A%20introduction&body=Dear%20Ada%20Example/),
+      expect.stringMatching(
+        /^mailto:ada@example\.edu\?subject=Lattice%20Scout%3A%20introduction&body=Dear%20Ada%20Example/,
+      ),
     )
     expect(screen.getByRole('link', { name: 'Propose call' })).toHaveAttribute(
       'href',

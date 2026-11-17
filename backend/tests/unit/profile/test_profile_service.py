@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -14,7 +15,14 @@ from tests.fakes.profile import InMemoryProfileUoW, ProfileStore
 
 from scout.adapters.literature.fixtures import FixtureLiterature
 from scout.ports.jobs import Job, JobStatus
-from scout.ports.literature import AuthorCandidate, AuthorRecord, LiteraturePort, WorkQuery, WorkRecord
+from scout.ports.literature import (
+    AuthorCandidate,
+    AuthorRecord,
+    LiteraturePort,
+    WorkFilter,
+    WorkQuery,
+    WorkRecord,
+)
 from scout.profile.application.import_profile import ImportProfile
 from scout.profile.application.service import ProfileNotFound, ProfileService, UnknownAuthor
 from scout.profile.domain.researcher import ImportStatus, VerifiedLevel
@@ -174,6 +182,12 @@ class FlakyLiterature:
 
     async def count_works(self, query: WorkQuery) -> int:
         return await self.inner.count_works(query)
+
+    async def works_by_filter(self, query: WorkFilter) -> list[WorkRecord]:
+        return await self.inner.works_by_filter(query)
+
+    async def get_authors(self, author_ids: Sequence[str]) -> list[AuthorRecord]:
+        return await self.inner.get_authors(author_ids)
 
 
 async def test_crash_after_first_author_resumes_without_duplicates() -> None:

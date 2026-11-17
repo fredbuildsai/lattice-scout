@@ -307,3 +307,23 @@ match_method_proposal = Table(
     Column("account_id", UUID(as_uuid=True), ForeignKey("account.id"), nullable=False),
     Column("label", Text, nullable=False), Column("source_refs", ARRAY(Text), nullable=False), ts("created_at", nullable=False),
 )  # fmt: skip
+
+match_external_suggestion = Table(
+    "match_external_suggestion", metadata,
+    Column("id", UUID(as_uuid=True), primary_key=True),
+    Column("account_id", UUID(as_uuid=True), ForeignKey("account.id"), nullable=False),
+    Column("openalex_id", Text, nullable=False), Column("name", Text, nullable=False), Column("institution", Text),
+    Column("score", Float, nullable=False), Column("topic_overlap", Float, nullable=False),
+    Column("formula", Text, nullable=False), Column("layer", Text, nullable=False),
+    Column("vias", ARRAY(Text), nullable=False), Column("shared_topics", ARRAY(Text), nullable=False),
+    Column("h_index", Integer, nullable=False), Column("citations", BigInteger, nullable=False),
+    Column("works_count", Integer, nullable=False), Column("recent_works", Integer, nullable=False),
+    Column("state", Text, nullable=False), ts("created_at", nullable=False), ts("updated_at", nullable=False),
+)  # fmt: skip
+
+match_external_refresh = Table(
+    "match_external_refresh", metadata,
+    Column("id", BigInteger, primary_key=True, autoincrement=True),
+    Column("account_id", UUID(as_uuid=True), ForeignKey("account.id"), nullable=False),
+    ts("created_at", nullable=False),
+)  # fmt: skip

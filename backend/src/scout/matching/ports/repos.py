@@ -8,6 +8,7 @@ from typing import Protocol
 from uuid import UUID
 
 from scout.matching.domain.agent_io import JointIdea
+from scout.matching.domain.external import ExternalLayer, ExternalSuggestion, SuggestionState
 from scout.matching.domain.profile import MatchProfile
 from scout.matching.domain.proposal import MatchProposal
 from scout.matching.domain.reveal import Contact
@@ -147,6 +148,44 @@ class BlockRepo(Protocol):
         ...
 
 
+class ExternalSuggestionRepo(Protocol):
+    """Suggestions of researchers who are not on the platform, and the log of refreshes (daily limit)."""
+
+    async def list_for(
+        self, account: AccountId, states: Sequence[SuggestionState], layer: ExternalLayer | None = None
+    ) -> list[ExternalSuggestion]:
+        """The account's suggestions in ``states`` (optionally one layer), ``in_network`` first, then best score."""
+        ...
+
+    async def get(self, suggestion_id: UUID, account: AccountId) -> ExternalSuggestion | None:
+        """One suggestion of ``account``, else None."""
+        ...
+
+    async def seen_ids(self, account: AccountId) -> set[str]:
+        """OpenAlex ids of every suggestion stored for the account, whatever its state."""
+        ...
+
+    async def add_many(self, suggestions: Sequence[ExternalSuggestion]) -> int:
+        """Insert; a suggestion already stored for the same account and OpenAlex id is skipped. Returns inserted."""
+        ...
+
+    async def save(self, suggestion: ExternalSuggestion) -> None:
+        """Persist state and ``updated_at``."""
+        ...
+
+    async def delete_for(self, account: AccountId) -> int:
+        """Delete every suggestion and refresh record of the account (erasure); return suggestions deleted."""
+        ...
+
+    async def record_refresh(self, account: AccountId, now: datetime) -> None:
+        """Remember one refresh."""
+        ...
+
+    async def refreshes_since(self, account: AccountId, since: datetime) -> int:
+        """Refreshes of the account since ``since``."""
+        ...
+
+
 class MatchUnitOfWork(UnitOfWork, Protocol):
     """One transaction over the matching repositories."""
 
@@ -178,4 +217,9 @@ class MatchUnitOfWork(UnitOfWork, Protocol):
     @property
     def ideas(self) -> JointIdeaRepo:
         """Joint ideas."""
+        ...
+
+    @property
+    def external(self) -> ExternalSuggestionRepo:
+        """External suggestions."""
         ...

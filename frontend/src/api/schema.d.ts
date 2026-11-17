@@ -200,6 +200,68 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/matches/external": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Researchers not on Lattice Scout yet
+         * @description Active and saved suggestions from public OpenAlex data; dismissed ones are hidden. These people are not
+         *     members: they are never contacted and never enter the double opt-in.
+         */
+        get: operations["list_external_api_v1_matches_external_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/matches/external/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Find researchers not on Lattice Scout yet
+         * @description Searches OpenAlex now (in_network: co-authors of your co-authors; in_field: outside your network, same
+         *     topics), stores new suggestions and returns the list. No LLM is involved.
+         */
+        post: operations["refresh_external_api_v1_matches_external_refresh_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/matches/external/{suggestion_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Save, dismiss or restore a suggestion
+         * @description ``saved`` keeps it at hand, ``dismissed`` hides it (it is never suggested again), ``active`` restores it.
+         */
+        patch: operations["set_external_state_api_v1_matches_external__suggestion_id__patch"];
+        trace?: never;
+    };
     "/api/v1/matches/{match_id}": {
         parameters: {
             query?: never;
@@ -1272,6 +1334,95 @@ export interface components {
             work_id?: string | null;
             /** Year */
             year?: number | null;
+        };
+        /**
+         * ExternalListOut
+         * @description Active and saved external suggestions, in_network first, then best score.
+         */
+        ExternalListOut: {
+            /** Items */
+            items: components["schemas"]["ExternalSuggestionOut"][];
+        };
+        /**
+         * ExternalRefreshIn
+         * @description Which scopes to search. Out of network and out of field come later.
+         */
+        ExternalRefreshIn: {
+            /** Scopes */
+            scopes?: ("in_network" | "in_field")[];
+        };
+        /**
+         * ExternalStateIn
+         * @description Save, dismiss, or restore (active) a suggestion.
+         */
+        ExternalStateIn: {
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "active" | "saved" | "dismissed";
+        };
+        /**
+         * ExternalSuggestionOut
+         * @description A researcher who is not on Lattice Scout, from public OpenAlex data. Never contacted by the platform.
+         */
+        ExternalSuggestionOut: {
+            /** Citations */
+            citations: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Formula */
+            formula: string;
+            /** H Index */
+            h_index: number;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Institution */
+            institution: string | null;
+            /**
+             * Layer
+             * @description in_network: co-author of your co-authors; in_field: outside your network, same topics.
+             * @enum {string}
+             */
+            layer: "in_network" | "in_field";
+            /** Name */
+            name: string;
+            /**
+             * Openalex Id
+             * @description Short OpenAlex author id; the profile is https://openalex.org/<id>.
+             */
+            openalex_id: string;
+            /** Openalex Url */
+            openalex_url: string;
+            /**
+             * Recent Works
+             * @description Works in the current year and the two before.
+             */
+            recent_works: number;
+            /** Score */
+            score: number;
+            /** Shared Topics */
+            shared_topics: string[];
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "active" | "saved" | "dismissed";
+            /** Topic Overlap */
+            topic_overlap: number;
+            /**
+             * Vias
+             * @description Your co-authors who link you (in_network only).
+             */
+            vias: string[];
+            /** Works Count */
+            works_count: number;
         };
         /**
          * FeedbackIn
@@ -2711,6 +2862,126 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["MatchListOut"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_external_api_v1_matches_external_get: {
+        parameters: {
+            query?: {
+                layer?: ("in_network" | "in_field") | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExternalListOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    refresh_external_api_v1_matches_external_refresh_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExternalRefreshIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExternalListOut"];
+                };
+            };
+            /** @description Claim your profile first. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Daily search limit reached (EXTERNAL_REFRESH_PER_DAY). */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    set_external_state_api_v1_matches_external__suggestion_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                suggestion_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExternalStateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExternalSuggestionOut"];
+                };
+            };
+            /** @description Not yours or unknown. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

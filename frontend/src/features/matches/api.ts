@@ -42,7 +42,9 @@ export function useMatches(limit = 50) {
     getNextPageParam: (last) => last.next_cursor ?? undefined,
     // The reveal job writes the joint ideas a little after the match turns mutual: look again while any are pending.
     refetchInterval: (q) =>
-      q.state.data?.pages.some((p) => p.items.some((m) => m.kind === 'revealed' && (m.ideas_status === 'pending' || m.ideas_status === 'none')))
+      q.state.data?.pages.some((p) =>
+        p.items.some((m) => m.kind === 'revealed' && (m.ideas_status === 'pending' || m.ideas_status === 'none')),
+      )
         ? 4000
         : false,
     select: (d): MatchList => ({
@@ -123,4 +125,59 @@ export function errorText(e: unknown): string {
     if (e.detail) return e.detail
   }
   return 'Something went wrong. Try again.'
+}
+
+export type ExternalSuggestion = components['schemas']['ExternalSuggestionOut']
+export type ExternalList = components['schemas']['ExternalListOut']
+export type ExternalScope = ExternalSuggestion['layer']
+export type ExternalState = ExternalSuggestion['state']
+
+/** The two scopes searchable today, in display order (out of network / out of field come later). */
+export const EXTERNAL_SCOPES: { id: ExternalScope; label: string }[] = [
+  { id: 'in_network', label: 'In your network' },
+  { id: 'in_field', label: 'In your field' },
+]
+
+/** GET /matches/external: active and saved suggestions of researchers who are not on Lattice Scout. */
+export function useExternalSuggestions() {
+  return useQuery({
+    queryKey: ['external-suggestions'],
+    queryFn: () => apiJson<ExternalList>('/api/v1/matches/external'),
+  })
+}
+
+/** POST /matches/external/refresh: searches OpenAlex now for the given scopes and stores the new list in the cache. */
+export function useRefreshExternal() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (scopes: ExternalScope[]) =>
+      apiJson<ExternalList>('/api/v1/matches/external/refresh', {
+        method: 'POST',
+        body: JSON.stringify({ scopes }),
+      }),
+    onSuccess: (list) => qc.setQueryData(['external-suggestions'], list),
+  })
+}
+
+/** PATCH /matches/external/{id}: save, dismiss or restore; refreshes the list. */
+export function useSetExternalState() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, state }: { id: string; state: ExternalState }) =>
+      apiJson<ExternalSuggestion>(`/api/v1/matches/external/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ state }),
+      }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['external-suggestions'] }),
+  })
+}
+
+/** Plain-language text for a failed external search. */
+export function externalErrorText(e: unknown): string {
+  if (e instanceof ApiError) {
+    if (e.code === 'profile_required') return 'Claim your OpenAlex profile first, then search again.'
+    if (e.status === 429) return 'You reached today’s search limit. Try again tomorrow.'
+    if (e.detail) return e.detail
+  }
+  return 'The search did not work. Try again.'
 }

@@ -22,6 +22,7 @@ from scout.matching.domain.agent_io import (
     SignalItem,
 )
 from scout.matching.domain.enums import MatchState
+from scout.matching.domain.external import ExternalLayer, ExternalSuggestion, SuggestionState
 from scout.matching.domain.profile import MatchProfile
 from scout.matching.domain.proposal import MatchProposal
 from scout.matching.domain.reveal import Contact
@@ -43,6 +44,8 @@ class MatchStore:
     ideas: dict[UUID, list[JointIdea]] = field(default_factory=dict)
     contacts: dict[AccountId, Contact] = field(default_factory=dict)
     conflicts: set[tuple[AccountId, AccountId, str]] = field(default_factory=set)
+    external: dict[UUID, ExternalSuggestion] = field(default_factory=dict)
+    refreshes: list[tuple[AccountId, datetime]] = field(default_factory=list)
 
 
 class FakeMatchRepo:
@@ -220,6 +223,54 @@ class FakeIdeaRepo:
         return list(self.s.ideas.get(match_id, []))
 
 
+class FakeExternalRepo:
+    def __init__(self, s: MatchStore) -> None:
+        self.s = s
+
+    async def list_for(
+        self, account: AccountId, states: Sequence[SuggestionState], layer: ExternalLayer | None = None
+    ) -> list[ExternalSuggestion]:
+        order = list(ExternalLayer)
+        rows = [
+            copy.deepcopy(x)
+            for x in self.s.external.values()
+            if x.account_id == account and x.state in states and (layer is None or x.layer is layer)
+        ]
+        return sorted(rows, key=lambda x: (order.index(x.layer), -x.score, x.openalex_id))
+
+    async def get(self, suggestion_id: UUID, account: AccountId) -> ExternalSuggestion | None:
+        x = self.s.external.get(suggestion_id)
+        return copy.deepcopy(x) if x is not None and x.account_id == account else None
+
+    async def seen_ids(self, account: AccountId) -> set[str]:
+        return {x.openalex_id for x in self.s.external.values() if x.account_id == account}
+
+    async def add_many(self, suggestions: Sequence[ExternalSuggestion]) -> int:
+        n = 0
+        for x in suggestions:
+            if x.openalex_id in await self.seen_ids(AccountId(x.account_id)) or x.id in self.s.external:
+                continue
+            self.s.external[x.id] = copy.deepcopy(x)
+            n += 1
+        return n
+
+    async def save(self, suggestion: ExternalSuggestion) -> None:
+        self.s.external[suggestion.id] = copy.deepcopy(suggestion)
+
+    async def delete_for(self, account: AccountId) -> int:
+        gone = [k for k, x in self.s.external.items() if x.account_id == account]
+        for k in gone:
+            del self.s.external[k]
+        self.s.refreshes = [r for r in self.s.refreshes if r[0] != account]
+        return len(gone)
+
+    async def record_refresh(self, account: AccountId, now: datetime) -> None:
+        self.s.refreshes.append((account, now))
+
+    async def refreshes_since(self, account: AccountId, since: datetime) -> int:
+        return sum(1 for a, t in self.s.refreshes if a == account and t >= since)
+
+
 class FakeMatchUow:
     def __init__(self, s: MatchStore) -> None:
         self.s = s
@@ -229,6 +280,7 @@ class FakeMatchUow:
         self.profiles = FakeProfileRepo(s)
         self.candidates = FakeCandidates(s)
         self.ideas = FakeIdeaRepo(s)
+        self.external = FakeExternalRepo(s)
 
     async def __aenter__(self) -> Self:
         return self
@@ -261,6 +313,16 @@ class FakeSources:
 
     async def signals(self, account: AccountId, sections: tuple[str, ...], limit: int) -> list[SignalItem]:
         return self.signal_items.get(account, [])[:limit]
+
+
+class FakeMembers:
+    """``MemberDirectory``: a fixed set of claimed OpenAlex ids."""
+
+    def __init__(self, ids: set[str] | None = None) -> None:
+        self.ids = set(ids or ())
+
+    async def claimed_author_ids(self) -> set[str]:
+        return set(self.ids)
 
 
 def outcome[T](value: T) -> AgentOutcome[T]:

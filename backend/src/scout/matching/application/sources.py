@@ -35,7 +35,18 @@ class ProfileSourceAdapter:
             for w in view.works
             if w.included
         )  # fmt: skip
-        return ProfileInput(r.id, r.country, r.import_status is ImportStatus.DONE, works)
+        return ProfileInput(r.id, r.country, r.import_status is ImportStatus.DONE, works, r.author_ids)
+
+
+class MemberDirectoryAdapter:
+    """``MemberDirectory`` over ``ProfileService``."""
+
+    def __init__(self, profile: ProfileService) -> None:
+        self._profile = profile
+
+    async def claimed_author_ids(self) -> set[str]:
+        """Every claimed OpenAlex author id on the platform."""
+        return await self._profile.claimed_author_ids()
 
 
 class ConsentSourceAdapter:

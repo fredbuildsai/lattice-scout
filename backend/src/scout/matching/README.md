@@ -171,6 +171,10 @@ All under `/api/v1`, behind `current_account`. Source: `backend/src/scout/api/ma
 | `POST /matches/{match_id}/decision` | `DecideOnMatch.execute` | 200 `MatchCard` | 404; 409 `consent_required`, `match_expired`, `match_closed`, `nothing_to_withdraw`; 422 `never_similar_needs_decline` |
 | `POST /matches/{match_id}/rating` | `GiveFeedback` (feedback context) | 200 feedback (`stars`, `reasons`, `comment`) | 404 when not a mutual match of the caller |
 
+| `GET /matches/external?layer=` | `ExternalSuggestions.visible` | 200 `ExternalListOut` (active and saved) | 422 unknown layer |
+| `POST /matches/external/refresh` | `ExternalSuggestions.refresh` | 200 `ExternalListOut` | 409 `profile_required`; 429 `external_refresh_limit`; 422 unknown scope |
+| `PATCH /matches/external/{id}` | `ExternalSuggestions.set_state` | 200 `ExternalSuggestionOut` | 404 `suggestion_not_found` |
+
 `limit` defaults to 20 (1 to 50). Lists hide proposals declined by the viewer, and expired proposals older than 30 days.
 `PATCH /api/v1/me/consent` is in the identity context. It enqueues `matching.profile`.
 
@@ -178,6 +182,28 @@ Views. `AnonymousMatchView` (`kind=anonymous`) has the score, the field label, t
 shared topic names, `you_bring`, `they_bring` (text only, no refs), `why`, `my_decision`, `created_at` and `expires_at`.
 `RevealedMatchView` (`kind=revealed`) adds `contact`, `ideas_status`, `joint_ideas`, `revealed_at` and `my_rating`.
 Neither view has the other side's decision, its timestamps, its rating, its profile weights or its vault signals.
+
+## External suggestions (researchers not on the platform)
+
+DECISIONS 132, ported from Faraday. `domain/external.py` (pure), `application/external.py` (`ExternalSuggestions`),
+`ExternalSuggestionRepo` on the unit of work, `MemberDirectory` in `ports/sources.py` (claimed OpenAlex ids of every
+member, through the anti-corruption layer). One refresh:
+
+1. Daily limit (`EXTERNAL_REFRESH_PER_DAY`, rows in `match_external_refresh`), then your topics: the stored matching profile,
+   or the same `compute_topics` over your included works when there is none (no consent needed).
+2. Your works from OpenAlex (`list_author_works` per claimed id). Excluded: you, every co-author, every member id, every
+   OpenAlex id already suggested to you.
+3. `in_network`: your 15 most frequent co-authors, their works since three years ago (`works_by_filter(author_id)`);
+   `in_field`: works since three years ago in your top 25 topics, most cited first, pages 1 and a deeper page that
+   moves one step per 20 suggestions seen. With `EXTERNAL_PI_ONLY` only last authors count.
+4. `collect_candidates` (in_network wins and keeps every linking co-author as "via"), `lookup_pool` (50 ids, 60 %
+   reserved for in_network), one `get_authors` call.
+5. `rank_external`, formula `ext1`: `T^alpha * (0.5 + 0.5 * min(activity))`, T = overlap coefficient of your topics and
+   the author's topic counts, activity = min(1, works in the last three years / 3); kept with T >= 0.1 and score >=
+   `MATCH_MIN_SCORE`; in_network first, then score; at most `EXTERNAL_BATCH_SIZE` stored.
+
+Every OpenAlex call is isolated: a failure drops that part of the search, never the request. No LLM. These people never
+enter `match_proposal`, are never contacted, and are deleted with the account (`MatchErasure`).
 
 ## Tables and views
 
@@ -194,6 +220,7 @@ Neither view has the other side's decision, its timestamps, its rating, its prof
 | `match_pair_conflict_v` | 0009 | Account pairs that are co-authors or in the same group. Returns ids only. |
 | `feedback.stars` (and its CHECK) | 0010 | 1 to 5 stars for matches. `rating` is nullable and each target type has its own CHECK. Reasons widened. |
 | `analytics.v_feedback_summary` | 0010 | Recreated with `avg_stars`. |
+| `match_external_suggestion`, `match_external_refresh` | 0019 | External suggestions per account (unique account + OpenAlex id, state `active` / `saved` / `dismissed`) and the refresh log for the daily limit. |
 
 Downgrades drop these objects and restore the earlier feedback constraints.
 
@@ -204,6 +231,8 @@ Settings are read in `scout/settings.py` and passed into `MatchConfig` in `boots
 `MATCH_COOLDOWN_DAYS` (180), `MATCH_MIN_SCORE` (0.11, calibrated with `scripts/calibrate_matching.py`), `MATCH_ALPHA` (1.0), `MATCH_BETA` (1.5),
 `MATCH_EXCLUDE_COAUTHORS` (true), `MATCH_EXCLUDE_SAME_GROUP` (true), `MATCH_MAX_EXPLAINS_PER_RUN` (200),
 `MATCH_NIGHTLY_UTC_HOUR` (2), `METHODS_CONFIG` (`config/methods.yaml`). `MATCH_NON_MEMBERS` is defined but no code reads it.
+External suggestions (`ExternalConfig`): `EXTERNAL_REFRESH_PER_DAY` (10), `EXTERNAL_BATCH_SIZE` (20),
+`EXTERNAL_PI_ONLY` (true); they reuse `MATCH_MIN_SCORE` and `MATCH_ALPHA`.
 Fixed in code: `candidate_limit` (2000) and `reveal_retry_minutes` (10).
 
 ## Tests
@@ -213,6 +242,8 @@ Fixed in code: `candidate_limit` (2000) and `reveal_retry_minutes` (10).
 | `tests/unit/matching/test_proposal.py` | Every state-machine row. |
 | `tests/unit/matching/test_reveal_properties.py` | Hypothesis: I1 to I6, I3 and I4 differentially, `build_revealed` iff mutual. |
 | `tests/unit/matching/test_scoring.py`, `test_profile.py`, `test_ids.py` | Scoring, weights, ids. |
+| `tests/unit/matching/test_external_domain.py`, `test_external_service.py` | External suggestions: pure functions; use case, limit and erasure against fakes. |
+| `tests/integration/test_external_suggestions_pg.py`, `test_external_api.py` | SQL repository, RLS, endpoints. |
 | `tests/unit/matching/test_application.py` | Use cases against the fakes in `tests/fakes/matching.py`. |
 | `tests/unit/matching/test_prompts.py` | Prompt front matter and versions. |
 | `tests/unit/matching/test_reveal_static_guard.py` | Reveal guard, layer 2. |

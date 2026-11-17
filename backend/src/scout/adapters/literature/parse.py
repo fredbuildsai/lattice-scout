@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from scout.ports.literature import AuthorRecord, TopicRef, WorkRecord
+from scout.ports.literature import AuthorRecord, TopicRef, WorkRecord, YearCount
 
 
 def short_id(value: str | None) -> str:
@@ -46,7 +46,28 @@ def parse_author(a: dict[str, Any]) -> AuthorRecord:
         institutions=tuple(i.get("display_name") for i in insts if i.get("display_name")),
         country=next((i.get("country_code") for i in insts if i.get("country_code")), None),
         topics=tuple(parse_topic(t) for t in a.get("topics") or []),
+        counts_by_year=tuple(
+            YearCount(
+                year=c["year"],
+                works_count=c.get("works_count") or 0,
+                cited_by_count=c.get("cited_by_count") or 0,
+            )
+            for c in a.get("counts_by_year") or []
+            if isinstance(c.get("year"), int)
+        ),
     )
+
+
+def last_author(authorships: list[dict[str, Any]]) -> dict[str, Any]:
+    """The author at position ``last``; when no authorship carries a position (old recordings), the last one listed.
+
+    A single-author work has position ``first`` in OpenAlex, so it has no last author.
+    """
+    if not authorships:
+        return {}
+    if any("author_position" in x for x in authorships):
+        return next((x.get("author") or {} for x in authorships if x.get("author_position") == "last"), {})
+    return authorships[-1].get("author") or {}
 
 
 def abstract_from_inverted(inv: dict[str, list[int]] | None) -> str | None:
@@ -62,7 +83,9 @@ def abstract_from_inverted(inv: dict[str, list[int]] | None) -> str | None:
 
 def parse_work(w: dict[str, Any]) -> WorkRecord:
     """Work object -> ``WorkRecord``."""
-    auth = [x.get("author") or {} for x in w.get("authorships") or []]
+    ships = w.get("authorships") or []
+    auth = [x.get("author") or {} for x in ships]
+    last = last_author(ships)
     return WorkRecord(
         id=short_id(w.get("id")),
         doi=bare_doi(w.get("doi")),
@@ -74,4 +97,6 @@ def parse_work(w: dict[str, Any]) -> WorkRecord:
         topics=tuple(parse_topic(t) for t in w.get("topics") or []),
         author_ids=tuple(short_id(a.get("id")) for a in auth if a.get("id")),
         author_names=tuple(a.get("display_name") for a in auth if a.get("display_name")),
+        last_author_id=short_id(last.get("id")) or None,
+        last_author_name=last.get("display_name"),
     )

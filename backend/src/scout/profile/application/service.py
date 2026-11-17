@@ -253,6 +253,11 @@ class ProfileService:
         works.sort(key=lambda w: (-(w.year or 0), -w.cited_by, w.openalex_work_id))
         return ProfileView(r, works)
 
+    async def claimed_author_ids(self) -> set[str]:
+        """Every OpenAlex author id claimed by any researcher (who is already on the platform)."""
+        async with self._uow() as uow:
+            return await uow.researchers.all_author_ids()
+
     async def summary(self, account_id: AccountId) -> Researcher | None:
         """The researcher or None."""
         async with self._uow() as uow:

@@ -4,6 +4,7 @@ claim, against PostgreSQL. These fail if the row/advisory locks or the non-overw
 from __future__ import annotations
 
 import asyncio
+from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from uuid import UUID
@@ -16,7 +17,7 @@ from scout.adapters.persistence.db import Database
 from scout.adapters.queue.postgres import PostgresJobQueue
 from scout.identity.adapters.sql import SqlIdentityUnitOfWork
 from scout.identity.application.service import IdentityService
-from scout.ports.literature import AuthorCandidate, AuthorRecord, WorkQuery, WorkRecord
+from scout.ports.literature import AuthorCandidate, AuthorRecord, WorkFilter, WorkQuery, WorkRecord
 from scout.profile.adapters.sql import SqlProfileUnitOfWork
 from scout.profile.application.import_profile import ImportProfile
 from scout.profile.application.service import ProfileService
@@ -58,6 +59,12 @@ class BlockingLiterature:
 
     async def count_works(self, query: WorkQuery) -> int:
         return await self.inner.count_works(query)
+
+    async def works_by_filter(self, query: WorkFilter) -> list[WorkRecord]:
+        return await self.inner.works_by_filter(query)
+
+    async def get_authors(self, author_ids: Sequence[str]) -> list[AuthorRecord]:
+        return await self.inner.get_authors(author_ids)
 
 
 @dataclass

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useConsent, useMe } from '../profile/api'
+import { ExternalSuggestions } from './ExternalSuggestions'
 import { MatchCardView, MatchListRow } from './MatchCardView'
 import { useMatches, type MatchCard } from './api'
 
@@ -56,6 +57,7 @@ export function OptInPanel({ onDone }: { onDone: () => void }) {
  * Matches (W7 / M7 / M8): two panes. The list groups proposals by status and follows `next_cursor` ("Load more");
  * the detail pane shows the selected match (decision controls, or the "You both said yes" hero with contact,
  * joint ideas and a rating form). Below `lg` the list and detail alternate. When matching is off the page offers the opt-in.
+ * Below, "Researchers not on Lattice Scout yet" lists suggestions from public OpenAlex data (no consent needed).
  */
 export function MatchesPage() {
   const matches = useMatches()
@@ -165,6 +167,7 @@ export function MatchesPage() {
           </div>
         </div>
       )}
+      <ExternalSuggestions />
     </section>
   )
 }

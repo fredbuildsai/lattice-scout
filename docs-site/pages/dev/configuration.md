@@ -160,6 +160,9 @@ and the [matching developer page](matching.md). The values below are the same as
 | `MATCH_MAX_EXPLAINS_PER_RUN` | `200` | MatchExplainer calls per compute run. After the limit, the template is used. |
 | `MATCH_NIGHTLY_UTC_HOUR` | `2` | Hour (UTC) of the nightly matching run. |
 | `METHODS_CONFIG` | `config/methods.yaml` | Controlled vocabulary of research methods (version 1, 44 methods). |
+| `EXTERNAL_REFRESH_PER_DAY` | `10` | Searches for researchers not on Lattice Scout (`POST /api/v1/matches/external/refresh`) one account may run in 24 hours; `0` = unlimited. Over the limit the API answers 429 (DECISIONS 132). |
+| `EXTERNAL_BATCH_SIZE` | `20` | Most new external suggestions kept per search. |
+| `EXTERNAL_PI_ONLY` | `true` | Only last authors (likely principal investigators) of the OpenAlex works become external suggestions. External suggestions also use `MATCH_MIN_SCORE` and `MATCH_ALPHA` (formula `ext1`, no method term). |
 
 ## Reserved for later milestones
 

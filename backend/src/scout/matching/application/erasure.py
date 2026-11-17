@@ -14,10 +14,11 @@ from scout.shared import AccountId
 
 @dataclass(frozen=True)
 class ForgetResult:
-    """How many proposals were detached (pending or closed) and deleted (mutual)."""
+    """How many proposals were detached (pending or closed) and deleted (mutual), and external suggestions deleted."""
 
     detached: int
     deleted: int
+    external_deleted: int = 0
 
 
 class MatchErasure:
@@ -27,7 +28,8 @@ class MatchErasure:
         self._uow = uow
 
     async def forget(self, account_id: UUID, now: datetime) -> ForgetResult:
-        """Delete mutual proposals, detach the others (they look like a consent close to the counterpart).
+        """Delete mutual proposals, detach the others (they look like a consent close to the counterpart), and delete
+        the account's external suggestions.
 
         One transaction and idempotent: a second call finds nothing left that names ``account_id``.
         """
@@ -43,5 +45,6 @@ class MatchErasure:
                 p.detach(p.side_of(account), now)
                 await uow.matches.save(p)
                 detached += 1
+            external = await uow.external.delete_for(account)
             await uow.commit()
-        return ForgetResult(detached=detached, deleted=len(mutual))
+        return ForgetResult(detached=detached, deleted=len(mutual), external_deleted=external)

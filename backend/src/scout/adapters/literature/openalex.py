@@ -6,7 +6,7 @@ import asyncio
 import hashlib
 import json
 import time
-from collections.abc import Awaitable, Callable
+from collections.abc import Awaitable, Callable, Sequence
 from datetime import UTC, datetime, timedelta
 from email.utils import parsedate_to_datetime
 from typing import Any, Protocol
@@ -15,7 +15,7 @@ import httpx
 import structlog
 
 from scout.adapters.literature.parse import parse_author, parse_work, short_id
-from scout.ports.literature import AuthorCandidate, AuthorRecord, WorkQuery, WorkRecord
+from scout.ports.literature import AuthorCandidate, AuthorRecord, WorkFilter, WorkQuery, WorkRecord
 from scout.ports.usage import ExternalCallRecord, ExternalService, UsageMeterPort
 from scout.shared import Clock, IdGenerator, InfrastructureError, NotFound, RateLimited
 from scout.shared.context import get_context
@@ -27,6 +27,9 @@ WORK_FIELDS = (
     "id,doi,display_name,title,publication_year,cited_by_count,type,primary_topic,topics,authorships,"
     "abstract_inverted_index"
 )
+FILTER_WORK_FIELDS = "id,display_name,publication_year,cited_by_count,authorships"
+AUTHOR_FIELDS = "id,display_name,orcid,last_known_institutions,summary_stats,cited_by_count,works_count,topics,counts_by_year"
+AUTHORS_PER_CALL = 50
 CACHE_TTL = timedelta(days=7)
 RETRY_STATUS = {429, 500, 502, 503, 504}
 
@@ -198,6 +201,40 @@ class OpenAlexClient:
         params = {**self._work_params(query), "per_page": "1", "select": "id"}
         data = await self._get("works", params, "/works?count")
         return int(data["meta"]["count"])
+
+    async def works_by_filter(self, query: WorkFilter) -> list[WorkRecord]:
+        """``/works?filter=author.id:`` or ``topics.id:A|B``, with date, sort and page; authorships only."""
+        filters = []
+        if query.author_id:
+            filters.append(f"author.id:{short_id(query.author_id)}")
+        if query.topic_ids:
+            filters.append("topics.id:" + "|".join(short_id(t) for t in query.topic_ids))
+        if query.from_publication_date:
+            filters.append(f"from_publication_date:{query.from_publication_date}")
+        if not filters:
+            return []
+        params = {
+            "filter": ",".join(filters), "per_page": str(query.per_page), "page": str(query.page),
+            "select": FILTER_WORK_FIELDS,
+        }  # fmt: skip
+        if query.sort:
+            params["sort"] = query.sort
+        data = await self._get("works", params, "/works?filter")
+        return [parse_work(w) for w in data["results"]]
+
+    async def get_authors(self, author_ids: Sequence[str]) -> list[AuthorRecord]:
+        """``/authors?filter=openalex:A|B`` in chunks of 50 ids."""
+        ids = list(dict.fromkeys(short_id(a) for a in author_ids if a))
+        out: list[AuthorRecord] = []
+        for i in range(0, len(ids), AUTHORS_PER_CALL):
+            chunk = ids[i : i + AUTHORS_PER_CALL]
+            data = await self._get(
+                "authors",
+                {"filter": "openalex:" + "|".join(chunk), "per_page": str(len(chunk)), "select": AUTHOR_FIELDS},
+                "/authors?filter=openalex",
+            )  # fmt: skip
+            out += [parse_author(a) for a in data["results"]]
+        return out
 
 
 def _ms(started: float) -> int:

@@ -1635,6 +1635,183 @@
         "title": "EvidenceOut",
         "type": "object"
       },
+      "ExternalListOut": {
+        "description": "Active and saved external suggestions, in_network first, then best score.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ExternalSuggestionOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "ExternalListOut",
+        "type": "object"
+      },
+      "ExternalRefreshIn": {
+        "description": "Which scopes to search. Out of network and out of field come later.",
+        "properties": {
+          "scopes": {
+            "items": {
+              "enum": [
+                "in_network",
+                "in_field"
+              ],
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Scopes",
+            "type": "array"
+          }
+        },
+        "title": "ExternalRefreshIn",
+        "type": "object"
+      },
+      "ExternalStateIn": {
+        "description": "Save, dismiss, or restore (active) a suggestion.",
+        "properties": {
+          "state": {
+            "enum": [
+              "active",
+              "saved",
+              "dismissed"
+            ],
+            "title": "State",
+            "type": "string"
+          }
+        },
+        "required": [
+          "state"
+        ],
+        "title": "ExternalStateIn",
+        "type": "object"
+      },
+      "ExternalSuggestionOut": {
+        "description": "A researcher who is not on Lattice Scout, from public OpenAlex data. Never contacted by the platform.",
+        "properties": {
+          "citations": {
+            "title": "Citations",
+            "type": "integer"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "formula": {
+            "title": "Formula",
+            "type": "string"
+          },
+          "h_index": {
+            "title": "H Index",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "institution": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Institution"
+          },
+          "layer": {
+            "description": "in_network: co-author of your co-authors; in_field: outside your network, same topics.",
+            "enum": [
+              "in_network",
+              "in_field"
+            ],
+            "title": "Layer",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "openalex_id": {
+            "description": "Short OpenAlex author id; the profile is https://openalex.org/<id>.",
+            "title": "Openalex Id",
+            "type": "string"
+          },
+          "openalex_url": {
+            "title": "Openalex Url",
+            "type": "string"
+          },
+          "recent_works": {
+            "description": "Works in the current year and the two before.",
+            "title": "Recent Works",
+            "type": "integer"
+          },
+          "score": {
+            "title": "Score",
+            "type": "number"
+          },
+          "shared_topics": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Shared Topics",
+            "type": "array"
+          },
+          "state": {
+            "enum": [
+              "active",
+              "saved",
+              "dismissed"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "topic_overlap": {
+            "title": "Topic Overlap",
+            "type": "number"
+          },
+          "vias": {
+            "description": "Your co-authors who link you (in_network only).",
+            "items": {
+              "type": "string"
+            },
+            "title": "Vias",
+            "type": "array"
+          },
+          "works_count": {
+            "title": "Works Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "openalex_id",
+          "openalex_url",
+          "name",
+          "institution",
+          "layer",
+          "vias",
+          "shared_topics",
+          "score",
+          "topic_overlap",
+          "formula",
+          "h_index",
+          "citations",
+          "works_count",
+          "recent_works",
+          "state",
+          "created_at"
+        ],
+        "title": "ExternalSuggestionOut",
+        "type": "object"
+      },
       "FeedbackIn": {
         "description": "A rating. Rating the same target again replaces the earlier one.",
         "properties": {
@@ -4436,6 +4613,165 @@
           }
         },
         "summary": "Your match proposals",
+        "tags": [
+          "matching"
+        ]
+      }
+    },
+    "/api/v1/matches/external": {
+      "get": {
+        "description": "Active and saved suggestions from public OpenAlex data; dismissed ones are hidden. These people are not\nmembers: they are never contacted and never enter the double opt-in.",
+        "operationId": "list_external_api_v1_matches_external_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "layer",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "in_network",
+                    "in_field"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Layer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExternalListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Researchers not on Lattice Scout yet",
+        "tags": [
+          "matching"
+        ]
+      }
+    },
+    "/api/v1/matches/external/refresh": {
+      "post": {
+        "description": "Searches OpenAlex now (in_network: co-authors of your co-authors; in_field: outside your network, same\ntopics), stores new suggestions and returns the list. No LLM is involved.",
+        "operationId": "refresh_external_api_v1_matches_external_refresh_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExternalRefreshIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExternalListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "409": {
+            "description": "Claim your profile first."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "429": {
+            "description": "Daily search limit reached (EXTERNAL_REFRESH_PER_DAY)."
+          }
+        },
+        "summary": "Find researchers not on Lattice Scout yet",
+        "tags": [
+          "matching"
+        ]
+      }
+    },
+    "/api/v1/matches/external/{suggestion_id}": {
+      "patch": {
+        "description": "``saved`` keeps it at hand, ``dismissed`` hides it (it is never suggested again), ``active`` restores it.",
+        "operationId": "set_external_state_api_v1_matches_external__suggestion_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "suggestion_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Suggestion Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExternalStateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExternalSuggestionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not yours or unknown."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Save, dismiss or restore a suggestion",
         "tags": [
           "matching"
         ]
