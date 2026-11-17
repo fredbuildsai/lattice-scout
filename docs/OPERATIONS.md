@@ -74,3 +74,22 @@ Connect a read-only database user to the `analytics` schema. Suggested first boa
 - Raw rows of `analytics_event`, `llm_call` and `external_call` live in monthly partitions. The daily partition job drops partitions older than `ANALYTICS_RETENTION_MONTHS` (13) and creates the next ones (each with RLS).
 - A user can switch analytics off (`analytics_opt_out` in `PATCH /api/v1/me/notifications`). `POST /events` then stores nothing for that account; the decision is cached for up to a minute.
 - Account erasure removes the user's events and sessions and anonymises cost rows (see the deletion page).
+
+## Run the whole site locally with Docker
+
+Needs only Docker (Compose v2.24 or later). The images are built on your machine; nothing is deployed.
+
+```bash
+git clone https://github.com/fredbuildsai/lattice-scout && cd lattice-scout
+git checkout claude/zealous-curie-7m18vd      # until it is merged
+cp .env.docker.example .env                   # then edit .env: OpenAlex key + mailto, at least one LLM key
+docker compose up --build                     # open http://localhost:5173 (API: http://localhost:8000/docs)
+```
+
+* **Environment variables.** Compose reads `.env` twice: for `${VAR}` in `docker-compose.yml`, and (`env_file`) it passes every line to the `api`, `worker`, `migrate` and `seed` containers. `.env` is git-ignored. The frontend only gets the `VITE_*` values listed in the compose file; Postgres and the frontend never see API keys. After editing `.env`, run `docker compose up -d` again (a changed value recreates the container).
+* **Real data from the start.** The defaults are `LLM_BACKEND=llm_router` and `LITERATURE_BACKEND=openalex`. The API refuses to start without at least one of `OPENROUTER_API_KEY`, `GROQ_API_KEY`, `MISTRAL_API_KEY` (`docker compose logs api` says so). `llmrouter-free` is installed into the image at build time from `LLM_ROUTER_SOURCE` (default: its GitHub repository; if that repository is private, the build fails: clone it next to this repo and set `LLM_ROUTER_SOURCE` to a path you add to the build context, or make it public).
+* **Services.** `postgres` (data in the `pgdata` volume), `migrate` (runs `alembic upgrade head` once), `api`, `worker`, `frontend` (Vite dev server, live reload from `./frontend`). Ports are bound to 127.0.0.1 only.
+* **Accounts.** `AUTH_MODE=dev`: sign in with any email, no Supabase needed. Dev signing keys and uploads live in the `appdata` volume.
+* **Demo data (optional).** `docker compose --profile seed run --rm seed` loads the Foster/Moreira demo pair and synthetic researchers from the committed fixtures. It never calls OpenAlex or an LLM.
+* **Stop / reset.** `docker compose down` keeps your data; `docker compose down -v` deletes the database and uploads.
+* **Status.** Written without a Docker daemon in the build VM, so it has not been run end to end. Report the first error (`docker compose logs <service>`) and it will be fixed.
