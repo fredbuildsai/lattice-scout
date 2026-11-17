@@ -14,7 +14,13 @@ config = context.config
 
 def _url() -> str:
     x = context.get_x_argument(as_dictionary=True)
-    return x.get("url") or os.environ.get("ALEMBIC_URL") or Settings().database_url
+    # DATABASE_URL first: migrating needs only the database, not the LLM keys that Settings() validates
+    return (
+        x.get("url")
+        or os.environ.get("ALEMBIC_URL")
+        or os.environ.get("DATABASE_URL")
+        or Settings().database_url
+    )
 
 
 def run() -> None:
